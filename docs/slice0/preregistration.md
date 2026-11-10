@@ -215,10 +215,34 @@ The last two test whether an earlier fright should change what happens next (riv
 minute and is ordered off at three, and the warband comes on from about 58 m at six. A test
 checks that the band strikes and goes before the front fights.
 
-**Open, to agree before the freeze: how the two memory variants are scored.** Contact is now
-the first bout, which in `shock` is the band's and in `volleys` would be the missiles'. So
-the time to break, the formed phase and the casualty clock would start at the shock, not at
-the front. Paullus's proposal is in call 0001.
+**How the two memory variants are scored** (agreed in call 0001, turns 37-38):
+
+- **Only the fronts are scored.** A body marked `front = false` in the scenario, such as
+  `shock`'s band, starts no contact, breaks no side, and a hit on one of its men counts in no
+  pattern. Contact is the first bout between two men of front bodies, or a gap of 3 m or
+  less between the front bodies. The formed phase and the casualty clock start there. For the
+  variants with no such body nothing changes: 24 run summaries over three variants, both
+  engines and two rungs came out the same before and after.
+- **Reported:** each side's front losses before contact, so that a shock that killed men can
+  be told from one that frightened them.
+- **A line that breaks before the fronts meet** breaks at once, as far as the comparison goes:
+  the shock alone broke it.
+- **The statistic, reported and not banded:** for each cell and parameter set, the probability
+  of superiority over seeds that the line breaks sooner after contact in `shock` than in
+  `base`, with "never" counted as later. The same for `volleys` against `base`. The report
+  gives its distribution over parameter sets, rung by rung.
+- **Rung 0 is the control.** It has no memory, so its difference from `base` is only what the
+  shock left behind: losses, disorder, breath, the longer approach. A memory shows itself as a
+  difference larger than rung 0's.
+- **Expected, written beforehand:**
+  - Rung 1 shows more than rung 0 only where men fled from the shock and rallied, since *has
+    fled* is all it carries (Varro).
+  - Rung 2 shows more than rung 1 only in draws where *shaken* wears off more slowly than the
+    four minutes between the shock and the front. The prior on the wear is 2-10 minutes, so
+    Varro expects that in about half the draws.
+  - Rung 3 shows more than rung 2 ([rungs-3-4.md](rungs-3-4.md)).
+- `volleys` has no body in reach: its missiles start no bout, so contact is untouched. Any
+  skirmishers it gets are `front = false`.
 
 ## Sign-off
 

@@ -65,6 +65,8 @@ centre_mm = [-45000, -9000]
 facing_deg = 0
 leader = "front-centre"
 tie = "loose"
+# Not one of the fronts: its bouts start no contact and its men break no side.
+front = false
 
 [[order]]
 body = "rear band"
