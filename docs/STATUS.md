@@ -1,6 +1,6 @@
 # Status
 
-**Phase:** Slice 0, the experiment between the two designs. The shared core is started.
+**Phase:** Slice 0, the experiment between the two designs. The shared core and harness run end to end with a toy man; the engines are next.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
 **Last updated:** 2026-11-10.
 
@@ -18,8 +18,8 @@ reviews his work and merges it.
 |---|---|---|
 | S0.0 | Land the rival on `main` as a proposal; point the vision docs at the merge; open this arc | c475976 |
 | S0.1 | Workspace and shared core: integer units and angles, Philox random streams with fork branches, W', observable state, state hash | 7ae78f3 |
-| S0.2a | The seam, in the core: tick and phases, the View and reference grid perception, dormancy, events and causes, competing hazards, intents and targets, the power table, the traits. Agreed with Varro on the call | (this) |
-| S0.2b | The harness: TOML scenarios (the 400-man patch and variants), the runner, a kinematic test substrate, SVG frame dumps, determinism and dormancy conformance tests | |
+| S0.2a | The seam, in the core: tick and phases, the View and reference grid perception, dormancy, events and causes, competing hazards, intents and targets, the power table, the traits. Agreed with Varro on the call | d419574 |
+| S0.2b | The harness: TOML scenarios (the patch), the runner, a kinematic test substrate, a toy man, SVG frame dumps, determinism and dormancy conformance tests | (this) |
 | S0.3 | Metrics and pre-registration: the eight patterns computed from observable state; pass bands and both sides' parameter priors written down before any scored run | |
 | S0.4 | Lethality bounds: literature search on skeletal trauma and experimental archaeology (Varro searches line-fighting ethnography and Collins) | |
 | S0.5 | The contact substrate, where every body touches its neighbours, at patch scale | |

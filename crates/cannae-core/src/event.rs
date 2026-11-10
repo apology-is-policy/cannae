@@ -92,6 +92,13 @@ impl EventLog {
         &self.events[i..]
     }
 
+    /// Events with `from <= tick < to`.
+    pub fn range(&self, from: u32, to: u32) -> &[Event] {
+        let a = self.events.partition_point(|e| e.tick < from);
+        let b = self.events.partition_point(|e| e.tick < to);
+        &self.events[a..b]
+    }
+
     /// Appends one phase's events after putting them in canonical order. A stable sort keeps
     /// one man's events in the order he produced them.
     pub fn append_phase(&mut self, mut batch: Vec<Event>) {

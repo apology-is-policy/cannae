@@ -27,7 +27,7 @@ pub use event::{Cause, Causes, Event, EventKind, EventLog};
 pub use fixed::Prob;
 pub use hazard::{Hazards, Transition};
 pub use intent::{Gait, Intent, Target};
-pub use model::{Decision, ManModel, Substrate};
+pub use model::{Decision, Frames, ManModel, NoBouts, Resolver, Substrate};
 pub use observe::{Bodies, BodyId, ManId, Observed, Posture, Role, Side, Wound};
 pub use rng::{Key, Rng, Stream};
 pub use units::{MilliJ, MilliW, SimMs, Vec2};
