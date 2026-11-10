@@ -170,7 +170,8 @@ This makes rich perception affordable for 100,000+ agents:
 
   A defensive stance lowers both the attack rate and the chance of being hit. That makes
   low-lethality standoffs possible, which matches the historical pattern. Second-rank spears,
-  and five ranks of sarissae, attack through the gaps.
+  and five ranks of sarissae, attack through the gaps. The full design is in
+  [10](10-combat-and-wounds.md).
 - **Missiles are ballistic** with dispersion and time of flight. They hit shields (absorbed or
   pinning), body zones, or the ground. Volleys at an area and aimed shots at a man.
 - **Terrain:**

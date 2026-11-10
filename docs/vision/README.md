@@ -190,3 +190,4 @@ by the log-likelihood of the historical outcome against simple baselines. Detail
 | [07-validation.md](07-validation.md) | Validation method, stylized facts, battle corpus, statistical criteria |
 | [08-roadmap.md](08-roadmap.md) | Vertical slices, what waits, the knowledge base, design reviews, open questions |
 | [09-intent-and-plans.md](09-intent-and-plans.md) | Intent, the player, the scene graph, plans and their authoring tiers, how officers decide, the LLM's role, the time model |
+| [10-combat-and-wounds.md](10-combat-and-wounds.md) | The contact zone, combat without dodge-and-crit rolls, reach and space, wounds in body and mind, staging |
