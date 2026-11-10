@@ -3,6 +3,7 @@
 use cannae_core::schedule::BASE_TICK;
 use cannae_harness::Scenario;
 use cannae_harness::metrics::ROUT_WINDOW_S;
+use cannae_score::draw::{Cell, drawn};
 use cannae_score::{Engine, Spec, run};
 
 fn base() -> Scenario {
@@ -19,15 +20,14 @@ fn stopping_at_the_end_of_the_rout_window_changes_no_statistic() {
     let s = base();
     let mut cut_something = false;
     for engine in [Engine::Pairwise, Engine::Field] {
+        let d = drawn(0, Cell { engine, rung: 1 }, 0).unwrap();
         let spec = |stop| Spec {
-            engine,
-            rung: 1,
             seed: 1,
             duration_s: 1_500,
             stop_at_rout_end: stop,
         };
-        let whole = run(&s, spec(false)).unwrap();
-        let cut = run(&s, spec(true)).unwrap();
+        let whole = run(&s, &d, spec(false)).unwrap();
+        let cut = run(&s, &d, spec(true)).unwrap();
         // The test means something only if a side broke early enough for the run to stop
         // short, and some whole run went on to log more (the field's rout logs almost nothing
         // once it is under way). At these settings both engines' lines break within the first

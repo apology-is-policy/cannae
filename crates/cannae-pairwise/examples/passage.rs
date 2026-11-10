@@ -8,7 +8,10 @@
 //! Garcimartín et al. 2016 let people push, through doors of 0.69 and 0.75 m, and found about
 //! 4.0. Sources: docs/slice0/crowd-physics.md.
 //!
-//! `cargo run --release -p cannae-pairwise --example passage`
+//! `cargo run --release -p cannae-pairwise --example passage [-- --spread]`
+//!
+//! `--spread` steers each man to the point of the mouth as far across it as he stands across
+//! the waiting area, instead of to its nearest point.
 #![allow(clippy::float_arithmetic)]
 
 use cannae_core::schedule::BASE_TICK;
@@ -53,7 +56,7 @@ const LIAO: Layout = Layout {
 };
 
 /// Seconds for each man to pass the bottleneck's far end, in order, for those who did.
-fn run(layout: &Layout, width_mm: i32, press: u8, params: Params) -> Vec<f64> {
+fn run(layout: &Layout, width_mm: i32, press: u8, params: Params, spread: bool) -> Vec<f64> {
     let mut b = Bodies::default();
     for row in 0..layout.wide {
         for col in 0..layout.deep {
@@ -95,7 +98,11 @@ fn run(layout: &Layout, width_mm: i32, press: u8, params: Params) -> Vec<f64> {
             .pos
             .iter()
             .map(|p| Target {
-                point: if p.x < 0 {
+                point: if p.x < 0 && spread {
+                    // The whole mouth used: each man makes for the point as far across it as
+                    // he stands across the waiting area.
+                    Vec2::new(300, (p.y as i64 * lane as i64 / area as i64) as i32)
+                } else if p.x < 0 {
                     Vec2::new(300, p.y.clamp(-lane, lane))
                 } else if p.x < exit_x {
                     Vec2::new(exit_x + 5_000, p.y.clamp(-lane, lane))
@@ -136,6 +143,7 @@ fn flow(times: &[f64], n: usize) -> Option<f64> {
 }
 
 fn main() {
+    let spread = std::env::args().any(|a| a == "--spread");
     println!("Pairwise substrate, placeholder parameters but the disc radius; specific flow Js");
     println!("in persons per metre of width per second, by disc radius (all pass unless marked");
     println!("with how many did)");
@@ -175,6 +183,7 @@ fn main() {
                                 radius_mm: r,
                                 ..Params::PLACEHOLDER
                             },
+                            spread,
                         );
                         let js = |j: f64| j / (w as f64 / 1000.0);
                         match flow(&times, n) {

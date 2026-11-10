@@ -1,15 +1,19 @@
-//! `cell --substrate pairwise|field --rung 0..3 [--variant base] [--seeds N] [--jobs J]
-//! [--secs S] [--whole yes]`
+//! `cell --substrate pairwise|field --rung 0..3 [--variant base] [--draws D] [--seeds N]
+//! [--freeze-seed F] [--jobs J] [--secs S] [--whole yes]`
 //!
-//! Runs one cell of the experiment on seeds 1 to N of a patch variant
-//! (`scenarios/patch/<variant>.toml`), J runs at a time, with every parameter at its
-//! placeholder or its prior's centre. Prints one line per run and the cost of the batch. A run
-//! stops where scoring stops, 15 minutes after a side breaks, unless `--whole yes`.
+//! Runs one cell of the experiment: parameter sets 0 to D-1 (`cannae_score::draw`, from the
+//! freeze seed F), each on seeds 1 to N of a patch variant (`scenarios/patch/<variant>.toml`),
+//! J runs at a time. Prints one line per run and the cost of the batch. A run stops where
+//! scoring stops, 15 minutes after a side breaks, unless `--whole yes`.
+//!
+//! The freeze seed is fixed at the freeze. Until then the mappings not yet written give their
+//! centres whatever it is.
 //!
 //! Floats here only report wall time; nothing they compute reaches a run.
 #![allow(clippy::float_arithmetic)]
 
 use cannae_harness::Scenario;
+use cannae_score::draw::{Cell, drawn};
 use cannae_score::{Engine, Run, Spec, run};
 use rayon::prelude::*;
 use std::process::ExitCode;
@@ -20,6 +24,8 @@ fn main() -> ExitCode {
     let mut rung = 1u8;
     let mut variant = "base".to_string();
     let mut seeds = 1u64;
+    let mut draws = 1u32;
+    let mut freeze_seed = 0u64;
     let mut jobs = 1usize;
     let mut secs = None;
     let mut stop_at_rout_end = true;
@@ -37,6 +43,8 @@ fn main() -> ExitCode {
             "--rung" => rung = v.parse().unwrap_or(9),
             "--variant" => variant = v,
             "--seeds" => seeds = v.parse().unwrap_or(1),
+            "--draws" => draws = v.parse().unwrap_or(1),
+            "--freeze-seed" => freeze_seed = v.parse().unwrap_or(0),
             "--jobs" => jobs = v.parse().unwrap_or(1),
             "--secs" => secs = v.parse().ok(),
             "--whole" => stop_at_rout_end = v != "yes",
@@ -58,20 +66,32 @@ fn main() -> ExitCode {
         }
     };
     let duration_s = secs.unwrap_or(s.duration_s);
+    let sets = match (0..draws)
+        .map(|i| drawn(freeze_seed, Cell { engine, rung }, i))
+        .collect::<Result<Vec<_>, _>>()
+    {
+        Ok(sets) => sets,
+        Err(e) => {
+            eprintln!("{e}");
+            return ExitCode::FAILURE;
+        }
+    };
     let pool = rayon::ThreadPoolBuilder::new()
         .num_threads(jobs)
         .build()
         .expect("thread pool");
     let started = Instant::now();
     let runs: Vec<Result<Run, String>> = pool.install(|| {
-        (1..=seeds)
-            .into_par_iter()
-            .map(|seed| {
+        let jobs: Vec<_> = sets
+            .iter()
+            .flat_map(|d| (1..=seeds).map(move |seed| (d, seed)))
+            .collect();
+        jobs.into_par_iter()
+            .map(|(d, seed)| {
                 let r = run(
                     &s,
+                    d,
                     Spec {
-                        engine,
-                        rung,
                         seed,
                         duration_s,
                         stop_at_rout_end,
@@ -129,8 +149,9 @@ fn print_run(r: &Run) {
     let at = |t: Option<u32>| t.map_or("-".to_string(), |t| format!("{}", t / 20));
     let broke = s.loser.and_then(|l| s.side_break[l as usize]);
     println!(
-        "seed {:>3}: {} men, {:.2} s wall ({:.0}x), contact {} s, {:?} broke at {} s, \
-         {} events, evaluated {} skipped {}, at the end {:?} spanning {:?} mm",
+        "draw {:>3} seed {:>3}: {} men, {:.2} s wall ({:.0}x), contact {} s, {:?} broke at {} \
+         s, {} events, evaluated {} skipped {}, at the end {:?} spanning {:?} mm",
+        r.draw,
         r.seed,
         r.men,
         r.wall.as_secs_f64(),
@@ -149,7 +170,7 @@ fn print_run(r: &Run) {
 fn usage() -> ExitCode {
     eprintln!(
         "usage: cell --substrate pairwise|field --rung 0..3 [--variant base] [--seeds N] \
-         [--jobs J] [--secs S] [--whole yes]"
+         [--draws D] [--freeze-seed F] [--jobs J] [--secs S] [--whole yes]"
     );
     ExitCode::FAILURE
 }
