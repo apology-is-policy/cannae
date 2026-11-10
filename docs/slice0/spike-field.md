@@ -1,9 +1,9 @@
 # Slice 0: The speed spike for the field engine (S0.7)
 
 **Status:** Varro, 2026-11-10. **Burst readings only.** The sustained readings are not taken
-yet: another project loaded the machine (load average 12 to 37) from about 13:30 UTC, and no
-reading taken under that load is reported here as a result. This file will be completed when
-the machine is quiet.
+yet: another project loaded the machine (load average 7 to 46) from about 13:30 UTC, and no
+reading taken under that load is reported here as a result. A quiet window is asked for through
+that project's own lock on the machine. The rule for reading them is fixed below.
 
 The kill line for this engine is 10x real time per core in the pocket
 ([rival-comparison.md](../rival-comparison.md)).
@@ -103,9 +103,42 @@ Counting a man as moving only by his own walk and lean, and not by the crowd's p
 neither figure. This rung fails here on speed and on physics, and it is not fixed. See
 [rival/08](../rival/08-the-field-as-built.md), "What it does badly".
 
+## How a sustained reading is read
+
+Agreed with Paullus on 2026-11-10 (call 0001, turns 55 to 59), and written here before any
+sustained reading of either engine was taken. His spike follows the same rule.
+
+- **A run** is ten minutes of wall time. The 1-minute load average is logged just before it and
+  must be under 2, or the run is not started.
+- **The figure of record** is the mean rate over the last five minutes of wall time: the
+  simulated time from the first report at or after five minutes to the end of the run, divided
+  by the wall time between them. The machine has no fan, and it throttles during the first
+  minutes.
+- **Reported beside it:** the mean of the whole run, and the slowest interval between two
+  reports, each with the simulated time it covers. A faster engine is further into the scene,
+  and the reader should see how far.
+- **The state of the scene:** for the pocket, whether the ring had closed, read from the count of
+  men in the position solve (`hot`) and the densest cell in the last reports.
+- **The load after a run** is logged too. One core leaves it near 1. A run that ends with it at
+  3 or more is reported, and is not the figure of record.
+
+**What a reading can decide.** Neither spike runs the man: his table, his hazards and rung 3's
+gauges are shared code, and their cost is not in any figure of either engine. It will be
+measured later with one harness, the same way for both. Until then:
+
+- a reading **under** the kill line is final. The man only adds cost;
+- a reading **over** it means "not failed yet".
+
+**The perception is reported apart from the substrate.** It is common ground: the core fixes
+the View, and the tests hold any perception to it. The reports print its three costs
+(rebuild, the dormancy test, the Views) beside the total. This engine's line is still read with
+the perception on, because an engine needs eyes.
+
 ## Still to do
 
-1. Sustained readings, ten minutes each, one core: line, surge and pocket, substrate alone and
-   with perception; the pocket with `Contact::Crowd`; the same hash on a repeat.
-2. The man's hazards on top, once both engines have a full man to time.
+1. Sustained readings, one core, in this order: the pocket with perception (the one read
+   against 10x), the pocket alone, the pocket with `Contact::Crowd`, the line, the surge; then
+   the same hash on a repeat. The line and the surge with perception are left out: the window
+   on the shared machine is two hours for both engines.
+2. The man's cost on top, with the shared harness, once the batch is done.
 3. A decision on contact inside crowds, after the passage study.
