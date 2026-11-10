@@ -3,7 +3,7 @@
 **Status:** a proposal on branch `varro`. It is not the design of record; that is
 [`docs/vision/`](../vision/README.md). Michal asked for a competing vision, with leave to relax
 anything. Written by Varro (Claude Fable 5.2) on 2026-11-10, and revised the same day after
-Paullus's critique of the one-page sketch (yip call 0001, turn 3 and notes 2 and 3).
+Paullus's critique of the one-page sketch (yip call 0001, turns 3 and 5, notes 2, 3 and 5).
 
 ## The thesis
 
@@ -63,6 +63,28 @@ Rust, the viewer, vertical slices, and the parsimony pillar, which the rival onl
 - some of the organic jostle of soft bodies: formed men keep their places, and bodies touch
   only where order has gone ([02](02-order-and-contact.md) §5);
 - "low losses while the lines are formed" as evidence: here it is an input.
+
+## Where the two designs have met
+
+Michal asked for convergence by argument, not a verdict. By turn 5 of the call, Paullus and I
+agree on more than we dispute.
+
+| Agreed | From |
+|---|---|
+| A1 must be measured at 1:1, because the race does not scale | The rival |
+| The standard as the frame; one representation for every kind of body | The rival; unified by Paullus |
+| A2 from the ensemble; fate curves by forking | The rival |
+| The visible layer as the default: five postures, hazards read off counted acts, events with logged causes, the genealogy | The rival |
+| No fast inner variables: a hazard with a reaction delay does what x, F and Φ did ([01](01-the-man.md) §9) | The rival's question, Paullus's analysis |
+| Marks, not gauges, as the default memory: *has fled*, *shaken* | Paullus's marks, the rival's rule |
+| One ladder for the man, spanning both designs ([06](06-experiment.md) §2) | Paullus |
+| The field as the default substrate, with contact where men are crowded and moving | The rival's field, Paullus's refinement |
+| One battle per core, integer state and no aggregate crate, if the speed per core holds | The rival |
+| The casualty clock as a constraint on both, with time-to-break scored by dose-response | The rival's clock, Paullus's scoring |
+
+**Still open, for the experiment to decide:** where on the ladder the patterns stop failing;
+what sets the rhythm of a clash; whether the speed is real; whether a soft pressure with local
+contact holds a crowd at a believable density.
 
 ## Documents
 

@@ -54,7 +54,7 @@ what happens next, and should it?
 | 3 | Rear-first collapse | Where the first men to leave a breaking body stood |
 | 4 | Lateral spread | A break travels along the line |
 | 5 | Casualty asymmetry | The loser's losses fall mostly after the break |
-| 6 | **Holds, then breaks** | The time to the first break: its mass must lie well away from both zero and never |
+| 6 | **Holds, then breaks** | The time to the first break must lie away from both zero and never, and must move the right way, by a credible amount, for veterans against recruits, a flank arrival, and relief. Its absolute value is close to an input in both designs. |
 | 7 | **The casualty clock** | Disabling hits per front position per hour inside the band, with lethality per bout inside its bounds ([02](02-order-and-contact.md) §9) |
 | 8 | The centurion gradient | The centurions' share of losses is higher in a formed fight than in a rout |
 
@@ -68,9 +68,21 @@ each on a fixed set of seeds, and score every pattern. Report:
 - the share of prior draws that pass every pattern;
 - which patterns fail most often, and how.
 
-**The memory ladder.** Engine B is run on three rungs: no marks; *has fled*; *has fled* and
-*shaken*. Engine A is also run with its resolve variable R removed. In each engine the lowest
-rung that passes is kept. That is the parsimony pillar applied to memory.
+**One ladder for the man.** Paullus proposed, and I accept, that the two men are rungs of one
+ladder and not rivals:
+
+| Rung | The man |
+|---|---|
+| 0 | No marks |
+| 1 | *Has fled* |
+| 2 | *Has fled* and *shaken* |
+| 3 | Continuous fear and resolve, the vision of record's F and R, as gauges in place of *shaken* |
+| 4 | The full excitable psyche of 04 §5 |
+
+Every rung shares the visible layer: five postures, hazards read off counted acts, and events
+with logged causes. The vision of record turns x into acts anyway. The lowest rung that passes
+is kept. The question is then not which man, but where on one ladder the patterns stop
+failing. That is the parsimony pillar applied to the mind.
 
 **The passage.** One more scenario, for the substrate: a maniple falling back through an
 interval under pressure, and a crowd leaving through a gate. It is run three ways: field
@@ -98,7 +110,9 @@ Measured after ten minutes of sustained load on the fanless Air, never at burst:
 
 - simulated seconds per wall second: engine B on one core; engine A on all cores as designed,
   reported in total and per core;
-- for B, an identical state hash across repeated runs; for A, across 1, 4 and 8 threads.
+- for B, an identical state hash across repeated runs; for A, across 1, 4 and 8 threads;
+- the peak density reached in the pocket, which must stay believable
+  ([02](02-order-and-contact.md) §5).
 
 ## 4. Kill criteria, both ways
 
@@ -106,7 +120,7 @@ Measured after ten minutes of sustained load on the fanless Air, never at burst:
 
 - it runs below 10× real time per core in the pocket; or
 - it cannot hold a line for an hour and then break with no more memory than the two marks
-  (pattern 6).
+  (pattern 6). Then the answer lies higher on the ladder (§2), on whichever substrate survives.
 
 **The vision of record's engine dies if:**
 
@@ -129,17 +143,29 @@ The man and the substrate are separable, so the experiment has four results, not
 The two mixed results are worth as much as the pure ones, and the harness should be built so
 that a man and a substrate can be combined freely.
 
-## 6. Who builds what
+## 6. Scope, order and who builds what
 
-Paullus proposed that each engine be built by its believer: Varro builds engine B; Paullus
-builds the harness and engine A. I agree. It keeps either of us from building the other's
-design badly, and it means the harness is written by the one who is not writing my engine.
+Two complete engines do not fit in two weeks, and they are not needed. Paullus's split, which
+I accept:
+
+- **The man** is tested on the 400-man patch: every rung of the ladder, on both substrates.
+  At 400 men the substrate costs nothing either way.
+- **The substrate** is tested by the 150,000-body spike, each running its real arithmetic per
+  man with no behaviour tuning, and by the passage.
+- **Order:** the harness and metrics; the patch on the field; the patch on pairwise contact;
+  the spikes; the passage. If time runs short, the threaded pairwise engine at full scale is
+  what gets measured in parts. Paullus has said that shortfall counts against his side.
+
+**Each piece is built by its believer.** Paullus builds the harness, the metrics, the pairwise
+substrate and rungs 3 and 4. Varro builds the field substrate and rungs 0 to 2. Each reads the
+other's parameter list before any scored run. That is my reading of Paullus's proposal, and
+the decision is Michal's.
 
 ## 7. Cost
 
-Two weeks, on the Air, with no money spent. That is the same budget as the Slice 0 already
-approved in principle, and it replaces that slice's toy and spike with comparative versions of
-both.
+Two weeks, on the Air, with no money spent. That is the budget the vision of record gives Slice 0, which
+still waits for Michal's go-ahead. It replaces that slice's toy and spike with comparative
+versions of both.
 
 ## 8. What Michal decides
 

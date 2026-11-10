@@ -100,8 +100,9 @@ measured in laboratories, and because a witness can see a winded man.
 
 **This is the rival's central bet.** A line must hold for an hour and then break, with these
 things and no slow reservoir of resolve behind them. The experiment climbs a ladder: no marks,
-then *has fled*, then *shaken*, and keeps the lowest rung that passes. If the top rung fails,
-the rival is wrong ([06](06-experiment.md)).
+then *has fled*, then *shaken*, and keeps the lowest rung that passes. If all three fail, the
+answer lies higher on the same ladder, in the vision of record's continuous state
+([06](06-experiment.md) §2).
 
 ## 5. What Michal asked for, in these terms
 
@@ -197,23 +198,29 @@ it inside the witness rule:
 1. **Events set it and clear it,** and each is logged with its cause.
 2. **It has signs.** A shaken body can be seen, as a winded one can, and the share of a unit's
    men who are shaken is shown.
-3. **It earns its place by ablation.** The engine runs with no marks, with *has fled*, and
-   with *shaken* added, and keeps the lowest rung that passes ([06](06-experiment.md) §2).
+3. **It earns its place on a ladder.** No marks; *has fled*; *shaken*; and above them the
+   vision of record's continuous fear and resolve, then its full excitable psyche. All rungs
+   share the postures, the hazards and the log. The lowest rung that passes is kept
+   ([06](06-experiment.md) §2). The single ladder is Paullus's proposal.
 
 The rule that results: **a man may carry marks of what has happened to him. He does not carry
 gauges.** A mark is discrete, set by an event, and explained in the log.
 
-**What still differs from the vision of record,** even with *shaken*:
+**What still differs,** after the argument, is two things:
 
-- no fast inner variables. Postures and hazards replace x, F and Φ;
-- one small mark where the vision of record has four slow variables (R, H, S, B);
-- bouts are led, not oscillated ([02](02-order-and-contact.md) §7).
+- **how much slow memory a man carries:** one small mark, or the vision of record's slow
+  variables. The ladder decides;
+- **what times a clash:** led bouts ([02](02-order-and-contact.md) §7), or the W′ cycle.
+  Patterns 2 and 7 decide.
 
-**The first difference may be smaller than it looks.** In the vision of record x, F and Φ have
-time constants of about a second. A variable that follows what a man sees with a second's lag
-is hard to tell from a hazard read off what he sees, with reaction time as a parameter. If
-that is right, what really divides the two men is the slow part (how much memory) and what
-sets the rhythm of a clash. Both are on the experiment's list.
+**The fast layer is settled.** I asked whether x, F and Φ, with time constants of about a
+second, do anything that a hazard with a reaction delay cannot. Paullus went through what they
+buy (call 0001, note 5) and conceded the layer. Hysteresis is the asymmetry of the posture
+changes: giving way is easy, and a rally needs no pursuer and a carrier in view. Summing small
+shocks is what a hazard does over a window of time. Momentum after success is enemy backs in
+view. One thing remains: how close a man stands at standoff, and how hard he leans into a
+press. That is graded, and it lives inside *steady*. It can be a function of his dispositions
+and of what he counts, and it needs no state.
 
 **What Michal would see.** Click a man: "Steady. Shaken, 2 of 3, since the standard fell four
 minutes ago. Chance to give ground: 4 % a second, because three neighbours have turned, the
@@ -225,6 +232,6 @@ thing to watch. It is made of counts, and nothing stores it.
 mind with visible signs. I think that is a psyche in the sense Michal asked for, and one he can
 inspect more honestly than a gauge. Without any mark he is closer to a reflex, and I no longer
 argue for that version as the default: it is the bottom rung of the ladder, there to be beaten.
-I expect the engine to need *shaken*. Paullus and I both lean to this middle. We differ on what
-surrounds it, and the patterns should settle that. The choice of what the vision says is
+I expect the engine to need *shaken*. Paullus and I both lean to this middle, and we now differ only in the two things
+above. The choice of what the vision says is
 Michal's.

@@ -80,6 +80,23 @@ carries everything at long range. Bodies touch each other only where it matters 
   oppressa suorum in terrore ac fuga sine ullo vulnere interiit* (*BC* 3.71).
 - **Othismos** stays a parameter: how much of the rear ranks' push reaches the front.
 
+**Which pressure.** Paullus asked, and it matters. The field's pressure is an equation of
+state: a function of density, zero below about two or three men to the square metre and rising
+above. It is deliberately soft. It limits speed, spreads a crowd gently, and reports crush. It
+does not have to hold men apart, because contact does that wherever they are crowded and
+moving (below). A stiff pressure would be unstable at 4 Hz. A projection that enforces a
+density limit, as continuum crowd models do (Treuille et al. 2006; Narain et al. 2009:
+Paullus's references, from memory), is a solve every step. If the soft field with contact lets
+a pocket pack beyond a believable density, the fallback is that projection, run only on the
+dense cells with a fixed number of sweeps. The spike's pocket measures peak density for this
+reason ([06](06-experiment.md) §3).
+
+**At the contact line, positions and not cells.** Lines in contact stand about a cell apart,
+so the grid cannot carry what happens there. Any man with an enemy within about three metres
+is handled by exact positions: who is in reach, on which side, at his flank or his back. At
+the densities of a fighting line the field's pressure is zero, so it does not push the two
+fronts apart. Counts by cell serve the men further back.
+
 **Where bodies touch.** Michal's read of the two substrates was that bodies feel more human
 and the field more mathematically pretty, and he asked Paullus and me to argue toward common
 ground. Paullus's case for bodies (call 0001, note 3) is that a field smooths away what is

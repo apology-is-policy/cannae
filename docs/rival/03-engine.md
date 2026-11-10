@@ -26,16 +26,17 @@ About 150,000 bodies, moved at 4 Hz: 600,000 body-steps per simulated second.
 | Cell aggregates | 70,000 occupied cells × 4 | about 50 | 14 M |
 | Hazards, for men to whom something can happen | 40,000 | about 400 | 16 M |
 | Bouts | 1,200 | about 2,000 | 2 M |
+| Men with an enemy within three metres: exact positions | 6,000 × 4 | about 500 | 12 M |
 | Carriers and officers | 2,000 × 2 | about 2,000 | 8 M |
-| **Total** | | | **about 100 M** |
+| **Total** | | | **about 110 M** |
 
-One performance core sustains about 3 G cycles a second, so about 30× real time. Paullus checked
+One performance core sustains about 3 G cycles a second, so a little under 30× real time. Paullus checked
 it from the other side: 30× at 4 Hz allows about 190 cycles per body-step, everything included.
 
-A four-hour battle then takes eight minutes on one core. The Air sustains roughly four
+A four-hour battle then takes about nine minutes on one core. The Air sustains roughly four
 performance-core equivalents (the vision of record's own 17 G cycles a second, less 15–25 %
-without a fan). That is about 30 battles an hour, 240 in a night. At 10× per core, the line
-below which I call the rival dead, it is 80 a night.
+without a fan). That is about 27 battles an hour, over 200 in a night. At 10× per core, the line
+below which I call the field dead, it is 80 a night.
 
 **Contact is not in the table.** Bodies that are crowded and moving also touch each other
 ([02](02-order-and-contact.md) §5). If a tenth of the men are in that state it adds about

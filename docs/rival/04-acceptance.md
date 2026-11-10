@@ -84,8 +84,12 @@ memory and must be checked before anyone relies on it.
 
 **Calibration.**
 
-- **Fewer parameters.** My count is 25–35, against the 50–100 the vision of record estimates
-  for psyche and combat. Counting both exactly is part of the experiment.
+- **Parameters.** My first estimate was 25–35, against the 50–100 the vision of record
+  estimates for psyche and combat. Paullus's rough count of my hazard table alone is 30–40,
+  and he is probably nearer. Each rung of the ladder will be counted line by line, with
+  priors, and the lists swapped before any scored run. I will factor the weights (an act's
+  weight times a role's weight) to keep the table small. Until the count is done, "fewer
+  parameters" is a claim I have not earned.
 - **Fixed from independent evidence:** W′ and its recovery; walking speed against density;
   the bounds on lethality per bout.
 - **The casualty clock** ([02](02-order-and-contact.md) §9) is a hard constraint, applied
@@ -100,7 +104,7 @@ memory and must be checked before anyone relies on it.
 | Pattern | Status in the rival |
 |---|---|
 | Low losses while the lines are formed | **Input.** The clock sets the bout rate. |
-| Battles last hours | **Partly input.** The clock assumes a duration. That a line breaks, and when, is not written in. |
+| Battles last hours | **Close to an input, in both designs.** The clock assumes a length, the clock sets the bouts, the bouts thin the bold, and the assumed length tends to come back out as the time to break. The vision of record has the same problem through a free time constant. So time-to-break is scored by dose-response, not by its value ([06](06-experiment.md) §2). Paullus's point. |
 | The loser's losses fall mostly after the break | **Mixed.** That turned backs are deadly is written in. The size of the asymmetry is not. |
 | Pulses and lulls | **Evidence.** Bouts are led, but nothing sets their rhythm. |
 | Rear-first collapse | **Evidence, weakly.** Room to run and closers are written in; that they add up to a collapse from the rear is not. |

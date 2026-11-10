@@ -98,8 +98,8 @@ first slice.
    threshold model can easily do one of two wrong things instead: stand frozen for ever, or
    collapse at the first alarm. The pulsing regime may be a knife-edge here too.
 2. **Hidden parameters.** The weights that turn visible acts into alarm and support are free
-   parameters. I count fewer than the vision of record has, but I have not yet counted them one
-   by one.
+   parameters. Paullus's rough count of the hazard table is 30–40, above my first estimate for
+   the whole man. The line-by-line count is owed before any scored run.
 3. **Rhythm.** Led bouts may look like history, or like noise.
 4. **A thin man may be a shallow one.** Experience becomes four numbers and two rules.
    Michal's Legio X must still feel different from recruits in ways he can see.
