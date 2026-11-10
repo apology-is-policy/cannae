@@ -146,7 +146,7 @@ who gives ground, turns or goes down, with the model's own reasons, and a tally 
 of 81 broke three seconds after its centurion was killed, and the warband then stood formed
 beside an open Roman flank. Both are the model doing what its rules say, and both look wrong.
 Nothing is retuned under this pre-registration; the batch shows how often the 200 drawn sets
-do this. Candidates for a second round, none decided:
+do this. Candidates for a second round, none decided (5 and 6 came from later questions):
 
 1. **A fallen leader weighs too much** against a replacement that takes five seconds. Varro,
    who wrote the rule, thinks so too.
@@ -157,6 +157,15 @@ do this. Candidates for a second round, none decided:
 4. **A line cannot give ground and hold.** A man who steps back alarms his neighbours and is
    already nearer to running, and nothing makes the men beside him step back to keep the line.
    Cannae needs a centre that is pushed back a long way without dissolving.
+5. **A man in flight cannot get past his own men.** He keeps the heading he chose when he
+   turned and never steps round the man behind him, and a steady man never makes way. On my
+   engine one runner stood pinned against the man behind him for over twenty seconds. On
+   Varro's he would pass through, because bodies of one side are not solid there.
+6. **No man is relieved by himself.** A whole century can be relieved in a lull, and files
+   close over the fallen, but a tired or wounded man cannot be passed back. The sources give
+   relief by lines and units (Livy 8.8; Caesar, Civil War 1.45 and 3.94) and room between ranks
+   to step forward and back (Polybius 18.30.8; Vegetius 3.14); none describes a drill for
+   swapping single men.
 
 **A defect found by watching (Michal, 2026-11-10).** When the man in front of a century's
 standard-bearer falls, the whole century steps back one rank, 1.8 m, two seconds later. A
