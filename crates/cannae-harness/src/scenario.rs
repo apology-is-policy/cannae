@@ -163,8 +163,23 @@ impl Layout {
     }
 }
 
-/// The frames of every placed body, with the scenario's timed orders queued.
+/// The frames of every placed body, with the scenario's timed orders queued, and each tie at
+/// its placeholder.
 pub fn frames(s: &Scenario, placed: &[Placed], bodies: &Bodies) -> Result<BodyFrames, String> {
+    frames_with(s, placed, bodies, |spec| match spec {
+        TieSpec::Drilled => Tie::DRILLED,
+        TieSpec::Loose => Tie::LOOSE,
+    })
+}
+
+/// The same, with the tie for each kind the scenario names given by `tie`: a drawn parameter
+/// set's, in the scored runs.
+pub fn frames_with(
+    s: &Scenario,
+    placed: &[Placed],
+    bodies: &Bodies,
+    tie: impl Fn(TieSpec) -> Tie,
+) -> Result<BodyFrames, String> {
     let mut frames = BodyFrames::default();
     for (b, p) in s.bodies.iter().zip(placed) {
         frames.add(
@@ -178,10 +193,7 @@ pub fn frames(s: &Scenario, placed: &[Placed], bodies: &Bodies) -> Result<BodyFr
                 rank_mm: b.rank_mm,
                 first: ManId(p.first),
                 closer: b.closer,
-                tie: match b.tie {
-                    TieSpec::Drilled => Tie::DRILLED,
-                    TieSpec::Loose => Tie::LOOSE,
-                },
+                tie: tie(b.tie),
             },
             bodies,
         );

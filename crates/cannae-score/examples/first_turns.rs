@@ -6,6 +6,7 @@
 
 use cannae_core::{EventKind, Posture, Side};
 use cannae_harness::{Scenario, place};
+use cannae_score::draw::{Cell, drawn};
 use cannae_score::{Engine, Spec, run_logged};
 
 fn main() {
@@ -30,14 +31,14 @@ fn main() {
         let mut from = [0u32; 5];
         let mut first_moves = [[0u32; 5]; 5];
         for seed in 1..=seeds {
+            // Set 0 with every mapping at its centre, as in the costing runs.
+            let d = drawn(0, Cell { engine, rung }, 0).unwrap();
             let spec = Spec {
-                engine,
-                rung,
                 seed,
                 duration_s: 1_200,
                 stop_at_rout_end: true,
             };
-            let (r, log) = run_logged(&s, spec).unwrap();
+            let (r, log) = run_logged(&s, &d, spec).unwrap();
             let (Some(loser), Some(t_break)) = (
                 r.summary.loser,
                 r.summary
