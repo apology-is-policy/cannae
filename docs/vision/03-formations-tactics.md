@@ -33,10 +33,14 @@ under stress. It is never a rigid block.
   for all-round defence.
 - **Testudo.** Overlapped shields over the head and on the sides. Slow. For assaults on walls,
   and against Parthian arrows (Antony, 36 BC). Falls apart under shock or fatigue.
-- **Cuneus / wedge.** The Roman *cuneus* is probably a dense assault column *(debated)*. The
-  Germanic "boar's head" is a deep wedge.
-- **Forfex** (pincers, against a wedge) and **serra** (saw: advance and retire). Both come from
-  Vegetius, a late source; use with care.
+- **Cuneus / wedge.** The Roman *cuneus* is probably a dense assault column *(debated)*. Late
+  Roman soldiers called a wedge the "pig's head" (*caput porcinum*: Vegetius 3.19; Ammianus
+  17.13.9). Tacitus says only that the Germans form their line of wedges (*acies per cuneos
+  componitur*, *Germania* 6); "boar's head" is not his term, and depth and shape are not recorded.
+- **Forfex** (pincers: a V of picked men that takes a wedge in and closes on it from both sides)
+  and **serra** (saw: a body of vigorous men set before a disordered line so that it can
+  re-form). Gellius already lists both names among formation terms (10.9, 2nd century AD). The
+  mechanics come only from Vegetius (3.19), a late source; use with care.
 - **Agmen quadratum.** A hollow square on the march with the baggage inside. Crassus at Carrhae.
 - **Celtic or Germanic shield-wall mass.** The Helvetian "phalanx", with overlapping shields.
 - **Open skirmish order.** Velites and light troops. Loose clouds that advance, throw, and fall
@@ -110,7 +114,7 @@ This is research value nobody else offers.
 
 | Pattern | Historical anchor | What must exist mechanically |
 |---|---|---|
-| **Double envelopment** | Cannae | A center that yields without breaking (drill + discipline + Hannibal's presence). Wing troops with timed triggers. Cavalry that rallies and re-tasks. The compression of the encircled mass. |
+| **Double envelopment** | Cannae | A center that holds for a time, then gives way and draws the enemy in. Polybius (3.115) and Livy (22.47) both have the Cannae centre driven in, and the trap closed anyway. Wing troops that turn inward when the situation shows them how to act (Polybius 3.115), inside a design set beforehand. Cavalry that rallies and re-tasks. The compression of the encircled mass. |
 | **Reverse Cannae / echelon** | Ilipa (206 BC) | Weak allies in the center, held back. Strong wings advance and wheel outward. Deployment deception over several days. Timing an early deployment so the enemy fights unfed. |
 | **Anti-elephant lanes** | Zama | Maniples aligned in columns rather than a checkerboard. Trumpets. Velites luring elephants down the lanes. |
 | **Hidden reserve against cavalry** | Pharsalus | A concealed line, then a well-timed counter-charge into disordered cavalry that is busy flanking |
@@ -123,7 +127,7 @@ This is research value nobody else offers.
 | **Over-pursuit** | Antiochus III at Raphia (217 BC) and again at Magnesia: he won his wing, chased it off the field, and lost the battle. At Zama, Laelius and Massinissa came back from their pursuit only just in time. | Pursuit urge versus discipline. The commander's own temperament when he leads a wing in person. |
 | **Breaking out** | 10,000 Romans cut through the Carthaginian center at the Trebia and marched away in order | A disciplined body that keeps cohesion in defeat and moves as one |
 | **Morale decapitation** | Flaminius killed at Trasimene; Perseus' early flight at Pydna; Hasdrubal at the Metaurus riding to his death | Visible leaders, rumors of their death that spread, leaders as single points of failure |
-| **Misread signal** | Munda: Labienus moved troops to meet a threat, and the Pompeian line read it as flight and collapsed. Gergovia: the recall was not heard over the din. Thapsus: the soldiers forced a trumpeter to sound the attack. | Signals and movements as observed *events* that each agent interprets. Interpretations can be wrong. Signal range is finite. |
+| **Misread signal** | Munda: Labienus moved troops to meet a threat, and the Pompeian line read it as flight and collapsed. Gergovia: most legions did not hear the recall because a wide valley lay between them and Caesar, and their officers could not hold back men flushed with success (*BG* 7.47). Thapsus: the soldiers forced a trumpeter to sound the attack. | Signals and movements as observed *events* that each agent interprets. Interpretations can be wrong. Signal range is finite, and terrain shadows sound. |
 
 ## 6. The march and readiness states
 

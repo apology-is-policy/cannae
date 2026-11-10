@@ -32,8 +32,9 @@ plus 300 cavalry.
 - 30 maniples, 10 in each heavy line. A maniple has two centuries. Hastati and principes maniples
   are about 120 men; triarii maniples are about 60. The velites are distributed among the
   maniples.
-- Each maniple has two centurions. The *prior* commands the maniple and the *posterior* is his
-  second. Each centurion picks an *optio*, who stands at the rear. Each maniple has two
+- Each maniple has two centurions. When both are present, the first elected commands the right
+  half of the maniple and the second the left; if one is absent, the other commands the whole
+  (Polybius 6.24). Each centurion picks an *optio*, who stands at the rear. Each maniple has two
   *signiferi*, chosen as "the bravest and most vigorous".
 - Cavalry: 10 *turmae* of 30 men. Each turma has 3 decurions and 3 optiones.
 - Six *tribuni militum* per legion, rotating in pairs.
@@ -49,7 +50,7 @@ infantry and a third of the allied cavalry, kept at the consul's disposal.
 | Type | Who | Kit (summary) | Role and style | Psyche / discipline notes |
 |---|---|---|---|---|
 | **Velites** | Youngest and poorest citizens | Bundle of light javelins (*hasta velitaris*: shaft about 90 cm and finger-thick; head about 23 cm, thin enough to bend on impact so it cannot be thrown back), *parma* about 90 cm across, sword, plain helmet, sometimes a wolf-skin cover | Skirmish ahead of the line, screen it, then retire through the intervals. Fight elephants and light troops. | Polybius says the wolf skin let officers **see** who was brave. Being observed is a real motivator, so it is a psyche input. Brittle in contact. |
-| **Hastati** | Young men, roughly in their 20s | *Scutum* about 120 × 75 cm, *gladius hispaniensis*, 2 pila (one heavy, one light), helmet, greave. Most wear a bronze chest plate about 20 cm square. Men above the 10,000-drachma property class wear mail. Crest of 3 feathers about 45 cm tall, "to look twice their height". | First heavy line: pilum volley, then sword fight. | Eager and less steady. Kept in order by centurions in front and optiones behind. |
+| **Hastati** | Young men, roughly in their 20s | *Scutum* about 120 × 75 cm, *gladius hispaniensis*, 2 pila (one heavy, one light), helmet, one greave (Polybius' word is singular). Most wear a bronze chest plate a span square, about 23 cm, the "heart-guard" (Polybius 6.23). Men above the 10,000-drachma property class wear mail. Crest of 3 feathers about 45 cm tall, "to look twice their height". | First heavy line: pilum volley, then sword fight. | Eager and less steady. Kept in order by centurions in front and optiones behind. |
 | **Principes** | Men in their prime, late 20s to 30s | Same as hastati, with more mail | Second line: relieves or reinforces the hastati | More experienced. Their arrival is both a fresh body of men and a morale event. |
 | **Triarii** | Veterans, 30s and older | Same, but a thrusting spear (*hasta*) instead of pila, and more mail | Last line. Kneel behind the principes with spears grounded, then form a final wall. "*Res ad triarios rediit*": it has come to the triarii. | Steadiest men, half-size maniples. Calm under pressure. Strong rally anchor for men falling back. |
 | **Equites** | Wealthiest citizens | Greek-style lance, shield and cuirass by the 2nd century BC (Polybius 6.25) | Wing cavalry, 300 per legion | Brave but tactically mediocre against Hannibal's horse. Often dismount to fight on foot, as at Cannae. |
@@ -136,8 +137,9 @@ These episodes are behavioral specifications. They are not flavor text.
   - They are recruited from Gauls, Germans (Batavians), Thracians, Spaniards and Syrian archers,
     and commanded by equestrian *praefecti*.
 - New offices: the *praefectus castrorum* (camp prefect), the Praetorian cohorts.
-- Kit: mail is still dominant. Early *lorica segmentata* fittings were found at Kalkriese (the
-  Teutoburg battlefield). The long-pointed Mainz-type gladius. The scutum moves toward the
+- Kit: mail is still dominant. The earliest *lorica segmentata* fragments come from the
+  Dangstetten camp (about 9 BC); more were found at Kalkriese (the Teutoburg battlefield, AD 9).
+  The long-pointed Mainz-type gladius. The scutum moves toward the
   curved rectangle.
 - **Auxiliaries fight differently from legionaries.** Their drill and discipline come from their
   own traditions, overlaid with Roman training. Their unit cohesion is often ethnic. They usually
@@ -154,7 +156,7 @@ These episodes are behavioral specifications. They are not flavor text.
 | Achaean League | 2nd century BC | Hellenistic-style infantry and cavalry |
 | Cretan archers | Throughout | Mercenaries on every side |
 | Balearic slingers | Throughout, Roman service after 123 BC | See Carthage |
-| Gallic, German and Spanish horse | Caesar | 400 German horse were decisive at Alesia. Germans mixed horsemen with runners on foot. |
+| Gallic, German and Spanish horse | Caesar | German horse decided cavalry fights before and at Alesia (*BG* 7.67, 7.80). Caesar had sent across the Rhine for horsemen and the light infantry who fought among them, and gives no number (7.65); the 400 often quoted were his German horse at Noviodunum (7.13). Germans mixed horsemen with runners on foot. |
 | Galatian legions of Deiotarus | 1st century BC | Roman-style legions raised by a client king; later Legio XXII Deiotariana |
 
 ---
@@ -177,13 +179,13 @@ faithful.
 
 | Type | Kit | Role and style | Psyche / discipline notes |
 |---|---|---|---|
-| **Libyan / African heavy infantry** | Originally spear and shield, possibly drilled as a phalanx after Xanthippus *(debated)*. Re-armed with captured Roman equipment after the Trebia and Trasimene (Polybius 3.114). | The core of Hannibal's infantry. At Cannae they stood in deep columns on the ends of the crescent and turned inward on the Roman flanks. | Long-service veterans of Spain, the Alps and three victories. Very high discipline and trust in Hannibal. Able to execute timed, complex maneuvers. |
+| **Libyan / African heavy infantry** | Originally spear and shield, possibly drilled as a phalanx after Xanthippus *(debated)*. Re-armed with captured Roman equipment after the Trebia and Trasimene (Polybius 3.114). | The core of Hannibal's infantry. At Cannae half stood at each end of the line, held back as a reserve (Polybius 3.113), and turned inward on the Roman flanks. Their formation is not recorded; the deep columns of many reconstructions are a scenario variant. | Long-service veterans of Spain, the Alps and three victories. Very high discipline and trust in Hannibal. Able to execute timed, complex maneuvers. |
 | **Libyphoenicians** | Similar | Heavy infantry in Spain and Africa | Mixed Punic-Libyan settlers |
 | **Carthaginian citizens** | Hoplite or phalanx style | Emergency levy (Zama second line, Bagradas) | Low experience. At Zama they clashed with their own retreating mercenaries. |
 | **Iberian *scutarii*** | Large oval shield, *falcata* or straight sword, *soliferrum* or *falarica* javelins. White linen tunics with purple borders (Polybius 3.114). | Medium-heavy line infantry. Alternated with Gallic companies in the Cannae centre. | Good individual swordsmen. Organised by tribe. Can fight in open order or in line. |
 | **Iberian *caetrati*** | Small round *caetra* buckler, falcata, javelins | Light and medium infantry, rough ground, ambush | Agile. Skirmish, then close in. |
 | **Celtiberians** | Excellent swords (the probable model for the gladius hispaniensis), javelins, varied shields | Shock and line infantry, hired by both sides | Fierce and loyal to pay. In 211 BC their desertion doomed the elder Scipios. |
-| **Cisalpine Gauls** (Insubres, Boii) | Long cutting sword, large oval shield, spears. At Cannae naked above the waist (Polybius). | Shock infantry with a terrifying first charge. Cannae centre. | Huge initial fury and low endurance (Polybius 2.33, a stereotype to calibrate rather than adopt). Weak drill. Cohesion through chieftain and kin. At Cannae they took about 4,000 of the 5,700 Carthaginian dead. |
+| **Cisalpine Gauls** (Insubres, Boii) | Long cutting sword, large oval shield, spears. At Cannae they fought naked (Polybius 3.114); Livy has them bare above the navel (*super umbilicum*, 22.46). | Shock infantry with a terrifying first charge. Cannae centre. | Huge initial fury and low endurance (Polybius 2.33, a stereotype to calibrate rather than adopt). Weak drill. Cohesion through chieftain and kin. At Cannae they took about 4,000 of the 5,700 Carthaginian dead. |
 | **Ligurians** | Light and medium infantry kit | Zama first line, rough ground | Tough hill fighters |
 | **Balearic slingers** | Three slings of different lengths for different ranges, lead and stone shot | Long-range missile troops | Elite missile troops. Trebia and Cannae (Paullus was hit by a sling stone early, per Livy). |
 | ***Lonchophoroi* and Mauri** | Javelins, light shields | Light infantry screen | Skirmishers |
@@ -249,7 +251,7 @@ faithful.
 | **Belgae** (e.g. the Nervii) | As above, with little cavalry | At the **Sabis (57 BC)**: an ambush out of the woods, into Caesar's army while it was building camp. Nearly won. | Among the fiercest of the Gauls. The Nervii fought to near-annihilation. |
 | **Gallic cavalry** (Aedui, Remi, Treveri) | Spear, sword, shield, mail for the rich. The four-horned saddle gave a firm seat without stirrups. | Shock and skirmish. Caesar's main cavalry source. | Aristocratic, brave. Discipline variable. |
 | **Archers** | Bows | Vercingetorix raised them deliberately in 52 BC | Low status |
-| **British charioteers** (*essedarii*) | Chariot with warrior and driver. The warrior dismounts to fight, and the chariot waits as a taxi. | Mobility, terror, harassment. Cassivellaunus had about 4,000 chariots. | Caesar admired their skill |
+| **British charioteers** (*essedarii*) | Chariot with warrior and driver. The warrior dismounts to fight, and the chariot waits as a taxi. | Mobility, terror, harassment. Cassivellaunus kept about 4,000 charioteers (*essedarii*) after dismissing most of his army (*BG* 5.19); how many chariots that means is unclear. | Caesar admired their skill |
 
 **Commanders:** Vercingetorix (scorched earth, Gergovia, Alesia), the Helvetian leaders, Boduognatus of the Nervii, Ambiorix (who destroyed Sabinus and Cotta in 54 BC), Commius, Cassivellaunus.
 
@@ -259,10 +261,10 @@ faithful.
 
 | Type | Kit | Role and style | Psyche / discipline notes |
 |---|---|---|---|
-| **Suebi under Ariovistus** (58 BC) | *Framea* (a short-bladed spear for throwing or thrusting), shield, few swords, little armour | A tribal phalanx organised by clan. **Horsemen paired with runners on foot** who held onto the horses' manes (*BG* 1.48). | Women on the wagons urged them on. Seers forbade fighting before the new moon, so Ariovistus waited (*BG* 1.50). A model of how ritual and omens constrain timing. |
+| **Suebi under Ariovistus** (58 BC) | *Framea* (a short-bladed spear for throwing or thrusting), shield, few swords, little armour | A tribal phalanx organised by clan. **Horsemen paired with runners on foot** who held onto the horses' manes (*BG* 1.48). | Women on the wagons urged them on (*BG* 1.51). The matrons, casting lots and divining, declared that the Germans could not win if they fought before the new moon, so Ariovistus avoided a general engagement (*BG* 1.50). A model of how ritual and omens constrain timing. |
 | **Cimbri and Teutones** (113–101 BC) | Similar, with some bronze-age-style helmets reported (Plutarch) | Huge migrating hosts. At Vercellae the Cimbri front ranks were reportedly chained together (Plutarch, *Marius* 27, *debated*). | Terrifying to Roman recruits. Marius made his men watch the Teutones from camp for days to get used to them (Plutarch, *Marius* 16), which is an explicit habituation effect. |
 | **Cherusci and allies under Arminius** (AD 9) | Light kit | Ambush and attrition from the forest edge against a strung-out marching column in rain | Arminius was a Roman-trained auxiliary officer. He knew the Roman column's weaknesses. |
-| **Germanic wedge** (*cuneus*, "boar's head", Tacitus *Germania* 6) | — | Deep wedge assault | Clan cohesion: "kinsmen fight beside kinsmen". The *barritus* war chant: they judged how the battle would go from the sound of it (Tacitus *Germania* 3). That is a ready-made audio-to-morale feedback loop. |
+| **Germanic wedge** (*cuneus*, Tacitus *Germania* 6) | — | A battle line formed of wedges (*acies per cuneos componitur*). Depth and shape are not recorded. "Boar's head" is not Tacitus' term: *caput porcinum*, "pig's head", is late Roman soldiers' slang for a wedge (Vegetius 3.19; Ammianus 17.13.9). | Clan cohesion: "kinsmen fight beside kinsmen". The *barritus* war chant: they judged how the battle would go from the sound of it (Tacitus *Germania* 3). That is a ready-made audio-to-morale feedback loop. |
 
 ---
 

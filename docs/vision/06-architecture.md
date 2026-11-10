@@ -110,7 +110,7 @@ This makes rich perception affordable for 100,000+ agents:
 - **L2, a medium grid (about 10 m).** Aggregates per cell: friend and enemy counts, mean
   velocity and facing, mean behavioral state x, combat intensity.
 - **L3, a coarse grid (about 40 m).** The same aggregates plus fields for sound emission and
-  propagation, dust density (advected by wind: the Volturnus at Cannae) and fog.
+  propagation, dust density (advected by wind: Livy's Volturnus at Cannae) and fog.
 - **Line of sight** comes from a coarse heightmap with precomputed horizon data, plus occlusion
   from the dust and fog fields and from body density in the soldier's own formation.
 - **What a soldier's perception costs.** A few nearest individuals from L1, plus a cone sample of

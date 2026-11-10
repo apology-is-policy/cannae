@@ -87,9 +87,10 @@ Information inside a formation is local too:
   (officers on horseback, men on a hill). Helmet types narrow the cone.
 - **Sound.** A coarse acoustic field: the intensity and direction of clamor, screams and fighting
   noise. The commands of a nearby centurion (about 10–30 m in battle din). Horn signals (cornu,
-  tuba) carry hundreds of metres, but only a few signals are distinguishable, and they get masked
-  (the recall at Gergovia went unheard). **Fighting heard behind you** is the strongest fear
-  input there is.
+  tuba) carry hundreds of metres, but only a few signals are distinguishable. Din masks them and
+  terrain shadows them: at Gergovia most legions did not hear the recall because a wide valley lay
+  between them and Caesar (*BG* 7.47). **Fighting heard behind you** is the strongest fear input
+  there is.
 - **Touch.** Crowd pressure: pushed from behind, which is support, or squeezed from the sides,
   which means compression and encirclement.
 - **Proprioception of neighbours.** Are my left, right and rear neighbours present and steady?
@@ -253,6 +254,7 @@ Micro-scenarios with expected outcome bands. Full list in [07](07-validation.md)
 - A feigned flight by Numidians versus by untrained horse: does it stay a feint?
 - The Pharsalus halt: do veterans self-pace their charge, and do recruits?
 - The Sabis: veterans forming up without orders after a surprise attack.
-- Gergovia: an enthusiastic assault that ignores a recall signal it cannot hear.
+- Gergovia: an eager assault that does not hear a recall sounded across a valley, and outruns
+  the officers who try to hold it back.
 - The Trebia breakout: a disciplined mass that keeps its cohesion in defeat.
 - The crumble-or-snap prediction against the threshold distribution width.

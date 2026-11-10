@@ -65,11 +65,11 @@ testudo works mechanically. No special rule is needed.
 | Armour | Mass | Coverage | Against cut / thrust / missile / blunt |
 |---|---|---|---|
 | ***Lorica hamata*** (mail) | About 9–15 kg | Torso, shoulders, upper thighs | Excellent / good / good / poor without padding underneath |
-| **Pectorale** (chest plate) | About 1–2 kg | A 20 cm square over the heart | A small zone only |
+| **Pectorale** (chest plate) | About 1–2 kg | A span square (about 23 cm) over the heart (Polybius 6.23) | A small zone only |
 | **Linothorax** | About 4–6 kg | Torso | Good / fair / fair / fair |
 | **Bronze cuirass** (muscle or bell) | About 5–8 kg | Torso | Very good, but hot |
 | **Scale** (*squamata*) | About 10–15 kg | Torso | Good; weak to upward thrusts |
-| ***Lorica segmentata*** (from about AD 9) | About 7–9 kg | Torso, shoulders | Very good against cut and thrust |
+| ***Lorica segmentata*** (earliest fragments: Dangstetten, about 9 BC) | About 7–9 kg | Torso, shoulders | Very good against cut and thrust |
 | **Cataphract full armour** (rider and horse) | Rider about 20+ kg; horse barding 30–40+ kg | Nearly everything | Very good. Heat and fatigue are severe. |
 | **Greaves** | 1–2 kg each | Shins | The leading leg, the one exposed under the shield |
 | **Helmets:** Montefortino, Coolus, Attic, Boeotian, Thracian, Agen-Port, Imperial Gallic | 1.5–3 kg | Head, with cheek guards | Each type has its own **vision/hearing modifiers**. Open-faced Roman helmets with cheek pieces: decent vision, reduced hearing. Boeotian (cavalry): open, good vision. Many Germans and some Gauls fought bareheaded. |

@@ -13,7 +13,7 @@ runner, a rider or a sound, and they can be lost or misread.
 Consul (or praetor, dictator, proconsul)
  ├─ wing commanders (the other consul or proconsul, legates)
  │   ├─ tribuni militum (6 per legion)        ├─ praefecti sociorum (allied alae)
- │   │   └─ centurions (prior/posterior)  →  optio, signifer, cornicen
+ │   │   └─ centurions (two per maniple)  →  optio, signifer, cornicen
  │   │        └─ files (file leader … file closer)
  │   └─ praefectus equitum / decurions (cavalry)
  └─ staff: friends, lictors, couriers, scouts (exploratores, speculatores)
@@ -71,7 +71,7 @@ Verbs:
 | Channel | Speed / range | Failure modes |
 |---|---|---|
 | **Voice** | About 10–30 m in battle din | Masked by noise. Garbled. Unheard by distant files. |
-| **Horn signals** (cornu, tuba, bucina; Celtic carnyx) | Several hundred metres; near-instant | A small vocabulary (advance, halt, retire, attack). Masked by din (Gergovia). Ambiguous about who it is meant for. Can be forced: at Thapsus the soldiers made a trumpeter sound the charge. |
+| **Horn signals** (cornu, tuba, bucina; Celtic carnyx) | Several hundred metres; near-instant | A small vocabulary (advance, halt, retire, attack). Masked by din. Shadowed by terrain: at Gergovia a wide valley kept most legions from hearing the recall (*BG* 7.47). Ambiguous about who it is meant for. Can be forced: at Thapsus the soldiers made a trumpeter sound the charge. |
 | **Standards** (signum movements) | Line of sight | Need visibility. Dust. Misread. |
 | **Runners** | About 3–5 m/s | Killed, lost, delayed by crowds. Arrive with a stale order. |
 | **Riders / aides / tribunes** | About 6–12 m/s | Same failures, faster. The tribune may interpret the order himself (good or bad). |
@@ -102,7 +102,7 @@ follow it into disaster.
 
 | Commander | Style traits |
 |---|---|
-| **Hannibal** | Deception, ambush, combined arms, precise timing, uses terrain and weather (the wind and sun at Cannae). Positions himself in the critical sector (Cannae center). Very high charisma with mercenaries. |
+| **Hannibal** | Deception, ambush, combined arms, precise timing, uses terrain and weather (the ambush in fog at Trasimene; the Romans lured across the icy Trebia unfed). At Cannae the sun troubled neither side (Polybius 3.114; Livy 22.46); the dust-laden wind in the Romans' faces is Livy's, not Polybius'. Positions himself in the critical sector (Cannae center). Very high charisma with mercenaries. |
 | **Scipio Africanus** | Innovation, drill, deceptive deployment (Ilipa), adapts to the enemy's system (lanes at Zama). Personal courage. |
 | **Caesar** | Speed, very high personal intervention and risk-taking (the Sabis, Munda), exceptional rapport with his soldiers, masterful use of reserves and the hidden line (Pharsalus). Writes his own legend. |
 | **Marius** | Training, patience, habituating his troops, choosing the moment and conditions (heat at Vercellae). |

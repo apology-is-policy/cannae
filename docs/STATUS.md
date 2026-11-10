@@ -2,7 +2,7 @@
 
 **Phase:** design. No code yet.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-09.
+**Last updated:** 2026-11-10.
 
 ## Current arc: V -- revise the vision after review 1
 
@@ -13,8 +13,8 @@ one commit.
 | Chunk | Content | State |
 |---|---|---|
 | C0 | Continuity contract: `CLAUDE.md`, self-compaction tooling, this file, the review record | landed |
-| V1 | The 13 factual corrections from the review | next |
-| V2 | README: Cannae outcome classes (centre may break), indeterminacy test redefined | queued |
+| V1 | The 13 factual corrections from the review | landed |
+| V2 | README: Cannae outcome classes (centre may break), indeterminacy test redefined | next |
 | V3 | 07 validation: Cannae as development scenario, sealed battles, script tiers, variance decomposition, contrasts, sensitivity analysis and history matching | queued |
 | V4 | 04 psyche: excitable-system dynamics, contagion on observable acts, parsimony | queued |
 | V5 | 06 architecture: fanless 8 GB Air, revised performance, intent pass, observables lane, keyframes | queued |
@@ -22,6 +22,10 @@ one commit.
 | V7 | 08 roadmap: vertical slices, demand-driven knowledge base, review cadence | queued |
 | V8 | New 09: intent, plans and command AI | queued |
 | V9 | New 10: the contact zone, combat and wounds | queued |
+
+**V1 note.** Each correction was checked against the primary text before it was applied. One
+half-item was overturned: Polybius 6.23 gives the hastatus one greave, not greaves (the Greek
+word is singular). This is recorded in the review's disposition table.
 
 ## Next arc (approved in principle, starts after V)
 

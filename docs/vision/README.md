@@ -60,8 +60,12 @@ reproduce the battle's structure:
 - Hasdrubal's Iberian and Gallic heavy horse breaks the Roman citizen cavalry on the river flank.
 - The Numidians pin the allied cavalry on the other wing. That cavalry breaks when Hasdrubal
   arrives in its rear.
-- The Gallo-Iberian crescent bows back under the deep Roman mass but does not rupture.
-- The Libyans, deployed in columns on the crescent's ends, face inwards and attack the flanks.
+- The Gallo-Iberian crescent holds for a time, then gives way under the deep Roman mass and is
+  driven in (Polybius 3.115; Livy 22.47). The Roman maniples crowd into the gap and lose their
+  order.
+- The Libyans, posted half at each end of the line and held back as a reserve (Polybius 3.113),
+  face inwards and attack the Roman flanks once the Romans are between them. Their formation is
+  not recorded; the deep columns of many reconstructions are a scenario variant.
 - Hasdrubal's cavalry closes the rear. The Roman mass is compressed and destroyed.
 - Casualties fall within the range the sources give. Polybius: about 70,000 Roman dead and
   10,000 captured, against 5,700 Carthaginian dead, 4,000 of them Gauls. Livy: 48,200 Roman dead

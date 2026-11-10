@@ -52,7 +52,7 @@
 | M9 | Pursuit: disciplined against undisciplined pursuers | Kill rates in pursuit. How often pursuers rally. How exposed they are to a counter-charge. |
 | M10 | The Pharsalus halt | Veterans self-pace the charge. Recruits do not. |
 | M11 | The Sabis: surprise attack on men building camp | Veterans self-organize into a line. Recruits need officers. |
-| M12 | Gergovia: an eager assault, then a recall signal in the din | Some units do not hear or do not obey |
+| M12 | Gergovia: an eager assault, then a recall sounded from across a valley (*BG* 7.47) | Units in the valley's sound shadow do not hear it. Eager units outrun officers who try to hold them back. |
 | M13 | Feigned flight: trained against untrained cavalry | Trained cavalry turns back. Untrained cavalry routs for real. Pursuers get disordered. |
 | M14 | Compression: an encircled block | The share of men able to fight collapses. Casualties accelerate. |
 | M15 | Lulls emerge | Contact intensity pulses without any scripted lull |
@@ -123,7 +123,7 @@ Idistaviso (AD 16).
 
 - The Roman cavalry on the right breaks before the infantry fight is decided.
 - The allied cavalry collapses after Hasdrubal arrives in its rear.
-- The Libyans turn inward after the Roman mass has pushed deep into the crescent.
+- The Libyans turn inward after the Roman mass has pushed deep into the yielding centre.
 - The rear is closed by cavalry.
 - The share of encircled Romans able to fight collapses (compression).
 
