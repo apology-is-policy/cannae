@@ -7,6 +7,7 @@ members = [
     "crates/cannae-harness",
     "crates/cannae-man",
     "crates/cannae-pairwise",
+    "crates/cannae-score",
 ]
 
 [workspace.package]

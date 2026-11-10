@@ -35,7 +35,10 @@ For each cell of the experiment (each rung of the memory ladder on each substrat
 1. Draw 200 parameter sets: the shared parameters from the shared priors, the rest from the
    engine's own.
 2. Run each set on the same 10 seeds, for each scenario variant.
-3. Compute a run summary per run, from observable state and the event log only.
+3. Compute a run summary per run, from observable state and the event log only. After the
+   first side breaks, the rout is scored for 15 minutes and no longer, so a run can stop there
+   and score as if it had run on (proposed by Paullus, to be agreed:
+   [scored-runs-cost.md](scored-runs-cost.md)).
 4. Pool each per-run statistic over a parameter set's seeds by its median, and compare it with
    the band.
 

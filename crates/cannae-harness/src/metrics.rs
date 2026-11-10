@@ -241,6 +241,39 @@ fn first_hits(n: usize, events: &[Event]) -> Vec<Option<u32>> {
     hit
 }
 
+/// Whether men tallied by posture are broken: at least `share` of those still standing have
+/// turned.
+pub fn is_broken(c: &[u16; 5], share: f64) -> bool {
+    let standing = c.iter().map(|&x| x as u32).sum::<u32>() - c[Posture::Down as usize] as u32;
+    let turned = c[Posture::Turned as usize] as u32;
+    standing > 0 && turned as f64 >= share * standing as f64
+}
+
+/// Which sides are broken at one sample, by the test `summarize` uses. `side_of_body` is each
+/// body's side.
+pub fn broken_sides(smp: &Sample, side_of_body: &[Side], share: f64) -> [bool; 2] {
+    let mut tally = [[0u16; 5]; 2];
+    for (b, c) in smp.postures.iter().enumerate() {
+        for p in 0..5 {
+            tally[side_of_body[b] as usize][p] += c[p];
+        }
+    }
+    tally.map(|t| is_broken(&t, share))
+}
+
+/// After the first side breaks, the rout is watched for this long and no longer. Patterns 4, 5
+/// and 8 read it, and the spread's own band ends here. A run may stop at [`scoring_end`] and
+/// score exactly as if it had run on.
+pub const ROUT_WINDOW_S: u32 = 900;
+
+/// The tick after the last one scored, given the tick of the first sample at which a side was
+/// broken.
+pub fn scoring_end(first_break: Option<u32>, end_tick: u32) -> u32 {
+    first_break.map_or(end_tick, |t| {
+        end_tick.min(t + 1 + ROUT_WINDOW_S * 1000 / BASE_TICK.0)
+    })
+}
+
 pub fn summarize(inp: &Inputs) -> RunSummary {
     let n = inp.initial.len();
     let nb = inp.placed.len();
@@ -249,11 +282,17 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
         .iter()
         .map(|p| inp.initial.side[p.first as usize])
         .collect();
-    let broken = |c: &[u16; 5], extra: (u32, u32)| {
-        let standing =
-            c.iter().map(|&x| x as u32).sum::<u32>() - c[Posture::Down as usize] as u32 + extra.0;
-        let turned = c[Posture::Turned as usize] as u32 + extra.1;
-        standing > 0 && turned as f64 >= inp.break_share * standing as f64
+    let first_break = inp
+        .samples
+        .iter()
+        .find(|smp| broken_sides(smp, &side_of_body, inp.break_share).contains(&true))
+        .map(|smp| smp.tick);
+    let end = scoring_end(first_break, inp.end_tick);
+    let inp = &Inputs {
+        samples: &inp.samples[..inp.samples.partition_point(|smp| smp.tick < end)],
+        events: &inp.events[..inp.events.partition_point(|e| e.tick < end)],
+        end_tick: end,
+        ..*inp
     };
     let mut s = RunSummary {
         body_break: vec![None; nb],
@@ -263,7 +302,7 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
     for smp in inp.samples {
         let mut side_tally = [[0u16; 5]; 2];
         for (b, c) in smp.postures.iter().enumerate() {
-            if s.body_break[b].is_none() && broken(c, (0, 0)) {
+            if s.body_break[b].is_none() && is_broken(c, inp.break_share) {
                 s.body_break[b] = Some(smp.tick);
             }
             for p in 0..5 {
@@ -271,7 +310,7 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
             }
         }
         for side in 0..2 {
-            if s.side_break[side].is_none() && broken(&side_tally[side], (0, 0)) {
+            if s.side_break[side].is_none() && is_broken(&side_tally[side], inp.break_share) {
                 s.side_break[side] = Some(smp.tick);
             }
         }
