@@ -545,11 +545,19 @@ outcome either of us had seen is listed in the addenda above and in the table be
 
 **What "only this defect fixed" means, in a form that can be checked** (Varro's conditions):
 
-- **The fix is named by what it does:** the frame is not re-formed on the standard-bearer
-  because his slot changed; he walks to his new slot. The commit's hash is added below as a
-  dated line when the commit exists.
-- **The fixed build counts** the times the defect would have occurred: a file closing renumbers
-  the standard-bearer while the frame is anchored on him.
+- **The fix is named by what it does** (Varro's design, call 0001, note 45). The commit's hash
+  is added below as a dated line when the commit exists.
+  1. When the standard-bearer's slot changes while he carries the standard, the frame is not
+     re-formed on him. He walks to his new slot. The cases: a file closing over a man ahead of
+     him; a succession in his file; the closer's post moving, if the closer carries it.
+  2. Until he reaches it the body stands, whatever its order. A frame on the march is defined
+     by where he stands, so he cannot gain a rank on a frame that moves with him.
+  3. While he walks, the frame moves only if he is driven further than the tolerance from the
+     straight path between his old slot and his new one. Then it re-forms on that path, so a
+     pressed body can still give ground.
+  4. No new parameter. A standard-bearer who was adrift and falls in again is unchanged.
+- **The fixed build counts** the times a frame was held this way, which are the times the
+  defect would have occurred.
 - **A run in which that count is zero must be unchanged by the fix.** Varro tests this on
   unscored sets before the repeat, event log against event log. For the repeat itself the
   report states it against the batch's records, field for field, all but the wall time.
