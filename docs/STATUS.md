@@ -1,40 +1,51 @@
 # Status
 
-**Phase:** design. No code yet. A rival vision is being written by a second session, Varro.
+**Phase:** design. No code yet. The rival-vision arc has reported; Michal decides next.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
 **Last updated:** 2026-11-10.
 
-## Current arc: a rival vision (Phase 0b)
+## Current arc: a rival vision (Phase 0b) -- reported, waiting for Michal
 
 Michal's idea, 2026-11-10. A second session, **Varro** (Fable 5.2, worktree `cannae-varro`,
-branch `varro`), builds a competing vision for the simulator and is free to relax our
-constraints. Paullus (the main session) leads, argues and reports. They talk over the yip line,
-and Michal watches on the switchboard. Nothing from the rival lands on `main` without Michal's
-decision.
+branch `varro`), built a competing vision and was free to relax our constraints. Paullus led,
+argued and reported. They talked over the yip line, and Michal watched on the switchboard.
+Nothing from the rival lands on `main` without Michal's decision.
 
-- **Varro's sketch, "Small men, many battles":** keep only what a witness could see of each man,
-  plus fixed dispositions; anchor formations on their standards; use a field-and-event substrate,
-  one battle per core; run full-scale Cannae a hundred times a night on the Air.
-- **Agreed so far:** the Slice 0 toy becomes a thin 2D patch; the casualty clock and the
-  centurions' share of losses become tests for both designs; Slice 0 becomes a bake-off, with one
-  harness, two engines, and kill criteria both ways.
-- **In progress:** Varro writes the full rival in `docs/rival/` (seven files, committed on
-  `varro`, not pushed).
-- **Next:** Paullus writes a short comparison, and both go to Michal.
-- **Questions for Michal:** does "a psyche" need inner per-man values, or is fear and morale shown
-  through behaviour enough? Is it acceptable for line-passage jams to be an input rather than an
-  emergent result?
+- **The rival:** *Small men, many battles*, seven files in `docs/rival/` on branch `varro`
+  (pushed as a branch, not merged).
+- **The report:** [rival-comparison.md](rival-comparison.md). It covers where each design was
+  stronger, the common design both sessions now hold, what is still open, Slice 0 as the
+  experiment, the options and the decisions.
+- **Converged:**
+  - Cannae is measured at 1:1, with A2 taken from the set of seeded runs.
+  - Each body of men forms on its standard.
+  - Each man has postures, chances to change them read off what he can see, and marks of
+    memory.
+  - Order decides the physics: bodies touch only where men are crowded and moving.
+  - Integer state, one battle per core.
+  - The casualty clock is a test on both designs.
+- **Open, for the experiment:**
+  - how much memory a man needs (one ladder spanning both designs);
+  - what times a clash;
+  - whether the speed is real;
+  - whether a crowd stays at a believable density.
+- **Recommendation:** merge. Take the common design as the hypothesis, run Slice 0 as the
+  experiment, then revise `docs/vision/`.
 
 ## Next arc
 
-**Slice 0, about 1–2 weeks, on Michal's go-ahead**, now proposed as a bake-off between the two
-designs. Michal chose the rival exercise over the design review 2 proposed at arc V's close.
+**Slice 0 as the experiment, about two weeks, on Michal's go-ahead.** The full plan is in
+[rival-comparison.md](rival-comparison.md).
 
-1. **Behaviour:** a thin 2D patch, two centuries against a warband (about 400 men), in each
-   engine. Scored on standoff, pulsing, rear-first collapse, the casualty asymmetry, the casualty
-   clock and the centurion share; parameter count and the share of prior volume that passes.
-2. **Performance:** 150,000 bodies in each substrate. Sustained simulated seconds per wall second
-   per core in an encirclement, and identical hashes across thread counts or cores.
+1. **Harness and metrics**, shared by both engines.
+2. **The man:** a 400-man patch (two centuries against a warband). Every rung of the memory
+   ladder runs on both substrates, and eight patterns are scored.
+3. **The substrate:** 150,000 bodies in a line battle, a pocket, and a rout through camp gates.
+   Speed is measured as sustained simulated seconds per wall second.
+4. **The passage:** a maniple falling back through an interval, and a crowd leaving through a
+   gate, both checked against measured crowd-flow data.
+
+Kill criteria run both ways. Each engine is built by its believer (proposed).
 
 ## Last arc: V -- revise the vision after review 1 (closed 2026-11-10)
 
@@ -77,7 +88,10 @@ word is singular). This is recorded in the review's disposition table.
 
 **Blocking the next step:**
 
-- The go-ahead for Slice 0 in its bake-off form, after the rival arc reports.
+- Which option: keep ours, adopt the rival, or merge ([rival-comparison.md](rival-comparison.md)).
+- The go-ahead for Slice 0 as the experiment, and who builds what.
+- Whether each man should also carry fear gauges for the inspector, even if the patterns don't need them.
+- Whether `docs/rival/` lands on `main` as a proposal.
 
 **Not blocking:**
 
