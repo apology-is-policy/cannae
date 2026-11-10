@@ -88,6 +88,21 @@ pub struct NearEnemy {
     pub sector: Sector,
     /// Whether I stand in his front sector.
     pub faces_me: bool,
+    /// Whether, by the bout resolver's rule, he would strike a man of my side other than me:
+    /// some man of my side in my window, not down, stands ahead of him and nearer to him than
+    /// I do ([`strikes_first`]). Such an enemy is that man's business (docs/rival/07-hazards.md,
+    /// sec. 2: "An enemy beside him who is fighting his neighbour is his neighbour's
+    /// business").
+    pub strikes_another: bool,
+}
+
+/// Whether an enemy at `enemy`, facing `facing`, would strike `friend` before `me`, were
+/// both in his reach. It is the resolver's own choice of opponent (`Bouts::opponent`): the
+/// nearest man who is not behind him, ties to the lower id. Whether `friend` is on his feet
+/// is the caller's to check.
+pub fn strikes_first(enemy: Vec2, facing: Turn, friend: (Vec2, ManId), me: (Vec2, ManId)) -> bool {
+    let to = friend.0 - enemy;
+    to.dot(facing.unit(1 << 10)) >= 0 && (to.len_sq(), friend.1) < (enemy.dist_sq(me.0), me.1)
 }
 
 /// What happened in a man's window since the last man step: things that shock, as opposed to
@@ -436,6 +451,7 @@ impl Perceive for GridPerception {
                             .map_or(Sector::Front, |d| Sector::of(own.facing, d)),
                         faces_me: to_me
                             .is_none_or(|d| Sector::of(bodies.facing[j], d) == Sector::Front),
+                        strikes_another: false,
                     },
                 ));
             }
@@ -444,6 +460,24 @@ impl Perceive for GridPerception {
         let mut near_arr = [None; MAX_NEAR];
         for (slot, (_, e)) in near_arr.iter_mut().zip(near) {
             *slot = Some(e);
+        }
+        if near_arr[0].is_some() {
+            // The men of his side in his window who are on their feet: any of them may be
+            // the one an enemy in his reach would strike first.
+            let friends: Vec<(Vec2, ManId)> = self
+                .window(own.pos)
+                .filter(|&(_, _, m)| {
+                    let j = m.0 as usize;
+                    m != man && bodies.side[j] == own.side && bodies.posture[j] != Posture::Down
+                })
+                .map(|(_, _, m)| (bodies.pos[m.0 as usize], m))
+                .collect();
+            for e in near_arr.iter_mut().flatten() {
+                let j = e.id.0 as usize;
+                e.strikes_another = friends.iter().any(|&friend| {
+                    strikes_first(bodies.pos[j], bodies.facing[j], friend, (own.pos, man))
+                });
+            }
         }
         let body = bodies.body[i].and_then(|b| frames.body(b));
         let dist = |q: Vec2| (q - own.pos).length().min(i32::MAX as i64) as i32;
@@ -555,6 +589,51 @@ mod tests {
         assert_eq!(e[2].sector, Sector::Front);
         assert!(e[2].faces_me);
         assert_eq!(v.crowding, 2);
+    }
+
+    #[test]
+    fn an_enemy_is_the_business_of_the_man_he_would_strike() {
+        // I face +x. An enemy a metre ahead faces me. With no one else about he is mine.
+        let mut b = Bodies::default();
+        let me = put(&mut b, 0, 0, Side::A, Posture::Steady, 0);
+        let foe = put(&mut b, 1_000, 0, Side::B, Posture::Forward, 32_768);
+        let see = |b: &Bodies, man: ManId| {
+            let mut g = GridPerception::default();
+            g.rebuild(b, &[], 5, 0);
+            let v = g.view(b, &NoFrames, man);
+            let e = v
+                .near()
+                .find(|e| e.id == foe)
+                .expect("the enemy is in reach");
+            e.strikes_another
+        };
+        assert!(!see(&b, me));
+        // A man of my side nearer to him, and ahead of him: he strikes that man first, and
+        // that man sees no one before himself.
+        let friend = put(&mut b, 400, 300, Side::A, Posture::Steady, 0);
+        assert!(see(&b, me));
+        assert!(!see(&b, friend));
+        // A man who has turned to run is struck as readily. A man who is down is not.
+        b.posture[friend.0 as usize] = Posture::Turned;
+        assert!(see(&b, me));
+        b.posture[friend.0 as usize] = Posture::Down;
+        assert!(!see(&b, me));
+        b.posture[friend.0 as usize] = Posture::Steady;
+        // Nearer to him but behind him: he would have to turn first, so he is still mine.
+        b.pos[friend.0 as usize] = Vec2::new(1_500, 0);
+        assert!(!see(&b, me));
+        // Level with him counts as ahead, as it does for the resolver. At exactly my distance
+        // the lower id is struck: I am, and to the other man the enemy is mine.
+        b.pos[friend.0 as usize] = Vec2::new(1_000, 1_000);
+        assert!(me < friend);
+        assert!(!see(&b, me));
+        assert!(see(&b, friend));
+        // A hair nearer than I am, and he is the other man's.
+        b.pos[friend.0 as usize] = Vec2::new(1_000, 999);
+        assert!(see(&b, me));
+        // An enemy of his own side is no one he would strike.
+        b.side[friend.0 as usize] = Side::B;
+        assert!(!see(&b, me));
     }
 
     #[test]

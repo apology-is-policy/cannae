@@ -8,9 +8,10 @@
 //!
 //! Prints the first `--events` changes of posture with the causes each hazard named, and for
 //! the first `--looks` men who gave ground or turned of themselves, what each saw when he
-//! decided. Then one line for the run, and how often an enemy was counted on a Roman's flank,
-//! split by whom that enemy stood nearest to. `--flank` overrides one weight, to tell that
-//! row's doing from the rest; it is a diagnostic and not a prior.
+//! decided. Then one line for the run, and how often an enemy stood beside a Roman and faced
+//! him, split by whether that enemy would have struck another man first (and so is not
+//! counted on his flank). `--flank` overrides one weight, to tell that row's doing from the
+//! rest; it is a diagnostic and not a prior.
 
 use cannae_core::power::GaitSpeeds;
 use cannae_core::schedule::{BASE_TICK, is_man_step};
@@ -97,7 +98,7 @@ fn main() {
     let (mut shown, mut printed) = (0, 0);
     let (mut broke, mut first_forward) = (None, None);
     let (mut driven, mut gave) = (0, 0);
-    // Enemies counted on a Roman's flank, by [he gives ground][another Roman stands nearer].
+    // Enemies beside a Roman and facing him, by [he gives ground][they would strike another].
     let mut flank = [[0u32; 2]; 2];
     let mut before = r.bodies.clone();
     let mut seen = GridPerception::default();
@@ -118,20 +119,13 @@ fn main() {
                 }
                 let v = seen.view(&before, &r.frames, ManId(i as u32));
                 for n in v.near() {
-                    let on_flank = standing(n.posture)
+                    let in_cone = standing(n.posture)
                         && n.faces_me
                         && matches!(n.sector, Sector::Left | Sector::Right);
-                    if !on_flank {
-                        continue;
+                    if in_cone {
+                        let back = (before.posture[i] == Posture::Back) as usize;
+                        flank[back][n.strikes_another as usize] += 1;
                     }
-                    let he = before.pos[n.id.0 as usize];
-                    let nearer = (0..before.len()).any(|j| {
-                        j != i
-                            && before.side[j] == Side::A
-                            && standing(before.posture[j])
-                            && (before.pos[j] - he).len_sq() < n.offset.len_sq()
-                    });
-                    flank[(before.posture[i] == Posture::Back) as usize][nearer as usize] += 1;
                 }
             }
         }
@@ -205,11 +199,13 @@ fn main() {
                 );
                 for n in v.near() {
                     println!(
-                        "           enemy at {:?}: {:?}, {:?}, faces him {} ({})",
+                        "           enemy at {:?}: {:?}, {:?}, faces him {}, would strike \
+                         another first {} ({})",
                         n.offset,
                         n.sector,
                         n.posture,
                         n.faces_me,
+                        n.strikes_another,
                         who(n.id.0 as usize)
                     );
                 }
@@ -236,8 +232,9 @@ fn main() {
         at(broke)
     );
     println!(
-        "   enemies counted on a flank, summed over man steps: by steady Romans {} (another \
-         Roman stood nearer to {} of them); by Romans giving ground {} ({})",
+        "   enemies beside a Roman and facing him, summed over man steps: {} for steady Romans, \
+         of whom {} would strike another man first and are not counted on his flank; {} for \
+         Romans giving ground, of whom {}",
         flank[0][0] + flank[0][1],
         flank[0][1],
         flank[1][0] + flank[1][1],

@@ -2,8 +2,8 @@
 //! what the man sees.
 
 use super::*;
-use cannae_core::view::{Counts, LeaderSeen, NearEnemy, Shocks, SlotView};
-use cannae_core::{BodyId, Vec2};
+use cannae_core::view::{Counts, LeaderSeen, NearEnemy, NoFrames, Perceive, Shocks, SlotView};
+use cannae_core::{BodyId, GridPerception, Side, Vec2};
 
 /// Men who are all alike, so that the arithmetic is exact: nerve 2, ardour 0.
 const PLAIN: Troop = Troop {
@@ -103,6 +103,7 @@ fn near(sector: Sector, posture: Posture, faces_me: bool) -> Option<NearEnemy> {
         posture,
         sector,
         faces_me,
+        strikes_another: false,
     })
 }
 
@@ -239,6 +240,12 @@ fn a_neighbours_opponent_is_not_a_flank_attack() {
     v.near[0] = near(Sector::Left, Posture::Forward, true);
     assert_eq!(doublings_x16(base, rate(&m, &v, Posture::Back)), 60);
     assert_eq!(causes(&m, &v, Posture::Back)[1], Cause::EnemyOnFlank);
+    // Facing him, but with another man of his side to strike first: his neighbour's business.
+    v.near[0] = Some(NearEnemy {
+        strikes_another: true,
+        ..v.near[0].unwrap()
+    });
+    assert_eq!(rate(&m, &v, Posture::Back), base);
     // Behind him, whichever way the enemy faces: 3 units, as fast as a man can go.
     v.near[0] = near(Sector::Rear, Posture::Steady, false);
     assert_eq!(rate(&m, &v, Posture::Back), CAP);
@@ -783,4 +790,62 @@ fn what_a_memory_adds_moves_his_hazards_and_is_named() {
     assert_eq!(pushed, rate(&plain, &led, Posture::Forward));
     assert!(pushed > rate(&plain, &v, Posture::Forward));
     assert!(causes(&m, &v, Posture::Forward).contains(&Cause::Resolve));
+}
+
+/// A man a pace behind a line at 1.8 m, with one enemy a metre in front of each of his
+/// neighbours and facing that neighbour. Three men of his side and two enemies, placed and
+/// perceived, not a view built by hand.
+fn a_pace_behind_his_line() -> (Bodies, ManId) {
+    let mut b = Bodies::default();
+    let mut put = |at: Vec2, side: Side, posture: Posture, facing: Turn| {
+        b.push(Observed {
+            pos: at,
+            side,
+            posture,
+            facing,
+            body: (side == Side::A).then_some(BodyId(0)),
+            ..Default::default()
+        })
+    };
+    let me = put(Vec2::new(-1_000, 0), Side::A, Posture::Back, Turn(0));
+    for y in [1_800, -1_800] {
+        let neighbour = Vec2::new(0, y);
+        put(neighbour, Side::A, Posture::Steady, Turn(0));
+        // A little to the outside of his man, as men come to stand who close on the nearest.
+        let enemy = Vec2::new(1_000, y + y.signum() * 250);
+        put(
+            enemy,
+            Side::B,
+            Posture::Forward,
+            Turn::of(neighbour - enemy).unwrap(),
+        );
+    }
+    (b, me)
+}
+
+fn perceived(b: &Bodies, man: ManId) -> View {
+    let mut g = GridPerception::default();
+    g.rebuild(b, &[], 4, 0);
+    g.view(b, &NoFrames, man)
+}
+
+#[test]
+fn the_men_fighting_his_neighbours_are_not_on_his_flank() {
+    // rival/07, sec. 2: "An enemy beside him who is fighting his neighbour is his neighbour's
+    // business."
+    let (mut b, me) = a_pace_behind_his_line();
+    let m = Men::new(Rung::NoMarks, Params::CENTRE, &b, &[PLAIN], &Rng::new(1));
+    let v = perceived(&b, me);
+    // Each of the two stands beyond the diagonal on his side, and he is inside the quarter
+    // turn that each of them faces.
+    let seen: Vec<_> = v.near().map(|e| (e.sector, e.faces_me)).collect();
+    assert_eq!(seen, [(Sector::Left, true), (Sector::Right, true)]);
+    assert!(!causes(&m, &v, Posture::Turned).contains(&Cause::EnemyOnFlank));
+
+    // An enemy a metre to his side who faces him, with no one nearer, is on his flank.
+    let beside = Vec2::new(-1_000, 1_000);
+    b.pos[2] = beside;
+    b.facing[2] = Turn::of(b.pos[me.0 as usize] - beside).unwrap();
+    let v = perceived(&b, me);
+    assert_eq!(causes(&m, &v, Posture::Turned)[0], Cause::EnemyOnFlank);
 }

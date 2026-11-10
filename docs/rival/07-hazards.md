@@ -40,7 +40,7 @@ within 3 m.
 | A man of his side turned | each, up to 8 | 1 |
 | A man of his side giving ground | each, up to 8 | 0.35 |
 | A man of his side going down, at this step | each, up to 3 | 2 |
-| An enemy in reach on his left or right, who faces him | each, up to 3 | 1.5 |
+| An enemy in reach on his left or right, who faces him and would strike him first | each, up to 3 | 1.5 |
 | An enemy in reach behind him | each, up to 3 | 3 |
 | An enemy in reach in front who has stepped forward | each, up to 3 | 0.5 |
 | His leader, within 20 m, turned | | 3 more |
@@ -48,6 +48,18 @@ within 3 m.
 
 An enemy counts only while he stands and faces the fight. An enemy beside him who is fighting
 his neighbour is his neighbour's business.
+
+**Whose business an enemy is** is settled by the bout resolver's own rule: a man strikes the
+nearest enemy who is not behind him, and at equal distances the one with the lower number. So
+an enemy beside a man is on his flank only if no other man of his side, on his feet and in his
+view, would be struck first. The perception works this out for every enemy in reach
+(`NearEnemy::strikes_another`).
+
+Until 2026-11-10 the code asked only whether the enemy faced him to within an eighth of a
+turn. That counted the men fighting his neighbours whenever he stood a pace behind his line:
+they stand on the diagonal, and he is behind the men they face. It was found on a hand-built
+scene, after Paullus's costing runs showed lines breaking in half a minute
+([priors-field.md](../slice0/priors-field.md), "What I have seen since").
 
 **Conditions** (how things stand):
 

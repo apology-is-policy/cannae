@@ -16,6 +16,43 @@ After it was written I ran the first 30 seconds of the base patch, and 5 seconds
 variant, to check that the files load and the men march. I looked at the event count and the
 hash, and at nothing else.
 
+**What I have seen since, and what it changed (2026-11-10).** Paullus ran the base patch at
+the centres to find what a run costs ([scored-runs-cost.md](scored-runs-cost.md)). A side broke
+in every one of 128 runs, at a median of 32 s, with almost no one down, and it was the Romans
+in 14 of 16 seeds on each engine. I then traced a scene of my own and not the patch: a century
+of 41 receiving a warband of 60 (`scenarios/scenes/first-contact.toml`, with
+`--example first_contact` in `cannae-man` and `--example contact_causes` in `cannae-score`).
+
+- **One fault, fixed.** The flank row (line 3) counted the men who were fighting a man's
+  neighbours whenever he stood a pace behind his line, against rival/07's own sentence that
+  such an enemy is his neighbour's business. About three quarters of the enemies it counted
+  were such men. An enemy now counts on a man's flank only if he would strike that man first,
+  by the bout resolver's rule. Paullus agreed the change before it was made, on the written
+  design and not on the outcome. No prior moved.
+- **Nothing else changed.** With the fault fixed, the century on that scene still breaks at
+  the centres, about a minute after the first man steps forward: in 14 of 16 seeds on the
+  pairwise engine and 12 of 16 on the field, at a median of 50 s and 62 s. That is the table
+  as I wrote it:
+  - a front-rank man at 1.8 m has four men beside him in his view, not six, and with three
+    attackers before him he sits 3.75 units under the edge;
+  - a man giving ground stands again only below 4 under (line 14), which at 3.75 takes about
+    25 s, and with two attackers on him a bout drives him back about every 18 s;
+  - so about half the front rank is giving ground at any time, each such neighbour costs a
+    man 0.6 units more, the weakest turn, and each turned man multiplies his neighbours'
+    hazard by 5.7.
+
+  I chose the centres without doing that sum. The priors stand as they were, and the draws
+  will show how much of them holds a line.
+- **My expectation in section 5 that the Roman line would not break was wrong at the
+  centres.** It is left as written, with a note.
+- **One reading I have not taken.** A bout that drives a steady man back puts him in the same
+  posture, with the same two ways out, as a man who gave ground from alarm. The shared priors
+  say only that the strike "drives its target back a step"; rival/07 says "the backward step
+  is the beginning of flight". Whether a man knocked back while calm should step up sooner is
+  an open reading of the design. Settling it after seeing which reading fails is what the
+  pre-registration exists to stop, so it waits for a second round, where it is the first
+  candidate.
+
 ## How a parameter set is drawn
 
 - **U[a, b]** is uniform between a and b. **L[a, b]** is log-uniform: the logarithm is uniform.
@@ -40,7 +77,7 @@ Alarm is in turned men: a man of his own side, turned, in view, is 1.
 |---|---|---|---|---|---|
 | 1 | `back` | A man of his side giving ground | U[0.2, 0.5] | 0.35 | A backward step is a weaker sign than a turned back, but the same kind. No source gives the ratio. |
 | 2 | `fall` | A man of his side going down, for the one step in which it happens | U[1, 3] | 2 | Worth more than a man who runs, but it lasts a quarter of a second, so it only moves men already near the edge |
-| 3 | `enemy_flank` | An enemy in reach beside him, facing him | U[1, 2.5] | 1.5 | His shield cannot face two ways |
+| 3 | `enemy_flank` | An enemy in reach beside him, facing him, who would strike him before any other man of his side | U[1, 2.5] | 1.5 | His shield cannot face two ways |
 | 4 | `enemy_rear` | An enemy in reach behind him | U[2, 4] | 3 | Attack from behind is what the sources say breaks bodies outright (Livy 22.48). With a nerve of 2, one such enemy should put a supported man near the edge and an unsupported one over it. |
 | 5 | `enemy_front` | An enemy in reach in front who has stepped forward | U[0.25, 0.75] | 0.5 | Facing an attack is what a line is for. Three attackers together should not move a man of average nerve who has his rank beside him. |
 | 6 | `gap` | An empty slot beside him | U[0.25, 1] | 0.5 | His open side is uncovered until the file closes |
@@ -229,6 +266,9 @@ crushed. That is a property of the draw, as in the pairwise engine, and is not c
 - **I expect the Roman line not to break at all in the base patch** at rungs 0 and 1, and I am
   unsure at rung 2. If that holds, pattern 6 fails for the Romans as "never", and the rungs
   pass or fail on the warband alone.
+  *Added 2026-11-10, after Paullus's costing runs: this was wrong at the centres. The Romans
+  broke first in 14 of 16 seeds on each engine, within the first minute. See "What I have
+  seen since", above.*
 - **Rear-first collapse is the pattern I am least sure of.** A man sees 4 to 6 m ahead, so the
   rear ranks of a body eight deep do not see its front. Alarm must travel back rank by rank as
   men give ground. If it does not, the first to turn will be in the front half.

@@ -304,8 +304,9 @@ impl<M: Memory> Men<M> {
                 continue;
             }
             match e.sector {
-                // An enemy beside him who faces his neighbour is his neighbour's business.
-                Sector::Left | Sector::Right if e.faces_me => flank += 1,
+                // An enemy beside him counts only if he faces him and would strike him first:
+                // one who is fighting his neighbour is his neighbour's business.
+                Sector::Left | Sector::Right if e.faces_me && !e.strikes_another => flank += 1,
                 Sector::Rear => rear += 1,
                 Sector::Front if e.posture == Posture::Forward => front += 1,
                 _ => {}

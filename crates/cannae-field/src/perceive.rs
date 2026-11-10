@@ -10,6 +10,7 @@ use crate::tiles::{NONE, TILE, TILE_SHIFT, Tiles};
 use cannae_core::view::{
     BodyState, CELL_MM, CROWD_CAP, CROWD_MM, Counts, FrameQuery, Group, LeaderSeen, MAX_NEAR,
     NearEnemy, Order, REACH_MM, Rel, Sector, Shocks, Standard, StandardSeen, WINDOW, axis, cell_of,
+    strikes_first,
 };
 use cannae_core::{
     Bodies, BodyId, Coarse, Event, EventKind, ManId, Perceive, Posture, Role, Turn, Vec2, View,
@@ -330,6 +331,51 @@ impl FieldPerception {
         (near, crowding)
     }
 
+    /// Whether an enemy at `enemy`, in the reach of the man `me` at `pos`, would strike another
+    /// man of `me`'s side first: one in his window, on his feet, whom [`strikes_first`] puts
+    /// before him. Such a man is no farther from the enemy than `me` is, so only the quarters
+    /// that near to the enemy are looked at, and the first one found ends the search.
+    #[allow(clippy::too_many_arguments)]
+    fn another_first(
+        &self,
+        bodies: &Bodies,
+        w: &[u32; CELLS],
+        (me, pos, side): (ManId, Vec2, usize),
+        enemy: Vec2,
+        facing: Turn,
+        d2: i64,
+    ) -> bool {
+        let (qx, qy) = quarter_of(pos);
+        // His window's south-west quarter, and the quarters of it the enemy's circle covers.
+        let (wx, wy) = (qx - (qx & 1) - 2 * WINDOW, qy - (qy & 1) - 2 * WINDOW);
+        let r = (d2 as u64).isqrt() as i32 + 1;
+        let side_len = 2 * SPAN as i32;
+        let span = |at: i32, w0: i32| {
+            let lo = (at - r).div_euclid(QUARTER_MM) - w0;
+            let hi = (at + r).div_euclid(QUARTER_MM) - w0;
+            lo.max(0)..=hi.min(side_len - 1)
+        };
+        for y in span(enemy.y, wy) {
+            for x in span(enemy.x, wx) {
+                let a = w[(y >> 1) as usize * SPAN + (x >> 1) as usize];
+                if a == NONE {
+                    continue;
+                }
+                let friends = LISTS * a as usize + 2 * ((y & 1) * 2 + (x & 1)) as usize + side;
+                for s in self.start[friends] as usize..self.start[friends + 1] as usize {
+                    let friend = ManId(self.id[s]);
+                    if friend != me
+                        && bodies.posture[friend.0 as usize] != Posture::Down
+                        && strikes_first(enemy, facing, (self.at[s], friend), (pos, me))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        false
+    }
+
     fn body_shocks(&self, body: Option<BodyId>, state: Option<BodyState>) -> (bool, bool) {
         let standard = body.is_some_and(|b| self.standards_down.contains(&b));
         let leader = !self.fallen.is_empty()
@@ -511,6 +557,14 @@ impl Perceive for FieldPerception {
                     sector: Turn::of(offset).map_or(Sector::Front, |d| Sector::of(own.facing, d)),
                     faces_me: to_me
                         .is_none_or(|d| Sector::of(bodies.facing[ju], d) == Sector::Front),
+                    strikes_another: self.another_first(
+                        bodies,
+                        &w,
+                        (man, own.pos, me),
+                        own.pos + offset,
+                        bodies.facing[ju],
+                        d2,
+                    ),
                 }
             })
         });
