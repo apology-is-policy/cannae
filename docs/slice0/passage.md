@@ -3,7 +3,8 @@
 **Status:** Paullus, 2026-11-10. The bench is built, and both engines have run on it: the
 pairwise substrate here, and Varro's field in [passage-field.md](passage-field.md), compared
 below. Run:
-`cargo run --release -p cannae-harness --bin passage -- --substrate pairwise --radius 300`.
+`cargo run --release -p cannae-harness --bin passage -- --substrate pairwise --radius 300`
+(add `--spread` for the second steering, below).
 Code: `crates/cannae-harness/src/passage.rs`. The calibration against measured flows is in
 [passage-calibration.md](passage-calibration.md).
 
@@ -73,12 +74,11 @@ arrives. No one was crushed in any run.
 3. **The line beside the interval is shoved** up to 0.6 m by men squeezing through a narrow
    gap. At any width, men pushed against it by the enemy's shove move it 0.2-0.5 m. Each
    man braces back to his slot afterwards.
-4. **In a jam, the flow runs about 40-50 % high.** Walking through a 3-6 m gate the discs pass
-   2.6-2.9 persons per metre per second, against about 1.9 measured. The calibration shows the
-   same at Liao et al.'s wide bottlenecks ([passage-calibration.md](passage-calibration.md)).
-   Real walkers slow down as a crowd thickens. Discs do not slow until they touch, so a packed
-   column streams through at full walking speed. Js also falls with width here, where Liao et
-   al. found it constant.
+4. **In a jam, the flow runs about 40-50 % high on this steering.** Walking through a 3-6 m
+   gate, the discs pass 2.6-2.9 persons per metre per second, against about 1.9 measured. Js
+   also falls with width here, where Liao et al. found it constant. Most of both turned out
+   to be the steering, not the discs (below): steered across the whole mouth, the discs pass
+   1.8-2.0.
 5. **Running and shoving more than doubles the flow** at the gate, to 6.0-6.4 at 3-6 m. There
    are no data for a crowd running through a wide gate. Garcimartín et al.'s pushing crowd,
    starting from standing at narrow doors, reached about 4.0. Discs running at 4 m/s in step
@@ -106,11 +106,46 @@ arrives. No one was crushed in any run.
   rule gave every man closing on an enemy a lean). The tables above are after the fix. Only
   the pushing rows moved, by up to a tenth.
 
+## Steering across the whole mouth
+
+Varro found that in his engine most of the fall of flow with width came from the steering.
+Every man from the wings makes for one of the two edge points of the mouth, so the wings pile
+into its edges. With `--spread`, each man makes for the point of the mouth as far across it as
+he stands across the crowd, so the whole mouth is used. The gate, Js, on both steerings:
+
+| Width | Discs, nearest point | Discs, whole mouth | Field, nearest point | Field, whole mouth |
+|---|---|---|---|---|
+| **Walking** | | | | |
+| 3 m | 2.91 | 2.01 | 1.81 | 1.60 |
+| 4.5 m | 2.94 | 1.89 | 1.70 | 1.61 |
+| 6 m | 2.64 | 1.79 | 1.43 | 1.27 |
+| 9 m | 1.86 | 1.57 | 0.91 | 0.93 |
+| 12 m | 1.51 | 1.32 | 0.87 | 0.79 |
+| **Running and shoving** | | | | |
+| 3 m | 6.27 | 5.60 | 5.70 | 5.11 |
+| 4.5 m | 6.35 | 5.38 | 4.73 | 4.17 |
+| 6 m | 6.05 | 5.13 | 3.89 | 3.33 |
+| 9 m | 4.75 | 4.44 | 2.60 | 2.48 |
+| 12 m | 3.78 | 3.60 | 2.42 | 2.10 |
+
+- **Steered across the whole mouth, both engines walk through a 3-4.5 m gate inside the
+  measured range** (about 1.9, 1.6-2.3): the discs at 1.9-2.0, the field at 1.6. On Liao et
+  al.'s own geometry the discs then pass 2.06-2.31, nearly constant across width
+  ([passage-calibration.md](passage-calibration.md)).
+- **The steering moves the discs by up to a third and the field by about a tenth.** A crowd of
+  discs keeps its walking speed until it touches, so how men converge on the mouth decides how
+  densely they arrive at it.
+- **At 9-12 m this loose crowd cannot keep the gate full,** so Js there measures what arrives,
+  not what the gate can pass.
+- **Neither steering was measured.** People in a waiting area do spread across a bottleneck,
+  so the second is the nearer. In the scored runs, steering comes from the man model.
+
 ## A candidate remedy, not built
 
 What discs lack is the relation between speed and density, the *fundamental diagram* of
-pedestrian research. One way to add it is a rule that a man walks no faster than the gap ahead
-of him allows, over a headway time. Single-file experiments find the space a walker needs grows
+pedestrian research. Through these gaps it costs little once men use the whole mouth: 10-20 %
+high on Liao's geometry. One way to add it is a rule that a man walks no faster than the gap
+ahead of him allows, over a headway time. Single-file experiments find the space a walker needs grows
 with his speed. That rule costs one parameter and a look-ahead beyond touching: up to about
 2 m at a walk, more at a run. That means a neighbour search several times larger, against a
 pocket already at 2.3x where the kill line is 3x.
@@ -128,8 +163,8 @@ Varro's engine ran the same passages with every prior at its centre
 
 | | Measured | Field | Discs (300 mm) |
 |---|---|---|---|
-| Walking through a 3 m gate, Js | about 1.9 (1.6-2.3) | 1.80 (1.17 before calibration) | 2.91 |
-| Running and shoving through a 3 m gate, Js | about 4.0, at 0.7 m doors | 5.65 | 6.27 |
+| Walking through a 3 m gate, Js | about 1.9 (1.6-2.3) | 1.81 (1.17 before calibration) | 2.91 |
+| Running and shoving through a 3 m gate, Js | about 4.0, at 0.7 m doors | 5.70 | 6.27 |
 | A maniple through a 3 m interval: nine in ten through | no data | 27 s | 24 s |
 | The same, with the enemy following | no data | 1-2 of 120 still not through after 5 min | 33 s |
 | Seyfried's 0.8-1.2 m corridor | 1.6-2.3 | cannot run: narrower than a cell | 1.7-2.4 |
@@ -152,15 +187,13 @@ What it shows, as it stands:
   capacity a drawn parameter, U[1.6, 2.3] persons per metre per second, on the bottleneck
   measurements and on no pattern, as the discs' radius was calibrated (F8 in
   [priors-field.md](priors-field.md)). He checked it first on Liao et al.'s geometry: the flow
-  scales with the capacity at every width from 2.4 to 5 m. At its centre the field walks 1.80
-  through a 3 m gate, and the discs stay 30-50 % high.
+  scales with the capacity at every width from 2.4 to 5 m. At its centre the field walks 1.81
+  through a 3 m gate. On the bench's first steering the discs stay 30-50 % high; steered
+  across the whole mouth they are in the measured range too (above).
 - **Running and shoving, both engines run high** where data exist only for narrow doors: the
-  field 5.65, the discs 6.27, against about 4.0 at 0.7 m.
-- **Some of the fall of flow with width may be the bench's steering.** Everyone from the wings
-  makes for the two edge points of the mouth. With the men spread across the mouth, the field
-  passes nearly its capacity at every width (Varro, `--spread` in his `gate_flow` example). The
-  discs fall with width on the same steering, so part of their fall may be the bench and not
-  the discs. Not yet checked.
+  field 5.70, the discs 6.27, against about 4.0 at 0.7 m.
+- **Much of the discs' excess was the bench's steering,** as Varro suspected from his engine.
+  Checked: see "Steering across the whole mouth" above.
 
 ## Waiting
 

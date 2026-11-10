@@ -47,17 +47,18 @@ running and shoving ([report](slice0/passage.md)). On my engine:
 - **At a 3 m interval, the enemy's shove jams it.** The longest wait between two men rises
   from half a second to seven. This is the clogging measured at doors in experiments, and here
   it comes out of the physics, with no rule for it.
-- **Two structural limits, reported, not fixed.** Walking without pushing matches measured
-  flows through narrow corridors when a man's disc has a radius of 300 mm
-  ([calibration](slice0/passage-calibration.md)). Through wide gaps it runs 30-50 % too fast,
-  because real walkers slow down as a crowd thickens and discs do not until they touch. And
-  people pushing through a 0.7 m door pass about 40 % faster than discs can, because people
-  turn their shoulders.
+- **Walking flows match with discs of 300 mm; pushing through a door does not.** Walking
+  without pushing matches the measured flows through narrow corridors and wide bottlenecks
+  ([calibration](slice0/passage-calibration.md)). I first reported the wide gaps 30-50 % too
+  fast, as a limit of discs. Varro's check showed most of that was the bench's steering: when
+  men use the whole mouth, the discs come within 10-20 % of the measured flow, nearly constant
+  across width. People pushing through a 0.7 m door pass about 40 % faster than discs can,
+  because people turn their shoulders. That limit stands, reported and not fixed.
 - **Varro's engine on the same bench** first passed too few walking men through a gate: 1.17
   per metre per second against about 1.9 measured, where mine passes 2.91. His walking curve
   was fitted to people walking in the open. He has now calibrated it on the bottleneck
-  measurements, as my disc's radius was, and at its centre it passes 1.80. Mine stays 30-50 %
-  high. His contact inside crowds changes the flow by under 6 % at any gate, so it buys
+  measurements, as my disc's radius was, and at its centre it passes 1.81. Steered across
+  the whole mouth, both engines walk through a 3 m gate inside the measured range. His contact inside crowds changes the flow by under 6 % at any gate, so it buys
   nothing there, and it already fails on speed in the pocket.
 - **The crush settings were unusable, now fixed.** The old stand-in values disabled half a
   running crowd at a gate within five minutes, and the rate's units could not even hold the

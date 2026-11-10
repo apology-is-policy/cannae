@@ -48,7 +48,10 @@ pattern 4's own band, the time for a break to spread along the line.
 - **What it gives up:** losses in a long pursuit. In the patch no one pursues. At the centres
   the losers are kilometres away within half an hour, and no one is chasing them.
 
-To be agreed with Varro before the freeze.
+**Agreed with Varro** (call 0001, turn 34), **with an audit he added.** For one parameter set
+in twenty, the seeds are also run to the end, and the report says how often anything happens
+after the window: a bout, a rally on the standard, a second break. That is what the window
+could hide. It costs about 9 hours more.
 
 ## What the costing runs saw
 
@@ -56,6 +59,12 @@ A run's cost depends on when it breaks, so the break times were read, and they a
 here. At these settings a side broke in every run, 128 runs on both engines and all four
 rungs. Most broke within the first minute: the median break came 32 s after the start, the
 range was 15-871 s, and almost no one was down when it happened.
+
+Varro asked one question about these runs, to know which rows of his table of hazards to
+look at: which posture came first. It was answered from the same runs, which a seed
+reproduces bit for bit (`--example first_turns`). On both engines, every man of the losing
+side who turned had been giving ground first, never steady. Most runs began with men stepping
+back. He is looking for a fault in the mechanism on scenes of his own, not on the patch.
 
 These runs are not scored. Bouts and gait are still at their placeholders, not drawn. Under the
 pre-registration no prior moves because of them. A defect found in them may be fixed, but only

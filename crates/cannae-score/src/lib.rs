@@ -7,7 +7,9 @@
 
 use cannae_core::power::GaitSpeeds;
 use cannae_core::schedule::BASE_TICK;
-use cannae_core::{BoutParams, Bouts, GridPerception, Perceive, Posture, Rng, Substrate, Vec2};
+use cannae_core::{
+    BoutParams, Bouts, Event, GridPerception, Perceive, Posture, Rng, Substrate, Vec2,
+};
 use cannae_field::{Field, FieldPerception};
 use cannae_gauges::Rung3;
 use cannae_harness::metrics::{Inputs, Recorder, RunSummary, broken_sides, scoring_end, summarize};
@@ -59,6 +61,11 @@ pub struct Run {
 pub const BREAK_SHARE: f64 = 0.4;
 
 pub fn run(s: &Scenario, spec: Spec) -> Result<Run, String> {
+    run_logged(s, spec).map(|(run, _)| run)
+}
+
+/// The run, and its whole event log, for looking into what happened in it.
+pub fn run_logged(s: &Scenario, spec: Spec) -> Result<(Run, Vec<Event>), String> {
     let troops = s
         .bodies
         .iter()
@@ -123,7 +130,7 @@ fn play<P: Perceive, M: Memory, S: Substrate>(
     perception: P,
     memory: impl FnOnce(usize) -> M,
     substrate: S,
-) -> Result<Run, String> {
+) -> Result<(Run, Vec<Event>), String> {
     let started = Instant::now();
     let (bodies, placed) = place(s);
     let f = frames(s, &placed, &bodies)?;
@@ -190,7 +197,7 @@ fn play<P: Perceive, M: Memory, S: Substrate>(
             hi = Vec2::new(hi.x.max(p.x), hi.y.max(p.y));
         }
     }
-    Ok(Run {
+    let run = Run {
         end_postures,
         end_span_mm: (hi.x.saturating_sub(lo.x), hi.y.saturating_sub(lo.y)),
         seed: spec.seed,
@@ -202,5 +209,6 @@ fn play<P: Perceive, M: Memory, S: Substrate>(
         evaluated: r.evaluated,
         skipped: r.skipped,
         summary,
-    })
+    };
+    Ok((run, r.log.all().to_vec()))
 }

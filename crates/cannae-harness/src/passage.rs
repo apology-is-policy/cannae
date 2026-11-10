@@ -37,6 +37,10 @@ pub struct Case {
     pub pressed: bool,
     /// How long to run at most, s. The run stops early once every passer is through.
     pub seconds: u32,
+    /// Gate only: each man makes for the point of the mouth as far across it as he stands
+    /// across the crowd, so the whole mouth is used, instead of the nearest point (Varro's
+    /// check of how much of the flow is the steering's).
+    pub spread: bool,
 }
 
 /// The parts men play.
@@ -53,6 +57,8 @@ enum Part {
 /// How far men keep from a gap's edge when they aim at its mouth, mm: about a body's radius
 /// and a hand.
 const EDGE_MM: i32 = 400;
+/// Half the width of the crowd at the gate, mm: its outermost files stand this far out.
+const CROWD_HALF_MM: i32 = 17_700;
 /// How far in front of the line the enemy stops, mm.
 const ENEMY_STOP_MM: i32 = 1_500;
 /// The depth of a gate's passage through the rampart, mm.
@@ -182,10 +188,13 @@ fn setup(case: &Case) -> Setup {
 
 /// Where a passer at `p` heads: the mouth while he is in front of it, then straight through,
 /// then straight on.
-fn passer_target(p: Vec2, half: i32, through_x: i32) -> Vec2 {
+fn passer_target(p: Vec2, half: i32, through_x: i32, spread: bool) -> Vec2 {
     let lane = (half - EDGE_MM).max(0);
     let y = p.y.clamp(-lane, lane);
-    if p.x >= 0 {
+    if p.x >= 0 && spread {
+        let across = p.y as i64 * lane as i64 / CROWD_HALF_MM as i64;
+        Vec2::new(-300, (across as i32).clamp(-lane, lane))
+    } else if p.x >= 0 {
         Vec2::new(-300, y)
     } else if p.x >= through_x {
         Vec2::new(through_x - 5_000, y)
@@ -218,7 +227,8 @@ fn targets(case: &Case, s: &Setup, out: &mut Vec<Target>) {
         } else {
             match part {
                 Part::Passer => {
-                    let point = passer_target(p, half, s.through_x);
+                    let spread = case.spread && case.kind == Kind::Gate;
+                    let point = passer_target(p, half, s.through_x, spread);
                     Target {
                         point,
                         speed: pass_speed,
@@ -409,6 +419,7 @@ mod tests {
             width_mm: 3_000,
             pressed: false,
             seconds: 60,
+            spread: false,
         };
         let o = run(&case, |_| Kinematic::default());
         assert_eq!(o.passers, 120);
@@ -428,6 +439,7 @@ mod tests {
                     width_mm,
                     pressed: false,
                     seconds: 240,
+                    spread: false,
                 },
                 pairwise,
             )
@@ -447,6 +459,7 @@ mod tests {
             width_mm: 3_000,
             pressed: true,
             seconds: 30,
+            spread: false,
         };
         let mut s = setup(&case);
         let mut sub = make(&s.walls);

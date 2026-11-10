@@ -37,8 +37,11 @@ For each cell of the experiment (each rung of the memory ladder on each substrat
 2. Run each set on the same 10 seeds, for each scenario variant.
 3. Compute a run summary per run, from observable state and the event log only. After the
    first side breaks, the rout is scored for 15 minutes and no longer, so a run can stop there
-   and score as if it had run on (proposed by Paullus, to be agreed:
-   [scored-runs-cost.md](scored-runs-cost.md)).
+   and score as if it had run on ([scored-runs-cost.md](scored-runs-cost.md); proposed by
+   Paullus, agreed by Varro).
+   - **The audit, reported and not banded** (Varro): for one parameter set in twenty (draws
+     0, 20, 40 and so on), the seeds are also run to the end. The report says how often
+     anything happens after the window: a bout, a rally, a second break.
 4. Pool each per-run statistic over a parameter set's seeds by its median, and compare it with
    the band.
 

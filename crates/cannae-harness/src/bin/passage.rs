@@ -1,10 +1,11 @@
 //! The passage study (S0.8): both passages across gap widths, on one substrate.
 //!
 //! `cargo run --release -p cannae-harness --bin passage -- [--substrate
-//! pairwise|field|kinematic] [--radius MM] [--contact line|crowd|all]`
+//! pairwise|field|kinematic] [--radius MM] [--contact line|crowd|all] [--spread]`
 //!
 //! `--radius` is the pairwise engine's disc; `--contact` is which men the field keeps apart by
-//! position (its three physics rungs).
+//! position (its three physics rungs). `--spread` steers the gate's crowd across the whole
+//! mouth instead of to its nearest point.
 #![allow(clippy::float_arithmetic)]
 
 use cannae_core::Wall;
@@ -41,6 +42,7 @@ fn main() {
     let radius: i32 = arg("--radius").map_or(Params::PLACEHOLDER.radius_mm, |r| {
         r.parse().expect("--radius takes mm")
     });
+    let spread = args.iter().any(|a| a == "--spread");
     let contact = match arg("--contact").as_deref() {
         None | Some("line") => Contact::Line,
         Some("crowd") => Contact::Crowd,
@@ -115,6 +117,7 @@ fn main() {
                     width_mm: w,
                     pressed,
                     seconds,
+                    spread,
                 });
                 println!("{:>4} m {:>7} {}", w as f64 / 1000.0, pressed, cell(&o, w));
             }

@@ -65,13 +65,44 @@ at **280-300 mm**, narrowed from 240-300. A first version of this table aimed ev
 middle of the mouth. Aiming at its nearest point, as here, moves the flow by up to a tenth,
 and leaves r = 300 still the best fit.
 
-**Walking through a wide bottleneck runs 30-50 % high at every radius in the prior.** At
-2.4-5.0 m, discs of 300 mm pass 2.4-2.9 persons per metre per second, against a constant 1.9
-or so. Real walkers slow down as a crowd thickens. A disc keeps full walking speed until it
-touches the one ahead, so a packed column streams through at full speed. In a narrow corridor
-of one or two lanes this hardly shows. In a wide one it does. This is the substrate's second
-structural limit. The remedy, a speed that depends on the gap ahead, is discussed in
-[passage.md](passage.md) and not built.
+**Walking through a wide bottleneck runs 30-50 % high at every radius in the prior, on this
+steering.** At 2.4-5.0 m, discs of 300 mm pass 2.4-2.9 persons per metre per second, against
+a constant 1.9 or so. Most of that turned out to be the steering, not the discs (next).
+
+## The steering, revisited (2026-11-10)
+
+Varro found that in his engine most of the fall of flow with width came from the bench's
+steering. Every man from the wings makes for one of the two edge points of the mouth, so the
+wings converge on its edges. Steered instead to the point of the mouth as far across it as he
+stands across the waiting area, each man uses the whole mouth
+(`--example passage -- --spread`). The discs at r = 300 mm on that steering:
+
+| Width | Nearest point | Across the whole mouth | Measured |
+|---|---|---|---|
+| Seyfried, 0.8 m | 1.77 | 1.77 | 1.6-1.9 |
+| 0.9 m | 1.95 | 1.60 | 1.9-2.1 |
+| 1.0 m | 1.73 | 2.14 | 1.9-2.2 |
+| 1.1 m | 2.38 | 2.14 | 1.8-1.9 |
+| 1.2 m | 2.37 | 2.29 | 1.8-2.3 |
+| Liao, 2.4 m | 2.87 | 2.31 | constant, about 1.9 |
+| 3.0 m | 2.94 | 2.22 | |
+| 3.6 m | 2.89 | 2.12 | |
+| 4.4 m | 2.56 | 2.12 | |
+| 5.0 m | 2.42 | 2.06 | |
+
+**Steered across the whole mouth, discs of 300 mm fit both experiments.** All five of
+Seyfried's widths fall in the measured range overall (1.6-2.3), though not always in the band
+for their own width. Liao's wide bottlenecks come out at 2.06-2.31, within 11 % of constant
+across width, and 10-20 % above the 1.9 measured. The narrow corridor hardly cares how men aim
+at it. The wide one does.
+
+So **the second structural limit is mostly the bench's, not the discs'.** What is left is
+10-20 % high. In principle discs still lack a speed that falls as the crowd thickens. Real
+walkers slow down before they touch, and a disc does not. Through these gaps it costs little,
+once men use the whole mouth. Neither steering was measured. People in a waiting area do
+spread across a bottleneck, so the second is the nearer of the two. In the scored runs the
+steering comes from the man model, not from the bench. The prior on the radius stays at
+280-300 mm.
 
 **Pushing through a narrow door does not match at any radius that also matches walking.** The
 measured 4.0 needs discs of about 240 mm, which walk through an open bottleneck nearly twice
@@ -81,7 +112,7 @@ door at about 1.5-2 persons a second, against the 2.8 measured.
 
 This is the first structural limit: the pairwise engine underestimates the flow of a pushing
 crowd through gaps of one or two bodies' width by about 40 %. Military passages are wider,
-where shoulders matter less but the second limit applies instead. Bodies that turn (ellipses,
+and there shoulders matter less. Bodies that turn (ellipses,
 or a radius that shrinks under press) are possible remedies, each with a cost, and none is
 built.
 
