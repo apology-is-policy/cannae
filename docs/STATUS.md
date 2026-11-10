@@ -109,6 +109,16 @@ cell and variant of the field engine. The pairwise engine costs about twice as m
 batch with the Mac or renting a machine. `base` runs first on both engines, so the eight
 patterns' verdicts for all eight cells come in **about 1.6 days**.
 
+**Progress (2026-11-10, 21:10 UTC).** The first cell's `base` is complete (the field engine,
+rung 0: 2,100 runs in 3 hours). The second cell is running, more slowly so far, so the total
+may be nearer 14 days.
+
+**Rechecked on the Mac.** For every cell and variant, two parameter sets are run again on the
+Mac and compared with the Pi's records, field for field (`tools/s09-recheck.py`). The freeze
+seed fixes which sets, so nobody picks them. It runs as the batch goes. So far: the first
+cell's 20 records are all equal. The tool was tested on a copy with one altered record, and it
+caught it.
+
 **Two addenda to the pre-registration** (agreed with Varro, written before any record was
 scored, [addenda](slice0/preregistration.md#addendum-1-2026-11-10-cells-that-base-rules-out-run-their-variants-last)):
 
