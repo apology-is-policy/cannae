@@ -47,6 +47,22 @@ a line says otherwise.
 | Run speed | 4.0 m/s | uniform 3.0-5.0 m/s | Vegetius 1.9: "quicquid addideris, iam cursus est, cuius spatium non potest definiri": anything faster than the full step is running, and its distance cannot be fixed. 4 m/s is about the speed at VO2max for fit men, unloaded [primary]. A charge over a short distance may go faster, and a shield and kit slow it. |
 | Troops differ in wind | none | not drawn: the same for every troop | Livy (10.28) blames the Gauls' fading at Sentinum partly on bodies that cannot bear toil and heat. That is a candidate variant, not a prior: building it in would hand one side a result the patterns are meant to test. |
 
+## Crowd physics both substrates have (Paullus, moved from priors-pairwise.md)
+
+Drawn once for both, so that neither substrate can be said to have had the kinder draw. Each
+substrate maps them onto its own mechanics. The pairwise engine's mapping is given in each
+line; the field engine's goes in [priors-field.md](priors-field.md). Sources are in
+[crowd-physics.md](crowd-physics.md).
+
+| Parameter | Placeholder now (pairwise) | Prior | Source or reason |
+|---|---|---|---|
+| Crush onset density ρc (sets `crush_mm`) | `crush_mm` 250, which is about 4.4 men per m² at r = 280 | uniform 5-8 men per m² | Helbing and Mukerji 2012: above 4-5 per m² congestion builds and falls become likely [primary]. Helbing et al. 2007 (Hajj, measured): flow collapses above 6 per m² local, with local peaks above 10 [primary]. Fruin 1993: at about 7 per m² the crowd becomes "almost a fluid mass" [primary]. `crush_mm` is derived as six contacts' overlap at ρc in hexagonal packing: 6 (2r − s), with s = √(2 / (√3 ρc)). At r = 280 that is 477-1080 mm. The placeholder crushes too early. |
+| Time to be disabled when crushed (sets `crush_rate_q16_per_mm`) | 0.01 per s per mm | log-uniform 30-600 s, as the mean time to disablement at a density 2 per m² above ρc | No measurement found. Expert estimates in press interviews put loss of consciousness at about 30 s and irreversible harm at 3-6 minutes [secondary, unconfirmed]. The rate per mm is derived from this time and the extra overlap at ρc + 2. The weakest line in the file. |
+| `turn_per_tick`: fastest turn | 1,638 units (180° per s) | uniform 120-200° per s | Mason et al. 2022: turning in place peaks at 190 ± 27° per s and averages 124° per s; a 180° turn while walking peaks at 179-182° per s [primary]. The pace instruction is unconfirmed, so these are typical rates, not maximal ones. |
+| `press_mm_s`: how fast a man at full press edges forward | 300 | uniform 200-700 | No direct measurement. The nearest is Pastor et al. 2015: a crowd approaching a door advanced at 0.41 m/s when told to avoid contact and 0.72 m/s when pushing was allowed [primary]. |
+
+**Count: 4.**
+
 ## Ties, bouts and kits (Varro)
 
 **U[a, b]** is uniform; **L[a, b]** is log-uniform. Draws are independent.
@@ -111,6 +127,7 @@ Reach is fixed at 1.5 m for every troop in the patch: all fight with swords.
 | Part | Drawn | Fixed |
 |---|---|---|
 | Stamina, power, gait | 7 | 3 |
+| Crowd physics | 4 | 0 |
 | Ties, bouts, kits | 27 (ties 10, bouts 16, kit 1) | 5 (lead, lift reach, skill steps, leader skill, reach) |
 
 ## Sign-off
@@ -118,6 +135,7 @@ Reach is fixed at 1.5 m for every troop in the patch: all fight with swords.
 | Lines | Written by | Read and signed by |
 |---|---|---|
 | Stamina, power, gait | Paullus | Varro: read 2026-11-10, no objection (call 0001 turn 16); signs at the freeze |
+| Crowd physics | Paullus (ranges copied by Varro for the field) | Varro: pending |
 | Ties, bouts, kits | Varro | Paullus: read 2026-11-10; signs at the freeze. S23 provisionally (below) |
 
 **Paullus on S23 (the warband's guard), 2026-11-10.** Checked in English only: the Loeb text of

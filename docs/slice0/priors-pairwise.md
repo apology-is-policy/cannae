@@ -16,15 +16,15 @@ secondary or unconfirmed.
 
 ## The substrate (`crates/cannae-pairwise`, `Params`)
 
-**Drawn parameters: 8.** One is fixed.
+**Drawn parameters: 4.** One is fixed. Four physical numbers that both substrates have (crush
+onset density, time to disablement, turn rate, and how fast a full press gains ground) are drawn
+once for both, in [priors-shared.md](priors-shared.md), at Varro's proposal (call 0001, turn
+18). The derivations of `crush_mm` and the crush rate from them, in this substrate's terms, are
+kept there.
 
 | Parameter | Placeholder | Prior | Source or reason |
 |---|---|---|---|
 | `radius_mm`: a man's disc | 280 | uniform 240-300 | ANSUR II men: bideltoid breadth 510 mm mean, 567 mm at the 95th percentile, chest depth 254 mm [primary, computed from the public data]. Fruin's body ellipse is 600 by 450 mm [secondary]. A disc with the same area has radius 260 mm; one with the same width, 300 mm. Ancient men were smaller than modern American soldiers but carried a shield. Check: discs of radius 240-300 touch at 5.0-3.2 men per m², bracketing Fruin's "when crowd density equals the plan area of the human body, individual control is lost" [primary]. |
-| Crush onset density ρc (sets `crush_mm`) | `crush_mm` 250, which is about 4.4 men per m² at r = 280 | uniform 5-8 men per m² | Helbing and Mukerji 2012: above 4-5 per m² congestion builds and falls become likely [primary]. Helbing et al. 2007 (Hajj, measured): flow collapses above 6 per m² local, with local peaks above 10 [primary]. Fruin 1993: at about 7 per m² the crowd becomes "almost a fluid mass" [primary]. `crush_mm` is derived as six contacts' overlap at ρc in hexagonal packing: 6 (2r − s), with s = √(2 / (√3 ρc)). At r = 280 that is 477-1080 mm. The placeholder crushes too early. |
-| Time to be disabled when crushed (sets `crush_rate_q16_per_mm`) | 0.01 per s per mm | log-uniform 30-600 s, as the mean time to disablement at a density 2 per m² above ρc | No measurement found. Expert estimates in press interviews put loss of consciousness at about 30 s and irreversible harm at 3-6 minutes [secondary, unconfirmed]. The rate per mm is derived from this time and the extra overlap at ρc + 2. The weakest line in the file. |
-| `turn_per_tick`: fastest turn | 1,638 units (180° per s) | uniform 120-200° per s | Mason et al. 2022: turning in place peaks at 190 ± 27° per s and averages 124° per s; a 180° turn while walking peaks at 179-182° per s [primary]. The pace instruction is unconfirmed, so these are typical rates, not maximal ones. |
-| `press_mm_s`: how fast a man at full press edges forward | 300 | uniform 200-700 | No direct measurement. The nearest is Pastor et al. 2015: a crowd approaching a door advanced at 0.41 m/s when told to avoid contact and 0.72 m/s when pushing was allowed [primary]. |
 | `brace_mm_s`: how fast a standing man regains his spot after a shove | 600 | uniform 300-1,200 | A reason, not a source: a man shoved half a metre regains it in about a second. Checked with `press_mm_s` in the passage study (below). |
 | `core_mm`: overlap with one neighbour beyond which bodies give no more | 150 | uniform 100-200 | Chest depth of ANSUR II men is 254 mm on average [primary, computed]. Bodies and kit yield some way under crowd pressure, and then not at all. Check: at r = 280 and a core of 150 mm, men pressed to the bone stand 410 mm apart, about 6.9 per m², near Fruin's "almost a fluid mass" at about 7 per m² [primary]. Across the box, 5-15 per m²; the Hajj measurements found local densities above 10 [primary]. |
 | `stiffness_q8`: share of an overlap removed per pass, out of 256 | 128 | uniform 64-192 | Numerical: how soft the discs are. Together with `press_mm_s` it sets how far a pressed crowd compresses. Its effect on each pattern is reported, so that no verdict hinges on it alone. |
@@ -71,6 +71,6 @@ parameters are drawn here, on top of rung 3's.
 
 | Part | Drawn | Fixed |
 |---|---|---|
-| Substrate | 8 | 1 |
+| Substrate | 4 (plus 4 shared) | 1 |
 | Rung 3 | (to come) | |
 | Rung 4 | (to come) | |
