@@ -1,0 +1,28 @@
+# The live viewer: runs one battle and serves a page that shows it as it goes.
+#
+# A package of its own, outside the main workspace. Nothing under crates/ changes for it (that
+# code is frozen while Slice 0's scored batch runs), and no simulation crate depends on it: the
+# model stays independent of rendering.
+[package]
+name = "cannae-view"
+version = "0.1.0"
+edition = "2024"
+publish = false
+description = "A live view of one battle of the patch, in a browser"
+
+[workspace]
+
+[dependencies]
+cannae-core = { path = "../crates/cannae-core" }
+cannae-field = { path = "../crates/cannae-field" }
+cannae-gauges = { path = "../crates/cannae-gauges" }
+cannae-harness = { path = "../crates/cannae-harness" }
+cannae-man = { path = "../crates/cannae-man" }
+cannae-pairwise = { path = "../crates/cannae-pairwise" }
+cannae-score = { path = "../crates/cannae-score" }
+
+[profile.release]
+debug = 1
+
+[lints.rust]
+unsafe_code = "forbid"

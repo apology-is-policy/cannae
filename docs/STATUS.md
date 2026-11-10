@@ -132,6 +132,15 @@ scored, [addenda](slice0/preregistration.md#addendum-1-2026-11-10-cells-that-bas
    same event log. If any run differs, the scoring stops and Michal is told. It is running on
    the Pi now, beside the batch.
 
+**A live viewer (asked for by Michal, 2026-11-10).** `cd viewer && cargo run --release`, then
+open http://127.0.0.1:8377/. It runs one battle of the patch on either engine, at any memory
+rung and scenario variant, and shows it as it goes: play, pause, step, speed, pan and zoom, and
+a click on a man says who he is and what he is doing. It uses the mid-range parameter set,
+which is never scored; the batch's drawn sets are not offered, because watching one before it
+is scored would be reading its outcome. The viewer is a package of its own outside `crates/`,
+so the frozen code is untouched and no simulation crate depends on it. `tools/replay.py` makes
+a replay page from the harness's still frames.
+
 **Speed readings.** These need about two quiet hours on the Mac, through the other project's
 lock. My spike now times the perception as Varro's does. Testing it showed that the core's
 reference perception, which my engine uses, is very slow in the pocket. In a short test on a

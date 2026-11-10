@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cannae: live view</title>
+<style>
+:root {
+  --bg: #fbfaf7; --ink: #1c1a17; --muted: #6b665c; --line: #d9d4c8; --field: #f4f1ea;
+  --a: #a8322d; --b: #2d5ea8; --turned: #e8c547; --down: #9a968c; --edge: #111111;
+  --accent: #1c1a17; --accent-ink: #fbfaf7; --hit: #d9480f; --wall: #5c574d;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #171614; --ink: #ece8df; --muted: #a39d90; --line: #3a372f; --field: #24221e;
+    --a: #e0635c; --b: #6f9fe6; --turned: #e8c547; --down: #6e6a61; --edge: #f2efe8;
+    --accent: #ece8df; --accent-ink: #171614; --hit: #ff8a4c; --wall: #b5ae9f;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 18px 16px 32px; }
+h1 { font-size: 1.25rem; margin: 0 0 2px; }
+p.note { margin: 0 0 12px; color: var(--muted); font-size: 0.92rem; }
+canvas { display: block; width: 100%; height: min(60vh, 640px); background: var(--field);
+  border: 1px solid var(--line); border-radius: 8px; touch-action: none; cursor: grab; }
+.bar { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin: 10px 0 0; }
+button, select, input { font: inherit; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; min-height: 40px; }
+button { cursor: pointer; }
+button#play { background: var(--accent); color: var(--accent-ink); border-color: var(--accent);
+  min-width: 84px; }
+button[aria-pressed="true"] { border-color: var(--ink); }
+input#seed { width: 6.5em; }
+label { display: inline-flex; align-items: center; gap: 6px; color: var(--muted);
+  font-size: 0.92rem; }
+#clock { font-variant-numeric: tabular-nums; min-width: 5em; font-weight: 600; }
+#rate { color: var(--muted); font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+.read { margin: 10px 0 0; font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+#broke { color: var(--muted); }
+#man { margin: 10px 0 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+  font-size: 0.95rem; color: var(--muted); }
+#man b { color: var(--ink); }
+#error { color: var(--hit); margin: 8px 0 0; }
+ul.legend { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 0;
+  margin: 12px 0 0; font-size: 0.92rem; color: var(--muted); }
+ul.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 50%;
+  margin-right: 6px; vertical-align: -1px; border: 2px solid transparent; }
+ul.legend i.bar-i { width: 16px; height: 0; border: 0; border-top: 2px solid var(--hit);
+  border-radius: 0; vertical-align: 4px; }
+</style>
+</head>
+<body>
+<main>
+<h1>Cannae: live view</h1>
+<p class="note" id="what">Connecting.</p>
+<canvas id="c" aria-label="The men of both sides, drawn from above"></canvas>
+<div class="bar">
+  <button id="play">Play</button>
+  <button id="step" title="On to the next time the men decide (a quarter of a second)">Step</button>
+  <span id="clock">0.0 s</span>
+  <label>Speed
+    <select id="speed">
+      <option value="0.25">0.25x</option><option value="0.5">0.5x</option>
+      <option value="1" selected>1x</option><option value="2">2x</option>
+      <option value="5">5x</option><option value="20">20x</option>
+      <option value="max">flat out</option>
+    </select>
+  </label>
+  <span id="rate"></span>
+  <button id="line" aria-pressed="true">The line</button>
+  <button id="all" aria-pressed="false">Everyone</button>
+</div>
+<div class="bar">
+  <label>Engine
+    <select id="engine">
+      <option value="pairwise">pairwise (Paullus)</option>
+      <option value="field">field (Varro)</option>
+    </select>
+  </label>
+  <label>Memory
+    <select id="rung">
+      <option value="0">0: none</option>
+      <option value="1">1: has fled before</option>
+      <option value="2">2: shaken</option>
+      <option value="3">3: fear and resolve</option>
+    </select>
+  </label>
+  <label>Battle
+    <select id="variant">
+      <option value="base">base</option>
+      <option value="veterans">veterans</option>
+      <option value="recruits">recruits</option>
+      <option value="flank">struck in the flank</option>
+      <option value="backed">with a second line</option>
+      <option value="relief">second line relieves</option>
+      <option value="volleys">under missiles</option>
+      <option value="shock">band charges the rear</option>
+    </select>
+  </label>
+  <label>Seed <input id="seed" type="number" min="0" step="1" value="1" inputmode="numeric"></label>
+  <button id="new">New battle</button>
+</div>
+<div id="error" role="alert"></div>
+<div class="read" id="count"></div>
+<div class="read" id="broke"></div>
+<div id="man">Click a man to see who he is and what he is doing.</div>
+<ul class="legend">
+  <li><i style="background:var(--a)"></i>Romans</li>
+  <li><i style="background:var(--b)"></i>Warband</li>
+  <li><i style="background:var(--b);border-color:var(--edge)"></i>Going forward</li>
+  <li><i style="background:var(--field);border-color:var(--a)"></i>Giving ground</li>
+  <li><i style="background:var(--turned);border-color:var(--a)"></i>Turned to flee</li>
+  <li><i style="background:var(--down);width:8px;height:8px"></i>Down</li>
+  <li><i class="bar-i"></i>A bout that hurt or drove a man back</li>
+</ul>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const cv = $('c'), g = cv.getContext('2d');
+const POSTURE = ['steady', 'going forward', 'giving ground', 'turned to flee', 'down'];
+const WOUND = ['sound', 'hampered', 'disabled', 'dead'];
+const ROLE = ['soldier', 'file leader', 'closer (optio)', 'standard-bearer'];
+const SIDE = ['Roman', 'Warband'];
+let M = null, S = null;          // what does not change in a battle; the latest frame
+let home = null, view = [0, 0, 1, 1], mode = 'line';
+let sel = -1, flashes = [], broke = [null, null], dirty = true, fit = null;
+let col = {};
+function colours() {
+  const css = getComputedStyle(document.documentElement);
+  for (const k of ['a', 'b', 'turned', 'down', 'edge', 'field', 'hit', 'wall', 'ink']) {
+    col[k] = css.getPropertyValue('--' + k).trim();
+  }
+  dirty = true;
+}
+function bounds(keep) {
+  let b = [Infinity, Infinity, -Infinity, -Infinity], any = false;
+  for (let i = 0; i < M.n; i++) {
+    if (!keep(i)) continue;
+    any = true;
+    b[0] = Math.min(b[0], S.x[i]); b[1] = Math.min(b[1], -S.y[i]);
+    b[2] = Math.max(b[2], S.x[i]); b[3] = Math.max(b[3], -S.y[i]);
+  }
+  if (!any) return null;
+  const m = 0.08 * Math.max(b[2] - b[0], b[3] - b[1]) + 2500;
+  return [b[0] - m, b[1] - m, b[2] + m, b[3] + m];
+}
+function size() {
+  const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+  cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d);
+  dirty = true;
+}
+function seconds() { return S.tick * M.tickMs / 1000; }
+
+function onFrame() {
+  if (!home) { home = bounds(() => true); view = home.slice(); }
+  if (mode === 'all') {
+    const b = bounds(i => S.p[i] !== 4);
+    // Ease towards the men still up, so the view does not jump as they scatter.
+    if (b) view = view.map((v, k) => v + 0.2 * (b[k] - v));
+  }
+  const up = [0, 0], fled = [0, 0], down = [0, 0];
+  for (let i = 0; i < M.n; i++) {
+    const s = M.side[i], p = S.p[i];
+    if (p === 4) down[s]++; else if (p === 3) fled[s]++; else up[s]++;
+  }
+  for (const s of [0, 1]) {
+    const standing = up[s] + fled[s];
+    if (broke[s] === null && standing > 0 && fled[s] / standing >= 0.4) broke[s] = seconds();
+  }
+  const now = performance.now();
+  for (const [att, def, took, gave] of S.bouts) {
+    if (took > 0 || gave > 0) flashes.push({ att, def, until: now + 260 });
+  }
+  $('clock').textContent = seconds().toFixed(1) + ' s';
+  $('play').textContent = S.playing ? 'Pause' : S.ended ? 'Ended' : 'Play';
+  $('play').disabled = S.ended;
+  $('rate').textContent = S.playing && S.rate > 0 ? `running at ${S.rate.toFixed(1)}x` : '';
+  const want = S.speed === 0 ? 'max' : String(S.speed);
+  if ($('speed').value !== want && [...$('speed').options].some(o => o.value === want)) {
+    $('speed').value = want;
+  }
+  $('count').textContent =
+    `Romans: ${up[0]} standing, ${fled[0]} fleeing, ${down[0]} down.   ` +
+    `Warband: ${up[1]} standing, ${fled[1]} fleeing, ${down[1]} down.`;
+  $('broke').textContent = [0, 1].filter(s => broke[s] !== null).map(s =>
+    `${s ? 'The warband' : 'The Roman line'} broke at about ${broke[s].toFixed(0)} s ` +
+    `(four in ten of those still up had turned).`).join('  ');
+  describe();
+  dirty = true;
+}
+function describe() {
+  if (sel < 0 || !S) return;
+  const i = sel, body = M.body[i] >= 0 ? M.bodies[M.body[i]] : 'no body';
+  $('man').innerHTML = '';
+  const b = document.createElement('b');
+  b.textContent = `Man ${i}: ${SIDE[M.side[i]]}, ${body}, ${ROLE[M.role[i]] || 'soldier'}. `;
+  $('man').append(b, `He is ${POSTURE[S.p[i]]}, ${WOUND[S.w[i]]}, ` +
+    `${S.ip[i] ? 'in his place' : 'out of his place'}.`);
+}
+
+function draw() {
+  requestAnimationFrame(draw);
+  const now = performance.now();
+  flashes = flashes.filter(f => f.until > now);
+  if (!dirty && !flashes.length) return;
+  dirty = false;
+  const w = cv.width, h = cv.height;
+  g.fillStyle = col.field; g.fillRect(0, 0, w, h);
+  if (!M || !S || M.error) return;
+  const s = Math.min(w / (view[2] - view[0]), h / (view[3] - view[1]));
+  const ox = (w - s * (view[2] - view[0])) / 2 - s * view[0];
+  const oy = (h - s * (view[3] - view[1])) / 2 - s * view[1];
+  fit = { s, ox, oy };
+  const X = i => ox + s * S.x[i], Y = i => oy - s * S.y[i];
+  const r = Math.max(280 * s, 1.6), lw = Math.max(60 * s, 1);
+  g.lineCap = 'round';
+  g.strokeStyle = col.wall; g.lineWidth = Math.max(200 * s, 2);
+  for (const [x1, y1, x2, y2] of M.walls) {
+    g.beginPath(); g.moveTo(ox + s * x1, oy - s * y1); g.lineTo(ox + s * x2, oy - s * y2);
+    g.stroke();
+  }
+  // Men down first, so that the standing are drawn over them.
+  for (const pass of [0, 1]) for (let i = 0; i < M.n; i++) {
+    const p = S.p[i];
+    if ((p === 4) !== (pass === 0)) continue;
+    const x = X(i), y = Y(i), c = M.side[i] ? col.b : col.a;
+    if (p === 4) {
+      g.fillStyle = col.down; g.beginPath(); g.arc(x, y, r / 2, 0, 7); g.fill();
+      continue;
+    }
+    g.beginPath(); g.arc(x, y, r, 0, 7);
+    g.fillStyle = p === 2 ? col.field : p === 3 ? col.turned : c;
+    g.fill();
+    g.lineWidth = M.role[i] === 1 || M.role[i] === 3 ? 2 * lw : lw;
+    g.strokeStyle = p === 1 ? col.edge : c;
+    g.stroke();
+    const t = S.a[i] / 65536 * 2 * Math.PI;
+    g.beginPath(); g.moveTo(x, y);
+    g.lineTo(x + 560 * s * Math.cos(t), y - 560 * s * Math.sin(t));
+    g.lineWidth = lw; g.strokeStyle = col.edge; g.stroke();
+    if (S.w[i] === 1) {
+      g.fillStyle = col.field; g.beginPath(); g.arc(x, y, r * 0.4, 0, 7); g.fill();
+    }
+  }
+  g.strokeStyle = col.hit; g.lineWidth = Math.max(90 * s, 2);
+  for (const f of flashes) {
+    g.globalAlpha = Math.min(1, (f.until - now) / 160);
+    g.beginPath(); g.moveTo(X(f.att), Y(f.att)); g.lineTo(X(f.def), Y(f.def)); g.stroke();
+  }
+  g.globalAlpha = 1;
+  if (sel >= 0) {
+    g.beginPath(); g.arc(X(sel), Y(sel), r + Math.max(160 * s, 4), 0, 7);
+    g.lineWidth = Math.max(70 * s, 2); g.strokeStyle = col.ink; g.stroke();
+  }
+}
+
+const es = new EventSource('/events');
+es.addEventListener('meta', e => {
+  M = JSON.parse(e.data); S = null; home = null; sel = -1; flashes = []; broke = [null, null];
+  $('error').textContent = M.error || '';
+  $('man').textContent = 'Click a man to see who he is and what he is doing.';
+  if (M.error) { $('what').textContent = 'No battle.'; dirty = true; return; }
+  $('engine').value = M.engine; $('rung').value = String(M.rung);
+  $('variant').value = M.variant; $('seed').value = M.seed;
+  $('what').textContent = `${M.n} men, the ${M.engine} engine, memory rung ${M.rung}, ` +
+    `"${M.variant}", seed ${M.seed}. Mid-range settings, which are never scored; the same code ` +
+    `as a scored run. It ends at ${M.durationS} s. Drag to move, pinch or scroll to zoom.`;
+  look('line');
+});
+es.addEventListener('frame', e => {
+  const f = JSON.parse(e.data);
+  if (!M || M.error || !f.x) return;
+  S = f; onFrame();
+});
+es.onerror = () => { $('rate').textContent = 'connection lost, trying again'; };
+
+const cmd = q => fetch('/cmd?' + q).then(async r => {
+  $('error').textContent = r.ok ? '' : await r.text();
+}).catch(() => { $('error').textContent = 'The viewer is not answering.'; });
+$('play').onclick = () => cmd('do=' + (S && S.playing ? 'pause' : 'play'));
+$('step').onclick = () => cmd('do=step');
+$('speed').onchange = e => cmd('do=speed&x=' + e.target.value);
+$('new').onclick = () => cmd(`do=restart&engine=${$('engine').value}&rung=${$('rung').value}` +
+  `&variant=${$('variant').value}&seed=${encodeURIComponent($('seed').value || '1')}`);
+function look(m) {
+  mode = m;
+  $('line').setAttribute('aria-pressed', String(m === 'line'));
+  $('all').setAttribute('aria-pressed', String(m === 'all'));
+  if (m === 'line' && home) view = home.slice();
+  dirty = true;
+}
+$('line').onclick = () => look('line');
+$('all').onclick = () => look('all');
+
+// Drag to move the view, wheel or pinch to zoom about the pointer, a tap to pick a man.
+const held = new Map();
+let pinch = 0, travelled = 0;
+function world(px, py) {
+  const r = cv.getBoundingClientRect(), d = cv.width / r.width;
+  return [((px - r.left) * d - fit.ox) / fit.s, ((py - r.top) * d - fit.oy) / fit.s];
+}
+function zoom(f, px, py) {
+  if (!fit) return;
+  const [wx, wy] = world(px, py);
+  view = [wx + (view[0] - wx) * f, wy + (view[1] - wy) * f,
+          wx + (view[2] - wx) * f, wy + (view[3] - wy) * f];
+  look('free');
+}
+function pick(px, py) {
+  if (!fit || !S) return;
+  const [wx, wy] = world(px, py);
+  let best = -1, d2 = Infinity;
+  for (let i = 0; i < M.n; i++) {
+    const dx = S.x[i] - wx, dy = -S.y[i] - wy, q = dx * dx + dy * dy;
+    if (q < d2) { d2 = q; best = i; }
+  }
+  // Within a body's width, or a fingertip, whichever is the wider on this screen.
+  const reach = Math.max(700, 18 * (window.devicePixelRatio || 1) / fit.s);
+  sel = d2 <= reach * reach ? best : -1;
+  if (sel < 0) $('man').textContent = 'Click a man to see who he is and what he is doing.';
+  describe(); dirty = true;
+}
+cv.onpointerdown = e => {
+  cv.setPointerCapture(e.pointerId); held.set(e.pointerId, e);
+  if (held.size === 1) travelled = 0;
+};
+cv.onpointerup = cv.onpointercancel = e => {
+  if (held.size === 1 && travelled < 6 && e.type === 'pointerup') pick(e.clientX, e.clientY);
+  held.delete(e.pointerId); pinch = 0;
+};
+cv.onpointermove = e => {
+  const was = held.get(e.pointerId);
+  if (!was || !fit) return;
+  held.set(e.pointerId, e);
+  travelled += Math.abs(e.clientX - was.clientX) + Math.abs(e.clientY - was.clientY);
+  if (held.size === 1) {
+    if (travelled < 6) return;
+    const k = (cv.width / cv.getBoundingClientRect().width) / fit.s;
+    const dx = (e.clientX - was.clientX) * k, dy = (e.clientY - was.clientY) * k;
+    view = [view[0] - dx, view[1] - dy, view[2] - dx, view[3] - dy];
+    look('free');
+  } else if (held.size === 2) {
+    const [p, q] = [...held.values()];
+    const d = Math.hypot(p.clientX - q.clientX, p.clientY - q.clientY);
+    if (pinch) zoom(pinch / d, (p.clientX + q.clientX) / 2, (p.clientY + q.clientY) / 2);
+    pinch = d;
+  }
+};
+cv.addEventListener('wheel', e => {
+  e.preventDefault(); zoom(e.deltaY > 0 ? 1.15 : 1 / 1.15, e.clientX, e.clientY);
+}, { passive: false });
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', colours);
+addEventListener('resize', size);
+colours(); size(); draw();
+</script>
+</body>
+</html>
