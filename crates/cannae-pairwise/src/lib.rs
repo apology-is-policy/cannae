@@ -56,26 +56,194 @@ pub const PURPOSE_CRUSH: u32 = 1;
 
 pub struct Pairwise {
     pub p: Params,
-    keys: Vec<(i64, u32)>,
+    /// Threads for the contact passes. Results are identical for any count: corrections are
+    /// integers summed per thread and then across threads, and integer addition does not care
+    /// about order.
+    pub threads: usize,
+    grid: Grid,
     corr: Vec<Vec2>,
     pressure: Vec<i32>,
     weight: Vec<i32>,
     old: Vec<Vec2>,
+    bufs: Vec<(Vec<Vec2>, Vec<i32>)>,
 }
 
-fn cell_key(cx: i32, cy: i32) -> i64 {
-    ((cy as i64) << 32) | cx as u32 as i64
+/// Men sorted by cell into a dense row-major grid over their bounding box, with their positions
+/// and weights copied into that order, so a cell's neighbours are contiguous in memory. Cells
+/// are at least one diameter wide, and wider when men are spread thin, which keeps the grid's
+/// size proportional to their number.
+#[derive(Default)]
+struct Grid {
+    size: i32,
+    x0: i32,
+    y0: i32,
+    w: i32,
+    h: i32,
+    start: Vec<u32>,
+    /// Man ids in cell order (ties by id).
+    id: Vec<u32>,
+    px: Vec<i32>,
+    py: Vec<i32>,
+    wt: Vec<i32>,
+    slot: Vec<u32>,
+}
+
+impl Grid {
+    fn build(
+        &mut self,
+        diameter: i32,
+        pos: &[Vec2],
+        weight: &[i32],
+        active: impl Fn(usize) -> bool,
+    ) {
+        let (mut x0, mut y0, mut x1, mut y1) = (i32::MAX, i32::MAX, i32::MIN, i32::MIN);
+        let mut m = 0usize;
+        for (i, p) in pos.iter().enumerate() {
+            if active(i) {
+                x0 = x0.min(p.x);
+                y0 = y0.min(p.y);
+                x1 = x1.max(p.x);
+                y1 = y1.max(p.y);
+                m += 1;
+            }
+        }
+        if m == 0 {
+            (x0, y0, x1, y1) = (0, 0, 0, 0);
+        }
+        let (spanx, spany) = ((x1 - x0) as i64 + 1, (y1 - y0) as i64 + 1);
+        let mut size = diameter as i64;
+        // At most about eight cells per man.
+        let cap = 8 * m as i64 + 4096;
+        while (spanx / size + 1) * (spany / size + 1) > cap {
+            size *= 2;
+        }
+        self.size = size as i32;
+        (self.x0, self.y0) = (x0, y0);
+        self.w = (spanx / size + 1) as i32;
+        self.h = (spany / size + 1) as i32;
+        let cells = (self.w * self.h) as usize;
+        self.slot.clear();
+        self.slot.resize(pos.len(), u32::MAX);
+        self.start.clear();
+        self.start.resize(cells + 1, 0);
+        for (i, &p) in pos.iter().enumerate() {
+            if active(i) {
+                let c = self.cell_index(p);
+                self.slot[i] = c as u32;
+                self.start[c + 1] += 1;
+            }
+        }
+        for c in 0..cells {
+            self.start[c + 1] += self.start[c];
+        }
+        self.id.clear();
+        self.id.resize(m, 0);
+        let mut fill = self.start.clone();
+        for i in 0..pos.len() {
+            let c = self.slot[i];
+            if c != u32::MAX {
+                let k = fill[c as usize] as usize;
+                self.id[k] = i as u32;
+                fill[c as usize] += 1;
+            }
+        }
+        self.px.clear();
+        self.py.clear();
+        self.wt.clear();
+        for &i in &self.id {
+            let i = i as usize;
+            self.px.push(pos[i].x);
+            self.py.push(pos[i].y);
+            self.wt.push(weight[i]);
+        }
+    }
+
+    fn cell_index(&self, p: Vec2) -> usize {
+        let cx = (p.x - self.x0) / self.size;
+        let cy = (p.y - self.y0) / self.size;
+        (cy * self.w + cx) as usize
+    }
+
+    fn range(&self, cx: i32, cy: i32) -> core::ops::Range<usize> {
+        if cx < 0 || cy < 0 || cx >= self.w || cy >= self.h {
+            return 0..0;
+        }
+        let c = (cy * self.w + cx) as usize;
+        self.start[c] as usize..self.start[c + 1] as usize
+    }
+}
+
+/// The contact between sorted men `a` and `b`, if any, added to `corr` and `pressure` (indexed
+/// by sorted position). Symmetric in `a` and `b` except for exact coincidence, which is broken by
+/// man id, so the result does not depend on which of the two finds the other.
+#[inline]
+fn contact(g: &Grid, p: &Params, a: usize, b: usize, corr: &mut [Vec2], pressure: &mut [i32]) {
+    let reach = 2 * p.radius_mm as i64;
+    let mut d = Vec2::new(g.px[b] - g.px[a], g.py[b] - g.py[a]);
+    let d2 = d.len_sq();
+    if d2 >= reach * reach {
+        return;
+    }
+    let mut dist = (d2 as u64).isqrt() as i64;
+    if dist == 0 {
+        // Exactly coincident: separate along x, lower id to the left.
+        d = Vec2::new(if g.id[a] < g.id[b] { 1 } else { -1 }, 0);
+        dist = 1;
+    }
+    let overlap = reach - dist;
+    let (wa, wb) = (g.wt[a] as i64, g.wt[b] as i64);
+    let push = overlap * p.stiffness_q8 as i64;
+    let ma = push * wb / (wa + wb) / 256;
+    let mb = push * wa / (wa + wb) / 256;
+    corr[a] -= d.mul_div(ma, dist);
+    corr[b] += d.mul_div(mb, dist);
+    pressure[a] += overlap as i32;
+    pressure[b] += overlap as i32;
+}
+
+/// All contacts of men in grid rows `rows`: within each cell, and with the half of the
+/// neighbouring cells that come later (east, and the three cells of the next row), so each pair
+/// is found exactly once.
+fn pairs(
+    g: &Grid,
+    p: &Params,
+    rows: core::ops::Range<i32>,
+    corr: &mut [Vec2],
+    pressure: &mut [i32],
+) {
+    for cy in rows {
+        for cx in 0..g.w {
+            let here = g.range(cx, cy);
+            for a in here.clone() {
+                for b in a + 1..here.end {
+                    contact(g, p, a, b, corr, pressure);
+                }
+                for (nx, ny) in [
+                    (cx + 1, cy),
+                    (cx - 1, cy + 1),
+                    (cx, cy + 1),
+                    (cx + 1, cy + 1),
+                ] {
+                    for b in g.range(nx, ny) {
+                        contact(g, p, a, b, corr, pressure);
+                    }
+                }
+            }
+        }
+    }
 }
 
 impl Pairwise {
     pub fn new(p: Params) -> Self {
         Pairwise {
             p,
-            keys: Vec::new(),
+            threads: 1,
+            grid: Grid::default(),
             corr: Vec::new(),
             pressure: Vec::new(),
             weight: Vec::new(),
             old: Vec::new(),
+            bufs: Vec::new(),
         }
     }
 
@@ -85,66 +253,45 @@ impl Pairwise {
         &self.pressure
     }
 
-    fn cell(&self, p: Vec2) -> (i32, i32) {
-        let size = 2 * self.p.radius_mm;
-        (p.x.div_euclid(size), p.y.div_euclid(size))
-    }
-
-    /// One relaxation pass. A sort rather than a counting sort for the cell list: the speed
-    /// spike (S0.7) measures whether that matters.
+    /// One relaxation pass.
     fn relax(&mut self, bodies: &mut Bodies) {
         let n = bodies.len();
-        self.keys.clear();
-        for i in 0..n {
-            if bodies.posture[i] != Posture::Down {
-                let (cx, cy) = self.cell(bodies.pos[i]);
-                self.keys.push((cell_key(cx, cy), i as u32));
-            }
+        let posture = &bodies.posture;
+        self.grid
+            .build(2 * self.p.radius_mm, &bodies.pos, &self.weight, |i| {
+                posture[i] != Posture::Down
+            });
+        let m = self.grid.id.len();
+        let threads = self.threads.max(1);
+        self.bufs.resize_with(threads, Default::default);
+        let h = self.grid.h;
+        let per = (h as usize).div_ceil(threads).max(1) as i32;
+        let (g, p) = (&self.grid, &self.p);
+        let work = |k: usize, buf: &mut (Vec<Vec2>, Vec<i32>)| {
+            buf.0.clear();
+            buf.0.resize(m, Vec2::ZERO);
+            buf.1.clear();
+            buf.1.resize(m, 0);
+            let lo = (k as i32 * per).min(h);
+            pairs(g, p, lo..(lo + per).min(h), &mut buf.0, &mut buf.1);
+        };
+        if threads == 1 {
+            work(0, &mut self.bufs[0]);
+        } else {
+            std::thread::scope(|sc| {
+                for (k, buf) in self.bufs.iter_mut().enumerate() {
+                    sc.spawn(move || work(k, buf));
+                }
+            });
         }
-        self.keys.sort_unstable();
         self.corr.clear();
         self.corr.resize(n, Vec2::ZERO);
         self.pressure.clear();
         self.pressure.resize(n, 0);
-        let reach = 2 * self.p.radius_mm as i64;
-        for &(_, i) in &self.keys {
-            let i = i as usize;
-            let pi = bodies.pos[i];
-            let (cx, cy) = self.cell(pi);
-            for dy in -1..=1 {
-                for dx in -1..=1 {
-                    let k = cell_key(cx + dx, cy + dy);
-                    let lo = self.keys.partition_point(|c| c.0 < k);
-                    for &(kk, j) in &self.keys[lo..] {
-                        if kk != k {
-                            break;
-                        }
-                        let j = j as usize;
-                        if j <= i {
-                            continue;
-                        }
-                        let mut d = bodies.pos[j] - pi;
-                        let d2 = d.len_sq();
-                        if d2 >= reach * reach {
-                            continue;
-                        }
-                        let mut dist = (d2 as u64).isqrt() as i64;
-                        if dist == 0 {
-                            // Exactly coincident: separate along x, lower id to the left.
-                            d = Vec2::new(1, 0);
-                            dist = 1;
-                        }
-                        let overlap = reach - dist;
-                        let (wi, wj) = (self.weight[i] as i64, self.weight[j] as i64);
-                        let push = overlap * self.p.stiffness_q8 as i64;
-                        let mi = push * wj / (wi + wj) / 256;
-                        let mj = push * wi / (wi + wj) / 256;
-                        self.corr[i] -= d.mul_div(mi, dist);
-                        self.corr[j] += d.mul_div(mj, dist);
-                        self.pressure[i] += overlap as i32;
-                        self.pressure[j] += overlap as i32;
-                    }
-                }
+        for buf in &self.bufs {
+            for (k, &i) in self.grid.id.iter().enumerate() {
+                self.corr[i as usize] += buf.0[k];
+                self.pressure[i as usize] += buf.1[k];
             }
         }
         for i in 0..n {
@@ -303,6 +450,37 @@ mod tests {
         let mut s = Pairwise::new(Params::PLACEHOLDER);
         run(&mut s, &mut b, &t, 100);
         assert!(b.pos[walker].x < 2_000, "walker at {:?}", b.pos[walker]);
+    }
+
+    #[test]
+    fn thread_count_cannot_change_a_bit() {
+        let mut crowd = Bodies::default();
+        for r in 0..30 {
+            for f in 0..30 {
+                crowd.push(man(f * 450 + (r % 2) * 200, r * 430));
+            }
+        }
+        let centre = Vec2::new(6_500, 6_000);
+        let t: Vec<Target> = crowd
+            .pos
+            .iter()
+            .map(|_| Target {
+                point: centre,
+                speed: 1_300,
+                face: None,
+                press: 128,
+            })
+            .collect();
+        let mut finals = Vec::new();
+        for threads in [1, 3, 8] {
+            let mut b = crowd.clone();
+            let mut s = Pairwise::new(Params::PLACEHOLDER);
+            s.threads = threads;
+            let ev = run(&mut s, &mut b, &t, 60);
+            finals.push((b.state_hash(), ev));
+        }
+        assert_eq!(finals[0], finals[1]);
+        assert_eq!(finals[0], finals[2]);
     }
 
     #[test]

@@ -21,12 +21,14 @@ reviews his work and merges it.
 | S0.2a | The seam, in the core: tick and phases, the View and reference grid perception, dormancy, events and causes, competing hazards, intents and targets, the power table, the traits. Agreed with Varro on the call | d419574 |
 | S0.2b | The harness: TOML scenarios (the patch), the runner, a kinematic test substrate, a toy man, SVG frame dumps, determinism and dormancy conformance tests | c196e28 |
 | S0.3 | Metrics and pre-registration: the eight patterns computed from observable state; pass bands and both sides' parameter priors written down before any scored run | 0fbcc74 metrics and draft; freeze after Varro agrees |
-| S0.4 | Lethality bounds: literature search on skeletal trauma and experimental archaeology (Varro searches line-fighting ethnography and Collins) | (this) Paullus's half; band proposed |
+| S0.4 | Lethality bounds: literature search on skeletal trauma and experimental archaeology (Varro searches line-fighting ethnography and Collins) | f8cb2a6 Paullus's half; band proposed |
 | S0.5 | The pairwise substrate, where every body touches its neighbours, at patch scale; a perception conformance check for Varro | 14e919b |
 | S0.6 | The top two rungs of the memory ladder: continuous fear and resolve, then the full excitable psyche | |
-| S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | |
+| S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | (this) in progress: pairwise substrate only, burst readings |
 | S0.8 | The passage study, against measured crowd-flow data | |
 | S0.9 | Scored runs and the report; then design review 2 | |
+
+**First speed readings (pairwise substrate only, no man model, 6 s bursts, not yet the sustained 10 minutes):** 150,000 bodies run at about 2.5x real time on one core in a line battle and 2.4x in a pocket; 4-8 threads give only 2.9x so far, because the serial parts now dominate. Hashes are identical across thread counts. The kill line for this engine is 3x sustained on all cores, with the man included, so it is close.
 
 **Varro's work:** frames, slots, ties, drills and standards, and the shared bout resolver, in the core for Paullus to review; the field substrate, with contact where men are crowded and moving; the visible
 layer (postures, hazards, the event log) and the bottom three rungs; his hazard table with priors.
