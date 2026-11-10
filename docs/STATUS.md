@@ -139,7 +139,24 @@ a click on a man says who he is and what he is doing. It uses the mid-range para
 which is never scored; the batch's drawn sets are not offered, because watching one before it
 is scored would be reading its outcome. The viewer is a package of its own outside `crates/`,
 so the frozen code is untouched and no simulation crate depends on it. `tools/replay.py` makes
-a replay page from the harness's still frames.
+a replay page from the harness's still frames. The viewer also says why: a log of every man
+who gives ground, turns or goes down, with the model's own reasons, and a tally per side.
+
+**What watching it showed (Michal, 2026-11-10).** At mid-range settings, on one seed, a century
+of 81 broke three seconds after its centurion was killed, and the warband then stood formed
+beside an open Roman flank. Both are the model doing what its rules say, and both look wrong.
+Nothing is retuned under this pre-registration; the batch shows how often the 200 drawn sets
+do this. Candidates for a second round, none decided:
+
+1. **A fallen leader weighs too much** against a replacement that takes five seconds. Varro,
+   who wrote the rule, thinks so too.
+2. **Nothing limits how fast turning spreads.** Each man who turns alarms all who see him at
+   the next quarter-second.
+3. **Bodies never exploit a gap.** A body follows its one scripted order; the command layer is
+   a later slice.
+4. **A line cannot give ground and hold.** A man who steps back alarms his neighbours and is
+   already nearer to running, and nothing makes the men beside him step back to keep the line.
+   Cannae needs a centre that is pushed back a long way without dissolving.
 
 **Speed readings.** These need about two quiet hours on the Mac, through the other project's
 lock. My spike now times the perception as Varro's does. Testing it showed that the core's
