@@ -1,0 +1,145 @@
+# 06 — The Experiment
+
+The two designs disagree about two things: the man, and the substrate he moves on. Both can be
+settled cheaply, inside the two weeks the vision of record already gives to Slice 0. The form
+below was agreed with Paullus on yip call 0001. Whether it runs, and who builds what, is
+Michal's decision.
+
+## 1. One harness, two engines
+
+**Shared by both engines:**
+
+- the scenario files;
+- the metrics, computed by the harness from observable state only: positions, postures, wound
+  classes and logged events;
+- the RNG streams;
+- W′ and its constants.
+
+**Different:** the model of the man, and the substrate.
+
+| | Engine A: the vision of record | Engine B: the rival |
+|---|---|---|
+| The man | The excitable psyche of 04 §5, with its three kernels | Dispositions, postures and hazards ([01](01-the-man.md)) |
+| The substrate | Soft-body collision at 20 Hz, threaded | Field and events at 4 Hz, one core ([03](03-engine.md)) |
+
+**Fairness.**
+
+- Each engine's parameter priors are written down before any scored run, by its builder, and
+  read by the other.
+- The pass bands for every pattern are fixed before any scored run.
+- Neither engine may special-case the patch.
+- Both get the same time box for tuning and optimisation.
+
+## 2. The patch: behaviour
+
+A thin slice of a battle in two dimensions: two centuries side by side, twenty files by eight
+ranks, against a warband of equal numbers on open ground. About 400 men. It is wide enough for
+a break to spread along the line and deep enough to have rear ranks, which the one-dimensional
+toy could not offer together.
+
+**Variants:** veterans against recruits; a small third body arriving on a flank; a second
+Roman line behind the first, to test relief.
+
+**Memory variants,** for the question of whether fear must outlast its cause
+([01](01-the-man.md) §9): volleys that cannot be answered and kill few, then a charge; a shock
+from behind that is driven off, then pressure from the front. Does the earlier fright change
+what happens next, and should it?
+
+**Patterns scored:**
+
+| # | Pattern | What is measured |
+|---|---|---|
+| 1 | A stable standoff | Two lines can face each other out of reach without closing to the death |
+| 2 | Pulses and lulls | Clash and lull structure in the contact-intensity series, with no scripted rhythm |
+| 3 | Rear-first collapse | Where the first men to leave a breaking body stood |
+| 4 | Lateral spread | A break travels along the line |
+| 5 | Casualty asymmetry | The loser's losses fall mostly after the break |
+| 6 | **Holds, then breaks** | The time to the first break: its mass must lie well away from both zero and never |
+| 7 | **The casualty clock** | Disabling hits per front position per hour inside the band, with lethality per bout inside its bounds ([02](02-order-and-contact.md) §9) |
+| 8 | The centurion gradient | The centurions' share of losses is higher in a formed fight than in a rout |
+
+Patterns 1, 2, 3 and 5 are the four the vision of record set for its toy. Pattern 4 comes with
+the second dimension. Patterns 6 and 7 are the ones each side expects the other to fail.
+
+**Procedure.** For each engine, draw the same number of parameter sets from its priors, run
+each on a fixed set of seeds, and score every pattern. Report:
+
+- the number of free parameters;
+- the share of prior draws that pass every pattern;
+- which patterns fail most often, and how.
+
+**The memory ladder.** Engine B is run on three rungs: no marks; *has fled*; *has fled* and
+*shaken*. Engine A is also run with its resolve variable R removed. In each engine the lowest
+rung that passes is kept. That is the parsimony pillar applied to memory.
+
+A model that passes only on a knife-edge has failed, whichever engine it is. The vision of
+record already says so (04 §5.3).
+
+**One thing must be found first:** bounds on lethality per bout from duel experiments and
+reenactment. Neither of us has a source in hand. Without them pattern 7 has no teeth.
+
+## 3. The spike: speed
+
+150,000 bodies in each substrate, with realistic memory traffic, in two configurations:
+
+- **a line battle:** two armies in contact along 1.5 km;
+- **a pocket:** 60,000 men encircled and compressed.
+
+Measured after ten minutes of sustained load on the fanless Air, never at burst:
+
+- simulated seconds per wall second: engine B on one core; engine A on all cores as designed,
+  reported in total and per core;
+- for B, an identical state hash across repeated runs; for A, across 1, 4 and 8 threads.
+
+## 4. Kill criteria, both ways
+
+**The rival dies if:**
+
+- it runs below 10× real time per core in the pocket; or
+- it cannot hold a line for an hour and then break with no more memory than the two marks
+  (pattern 6).
+
+**The vision of record's engine dies if:**
+
+- it cannot meet the casualty clock without making the clash nearly harmless (pattern 7); or
+- it cannot reach 3× real time sustained at full scale on the Air. Below that, every A1 batch
+  needs a rented machine.
+
+**Tie-breakers, if both live:** fewer free parameters; a larger share of the prior passing;
+the centurion gradient.
+
+## 5. Four outcomes
+
+The man and the substrate are separable, so the experiment has four results, not two.
+
+| | Substrate B is fast enough | Substrate B is not |
+|---|---|---|
+| **Man B passes** | The rival stands | The small man on the vision of record's engine: a cheaper psyche, same physics |
+| **Man B fails** | The dynamical psyche on fields and events: costlier per man than B, perhaps far cheaper than pairwise collision | The vision of record stands, with the lessons of [05](05-costs-and-critique.md) §7 |
+
+The two mixed results are worth as much as the pure ones, and the harness should be built so
+that a man and a substrate can be combined freely.
+
+## 6. Who builds what
+
+Paullus proposed that each engine be built by its believer: Varro builds engine B; Paullus
+builds the harness and engine A. I agree. It keeps either of us from building the other's
+design badly, and it means the harness is written by the one who is not writing my engine.
+
+## 7. Cost
+
+Two weeks, on the Air, with no money spent. That is the same budget as the Slice 0 already
+approved in principle, and it replaces that slice's toy and spike with comparative versions of
+both.
+
+## 8. What Michal decides
+
+1. **Whether Slice 0 runs in this form.**
+2. **Who builds what** (§6).
+3. **Whether dispositions, visible acts and at most two marks are the psyche he asked for,**
+   with fear and morale as things he watches and measures per unit, or whether he wants
+   gauges in each man ([01](01-the-man.md) §9). The memory ladder (§2) informs that choice. It
+   does not make it.
+4. **When a design review runs.** CLAUDE.md proposes one after a major revision of the vision.
+   A rival vision is at least that. My suggestion is to review after the experiment, when its
+   results have made half the questions moot. That is a suggestion, not a decision.
