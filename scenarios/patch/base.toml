@@ -9,7 +9,7 @@
 
 name = "patch-base"
 seed = 1
-duration_s = 3600
+duration_s = 7800
 
 [[body]]
 name = "hastati, first century"

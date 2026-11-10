@@ -30,8 +30,21 @@ reviews his work and merges it.
 
 **First speed readings (pairwise substrate only, no man model, 6 s bursts, not yet the sustained 10 minutes):** 150,000 bodies run at about 2.5x real time on one core in a line battle and 2.4x in a pocket; 4-8 threads give only 2.9x so far, because the serial parts now dominate. Hashes are identical across thread counts. The kill line for this engine is 3x sustained on all cores, with the man included, so it is close.
 
-**Varro's work:** frames, slots, ties, drills and standards, and the shared bout resolver, in the core for Paullus to review; the field substrate, with contact where men are crowded and moving; the visible
-layer (postures, hazards, the event log) and the bottom three rungs; his hazard table with priors.
+**Varro's work:**
+
+| Piece | Status |
+|---|---|
+| Frames (standards, slots, ties, drills) and the shared bout resolver, in the core | 84dce11, reviewed and merged to `main` |
+| His priors file and behaviour table | next |
+| The visible layer (postures, hazards) and the bottom three rungs of the memory ladder | |
+| His half of the lethality search (line-fighting ethnography, Collins) | |
+| The field substrate, with contact where men are crowded and moving | |
+
+**Pre-registration, one change agreed:** Varro showed the first draft of pattern 6 could not be
+passed by a line whose chance of breaking stays the same every minute, so it quietly assumed
+that lines grow brittle. Now a line must not break within 5 minutes of contact in more than
+10 % of seeds, and must not still be unbroken two hours after contact in more than 25 %. The
+shape of the time to break is reported as a finding, not banded.
 
 **Kill criteria, both ways.**
 

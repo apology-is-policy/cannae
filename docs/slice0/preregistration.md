@@ -64,7 +64,7 @@ eight patterns. A model that passes only on a knife-edge has failed, whichever e
 | 3 | Rear-first collapse | The mean setup depth (0 front, 1 rear) of the first tenth of each broken body to turn | At least 0.6 |
 | 4 | Lateral spread | Spearman's rho between a 2 m bin's distance from the first break and its first turn; the time for 80 % of the line's bins to turn | At least 0.3; 10-900 s |
 | 5 | Casualty asymmetry | The share of the loser's hits after the break | At least 0.6 |
-| 6 | Holds, then breaks | Across seeds: the share that break within 5 minutes of contact; the share that never break in the hour | At most 10 %; at most 20 % |
+| 6 | Holds, then breaks | Across seeds: the share that break within 5 minutes of contact; the share still unbroken two hours after contact | At most 10 %; at most 25 % |
 | 7 | The casualty clock | Hits per front file per hour while formed, each side against its own first-line files; lethality per bout | 0.1-2.0; 0.005-0.15 (proposed) |
 | 8 | The centurion gradient | Leaders' share of hits while formed, against after the break, pooled over seeds | Higher while formed |
 
@@ -81,7 +81,14 @@ eight patterns. A model that passes only on a knife-edge has failed, whichever e
 - **Pattern 5:** the victors lose few men, and the vanquished lose most of theirs in flight
   (du Picq).
 - **Pattern 6:** the time to break must lie well away from both zero and never. This is the
-  pattern each side expects the other to fail.
+  pattern each side expects the other to fail. Varro showed that the first draft (unbroken
+  within one hour, at most 20 %) could not be passed by a line whose chance of breaking is the
+  same every minute: at most 10 % broken by 5 minutes needs a mean time to break of at least
+  47 minutes, and at most 20 % unbroken at an hour needs at most 37. The band would have
+  assumed a hazard that rises with time. That may be true, but no source gives its shape, and
+  it is what separates the rungs of the memory ladder. So the horizon is two hours, at which a
+  constant hazard passes for a mean of 47-87 minutes, and the shape is reported, not banded
+  (below).
 - **Pattern 7:** the casualty clock (rival 02 §9) gives one disabling hit per front position
   every 1.4-2.8 hours, at 1.8 and 0.9 m per file. Plausible inputs move that by a factor of
   two or three, hence 0.1-2.0.
@@ -111,6 +118,13 @@ later than any time:
 
 The absolute time to break is close to an input in both designs, so it is scored by direction
 and size, not by value (rival 04 §4).
+
+**Reported, not banded: the shape of the time to break.** For each cell, a Weibull fitted by
+maximum likelihood to each parameter set's times to break over its seeds, with seeds unbroken
+at two hours censored there (`weibull_shape` in the metrics). The report gives the median shape
+over parameter sets and its spread. A shape near 1 is a line whose chance of breaking does not
+change with time; above 1, a line that grows brittle. Patch scenarios run 7,800 s, so that
+contact up to 10 minutes in still leaves two hours to watch.
 
 ## The variants
 

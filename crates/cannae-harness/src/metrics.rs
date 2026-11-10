@@ -532,6 +532,55 @@ pub fn superiority(a: &[Option<f64>], b: &[Option<f64>]) -> Option<f64> {
     Some(wins / (a.len() * b.len()) as f64)
 }
 
+/// The shape k of a Weibull fitted to times to break by maximum likelihood, with seeds still
+/// unbroken at `censor_s` censored there. Reported for each cell, not banded: k = 1 is a line
+/// whose chance of breaking is the same every minute, k > 1 one that grows brittle. `None`
+/// with fewer than two breaks, or when every break came at the same moment.
+///
+/// The profile likelihood gives 1/k + mean(ln t, breaks) = sum(t^k ln t) / sum(t^k) over all
+/// seeds; the left side minus the right falls as k grows, so bisection finds the root.
+pub fn weibull_shape(times_s: &[Option<f64>], censor_s: f64) -> Option<f64> {
+    let broke: Vec<f64> = times_s
+        .iter()
+        .flatten()
+        .copied()
+        .filter(|&t| t <= censor_s)
+        .map(|t| t.max(1e-3))
+        .collect();
+    if broke.len() < 2 || broke.iter().all(|&t| t == broke[0]) {
+        return None;
+    }
+    let all: Vec<f64> = times_s
+        .iter()
+        .map(|t| {
+            t.filter(|&t| t <= censor_s)
+                .map_or(censor_s, |t| t.max(1e-3))
+        })
+        .collect();
+    // Scaled so that t^k cannot overflow for large k.
+    let top = all.iter().copied().fold(0.0, f64::max);
+    let mean_ln = broke.iter().map(|t| (t / top).ln()).sum::<f64>() / broke.len() as f64;
+    let g = |k: f64| {
+        let (mut num, mut den) = (0.0, 0.0);
+        for &t in &all {
+            let x = t / top;
+            let w = x.powf(k);
+            num += w * x.ln();
+            den += w;
+        }
+        1.0 / k + mean_ln - num / den
+    };
+    let (mut lo, mut hi) = (0.01, 50.0);
+    if g(hi) > 0.0 {
+        return Some(hi);
+    }
+    for _ in 0..100 {
+        let mid = 0.5 * (lo + hi);
+        if g(mid) > 0.0 { lo = mid } else { hi = mid }
+    }
+    Some(0.5 * (lo + hi))
+}
+
 /// The pre-registered pass bands. Each per-run statistic is pooled over a parameter set's seeds
 /// by its median; a parameter set passes a pattern when the pooled value lies in the band.
 #[derive(Clone, Debug, Deserialize, PartialEq)]
@@ -546,10 +595,12 @@ pub struct Bands {
     pub spread_min_rho: f64,
     pub spread_s: [f64; 2],
     pub asymmetry_min_after_break: f64,
-    /// At most this share of seeds may break within `holds_early_s` of contact, and at most
-    /// `holds_max_never` may never break.
+    /// At most `holds_max_early` of seeds may break within `holds_early_s` of contact, and at
+    /// most `holds_max_never` may still be unbroken `holds_never_s` after contact. A scenario
+    /// must run long enough past contact to see that far.
     pub holds_early_s: f64,
     pub holds_max_early: f64,
+    pub holds_never_s: f64,
     pub holds_max_never: f64,
     pub clock_hits_per_file_hour: [f64; 2],
     /// Fixed after the lethality search (S0.4).
@@ -589,7 +640,10 @@ pub fn verdicts(runs: &[RunSummary], b: &Bands) -> [Option<bool>; 8] {
             .iter()
             .filter(|r| r.time_to_break_s.is_some_and(|t| t < b.holds_early_s))
             .count() as f64;
-        let never = runs.iter().filter(|r| r.time_to_break_s.is_none()).count() as f64;
+        let never = runs
+            .iter()
+            .filter(|r| r.time_to_break_s.is_none_or(|t| t > b.holds_never_s))
+            .count() as f64;
         early / n <= b.holds_max_early && never / n <= b.holds_max_never
     });
     let clock = runs
@@ -638,6 +692,24 @@ mod tests {
         assert!((rho - 1.0).abs() < 1e-12);
         assert_eq!(superiority(&[Some(1.0)], &[None]), Some(1.0));
         assert_eq!(superiority(&[Some(2.0)], &[Some(2.0)]), Some(0.5));
+        // Weibull quantiles at shape 1 and 2 give their shapes back, with and without
+        // censoring the latest third.
+        for k in [1.0, 2.0] {
+            let times: Vec<Option<f64>> = (0..300)
+                .map(|i| {
+                    let u = (i as f64 + 0.5) / 300.0;
+                    Some(1_800.0 * (-(1.0 - u).ln()).powf(1.0 / k))
+                })
+                .collect();
+            let full = weibull_shape(&times, f64::INFINITY).unwrap();
+            assert!((full - k).abs() < 0.05 * k, "k {k}: {full}");
+            let mut sorted: Vec<f64> = times.iter().flatten().copied().collect();
+            sorted.sort_by(f64::total_cmp);
+            let cut = sorted[200];
+            let censored = weibull_shape(&times, cut).unwrap();
+            assert!((censored - k).abs() < 0.1 * k, "k {k} censored: {censored}");
+        }
+        assert_eq!(weibull_shape(&[Some(5.0), None], 10.0), None);
     }
 
     const LINE: &str = r#"

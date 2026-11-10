@@ -23,10 +23,13 @@ spread_s = [10.0, 900.0]
 # 5. Casualty asymmetry.
 asymmetry_min_after_break = 0.6
 
-# 6. Holds, then breaks.
+# 6. Holds, then breaks. "Never" is still unbroken two hours after contact, so a line whose
+# chance of breaking is constant can pass (mean time to break 47-87 minutes). The shape of the
+# time to break is reported for each cell, not banded (Varro, call 0001 turn 10).
 holds_early_s = 300.0
 holds_max_early = 0.1
-holds_max_never = 0.2
+holds_never_s = 7200.0
+holds_max_never = 0.25
 
 # 7. The casualty clock.
 clock_hits_per_file_hour = [0.1, 2.0]
