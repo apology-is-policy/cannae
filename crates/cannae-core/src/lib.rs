@@ -23,6 +23,7 @@ pub mod schedule;
 pub mod stamina;
 pub mod units;
 pub mod view;
+pub mod wall;
 
 pub use angle::Turn;
 pub use bouts::{BoutParams, Bouts, Kit};
@@ -37,3 +38,4 @@ pub use rng::{Key, Rng, Stream};
 pub use stamina::{CpPerMille, CpUs, StaminaParams};
 pub use units::{SimMs, Vec2};
 pub use view::{Coarse, FrameQuery, GridPerception, Perceive, View};
+pub use wall::Wall;
