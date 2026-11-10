@@ -5,6 +5,8 @@
 //! Every parameter is at its placeholder or its prior's centre until the sampler draws them.
 //! The wall-clock readings are for costing the batch only; they never touch the simulation.
 
+pub mod draw;
+
 use cannae_core::power::GaitSpeeds;
 use cannae_core::schedule::BASE_TICK;
 use cannae_core::{BoutParams, Bouts, GridPerception, Perceive, Posture, Rng, Substrate, Vec2};
