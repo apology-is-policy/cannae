@@ -249,13 +249,29 @@ contact up to 10 minutes in still leaves two hours to watch.
 | `veterans` / `recruits` | The Roman troop type: veterans and recruits against the same warband |
 | `flank` | A small third body arrives on one flank of the Roman line after contact |
 | `relief` | A second Roman line stands behind the first and relieves it in a lull |
-| `volleys` | Missiles that cannot be answered and kill few, then a charge |
+| `volleys` | Missiles that cannot be answered and kill few, then pressure from the front |
 | `shock` | An attack from behind that is driven off, then pressure from the front |
 
 The last two test whether an earlier fright should change what happens next (rival 01 §9).
 `shock` is written (`scenarios/patch/shock.toml`): a band of 36 charges the Roman rear at one
 minute and is ordered off at three, and the warband comes on from about 58 m at six. A test
 checks that the band strikes and goes before the front fights.
+
+`volleys` is written (`scenarios/patch/volleys.toml`) on the same clock, so that the two differ
+only in the fright. Missiles fall on the Roman line from one minute to three, with no enemy in
+reach to answer, and the warband comes on at six by the base patch's order.
+
+- **The fall is scripted and nobody throws it,** as the band is ordered off and not beaten off:
+  every run has the same fire to remember.
+- **The dose,** of every thousand men who stand under it throughout: 75 hampered, 20 disabled,
+  5 killed. That is about 4 men felled and 12 hampered of 162.
+  - Its shape is that of a fight with missiles: 10 to 30 wounded for each man killed, most of
+    them lightly ([lethality-line-fighting.md](lethality-line-fighting.md), A4).
+  - Its size is Varro's choice of "few" and has no source. It is the script's, not a prior:
+    both engines and every rung get the same fire, draw for draw.
+- **A test checks** that the fire falls on the Romans alone and only while it lasts, that
+  nobody fights before the front comes on, and that what it cost is reported as the Romans'
+  losses before contact.
 
 **How the two memory variants are scored** (agreed in call 0001, turns 37-38):
 
