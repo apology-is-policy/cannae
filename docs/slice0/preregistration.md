@@ -56,7 +56,12 @@ eight patterns. A model that passes only on a knife-edge has failed, whichever e
 (vision 04 §5.3). The 10 % is proposed, to be agreed.
 
 **Common draws.** Draw *i* uses the same shared values in every cell, from a seed fixed at
-the freeze, so cells do not differ by the noise of the shared priors. The ladder is nested in
+the freeze, so cells do not differ by the noise of the shared priors. **The freeze seed** is
+the first 8 bytes, read big-endian, of the SHA-256 over `scenarios/prereg.toml`,
+`priors-shared.md`, `priors-pairwise.md` and `priors-field.md`, concatenated in that order as
+frozen (agreed in call 0001, turns 35-36). Neither side can choose it without changing what
+both signed. A drawn value depends only on that seed, the name of its line and the draw's
+number (`crates/cannae-score/src/draw.rs`). The ladder is nested in
 the same way. What a man sees, and how much each thing he sees weighs (the alarm and urge sums
 of the visible layer), is one set of weights for every rung. On one substrate, draw *i* of
 a rung is draw *i* of the rung below plus that rung's new parameters. So rung 3 (the
