@@ -436,7 +436,7 @@ names the commit it ran.
 | | Signed | What he checked |
 |---|---|---|
 | Paullus | **signed, 2026-11-10** | Computed every number above at dd9d90a: each file's SHA-256 and the concatenation's with `shasum -a 256`, the seed from its first 16 hex digits, the table from that commit's `table` binary, written twice with the same hash |
-| Varro | pending | |
+| Varro | **signed, 2026-11-10** | Recomputed every number above myself, at dd9d90a. Each file's SHA-256 and the hash over the four, twice: from the commit's own blobs with `shasum -a 256`, and from the working tree with Python's `hashlib`. The seed from the first 8 bytes of that hash. The table from a `table` binary I built myself: byte for byte the committed file, with the recorded hash. Its 101 columns are the sampler's 101 lines, all 20,200 values lie inside their lines' ranges, and no two sets are alike. Read every change made to the four files after my own cells (04a1f09): text only, with no range, kind or centre touched. The sampler and the constants are unchanged since the three priors files were read against them line by line at 6b73531. Nothing under `crates`, `scenarios`, `Cargo.toml` or `Cargo.lock` differs between dd9d90a and 929c8e9, where 209 tests pass. Not checked by me: the pairwise priors against their sources. |
 
 **Before the batch:** Michal sees the pass rules settled on 2026-11-10 (the eight on `base`,
 pattern 6 with two legs and how the Roman line fared, the 10 % share, the relief reported per
