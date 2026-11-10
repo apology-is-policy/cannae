@@ -5,22 +5,27 @@
 //! The wall-clock readings are for costing the batch only; they never touch the simulation.
 
 pub mod draw;
+pub mod report;
 
-use crate::draw::{Drawn, SubstrateParams};
+use crate::draw::{Cell, Drawn, SubstrateParams};
 use cannae_core::schedule::BASE_TICK;
-use cannae_core::{Bouts, Event, GridPerception, Perceive, Posture, Rng, Substrate, Vec2, Wall};
+use cannae_core::{
+    Bouts, Event, EventKind, GridPerception, Perceive, Posture, Rng, Side, Substrate, Vec2, Wall,
+};
 use cannae_field::{Field, FieldPerception};
 use cannae_gauges::Rung3;
 use cannae_harness::metrics::{
-    Inputs, Recorder, RunSummary, broken_sides, front_sides, scoring_end, summarize,
+    Inputs, Recorder, RunSummary, Sample, broken_sides, front_men, front_sides, scoring_end,
+    summarize,
 };
 use cannae_harness::scenario::{Layout, frames_with};
 use cannae_harness::{Runner, Scenario, place};
 use cannae_man::{Marks, Memory, Men, Rung, Troop};
 use cannae_pairwise::Pairwise;
+use serde::{Deserialize, Serialize};
 use std::time::{Duration, Instant};
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Engine {
     Pairwise,
     Field,
@@ -55,6 +60,103 @@ pub struct Run {
     pub end_span_mm: (i32, i32),
     pub evaluated: u64,
     pub skipped: u64,
+    /// For a run carried on to the end: what it did after the rout window closed. `None` if
+    /// the run stopped there, or no side broke early enough for the window to close.
+    pub audit: Option<Audit>,
+}
+
+/// What a run did after its rout window closed, among front men as scored: what stopping
+/// there would have hidden (the audit, preregistration step 3).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Audit {
+    /// Bouts between two front men.
+    pub bouts: u32,
+    /// Front men who turned from flight back to face the enemy.
+    pub rallies: u32,
+    /// A front side that had not broken by the window's close broke after it.
+    pub second_break: bool,
+}
+
+/// The name of a cell's file of records for one variant: `pairwise-r1-base.jsonl`.
+pub fn record_file(cell: Cell, variant: &str) -> String {
+    let engine = match cell.engine {
+        Engine::Pairwise => "pairwise",
+        Engine::Field => "field",
+    };
+    format!("{engine}-r{}-{variant}.jsonl", cell.rung)
+}
+
+/// One run as written to disk by the batch runner and read back by the scorer.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct Record {
+    pub engine: Engine,
+    pub rung: u8,
+    pub variant: String,
+    /// `None` for the nominal set, which is never scored.
+    pub freeze_seed: Option<u64>,
+    pub draw: u32,
+    pub seed: u64,
+    /// Carried on to the end of the scenario rather than stopped at the window's close.
+    pub whole: bool,
+    pub sim_s: u32,
+    pub wall_ms: u64,
+    pub summary: RunSummary,
+    pub audit: Option<Audit>,
+}
+
+impl Record {
+    pub fn new(cell: Cell, variant: &str, freeze_seed: Option<u64>, whole: bool, r: &Run) -> Self {
+        Record {
+            engine: cell.engine,
+            rung: cell.rung,
+            variant: variant.to_string(),
+            freeze_seed,
+            draw: r.draw,
+            seed: r.seed,
+            whole,
+            sim_s: r.sim_s,
+            wall_ms: r.wall.as_millis() as u64,
+            summary: r.summary.clone(),
+            audit: r.audit,
+        }
+    }
+}
+
+/// The audit of a run carried on past `close`, the end of its rout window.
+fn audit(
+    close: u32,
+    samples: &[Sample],
+    events: &[Event],
+    front: &[bool],
+    sides: &[Option<Side>],
+) -> Audit {
+    let after = &events[events.partition_point(|e| e.tick < close)..];
+    let mut a = Audit::default();
+    for e in after {
+        match e.kind {
+            EventKind::Bout { attacker, .. }
+                if front[e.man.0 as usize] && front[attacker.0 as usize] =>
+            {
+                a.bouts += 1
+            }
+            EventKind::Posture {
+                from: Posture::Turned,
+                to: Posture::Steady | Posture::Forward | Posture::Back,
+            } if front[e.man.0 as usize] => a.rallies += 1,
+            _ => {}
+        }
+    }
+    let split = samples.partition_point(|smp| smp.tick < close);
+    let mut broken = [false; 2];
+    for smp in &samples[..split] {
+        let b = broken_sides(smp, sides, BREAK_SHARE);
+        broken = [broken[0] | b[0], broken[1] | b[1]];
+    }
+    a.second_break = samples[split..].iter().any(|smp| {
+        let b = broken_sides(smp, sides, BREAK_SHARE);
+        (b[0] && !broken[0]) || (b[1] && !broken[1])
+    });
+    a
 }
 
 /// The share of standing men who must have turned for a body or a side to count as broken
@@ -167,6 +269,17 @@ fn play<P: Perceive, M: Memory, S: Substrate>(
         end_tick: stop,
         break_share: BREAK_SHARE,
     });
+    let audit = (!spec.stop_at_rout_end)
+        .then(|| {
+            let first = rec
+                .samples
+                .iter()
+                .find(|smp| broken_sides(smp, &sides, BREAK_SHARE).contains(&true))?;
+            let close = scoring_end(Some(first.tick), end);
+            let front = front_men(&initial, &placed);
+            (close < end).then(|| audit(close, &rec.samples, r.log.all(), &front, &sides))
+        })
+        .flatten();
     let wall_at_break = summary
         .loser
         .and_then(|l| summary.side_break[l as usize])
@@ -193,6 +306,7 @@ fn play<P: Perceive, M: Memory, S: Substrate>(
         events: r.log.all().len(),
         evaluated: r.evaluated,
         skipped: r.skipped,
+        audit,
         summary,
     };
     Ok((run, r.log.all().to_vec()))

@@ -32,8 +32,8 @@ perception about 35 %.
   set that passes leaves at most a quarter of its seeds unbroken (pattern 6). If every set
   were like that, the batch would take about three days. Sets that hold longer cost more.
 
-The variants `relief`, `volleys` and `shock` do not exist yet. `relief` adds a second line, so
-it will cost more per run.
+`shock` is written and costs what `base` costs. `volleys` is being written by Varro, and
+should cost about the same. `relief` adds a second line, so it will cost more per run.
 
 ## The stop rule, proposed
 
@@ -69,6 +69,20 @@ back. He is looking for a fault in the mechanism on scenes of his own, not on th
 These runs are not scored. Bouts and gait are still at their placeholders, not drawn. Under the
 pre-registration no prior moves because of them. A defect found in them may be fixed, but only
 on an argument from the mechanism, not from the pass marks.
+
+## How the batch is run
+
+- **Each cell, variant by variant:** `cell --substrate S --rung R --variant V --draws 200
+  --seeds 10 --freeze-seed F --jobs 4 --out DIR`. Each run is appended to
+  `DIR/<engine>-r<rung>-<variant>.jsonl` as one JSON line the moment it ends.
+- **A stop costs only the runs in flight.** Started again with the same arguments, `cell` skips
+  every run already in the file, so the batch can span nights and survive a crash or a
+  reboot. A file written from another freeze seed is refused.
+- **The audit runs with it:** sets 0, 20, 40 and so on are run a second time to the end, and
+  each of those runs records what happened after its window.
+- **Scoring:** `score --substrate S --rung R --dir DIR` reads a cell's files and prints the
+  pattern verdicts, the dose-response, the knife-edge rule, the shapes, the memory variants
+  and the audit ([preregistration](preregistration.md), "Scoring a parameter set").
 
 ## If it is still too slow
 

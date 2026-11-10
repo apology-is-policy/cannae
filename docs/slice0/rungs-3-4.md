@@ -47,8 +47,15 @@ not:
 - **A fright that lingers.** After a shock that is driven off (the `shock` variant), men
   should stay nearer the edge for minutes. *Shaken* does that in steps, so rung 3 must do it
   measurably better, or the ladder keeps rung 2.
-- **Volleys that kill few but wear men down** (the `volleys` variant): fear accumulates, and
-  resolve drains, under fire that kills nobody.
+- **Volleys that kill few but wear men down** (the `volleys` variant). *Amended before the
+  freeze (call 0001, turns 42-43):* I first wrote that fear accumulates, and resolve drains,
+  under fire that kills nobody. That cannot come true in this build. The visible layer, which
+  every rung shares, has no row for missiles that fell nobody: men see only the falls, and a
+  fall is two units of acts for one step. So in `volleys` I expect rung 3 to differ from
+  rung 1 by no more than rung 0 does. Fear of the fire itself would need a row for being
+  under fire, read by every rung; no pattern of the eight needs it, so it waits for a slice
+  that does (rival 07 §8). My gauges must not read falls their own way: the ladder is nested,
+  and a rung-3 difference must come from memory, not perception.
 
 **Priors** (to go into [priors-pairwise.md](priors-pairwise.md) before the freeze):
 

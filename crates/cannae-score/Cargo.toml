@@ -13,6 +13,9 @@ cannae-harness = { path = "../cannae-harness" }
 cannae-man = { path = "../cannae-man" }
 cannae-pairwise = { path = "../cannae-pairwise" }
 rayon = "1"
+serde = { version = "1", features = ["derive"] }
+# Exact floats on the way back in, so a summary read from disk equals the one written.
+serde_json = { version = "1", features = ["float_roundtrip"] }
 
 [lints]
 workspace = true

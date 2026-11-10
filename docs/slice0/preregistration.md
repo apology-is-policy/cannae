@@ -42,8 +42,25 @@ For each cell of the experiment (each rung of the memory ladder on each substrat
    - **The audit, reported and not banded** (Varro): for one parameter set in twenty (draws
      0, 20, 40 and so on), the seeds are also run to the end. The report says how often
      anything happens after the window: a bout, a rally, a second break.
+   - **What counts as happening after the window,** among front men as scored: a bout
+     between two of them; a man who turns from flight back to face the enemy (a rally); a
+     side that had not broken by the window's close breaking after it (a second break). The
+     audit also checks that each audited seed's stopped run and whole run summarise the
+     same.
 4. Pool each per-run statistic over a parameter set's seeds by its median, and compare it with
    the band.
+
+**Scoring a parameter set** (agreed in call 0001, turns 43-44; rival 06 §2):
+
+- **The eight bands are scored on `base`,** per parameter set, over its 10 seeds.
+- **Pattern 6 passes only if** its band passes on `base` **and** all three dose-response
+  statistics below reach 0.6 for the same parameter set. The report gives pattern 6 both with
+  and without them, so a reader sees which half failed.
+- **A set passes** when all eight patterns pass, pattern 6 as above.
+- **`shock` and `volleys` are reported only** (below).
+
+**Code:** `crates/cannae-score` (`cell` writes each run to disk, `score` scores a cell),
+with the bands and statistics in `crates/cannae-harness/src/metrics.rs`.
 
 **Report:**
 
@@ -53,7 +70,10 @@ For each cell of the experiment (each rung of the memory ladder on each substrat
 
 **The knife-edge rule.** A cell passes only if at least 10 % of its parameter sets pass all
 eight patterns. A model that passes only on a knife-edge has failed, whichever engine it is
-(vision 04 §5.3). The 10 % is proposed, to be agreed.
+(vision 04 §5.3). The 10 % is agreed (call 0001, turn 44). **It is applied to the observed
+share as it comes.** The report gives each cell's share with its 95 % binomial (Wilson)
+interval. At 200 sets, a true 10 % is observed anywhere from about 6 % to 14 %. Both sides
+sign now that nobody argues from the interval afterwards.
 
 **Common draws.** Draw *i* uses the same shared values in every cell, from a seed fixed at
 the freeze, so cells do not differ by the noise of the shared priors. **The freeze seed** is
@@ -181,13 +201,35 @@ alone. The interval passage shows it, and it is reported as it comes.
 - **Pattern 8:** Caesar's centurion losses are high in a formed fight and lower in a repulse
   or a panic (rival 04 §5).
 
-**Dose-response, for pattern 6, across variants, with the casualty clock held fixed.** Each
-statistic below is the probability of superiority over seeds, with "never broke" counted as
-later than any time:
+**Dose-response, for pattern 6, across variants, with the casualty clock held fixed.** All
+three variants change the Roman side, so each statistic compares **how the Roman line fared**
+(agreed in call 0001, turns 43-44). Each run gets one value, ordered worst for the Romans
+first:
 
-- recruits break sooner than veterans: at least 0.6;
-- a line attacked in the flank breaks sooner than one not attacked: at least 0.6;
-- a line relieved by a second line breaks later than one without relief: at least 0.6.
+1. the Roman side broke first, at time *t* after contact: the earlier, the worse;
+2. neither side broke;
+3. the warband broke first, at time *t* after contact: the earlier, the better.
+
+A Roman line broken before the fronts met has the worst value there is. If both sides break
+at the same tick, the Romans count as broken first, the conservative side. The statistic is
+the probability of superiority on that value over the 10 × 10 pairs of a parameter set's
+seeds, ties counted half (`fortune` and `superiority_of` in the metrics):
+
+- the Roman line fares worse with recruits than with veterans: at least 0.6;
+- it fares worse attacked in the flank (`flank`) than not (`base`): at least 0.6;
+- it fares worse without relief (`base`) than with it (`relief`): at least 0.6.
+
+**Why not the time to break alone.** The first break of either side, as a time, would score
+a warband that breaks sooner against recruits as recruits breaking sooner. The Roman side's
+break time alone, with "never" tied, gives a variant no room to respond in a set where the
+Romans usually win: `relief` could not reach 0.6 unless the unrelieved line broke in at least
+2 seeds of 10. That would fail a set for having no room to respond, not for responding
+wrongly. The value above lets one thing through, which the report names: veterans who hold
+no longer than recruits but beat the warband sooner pass on skill at arms alone.
+
+**Reported beside it:** the same three statistics on the Roman side's break time alone, with
+"never" later than any time, and the number of sets where the Roman line broke in fewer than
+2 seeds of `base`. A reader then sees whether any verdict hangs on the definition.
 
 The absolute time to break is close to an input in both designs, so it is scored by direction
 and size, not by value (rival 04 §4).
@@ -228,9 +270,10 @@ checks that the band strikes and goes before the front fights.
 - **A line that breaks before the fronts meet** breaks at once, as far as the comparison goes:
   the shock alone broke it.
 - **The statistic, reported and not banded:** for each cell and parameter set, the probability
-  of superiority over seeds that the line breaks sooner after contact in `shock` than in
-  `base`, with "never" counted as later. The same for `volleys` against `base`. The report
-  gives its distribution over parameter sets, rung by rung.
+  of superiority over seed pairs that the Roman line fares worse in `shock` than in `base`,
+  by the same value as the dose-response (agreed in call 0001, turn 44). The same for
+  `volleys` against `base`. The report gives its distribution over parameter sets, rung by
+  rung.
 - **Rung 0 is the control.** It has no memory, so its difference from `base` is only what the
   shock left behind: losses, disorder, breath, the longer approach. A memory shows itself as a
   difference larger than rung 0's.
@@ -243,6 +286,11 @@ checks that the band strikes and goes before the front fights.
   - Rung 3 shows more than rung 2 ([rungs-3-4.md](rungs-3-4.md)).
 - `volleys` has no body in reach: its missiles start no bout, so contact is untouched. Any
   skirmishers it gets are `front = false`.
+- **What `volleys` cannot test** (call 0001, turns 42-43). Men see only the falls a volley
+  causes: the visible layer, shared by every rung, has no row for missiles that fell nobody.
+  So Slice 0 does not test fear of the fire itself, only what seen falls and losses leave
+  behind. Rung 3's expectation is amended to match ([rungs-3-4.md](rungs-3-4.md)). A row for
+  being under fire waits for a slice whose named pattern needs it.
 
 ## Sign-off
 
