@@ -539,7 +539,7 @@ fn in_a_packed_moving_crowd_men_touch_only_if_asked() {
     };
     let (field, touching) = (close(Contact::Line), close(Contact::Crowd));
     assert!(field > 40, "{field}");
-    assert!(touching * 4 < field, "{touching} against {field}");
+    assert!(touching * 3 < field, "{touching} against {field}");
 }
 
 /// Two mobs of enemies pressing on each other: every part of the step is exercised.

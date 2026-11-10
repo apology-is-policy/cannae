@@ -155,18 +155,30 @@ fn main() {
     let (mut last_t, mut last_tick) = (start, 0u32);
     let mut done = 0u32;
     let mut peak = 0u32;
+    let mut awake: Vec<ManId> = Vec::new();
+    let mut pp = [0u64; 3];
     for tick in 0..ticks {
         if is_man_step(tick) {
             if perceive {
+                let t0 = Instant::now();
                 p.rebuild(&bodies, &[], tick, tick.saturating_sub(5));
+                let t1 = Instant::now();
+                awake.clear();
                 for i in 0..bodies.len() {
                     let man = ManId(i as u32);
                     if p.coarse(&bodies, &NoFrames, man).enemy_near {
-                        let v = p.view(&bodies, &NoFrames, man);
-                        seen += v.crowding as u64;
-                        viewed += 1;
+                        awake.push(man);
                     }
                 }
+                let t2 = Instant::now();
+                for &man in &awake {
+                    let v = std::hint::black_box(p.view(&bodies, &NoFrames, man));
+                    seen += v.crowding as u64;
+                    viewed += 1;
+                }
+                pp[0] += (t1 - t0).as_nanos() as u64;
+                pp[1] += (t2 - t1).as_nanos() as u64;
+                pp[2] += t2.elapsed().as_nanos() as u64;
             }
             if config == "surge" {
                 for (i, t) in targets.iter_mut().enumerate() {
@@ -204,6 +216,16 @@ fn main() {
                 crushed,
                 viewed
             );
+            if perceive {
+                let ms = |v: u64| v as f64 / 1e6;
+                println!(
+                    "    perception, ms: rebuild {:.0}, coarse {:.0}, views {:.0}",
+                    ms(pp[0]),
+                    ms(pp[1]),
+                    ms(pp[2])
+                );
+                pp = [0; 3];
+            }
             (last_t, last_tick) = (now, tick + 1);
         }
         if now.duration_since(start).as_secs() >= wall_s {

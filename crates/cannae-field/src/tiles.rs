@@ -94,11 +94,16 @@ impl Tiles {
         }
     }
 
+    #[inline]
     pub fn touch_tile(&mut self, tx: i32, ty: i32) -> u32 {
         let k = key(tx, ty);
         if self.last.1 != NONE && self.last.0 == k {
             return self.last.1;
         }
+        self.touch_slow(k, tx, ty)
+    }
+
+    fn touch_slow(&mut self, k: u64, tx: i32, ty: i32) -> u32 {
         let mut s = self.slot(k);
         let t = loop {
             let v = self.vals[s];

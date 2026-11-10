@@ -67,7 +67,8 @@ pub struct Params {
     /// Under `Contact::Crowd`: the density of the men around him above which a moving man
     /// touches them.
     pub crowd_q8: u32,
-    /// Under `Contact::Crowd`: a man slower than this is not moving.
+    /// Under `Contact::Crowd`: a man whose own going, his walk and his lean, is slower than
+    /// this is not moving. What the crowd's push does to him does not count.
     pub moving_mm_s: i32,
     /// The density of the men around him above which a man is being crushed.
     pub crush_q8: u32,
@@ -129,6 +130,8 @@ const SETTLE: i64 = 2;
 /// The most times one man is moved clear of his neighbours in one pass. A man wedged between
 /// two needs several; most need one.
 const SWEEPS: u32 = 8;
+/// Densities above the crush onset, in grid units, whose chance is kept in a table.
+const CRUSH_TABLE: usize = 4_096;
 
 /// One of the men a hot man may touch this step.
 #[derive(Clone, Copy, Debug)]
@@ -265,9 +268,17 @@ pub struct Field {
     /// By man: what exact positions add to that.
     corr: Vec<Vec2>,
     hot: Vec<u32>,
+    /// Whether any man touches the men of his own side this step.
+    touching: bool,
     /// Men being crushed, with the density above the onset.
     crushing: Vec<(u32, i32)>,
-    // The men of each field cell, for the position solve.
+    /// The chance of being disabled in one step, by density above the onset in grid units.
+    /// Filled as densities are met; it depends on the parameters alone.
+    crush_chance: Vec<Prob>,
+    /// The step the table was filled for, ms.
+    crush_dt: i64,
+    // The men of each field cell and side, for the position solve: cell `a`, side `s` is
+    // entry `2a + s`.
     cstart: Vec<u32>,
     ccursor: Vec<u32>,
     corder: Vec<u32>,
@@ -291,7 +302,10 @@ impl Field {
             step: Vec::new(),
             corr: Vec::new(),
             hot: Vec::new(),
+            touching: false,
             crushing: Vec::new(),
+            crush_chance: Vec::new(),
+            crush_dt: 0,
             cstart: Vec::new(),
             ccursor: Vec::new(),
             corder: Vec::new(),
@@ -381,9 +395,11 @@ impl Field {
             step,
             hot,
             crushing,
+            touching,
             stats,
             ..
         } = self;
+        *touching = false;
         let n = bodies.len();
         step.clear();
         step.resize(n, Vec2::ZERO);
@@ -444,6 +460,8 @@ impl Field {
                 s = push.mul_div(dt, 1000);
             }
 
+            // What follows is his own going; the crowd's push above is not.
+            let pushed = s;
             let lean = if tg.press > 0 { tg.face } else { None };
             let dist = if tg.speed > 0 { to.length() } else { 0 };
             let dir = if dist > 0 {
@@ -491,18 +509,21 @@ impl Field {
                     let open = (g.hold - theirs).max(0) as i64;
                     let gain = p.press_mm_s as i64 * tg.press as i64 * room * open * dt
                         / (255 * 256 * 1000 * g.hold as i64);
-                    s += face.unit(gain as i32);
+                    if gain > 0 {
+                        s += face.unit(gain as i32);
+                    }
                 }
             }
 
             let packed_and_moving = match p.contact {
                 Contact::Line => false,
-                Contact::Crowd => here >= g.crowd && s.len_sq() >= moving2,
+                Contact::Crowd => here >= g.crowd && (s - pushed).len_sq() >= moving2,
                 Contact::All => true,
             };
             let mut k = kind[i];
             if packed_and_moving {
                 k |= TOUCHES;
+                *touching = true;
             }
             if foe != 0 || packed_and_moving {
                 k |= HOT;
@@ -533,6 +554,7 @@ impl Field {
             step,
             corr,
             hot,
+            touching,
             cstart,
             ccursor,
             corder,
@@ -543,23 +565,24 @@ impl Field {
             ..
         } = self;
         let cells = tiles.cells();
+        let groups = 2 * cells;
         cstart.clear();
-        cstart.resize(cells + 1, 0);
-        for &c in cell.iter() {
+        cstart.resize(groups + 1, 0);
+        for (i, &c) in cell.iter().enumerate() {
             if c != NONE {
-                cstart[c as usize + 1] += 1;
+                cstart[2 * c as usize + bodies.side[i] as usize + 1] += 1;
             }
         }
-        for a in 0..cells {
+        for a in 0..groups {
             cstart[a + 1] += cstart[a];
         }
         ccursor.clear();
-        ccursor.extend_from_slice(&cstart[..cells]);
+        ccursor.extend_from_slice(&cstart[..groups]);
         corder.clear();
-        corder.resize(cstart[cells] as usize, 0);
+        corder.resize(cstart[groups] as usize, 0);
         for (i, &c) in cell.iter().enumerate() {
             if c != NONE {
-                let k = &mut ccursor[c as usize];
+                let k = &mut ccursor[2 * c as usize + bodies.side[i] as usize];
                 corder[*k as usize] = i as u32;
                 *k += 1;
             }
@@ -589,6 +612,9 @@ impl Field {
             );
             let side = bodies.side[iu];
             let touches = kind[iu] & TOUCHES != 0;
+            // Where no one touches his own side, only the enemy's men are looked at.
+            let foes = 1 - side as usize;
+            let (first, last) = if *touching { (0, 2) } else { (foes, foes + 1) };
             let mut tile = (i32::MAX, i32::MAX, NONE);
             for cy in y0..=y1 {
                 for cx in x0..=x1 {
@@ -599,8 +625,8 @@ impl Field {
                     if tile.2 == NONE {
                         continue;
                     }
-                    let a = ((tile.2 << CELL_BITS) | local(cx, cy)) as usize;
-                    for &j in &corder[cstart[a] as usize..cstart[a + 1] as usize] {
+                    let a = 2 * ((tile.2 << CELL_BITS) | local(cx, cy)) as usize;
+                    for &j in &corder[cstart[a + first] as usize..cstart[a + last] as usize] {
                         if j == i {
                             continue;
                         }
@@ -653,6 +679,9 @@ impl Field {
                 let iu = i as usize;
                 let from = bodies.pos[iu] + step[iu].mul_div(k, passes) + corr[iu];
                 let near = &lists[ranges[h] as usize..ranges[h + 1] as usize];
+                if near.is_empty() {
+                    continue;
+                }
                 // What he must keep from each of the others, taken where they stood before
                 // this pass. Of an overlap between two hot men each gives his share, so each
                 // need only reach the gap less the other's share.
@@ -735,6 +764,11 @@ impl Substrate for Field {
             self.solve(bodies, far2);
         }
         let turn = (self.p.turn_per_tick as u32 * MAN_EVERY).min(u16::MAX as u32) as u16;
+        let per_s = if 1000 % dt == 0 {
+            (1000 / dt) as i32
+        } else {
+            0
+        };
         for (i, tg) in targets.iter().enumerate() {
             if self.base[i] == NONE {
                 bodies.vel[i] = Vec2::ZERO;
@@ -742,7 +776,11 @@ impl Substrate for Field {
             }
             let mv = self.step[i] + self.corr[i];
             bodies.pos[i] += mv;
-            bodies.vel[i] = mv.mul_div(1000, dt);
+            bodies.vel[i] = if per_s != 0 {
+                Vec2::new(mv.x * per_s, mv.y * per_s)
+            } else {
+                mv.mul_div(1000, dt)
+            };
             if let Some(f) = tg.face {
                 bodies.facing[i] = bodies.facing[i].rotate_toward(f, turn);
             }
@@ -750,9 +788,25 @@ impl Substrate for Field {
         for &i in &self.hot {
             self.corr[i as usize] = Vec2::ZERO;
         }
+        let (g, rate_q16) = (self.g, self.p.crush_rate_q16 as u64);
+        let chance_at = |over: i64| {
+            let rate = (g.q8(over) as u64 * rate_q16) >> 8;
+            Prob::from_rate(rate.min(u32::MAX as u64) as u32, SimMs(dt as u32))
+        };
+        if self.crush_dt != dt {
+            self.crush_chance.clear();
+            self.crush_dt = dt;
+        }
         for &(i, over) in &self.crushing {
-            let rate = (self.g.q8(over as i64) as u64 * self.p.crush_rate_q16 as u64) >> 8;
-            let chance = Prob::from_rate(rate.min(u32::MAX as u64) as u32, SimMs(dt as u32));
+            let chance = if over as usize >= CRUSH_TABLE {
+                chance_at(over as i64)
+            } else {
+                while self.crush_chance.len() <= over as usize {
+                    self.crush_chance
+                        .push(chance_at(self.crush_chance.len() as i64));
+                }
+                self.crush_chance[over as usize]
+            };
             if rng.chance(chance, Key::new(Stream::Substrate, i, tick, PURPOSE_CRUSH)) {
                 out.push(Event {
                     tick,
