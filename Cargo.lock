@@ -20,6 +20,8 @@ name = "cannae-gauges"
 version = "0.1.0"
 dependencies = [
  "cannae-core",
+ "cannae-harness",
+ "cannae-man",
 ]
 
 [[package]]

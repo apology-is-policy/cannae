@@ -7,6 +7,10 @@ description = "Rung 3 of the memory ladder: fear and resolve, continuous gauges 
 
 [dependencies]
 cannae-core = { path = "../cannae-core" }
+cannae-man = { path = "../cannae-man" }
+
+[dev-dependencies]
+cannae-harness = { path = "../cannae-harness" }
 
 [lints]
 workspace = true

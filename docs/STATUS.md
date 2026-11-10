@@ -23,7 +23,7 @@ reviews his work and merges it.
 | S0.3 | Metrics and pre-registration: the eight patterns computed from observable state; pass bands and both sides' parameter priors written down before any scored run | 0fbcc74 metrics and draft; freeze after Varro agrees |
 | S0.4 | Lethality bounds: literature search on skeletal trauma and experimental archaeology (Varro searches line-fighting ethnography and Collins) | f8cb2a6 Paullus's half; band proposed |
 | S0.5 | The pairwise substrate, where every body touches its neighbours, at patch scale; a perception conformance check for Varro | 14e919b |
-| S0.6 | The top two rungs of the memory ladder: continuous fear and resolve, then the full excitable psyche | Design written ([rungs-3-4.md](slice0/rungs-3-4.md)); waits for Varro's `Memory` hook |
+| S0.6 | The top two rungs of the memory ladder: continuous fear and resolve, then the full excitable psyche | Rung 3 built and plugged into Varro's men through his `Memory` hook ([design](slice0/rungs-3-4.md)). Its dormancy is exact through a fight and a rout; with its gauges switched off it replays rung 1's battle event for event. Rung 4 is a question for Michal |
 | S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | Pairwise done for the line, surge and pocket ([report](slice0/spike-pairwise.md)); the rout through camp gates is built (with walls indexed on a coarse grid, so a man checks only the walls near him) and waits for an idle machine to be timed; Varro's field spike is his |
 | S0.8 | The passage study, against measured crowd-flow data | Walls (`cannae_core::Wall`, `[[wall]]` in scenarios) and the pairwise calibration done ([report](slice0/passage-calibration.md)). The bench for the two passages is built, and the pairwise substrate has run on it ([report](slice0/passage.md)); Varro's field runs on the same bench when it lands |
 | S0.9 | Scored runs and the report; then design review 2 | |
@@ -72,9 +72,8 @@ The sources behind them are in [crowd-physics.md](slice0/crowd-physics.md) and [
 |---|---|
 | Frames (standards, slots, ties, drills) and the shared bout resolver, in the core | 84dce11, reviewed and merged to `main` |
 | `cannae-man` with rungs 0-2, his priors file, the behaviour table (rival 07), his lines of priors-shared.md, his half of the lethality search | 9b29064, reviewed and merged |
-| The field substrate | in progress |
-| His half of the lethality search (line-fighting ethnography, Collins) | |
-| The field substrate, with contact where men are crowded and moving | |
+| The field substrate (its own perception, and contact either along the line or where men are crowded), a first speed pass, and the `Memory` hook that rung 3 plugs into | e54c427, 09e4326, 756334c, reviewed and merged |
+| Walls on the field, its spike report, the rest of his priors | in progress |
 
 **Pre-registration: five defects found and fixed so far,** four of them by Varro. All were found
 before any scored run, which is the point of writing it down first.
@@ -99,6 +98,19 @@ Fighting tempo is reported but not banded. The sources are too thin to fail an e
   holds a line and then breaks it.
 - **Ours dies if** it meets the casualty clock only with a near-harmless clash, or if it runs
   below 3x sustained at full scale.
+
+**Where both stand on speed today: both are at risk in the pocket.** Mine runs the pocket at
+2.3x sustained on 4 cores with no man model yet, against a line of 3x with him. Varro's own
+readings (burst, one core, 150,000 men in the pocket):
+- his substrate alone, with contact along the line only: 15.2x, up from 9.4x;
+- with contact wherever men are crowded: 1.6x, because in a pocket 60,000-90,000 men are
+  crowded and pressing, and contact costs there what it costs in mine;
+- with perception on: 5.3x, before he rebuilt the search for nearby enemies. About 38,000 men
+  have an enemy in view at every step.
+
+So today the rival does not meet its own line of 10x per core in the pocket once perception is
+counted, and the man's hazards come on top. That is Varro's statement, and it may change after
+his sustained readings, which wait for the machine to be idle.
 
 **Deviation from the vision of record.** Slice 0 replaces the toy and spike described in
 [08](vision/08-roadmap.md) §1, with Michal's approval. The vision docs carry a pointer to say so.
@@ -162,6 +174,12 @@ word is singular). This is recorded in the review's disposition table.
 **Blocking the next step:** none.
 
 **Not blocking:**
+
+- **Othismos in Slice 0: whether formed lines shove.** Varro found that in his engine a man in
+  his place moves by his tie to his slot alone, so a press parameter would make formed lines
+  shove in my engine and do nothing in his. The two engines would then differ for a reason
+  that is not the question being tested. We are agreeing a recommendation first. It needs your
+  decision before the freeze, because it touches your ruling that othismos is a parameter.
 
 - **Rung 4, the full excitable psyche** (S0.6): build it only if rungs 0-3 all fail? Since I
   conceded that its fast layer behaves like a hazard with a reaction lag, and Varro's layer
