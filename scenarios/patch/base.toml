@@ -1,9 +1,11 @@
 # The Slice 0 patch: two centuries side by side against a warband of equal numbers, on open
 # ground. Wide enough for a break to spread along the line, deep enough to have rear ranks.
 #
-# Frontage per man is a parameter, not a finding (docs/vision/03 sec. 1). The Roman 1.8 m
-# follows one reading of Polybius 18.30 (three feet for the man and three to his neighbours;
-# from memory, to be checked against the Greek before S0.3). Variants change it.
+# Frontage per man is a parameter, not a finding (docs/vision/03 sec. 1). The Roman 1.8 m by
+# 1.8 m follows Polybius 18.30.6-9, checked against the Greek (Buettner-Wobst): the Roman stands
+# in three feet like a phalangite but needs at least three feet of clearance toward the man
+# beside and the man behind, so one Roman faces two phalangites. Six feet is about 1.8 m, and
+# it is a minimum. Variants change it.
 
 name = "patch-base"
 seed = 1

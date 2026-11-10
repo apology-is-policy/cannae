@@ -3,9 +3,11 @@
 //! Above critical power the anaerobic reserve W' drains joule for joule. Below it, the spent part
 //! recovers exponentially with a time constant that is shorter the further below critical power
 //! the man works (Skiba, Chidnok, Vanhatalo and Jones, "Modeling the expenditure and
-//! reconstitution of work capacity above critical power", Med. Sci. Sports Exerc. 44, 2012).
-//! The recovery formula below is quoted from memory and must be checked against the paper
-//! before the parameter priors are fixed (S0.3).
+//! reconstitution of work capacity above critical power", Med. Sci. Sports Exerc. 44(8):
+//! 1526-1532, 2012). The citation is confirmed from PubMed; the formula only through a secondary
+//! source (docs/slice0/lethality-skeletal.md, B1). The paper computes tau from the session's mean
+//! sub-CP power; this applies it to the current power at each step, a simplification. Skiba et
+//! al.'s later differential model (Eur. J. Appl. Physiol. 115, 2015) is the alternative.
 
 use crate::fixed::exp_neg_q32;
 use crate::units::{MilliJ, MilliW, SimMs};

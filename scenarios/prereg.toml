@@ -30,4 +30,7 @@ holds_max_never = 0.2
 
 # 7. The casualty clock.
 clock_hits_per_file_hour = [0.1, 2.0]
-# clock_lethality_per_bout = [lo, hi]   # fixed after the S0.4 literature search
+# Either man disabled or killed in one committed bout. Proposed from the skeletal and
+# experimental half of S0.4 (docs/slice0/lethality-skeletal.md); the lower end is the weakest
+# number here and is Varro's to set or accept.
+clock_lethality_per_bout = [0.005, 0.15]

@@ -65,7 +65,7 @@ eight patterns. A model that passes only on a knife-edge has failed, whichever e
 | 4 | Lateral spread | Spearman's rho between a 2 m bin's distance from the first break and its first turn; the time for 80 % of the line's bins to turn | At least 0.3; 10-900 s |
 | 5 | Casualty asymmetry | The share of the loser's hits after the break | At least 0.6 |
 | 6 | Holds, then breaks | Across seeds: the share that break within 5 minutes of contact; the share that never break in the hour | At most 10 %; at most 20 % |
-| 7 | The casualty clock | Hits per front file per hour while formed, each side against its own first-line files; lethality per bout | 0.1-2.0; bounds from S0.4 |
+| 7 | The casualty clock | Hits per front file per hour while formed, each side against its own first-line files; lethality per bout | 0.1-2.0; 0.005-0.15 (proposed) |
 | 8 | The centurion gradient | Leaders' share of hits while formed, against after the break, pooled over seeds | Higher while formed |
 
 **The reasons for the bands:**
@@ -85,6 +85,19 @@ eight patterns. A model that passes only on a knife-edge has failed, whichever e
 - **Pattern 7:** the casualty clock (rival 02 §9) gives one disabling hit per front position
   every 1.4-2.8 hours, at 1.8 and 0.9 m per file. Plausible inputs move that by a factor of
   two or three, hence 0.1-2.0.
+- **Pattern 7, lethality per bout (proposed: 0.005-0.15).** This is the chance that either
+  man is disabled or killed in one committed bout. The skeletal and experimental half of the
+  search is in [lethality-skeletal.md](lethality-skeletal.md). Its central range, 0.01-0.07,
+  comes mostly from the casualty clock plus an assumed bout rate. Using it as the band would
+  test the clock twice, so the band uses only the evidence that stands on its own:
+  - **Upper end, 0.15.** Gladiator fights went to a decision in perhaps 0.05-0.2 of exchanges,
+    between men with little armour and no neighbours. Common healed wounds and veterans of
+    several battles argue against much more than 0.1 for formed shield infantry.
+  - **Lower end, 0.005.** This is the weakest number in the file. It rests only on "several
+    times below gladiators". It is also what decides the vision of record's kill criterion ("a
+    near-harmless clash"). Paullus proposes it and builds that engine, so Varro should set or
+    accept it.
+  - Varro's half of the search (ethnography of line fighting, Collins) may narrow either end.
 - **Pattern 8:** Caesar's centurion losses are high in a formed fight and lower in a repulse
   or a panic (rival 04 §5).
 
