@@ -8,6 +8,7 @@ description = "The Slice 0 harness: scenarios, the runner, metrics, frame dumps"
 
 [dependencies]
 cannae-core = { path = "../cannae-core" }
+cannae-field = { path = "../cannae-field" }
 cannae-pairwise = { path = "../cannae-pairwise" }
 serde = { version = "1", features = ["derive"] }
 toml = "0.8"

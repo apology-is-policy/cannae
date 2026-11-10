@@ -439,10 +439,9 @@ mod tests {
         assert!(narrow.peak_density > wide.peak_density);
     }
 
-    #[test]
-    fn the_gate_is_walled_on_a_substrate_with_walls() {
-        // Every man who is through came through the gate: none is beyond the rampart outside
-        // the gate's width.
+    /// Every man who is through came through the gate: none is beyond the rampart outside the
+    /// gate's width.
+    fn the_gate_is_walled<S: Substrate>(make: impl FnOnce(&[Wall]) -> S) {
         let case = Case {
             kind: Kind::Gate,
             width_mm: 3_000,
@@ -450,7 +449,7 @@ mod tests {
             seconds: 30,
         };
         let mut s = setup(&case);
-        let mut sub = pairwise(&s.walls);
+        let mut sub = make(&s.walls);
         let rng = Rng::new(1);
         let mut tg = Vec::new();
         let mut out = Vec::new();
@@ -467,6 +466,27 @@ mod tests {
         assert!(!inside.is_empty());
         for p in inside {
             assert!(p.x < -GATE_DEPTH_MM || p.y.abs() <= 1_500, "{p:?}");
+        }
+    }
+
+    #[test]
+    fn the_gate_is_walled_on_the_pairwise_substrate() {
+        the_gate_is_walled(pairwise);
+    }
+
+    #[test]
+    fn the_gate_is_walled_on_the_field_under_every_contact() {
+        use cannae_field::{Contact, Field, Params as FieldParams};
+        for contact in [Contact::Line, Contact::Crowd, Contact::All] {
+            the_gate_is_walled(|walls| {
+                Field::with_walls(
+                    FieldParams {
+                        contact,
+                        ..FieldParams::CENTRE
+                    },
+                    walls,
+                )
+            });
         }
     }
 }

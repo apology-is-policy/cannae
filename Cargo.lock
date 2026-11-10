@@ -29,6 +29,7 @@ name = "cannae-harness"
 version = "0.1.0"
 dependencies = [
  "cannae-core",
+ "cannae-field",
  "cannae-pairwise",
  "serde",
  "toml",

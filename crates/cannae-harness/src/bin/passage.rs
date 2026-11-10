@@ -1,10 +1,14 @@
 //! The passage study (S0.8): both passages across gap widths, on one substrate.
 //!
-//! `cargo run --release -p cannae-harness --bin passage -- [--substrate pairwise|kinematic]
-//! [--radius MM]`
+//! `cargo run --release -p cannae-harness --bin passage -- [--substrate
+//! pairwise|field|kinematic] [--radius MM] [--contact line|crowd|all]`
+//!
+//! `--radius` is the pairwise engine's disc; `--contact` is which men the field keeps apart by
+//! position (its three physics rungs).
 #![allow(clippy::float_arithmetic)]
 
 use cannae_core::Wall;
+use cannae_field::{Contact, Field};
 use cannae_harness::kinematic::Kinematic;
 use cannae_harness::passage::{Case, Kind, Outcome, run};
 use cannae_pairwise::{Pairwise, Params};
@@ -37,6 +41,15 @@ fn main() {
     let radius: i32 = arg("--radius").map_or(Params::PLACEHOLDER.radius_mm, |r| {
         r.parse().expect("--radius takes mm")
     });
+    let contact = match arg("--contact").as_deref() {
+        None | Some("line") => Contact::Line,
+        Some("crowd") => Contact::Crowd,
+        Some("all") => Contact::All,
+        Some(other) => {
+            eprintln!("unknown contact {other}: line, crowd or all");
+            std::process::exit(2);
+        }
+    };
     let one = |case: &Case| -> Outcome {
         match substrate.as_str() {
             "pairwise" => run(case, |walls: &[Wall]| {
@@ -47,14 +60,27 @@ fn main() {
                 s.walls = walls.to_vec();
                 s
             }),
+            "field" => run(case, |walls: &[Wall]| {
+                Field::with_walls(
+                    cannae_field::Params {
+                        contact,
+                        ..cannae_field::Params::CENTRE
+                    },
+                    walls,
+                )
+            }),
             "kinematic" => run(case, |_: &[Wall]| Kinematic::default()),
             other => {
-                eprintln!("unknown substrate {other}: pairwise or kinematic");
+                eprintln!("unknown substrate {other}: pairwise, field or kinematic");
                 std::process::exit(2);
             }
         }
     };
-    println!("Substrate {substrate}, disc radius {radius} mm (pairwise only)");
+    match substrate.as_str() {
+        "pairwise" => println!("Substrate pairwise, disc radius {radius} mm"),
+        "field" => println!("Substrate field, contact {contact:?}, every prior at its centre"),
+        other => println!("Substrate {other}"),
+    }
     println!(
         "J and Js: persons per s, and per s per metre of width, from the 10th to the 90th in a \
          hundred; t90: s until nine in ten are through; gap: the longest wait in that stretch, s; \
