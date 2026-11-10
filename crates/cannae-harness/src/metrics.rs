@@ -119,6 +119,8 @@ pub struct RunSummary {
     pub lull_share: Option<f64>,
     // 3. Rear-first collapse.
     pub first_turn_depth: Option<f64>,
+    /// Men of the loser who turned before the collapse began: reported, not scored.
+    pub stragglers: u32,
     // 4. Lateral spread.
     pub spread_rho: Option<f64>,
     pub spread_s: Option<f64>,
@@ -130,6 +132,10 @@ pub struct RunSummary {
     pub hits_per_file_hour: [Option<f64>; 2],
     pub bouts_formed: u32,
     pub lethality_per_bout: Option<f64>,
+    /// Tempo, reported and not banded: the share of first-line front-rank man-time spent
+    /// forward while formed, and the share of those men who started any bout while formed.
+    pub front_forward_share: Option<f64>,
+    pub front_starters_share: Option<f64>,
     // 8. The centurion gradient.
     pub leader_hits_formed: u32,
     pub hits_formed: u32,
@@ -141,15 +147,17 @@ fn secs(ticks: u32) -> f64 {
     ticks as f64 * BASE_TICK.0 as f64 / 1000.0
 }
 
-/// Goh and Barabasi's burstiness, (sigma - mu) / (sigma + mu): 0 for a Poisson process,
-/// toward 1 for bursts, toward -1 for regular beats.
-pub fn burstiness(counts: &[u32]) -> Option<f64> {
-    if counts.len() < 2 {
+/// Goh and Barabasi's burstiness of the gaps between successive events, (sigma - mu) /
+/// (sigma + mu): 0 for a Poisson process at any rate, toward 1 for bursts, toward -1 for a
+/// regular beat. On counts per bin instead, a random process at under about half an event per
+/// bin would score above 0.2 (Varro, call 0001 turn 16).
+pub fn burstiness(gaps: &[u32]) -> Option<f64> {
+    if gaps.len() < 2 {
         return None;
     }
-    let n = counts.len() as f64;
-    let mu = counts.iter().map(|&c| c as f64).sum::<f64>() / n;
-    let var = counts.iter().map(|&c| (c as f64 - mu).powi(2)).sum::<f64>() / n;
+    let n = gaps.len() as f64;
+    let mu = gaps.iter().map(|&c| c as f64).sum::<f64>() / n;
+    let var = gaps.iter().map(|&c| (c as f64 - mu).powi(2)).sum::<f64>() / n;
     let sd = var.sqrt();
     if mu + sd == 0.0 {
         None
@@ -320,7 +328,6 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
                 }
             }
         }
-        s.burstiness = burstiness(&counts);
         let max = *counts.iter().max().unwrap_or(&0);
         if max > 0 {
             let lulls = counts
@@ -331,32 +338,105 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
         }
     }
 
-    // First turn of each man.
-    let mut first_turn = vec![None; n];
+    // Burstiness of the gaps between bouts, per 9 m sector of front (by the defender's place
+    // at setup), median over the sectors with at least three gaps. Flurries in different
+    // sectors pooled together would add up toward random.
+    let axis = axis_of(inp.initial);
+    let len = axis.length().max(1);
+    let lateral = |p: Vec2| axis.cross(p) / len;
+    let lo = (0..n)
+        .map(|i| lateral(inp.initial.pos[i]))
+        .min()
+        .unwrap_or(0);
+    let mut sectors: Vec<Vec<u32>> = Vec::new();
+    for e in inp.events {
+        if let EventKind::Bout { .. } = e.kind
+            && formed.contains(&e.tick)
+        {
+            let k = ((lateral(inp.initial.pos[e.man.0 as usize]) - lo) / 9_000) as usize;
+            if sectors.len() <= k {
+                sectors.resize(k + 1, Vec::new());
+            }
+            sectors[k].push(e.tick);
+        }
+    }
+    let mut per_sector: Vec<f64> = sectors
+        .iter()
+        .filter_map(|ticks| {
+            let gaps: Vec<u32> = ticks.windows(2).map(|w| w[1] - w[0]).collect();
+            (gaps.len() >= 3).then(|| burstiness(&gaps)).flatten()
+        })
+        .collect();
+    s.burstiness = median(&mut per_sector);
+
+    // Turns, by man, in tick order.
+    let mut turns: Vec<Vec<u32>> = vec![Vec::new(); n];
     for e in inp.events {
         if let EventKind::Posture {
             to: Posture::Turned,
             ..
         } = e.kind
-            && first_turn[e.man.0 as usize].is_none()
         {
-            first_turn[e.man.0 as usize] = Some(e.tick);
+            turns[e.man.0 as usize].push(e.tick);
         }
     }
+    let first_turn_from = |i: usize, from: u32| turns[i].iter().copied().find(|&t| t >= from);
+    // The collapse of a tally: from the last sample before `until` at which under a quarter of
+    // the break share had turned, reaching back through any earlier turns of the same men that
+    // come in an unbroken chain, each within `CHAIN` of the next, so that the first men of a
+    // cascade belong to it. A man who ran minutes before the cascade is a straggler, not its
+    // first sign.
+    const CHAIN: u32 = 30_000 / BASE_TICK.0;
+    let quarter = inp.break_share / 4.0;
+    let calm = |c: &[u16; 5]| {
+        let standing = c.iter().map(|&x| x as u32).sum::<u32>() - c[Posture::Down as usize] as u32;
+        standing == 0 || (c[Posture::Turned as usize] as f64) < quarter * standing as f64
+    };
+    let collapse_from = |until: u32, tally: &dyn Fn(&Sample) -> [u16; 5], men: &[usize]| {
+        let from = inp
+            .samples
+            .iter()
+            .filter(|smp| smp.tick < until && calm(&tally(smp)))
+            .map(|smp| smp.tick)
+            .max()
+            .unwrap_or(0);
+        let mut ts: Vec<u32> = men
+            .iter()
+            .flat_map(|&i| turns[i].iter().copied())
+            .filter(|&t| t < until)
+            .collect();
+        ts.sort_unstable();
+        let mut start = from;
+        let mut next = ts.iter().copied().find(|&t| t >= from).unwrap_or(from);
+        for &t in ts.iter().rev().filter(|&&t| t < from) {
+            if next - t > CHAIN {
+                break;
+            }
+            start = t;
+            next = t;
+        }
+        start
+    };
 
     if let (Some(loser), Some(bt)) = (s.loser, break_tick) {
         // 3. Depth of the first tenth of each broken body of the loser to turn.
         let mut depths = Vec::new();
         for (b, p) in inp.placed.iter().enumerate() {
-            if side_of_body[b] != loser || s.body_break[b].is_none() {
+            let Some(body_bt) = s.body_break[b] else {
+                continue;
+            };
+            if side_of_body[b] != loser {
                 continue;
             }
-            let mut turns: Vec<(u32, u32)> = (p.first..p.first + p.count)
-                .filter_map(|m| first_turn[m as usize].map(|t| (t, m)))
+            let body_men: Vec<usize> = (p.first..p.first + p.count).map(|m| m as usize).collect();
+            let from = collapse_from(body_bt, &|smp: &Sample| smp.postures[b], &body_men);
+            let mut in_collapse: Vec<(u32, u32)> = (p.first..p.first + p.count)
+                .filter_map(|m| first_turn_from(m as usize, from).map(|t| (t, m)))
+                .filter(|&(t, _)| t <= body_bt)
                 .collect();
-            turns.sort_unstable();
+            in_collapse.sort_unstable();
             let k = (p.count as usize).div_ceil(10);
-            for &(_, m) in turns.iter().take(k) {
+            for &(_, m) in in_collapse.iter().take(k) {
                 let r = inp.layout.rank[m as usize] as f64;
                 let d = if p.ranks > 1 {
                     (r / (p.ranks - 1) as f64).min(1.0)
@@ -370,11 +450,25 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
             s.first_turn_depth = Some(depths.iter().sum::<f64>() / depths.len() as f64);
         }
 
-        // 4. Lateral spread across the loser's line, in 2 m bins of setup position.
-        let axis = axis_of(inp.initial);
-        let len = axis.length().max(1);
-        let lateral = |p: Vec2| axis.cross(p) / len;
+        // 4. Lateral spread across the loser's line, in 2 m bins of setup position, over the
+        // turns from the start of the side's collapse.
+        let side_tally = |smp: &Sample| {
+            let mut t = [0u16; 5];
+            for (b, c) in smp.postures.iter().enumerate() {
+                if side_of_body[b] == loser {
+                    for k in 0..5 {
+                        t[k] += c[k];
+                    }
+                }
+            }
+            t
+        };
         let men: Vec<usize> = (0..n).filter(|&i| inp.initial.side[i] == loser).collect();
+        let from = collapse_from(bt, &side_tally, &men);
+        s.stragglers = men
+            .iter()
+            .filter(|&&i| turns[i].first().is_some_and(|&t| t < from))
+            .count() as u32;
         let lo = men
             .iter()
             .map(|&i| lateral(inp.initial.pos[i]))
@@ -387,7 +481,7 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
                 bins.resize(k + 1, (false, None));
             }
             bins[k].0 = true;
-            if let Some(t) = first_turn[i] {
+            if let Some(t) = first_turn_from(i, from) {
                 bins[k].1 = Some(bins[k].1.map_or(t, |u: u32| u.min(t)));
             }
         }
@@ -462,6 +556,55 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
     s.bouts_formed = bouts;
     if bouts > 0 {
         s.lethality_per_bout = Some(lethal as f64 / bouts as f64);
+    }
+
+    // Tempo: the first line's front rank, forward and starting bouts while formed.
+    let front: Vec<usize> = [Side::A, Side::B]
+        .iter()
+        .flat_map(|&side| front_bodies(inp, side))
+        .flat_map(|b| {
+            let p = &inp.placed[b];
+            (p.first..p.first + p.count).map(|m| m as usize)
+        })
+        .filter(|&i| inp.layout.rank[i] == 0)
+        .collect();
+    if !front.is_empty() && formed.end > formed.start {
+        let mut is_front = vec![false; n];
+        for &i in &front {
+            is_front[i] = true;
+        }
+        let mut since: Vec<Option<u32>> = vec![None; n];
+        let mut forward_ticks = 0u64;
+        let mut started = vec![false; n];
+        let clip = |t: u32| t.clamp(formed.start, formed.end);
+        for e in inp.events {
+            let i = e.man.0 as usize;
+            match e.kind {
+                EventKind::Posture { from, to } if is_front[i] => {
+                    if to == Posture::Forward && from != Posture::Forward {
+                        since[i] = Some(e.tick);
+                    } else if from == Posture::Forward
+                        && to != Posture::Forward
+                        && let Some(t0) = since[i].take()
+                    {
+                        forward_ticks += (clip(e.tick) - clip(t0)) as u64;
+                    }
+                }
+                EventKind::Bout { attacker, .. }
+                    if formed.contains(&e.tick) && is_front[attacker.0 as usize] =>
+                {
+                    started[attacker.0 as usize] = true;
+                }
+                _ => {}
+            }
+        }
+        for t0 in since.into_iter().flatten() {
+            forward_ticks += (clip(formed.end) - clip(t0)) as u64;
+        }
+        let man_ticks = front.len() as u64 * (formed.end - formed.start) as u64;
+        s.front_forward_share = Some(forward_ticks as f64 / man_ticks as f64);
+        s.front_starters_share =
+            Some(front.iter().filter(|&&i| started[i]).count() as f64 / front.len() as f64);
     }
 
     // 8. Leaders' share of losses, formed against after the break.
@@ -686,8 +829,17 @@ mod tests {
 
     #[test]
     fn statistics() {
+        // On gaps: a regular beat is -1, a burst after a long lull is high, and random gaps
+        // (exponential quantiles) are near 0 whatever their rate.
         assert_eq!(burstiness(&[5, 5, 5, 5]), Some(-1.0));
-        assert!(burstiness(&[0, 0, 0, 20, 0, 0, 0, 0]).unwrap() > 0.3);
+        assert!(burstiness(&[1, 1, 1, 100, 1, 1, 1]).unwrap() > 0.3);
+        for scale in [20.0, 2_000.0] {
+            let gaps: Vec<u32> = (0..400)
+                .map(|i| (-(1.0 - (i as f64 + 0.5) / 400.0).ln() * scale).round() as u32)
+                .collect();
+            let b = burstiness(&gaps).unwrap();
+            assert!(b.abs() < 0.06, "random gaps at scale {scale}: {b}");
+        }
         let rho = spearman(&[1.0, 2.0, 3.0, 4.0], &[10.0, 20.0, 25.0, 40.0]).unwrap();
         assert!((rho - 1.0).abs() < 1e-12);
         assert_eq!(superiority(&[Some(1.0)], &[None]), Some(1.0));
@@ -781,6 +933,10 @@ mod tests {
             events.push(posture_event(t, m, Posture::Turned));
             t += 10;
         }
+        // A straggler from the front rank runs at tick 300 and stands again at 400, long before
+        // the collapse: he must not count as its first sign.
+        events.push(posture_event(300, 5, Posture::Turned));
+        events.push(posture_event(400, 5, Posture::Steady));
         // One loss before the break, three after.
         let wound = |tick, man| Event {
             tick,
@@ -820,6 +976,7 @@ mod tests {
         assert_eq!(sum.side_break[0], Some(1150));
         assert_eq!(sum.first_turn_depth, Some(1.0));
         assert!(sum.spread_rho.unwrap() > 0.9);
+        assert_eq!(sum.stragglers, 1);
         assert_eq!(sum.loser_after_break, Some(0.75));
         assert_eq!(sum.time_to_break_s, Some(secs(1050)));
         assert_eq!(sum.bouts_formed, 23);

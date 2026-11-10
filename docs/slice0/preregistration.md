@@ -59,6 +59,13 @@ weights as rungs 0-2, and nothing else changes.
 
 **The memory ladder.** Within each substrate, the lowest rung that passes is kept.
 
+**If no rung passes** (written before any run, at Varro's proposal):
+- the rungs are still ranked, first by the share of parameter sets passing all eight patterns,
+  then by the median number of patterns passed;
+- the report says plainly "no rung passed";
+- nobody narrows a prior and reruns under this pre-registration. A second round is a new
+  pre-registration, with its own freeze.
+
 ## Shared definitions
 
 - **Broken.** A body breaks when at least 40 % of its standing men (men not down) have turned.
@@ -77,9 +84,9 @@ weights as rungs 0-2, and nothing else changes.
 | # | Pattern | Statistic | Proposed band |
 |---|---|---|---|
 | 1 | A stable standoff | The formed phase's length; the median gap while formed | At least 300 s; at least 1.0 m |
-| 2 | Pulses and lulls | Burstiness of bouts in 10 s bins while formed; the share of bins at 20 % of the busiest or less | At least 0.2; 0.2-0.9 |
-| 3 | Rear-first collapse | The mean setup depth (0 front, 1 rear) of the first tenth of each broken body to turn | At least 0.6 |
-| 4 | Lateral spread | Spearman's rho between a 2 m bin's distance from the first break and its first turn; the time for 80 % of the line's bins to turn | At least 0.3; 10-900 s |
+| 2 | Pulses and lulls | Burstiness of the gaps between successive bouts while formed, per 9 m sector of front (by the defender's place at setup), median over sectors with at least three gaps; the share of 10 s bins at 20 % of the busiest or less | At least 0.2; 0.2-0.9 |
+| 3 | Rear-first collapse | The mean setup depth (0 front, 1 rear) of the first tenth of each broken body to turn within its collapse | At least 0.6 |
+| 4 | Lateral spread | Spearman's rho between a 2 m bin's distance from the first break and its first turn within the side's collapse; the time for 80 % of the line's bins to turn | At least 0.3; 10-900 s |
 | 5 | Casualty asymmetry | The share of the loser's hits after the break | At least 0.6 |
 | 6 | Holds, then breaks | Across seeds: the share that break within 5 minutes of contact; the share still unbroken two hours after contact | At most 10 %; at most 25 % |
 | 7 | The casualty clock | Hits per front file per hour while formed, each side against its own first-line files; lethality per bout | 0.1-2.0; 0.002-0.15 (proposed) |
@@ -89,9 +96,24 @@ weights as rungs 0-2, and nothing else changes.
 
 - **Pattern 1:** lines face each other just out of reach (Sabin; rival 02 §7). Five minutes is
   short against a battle of hours, but long enough to rule out lines that close straight to
-  the death.
-- **Pattern 2:** burstiness is 0 for bouts at random and negative for a steady beat. Pulses
-  need bursts, and lulls need quiet bins, but not only quiet bins.
+  the death. Since both engines halt an advance at the shared standoff (priors-shared.md,
+  S5), the gap is close to an input. It still fails if more than a tenth of a body is forward
+  most of the time, so it tests that fighting is the exception (Varro).
+- **Pattern 2:** burstiness, after Goh and Barabási, is computed on the gaps between bouts,
+  where a random process scores 0 at any rate. The first draft computed it on counts per bin,
+  where random fighting slower than one bout in 23 s across the front would have scored above
+  0.2 (Varro's arithmetic: (1 - √m) / (1 + √m) for a mean of m per bin). Flurries in
+  different stretches of the front, pooled, add up toward random, so it is taken per 9 m
+  sector. Pulses need bursts, and lulls need quiet bins, but not only quiet bins.
+- **Patterns 3 and 4: the collapse.** A body's collapse runs from the last sample at which
+  under a quarter of the break share of its standing men (10 %) had turned, to its break. It
+  reaches back from there through any earlier turns of the body's men that come in an unbroken
+  chain, each within 30 s of the next, so that the men who begin a cascade belong to it.
+  Pattern 4 does the same for the losing side as a whole. Only turns inside the collapse count,
+  so one man who ran an hour early cannot set either statistic. Men who turned before the
+  collapse are reported as stragglers, per run, and not scored. (Varro proposed the 10 %
+  start; the 30 s chain is Paullus's, after a test showed the bare threshold dropped the first
+  tenth of a cascade, the very men pattern 3 is about.)
 - **Pattern 3:** rear-first means the first to go stood behind the middle of the body.
 - **Pattern 4:** a break that spreads takes longer to reach far bins than near ones. A break
   that happens everywhere at once gives a rho near 0.
@@ -129,6 +151,10 @@ weights as rungs 0-2, and nothing else changes.
     (priors-shared.md, S8), inside this band. So the band is close to an input for both. What
     pattern 7 tests is whether each engine's tempo, at the harm it is dealt, lands on the
     clock.
+  - **Tempo, reported and not banded:** the share of the first line's front-rank man-time
+    spent forward while formed, and the share of those men who start any bout. The only
+    figures (5-25 % of the time, 10-25 % of the men) rest on Dani skirmishing and an inference
+    (lethality-line-fighting.md): too little to fail an engine on.
 - **Pattern 8:** Caesar's centurion losses are high in a formed fight and lower in a repulse
   or a panic (rival 04 §5).
 

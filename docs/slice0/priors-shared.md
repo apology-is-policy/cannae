@@ -117,5 +117,13 @@ Reach is fixed at 1.5 m for every troop in the patch: all fight with swords.
 
 | Lines | Written by | Read and signed by |
 |---|---|---|
-| Stamina, power, gait | Paullus | Varro: pending |
-| Ties, bouts, kits | Varro | Paullus: pending |
+| Stamina, power, gait | Paullus | Varro: read 2026-11-10, no objection (call 0001 turn 16); signs at the freeze |
+| Ties, bouts, kits | Varro | Paullus: read 2026-11-10; signs at the freeze. S23 provisionally (below) |
+
+**Paullus on S23 (the warband's guard), 2026-11-10.** Checked in English only: the Loeb text of
+1922 on LacusCurtius. The Greek could not be fetched, so this is provisional until it is read.
+Polybius 2.30.3 says the Gaulish shield "does not cover the whole body", and 2.30.8 that the
+Roman shields "were far more serviceable for defence". The Gaesatae stood naked in front
+(2.28.8), and nothing in 2.28-2.33 mentions Gallic body armour. That supports a guard worse than
+the reference, so U[1, 1.5] stands. 2.33 is about swords that bend and only cut: it bears on how
+the Gauls strike, not on what they take, so it should not be cited for S23.
