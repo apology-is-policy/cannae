@@ -1,7 +1,8 @@
 # Slice 0: The passage study (S0.8)
 
-**Status:** Paullus, 2026-11-10. The bench is built and the pairwise substrate has run on it.
-Varro's field, alone and with contact, runs on the same bench when it lands. Run:
+**Status:** Paullus, 2026-11-10. The bench is built, and both engines have run on it: the
+pairwise substrate here, and Varro's field in [passage-field.md](passage-field.md), compared
+below. Run:
 `cargo run --release -p cannae-harness --bin passage -- --substrate pairwise --radius 300`.
 Code: `crates/cannae-harness/src/passage.rs`. The calibration against measured flows is in
 [passage-calibration.md](passage-calibration.md).
@@ -116,9 +117,35 @@ has a speed-density relation by construction. If it matches the measured flows o
 and the discs do not, that is a point to the field, and this experiment exists to find exactly
 that.
 
+## The field on the same bench
+
+Varro's engine ran the same passages with every prior at its centre
+([passage-field.md](passage-field.md)). Against the measurements and against the discs:
+
+| | Measured | Field | Discs (300 mm) |
+|---|---|---|---|
+| Walking through a 3 m gate, Js | about 1.9 (1.6-2.3) | 1.17 | 2.91 |
+| Running and shoving through a 3 m gate, Js | about 4.0, at 0.7 m doors | 4.34 | 6.44 |
+| A maniple through a 3 m interval: nine in ten through | no data | 40 s | 24 s |
+| The same, with the enemy following | no data | 6-10 of 120 still not through after 5 min | 31 s |
+| Seyfried's 0.8-1.2 m corridor | 1.6-2.3 | cannot run: narrower than a cell | 1.7-2.4 |
+
+What it shows, as it stands:
+- **The two engines miss the walking flow in opposite directions.** The field passes the
+  capacity of its walking curve, which was fitted to people walking in the open. The discs keep
+  full speed until they touch.
+- **The field's three ways of touching give the same flow,** within 6 % at every width.
+  Contact inside a crowd buys nothing at a gate of 3 m or more. It already fails on speed in
+  the pocket, so it has no case left where it earns its place.
+- **Narrow gaps belong to the discs, and military widths may belong to the field.** The field
+  cannot resolve a gap narrower than a cell, about a metre. Intervals and camp gates are wider
+  than that.
+- **Varro proposes calibrating the steepness of his walking curve** against the bottleneck
+  measurements before the freeze, as the discs' radius was calibrated. With it, the field
+  would match the measured walking flow at gates and intervals, and the discs would stay
+  30-50 % high.
+
 ## Waiting
 
-- **The field, alone and with contact where crowded (Varro).** The bench takes any `Substrate`
-  built from the walls: `run(&case, |walls| ...)`.
 - **The man model's version (Varro):** the frames steering a body through an interval, and a
   turned man's flight aiming at a mouth before the ground beyond it.

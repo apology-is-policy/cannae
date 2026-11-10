@@ -43,6 +43,14 @@ first height arrives and not before: an empty stub now would be a mechanism with
   resolver), and in the man only through what he can see and feel underfoot. A man should
   never be handed a hidden terrain bonus.
 
+## Gaps already known (Varro, 2026-11-10)
+
+- **Perception sees through walls,** in both engines. A rampart hides nothing from a man's
+  View today. The line-of-sight test above would have to cover walls as well as ridges.
+- **In the field, a wall cuts the grid,** so two river banks closer together than a cell
+  (about a metre) would leave the men between them unresolved. A ford wider than a cell is
+  fine.
+
 ## When
 
 By the parsimony rule, a terrain effect is built when a battle the slice runs needs it. Cannae

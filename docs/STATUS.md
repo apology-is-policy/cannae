@@ -25,7 +25,7 @@ reviews his work and merges it.
 | S0.5 | The pairwise substrate, where every body touches its neighbours, at patch scale; a perception conformance check for Varro | 14e919b |
 | S0.6 | The top two rungs of the memory ladder: continuous fear and resolve, then the full excitable psyche | Rung 3 built and plugged into Varro's men through his `Memory` hook ([design](slice0/rungs-3-4.md)). Its dormancy is exact through a fight and a rout; with its gauges switched off it replays rung 1's battle event for event. Rung 4 is built only if rungs 0-3 all fail (Michal) |
 | S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | Pairwise done for the line, surge and pocket ([report](slice0/spike-pairwise.md)); the rout through camp gates is built (with walls indexed on a coarse grid, so a man checks only the walls near him) and waits for an idle machine to be timed; Varro's field spike is his |
-| S0.8 | The passage study, against measured crowd-flow data | Walls (`cannae_core::Wall`, `[[wall]]` in scenarios) and the pairwise calibration done ([report](slice0/passage-calibration.md)). The bench for the two passages is built, and the pairwise substrate has run on it ([report](slice0/passage.md)); Varro's field runs on the same bench when it lands |
+| S0.8 | The passage study, against measured crowd-flow data | Walls (`cannae_core::Wall`, `[[wall]]` in scenarios) and the pairwise calibration done ([report](slice0/passage-calibration.md)). The bench for the two passages is built, and both engines have run on it ([report](slice0/passage.md), [field](slice0/passage-field.md)) |
 | S0.9 | Scored runs and the report; then design review 2 | |
 
 **Speed (pairwise substrate only, no man model yet; sustained readings on the fanless Air,
@@ -38,7 +38,7 @@ up to 64 men per m². Now a man cannot walk into the men ahead of him, his lean 
 presses to the bone, and bodies have a hard core. The pressed edge settles at about 5 per m²,
 the crowd-safety literature's onset of danger.
 
-**The passage study (pairwise substrate so far).** A bench runs the same scripted passages on
+**The passage study.** A bench runs the same scripted passages on
 any physics engine: a maniple of 120 falling back through an interval in the line behind it,
 with and without the enemy shoving it, and a crowd of 600 making for a camp gate, walking or
 running and shoving ([report](slice0/passage.md)). On my engine:
@@ -53,6 +53,12 @@ running and shoving ([report](slice0/passage.md)). On my engine:
   because real walkers slow down as a crowd thickens and discs do not until they touch. And
   people pushing through a 0.7 m door pass about 40 % faster than discs can, because people
   turn their shoulders.
+- **Varro's engine on the same bench** passes too few walking men through a gate: 1.17 per
+  metre per second against about 1.9 measured, where mine passes 2.91. So the two engines miss
+  in opposite directions. His walking curve was fitted to people walking in the open, and he
+  proposes calibrating its steepness against the bottleneck measurements before the freeze,
+  as my disc's radius was. His contact inside crowds changes the flow by under 6 % at any
+  gate, so it buys nothing there, and it already fails on speed in the pocket.
 - **The crush settings were unusable, now fixed.** The old stand-in values disabled half a
   running crowd at a gate within five minutes, and the rate's units could not even hold the
   agreed prior. At the prior's centres, no one is crushed in a passage. A crowd shoved against
