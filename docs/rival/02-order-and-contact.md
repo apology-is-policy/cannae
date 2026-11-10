@@ -18,6 +18,13 @@ This is how the armies worked. At the Sabis, surprised while building camp, each
 own": *quaeque prima signa conspexit, ad haec constitit, ne in quaerendis suis pugnandi tempus
 dimitteret* (*BG* 2.21). Paullus supplied the reference.
 
+**On the march the frame goes where the carrier goes. Halted, it stands.** A halted body's
+carrier has a place in the frame like any other man, and the frame moves only when he is driven
+further from that place than his tolerance. Then it re-forms on him. So a pressed body braces
+on a fixed line and gives ground a step at a time, and a body whose carrier steps out follows
+him. Paullus caught the first build, which re-anchored on the carrier at every step and so gave
+a held line no fixed point.
+
 **When the standard goes down,** the frame freezes where it was, and the ties to it weaken.
 Every man who sees it fall counts it as alarm ([01](01-the-man.md) §3). A bold man nearby may
 pick it up, and the frame is restored. A unit that loses its standard and no one lifts it is a

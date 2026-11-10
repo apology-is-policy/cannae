@@ -1,9 +1,13 @@
 //! Bodies of men and their frames: standards, slots, ties and drills (docs/rival/02 sec. 1-4).
 //!
-//! A body is the men who follow one standard. Its frame is wherever the standard-bearer stands:
-//! `origin = his position - his slot's offset`, taken afresh at every man step. So the frame goes
-//! where he goes and stops when he is stopped; it is never fitted to where the men are. Every
-//! other man has a slot in the frame and walks to it.
+//! A body is the men who follow one standard, and its frame is never fitted to where the men
+//! are. On the march the frame is wherever the standard-bearer stands,
+//! `origin = his position - his slot's offset`, taken afresh at every man step: the body goes
+//! where he goes. Halted, the frame stands where it halted, and he has a place in it like any
+//! other man. It moves only when he is driven further from that place than the tie's tolerance,
+//! and then it re-forms on him. So a pressed body braces on a fixed line and gives ground a step
+//! at a time, and a body whose standard-bearer steps out follows its standard. Every other man
+//! has a slot in the frame and walks to it.
 //!
 //! A file is a list of men, front to rear, and a man's rank is his index in it. Closing a file
 //! over a gap is removing a man from the list, so gaps travel to the rear, and a file that has
@@ -510,8 +514,13 @@ impl BodyFrames {
 
     /// Anchors the frame on its standard-bearer and sets how far it leads. A standard that is
     /// down, or carried by a man in flight, anchors nothing: the frame stays where it was.
+    ///
+    /// A frame that was led at the last step follows him. A halted frame stays put until he is
+    /// out of his place in it. Re-anchoring a halted frame at every step would give a held line
+    /// no fixed point: its slots would follow every shove he took.
     fn anchor(&mut self, fi: usize, bodies: &Bodies) {
         let f = &mut self.frames[fi];
+        let on_the_march = f.lead != Vec2::ZERO;
         f.lead = Vec2::ZERO;
         let Standard::Carried(c) = f.standard else {
             return;
@@ -522,7 +531,11 @@ impl BodyFrames {
         if !up(bodies, c) {
             return;
         }
-        f.origin = bodies.pos[c.0 as usize] - offset;
+        let on_him = bodies.pos[c.0 as usize] - offset;
+        let tol = f.tie.tolerance_mm as i64;
+        if on_the_march || on_him.dist_sq(f.origin) > tol * tol {
+            f.origin = on_him;
+        }
         let halt_at = match f.order {
             Order::Hold => return,
             Order::Retire => {
@@ -767,26 +780,60 @@ mod tests {
     }
 
     #[test]
-    fn the_frame_goes_where_the_standard_goes() {
+    fn a_halted_frame_stands_until_its_standard_is_driven_off() {
         let (mut b, mut f) = century();
         step(&mut f, &mut b, 0);
         let before = f.slot(ManId(0)).unwrap().target;
-        // The standard-bearer is pushed back half a metre. Every slot follows him, so the
-        // others are now out of their places and he is not.
+        let his = f.slot(ManId(4)).unwrap().target;
+        // The standard-bearer is pushed back half a metre, inside a drilled man's tolerance.
+        // The frame does not move: his slot is where it was, and he is pulled back to it.
         b.pos[4] += Vec2::new(-500, 0);
+        step(&mut f, &mut b, 5);
+        assert_eq!(f.slot(ManId(0)).unwrap().target, before);
+        assert_eq!(f.slot(ManId(4)).unwrap().target, his);
+        assert!(b.in_place[4] && b.in_place[0]);
+        // Driven a metre from his place, he takes the frame with him: the body has given a
+        // metre of ground, and the men who were not pushed are out of their places.
+        b.pos[4] += Vec2::new(-500, 0);
+        step(&mut f, &mut b, 10);
+        assert_eq!(
+            f.slot(ManId(0)).unwrap().target,
+            before + Vec2::new(-1_000, 0)
+        );
+        assert_eq!(f.slot(ManId(4)).unwrap().target, b.pos[4]);
+        assert!(b.in_place[4] && !b.in_place[0]);
+        // And it stands again where he now is.
+        b.pos[4] += Vec2::new(300, 0);
+        step(&mut f, &mut b, 15);
+        assert_eq!(
+            f.slot(ManId(0)).unwrap().target,
+            before + Vec2::new(-1_000, 0)
+        );
+    }
+
+    #[test]
+    fn a_frame_on_the_march_goes_where_the_standard_goes() {
+        let (mut b, mut f) = century();
+        f.order(BodyId(0), Order::Advance, 0);
+        step(&mut f, &mut b, 0);
+        let lead = Vec2::new(1_500, 0);
+        assert_eq!(f.slot(ManId(0)).unwrap().target, b.pos[0] + lead);
+        // Only the standard-bearer moves, and by less than the tolerance. Every slot follows.
+        b.pos[4] += Vec2::new(300, 0);
         step(&mut f, &mut b, 5);
         assert_eq!(
             f.slot(ManId(0)).unwrap().target,
-            before + Vec2::new(-500, 0)
+            b.pos[0] + lead + Vec2::new(300, 0)
         );
-        assert!(b.in_place[4]);
-        assert!(
-            b.in_place[0],
-            "half a metre is inside a drilled man's tolerance"
-        );
-        b.pos[4] += Vec2::new(-500, 0);
+        // Halted by an order, the frame stands where he stood at the halt.
+        f.order(BodyId(0), Order::Hold, 5);
+        b.pos[4] += Vec2::new(300, 0);
         step(&mut f, &mut b, 10);
-        assert!(b.in_place[4] && !b.in_place[0]);
+        let halted = b.pos[0] + Vec2::new(600, 0);
+        assert_eq!(f.slot(ManId(0)).unwrap().target, halted);
+        b.pos[4] += Vec2::new(300, 0);
+        step(&mut f, &mut b, 15);
+        assert_eq!(f.slot(ManId(0)).unwrap().target, halted);
     }
 
     #[test]

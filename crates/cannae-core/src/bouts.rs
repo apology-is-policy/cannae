@@ -159,9 +159,12 @@ impl Bouts {
         self.cells.sort_unstable();
     }
 
-    /// The nearest standing enemy within `a`'s reach, ties to the lower id.
+    /// The nearest standing enemy within `a`'s reach and not behind him, ties to the lower id.
+    /// A man strikes at what is within a quarter turn of his facing; to strike at an enemy
+    /// behind him he must first turn, which his intent does for him by the next step.
     fn opponent(&self, bodies: &Bodies, a: usize) -> Option<(i64, ManId)> {
         let p = bodies.pos[a];
+        let ahead = bodies.facing[a].unit(1 << 10);
         let reach = self.kits[a].reach_mm as i64;
         let (cx, cy) = (p.x.div_euclid(CELL_MM), p.y.div_euclid(CELL_MM));
         let span = (reach as i32).div_euclid(CELL_MM) + 1;
@@ -176,7 +179,7 @@ impl Bouts {
                         continue;
                     }
                     let d = p.dist_sq(bodies.pos[j]);
-                    if d <= reach * reach {
+                    if d <= reach * reach && (bodies.pos[j] - p).dot(ahead) >= 0 {
                         let cand = (d, ManId(j as u32));
                         if best.is_none_or(|b| cand < b) {
                             best = Some(cand);
@@ -450,6 +453,24 @@ mod tests {
         b.posture[0] = Posture::Forward;
         b.pos[1] = Vec2::new(1_600, 0);
         assert!(run(&mut plain(2), &b, 4_000).is_empty());
+    }
+
+    #[test]
+    fn a_man_does_not_strike_behind_him() {
+        let mut b = Bodies::default();
+        let a = put(&mut b, 0, 0, Side::A, Posture::Forward, EAST);
+        put(&mut b, -800, 0, Side::B, Posture::Steady, EAST);
+        assert!(run(&mut plain(2), &b, 4_000).is_empty());
+        // With an enemy in front as well, further off than the one behind, he fights that one.
+        let front = put(&mut b, 1_400, 300, Side::B, Posture::Steady, WEST);
+        let bouts = bouts_of(&run(&mut plain(3), &b, 4_000));
+        assert!(!bouts.is_empty());
+        assert!(bouts.iter().all(|x| x.0 == a && x.1 == front));
+        // An enemy exactly beside him is not behind him.
+        let mut b = Bodies::default();
+        put(&mut b, 0, 0, Side::A, Posture::Forward, EAST);
+        put(&mut b, 0, 900, Side::B, Posture::Steady, EAST);
+        assert!(!run(&mut plain(2), &b, 4_000).is_empty());
     }
 
     #[test]
