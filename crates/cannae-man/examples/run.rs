@@ -65,7 +65,10 @@ fn run() -> Result<(), String> {
     let f = frames(&s, &placed, &bodies)?;
     let rng = Rng::new(s.seed);
     let men = Men::new(rung, Params::CENTRE, &bodies, &troops, &rng);
-    let bouts = Bouts::new(BoutParams::PLACEHOLDER, men.kits());
+    let bouts = (
+        Bouts::new(BoutParams::PLACEHOLDER, men.kits()),
+        s.volleys()?,
+    );
     let mut r = Runner::new(
         bodies,
         GridPerception::default(),

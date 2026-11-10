@@ -9,7 +9,7 @@ use cannae_core::hash::StateHasher;
 use cannae_core::power::GaitSpeeds;
 use cannae_core::{
     BodyFrames, BoutParams, Bouts, Cause, Event, EventKind, FrameQuery, GridPerception, ManId,
-    ManModel, Posture, Rng, Side,
+    ManModel, Posture, Resolver, Rng, Side, Volleys, Wound,
 };
 use cannae_harness::kinematic::Kinematic;
 use cannae_harness::scenario::frames;
@@ -88,9 +88,18 @@ const BRITTLE: Troop = Troop {
 
 const RUNGS: [Rung; 3] = [Rung::NoMarks, Rung::HasFled, Rung::Shaken];
 
-type Field = Runner<GridPerception, Men, Kinematic, BodyFrames, Bouts>;
+type Fought<R> = Runner<GridPerception, Men, Kinematic, BodyFrames, R>;
+type Field = Fought<Bouts>;
+/// With the scenario's volleys beside the bouts, as the scored runs have them.
+type UnderFire = Fought<(Bouts, Volleys)>;
 
-fn field(text: &str, troops: &[Troop], rung: Rung, mode: Dormancy) -> Field {
+fn fought<R: Resolver>(
+    text: &str,
+    troops: &[Troop],
+    rung: Rung,
+    mode: Dormancy,
+    resolver: impl FnOnce(&Scenario, Bouts) -> R,
+) -> Fought<R> {
     let s = Scenario::from_toml(text).unwrap();
     let (bodies, placed) = place(&s);
     let f = frames(&s, &placed, &bodies).unwrap();
@@ -101,7 +110,7 @@ fn field(text: &str, troops: &[Troop], rung: Rung, mode: Dormancy) -> Field {
         rate_q16: 1 << 15,
         ..BoutParams::PLACEHOLDER
     };
-    let bouts = Bouts::new(params, men.kits());
+    let bouts = resolver(&s, Bouts::new(params, men.kits()));
     let mut r = Runner::new(
         bodies,
         GridPerception::default(),
@@ -115,6 +124,25 @@ fn field(text: &str, troops: &[Troop], rung: Rung, mode: Dormancy) -> Field {
     r.dormancy = mode;
     r
 }
+
+fn field(text: &str, troops: &[Troop], rung: Rung, mode: Dormancy) -> Field {
+    fought(text, troops, rung, mode, |_, bouts| bouts)
+}
+
+fn under_fire(text: &str, troops: &[Troop], rung: Rung, mode: Dormancy) -> UnderFire {
+    fought(text, troops, rung, mode, |s, bouts| {
+        (bouts, s.volleys().unwrap())
+    })
+}
+
+/// The patch's `volleys` variant, with the troops it names.
+fn volleys(rung: Rung, mode: Dormancy) -> UnderFire {
+    let hastati = Troop::named("hastati").unwrap();
+    let warband = Troop::named("gallic-warband").unwrap();
+    under_fire(VOLLEYS, &[hastati, hastati, warband], rung, mode)
+}
+
+const VOLLEYS: &str = include_str!("../../../scenarios/patch/volleys.toml");
 
 fn clash(rung: Rung, mode: Dormancy) -> Field {
     field(CLASH, &[EAGER, BRITTLE], rung, mode)
@@ -189,6 +217,73 @@ fn every_rung_keeps_dormancy_exact_through_a_fight_and_a_rout() {
             .count();
         assert_eq!(fled > 0, rung >= Rung::HasFled, "{rung:?}: {fled} fled");
         assert_eq!(shaken > 0, rung >= Rung::Shaken, "{rung:?}: {shaken}");
+    }
+}
+
+#[test]
+fn with_no_volley_the_pair_is_the_bouts_alone_bit_for_bit() {
+    let mut alone = clash(Rung::Shaken, Dormancy::Skip);
+    let mut paired = under_fire(CLASH, &[EAGER, BRITTLE], Rung::Shaken, Dormancy::Skip);
+    alone.run_until(3_600);
+    paired.run_until(3_600);
+    assert_eq!(alone.hashes, paired.hashes);
+    assert_eq!(alone.log.all(), paired.log.all());
+}
+
+#[test]
+fn the_patchs_volleys_keep_dormancy_exact_and_only_shaken_remembers_them() {
+    // One minute of quiet, two of fire, and ten seconds after.
+    let (from, until, end) = (1_200, 3_600, 3_800);
+    for rung in RUNGS {
+        let mut skip = volleys(rung, Dormancy::Skip);
+        let mut all = volleys(rung, Dormancy::EvaluateAll);
+        let mut check = volleys(rung, Dormancy::Check);
+        let mut again = volleys(rung, Dormancy::Skip);
+        for r in [&mut skip, &mut all, &mut check, &mut again] {
+            r.run_until(end);
+        }
+        assert_eq!(skip.hashes, all.hashes, "{rung:?}");
+        assert_eq!(skip.hashes, check.hashes, "{rung:?}");
+        assert_eq!(skip.hashes, again.hashes, "{rung:?}");
+        // Most men sleep through it: a missile wakes only those who see a man fall.
+        assert!(
+            skip.skipped > 3 * skip.evaluated,
+            "{rung:?}: {} slept, {} did not",
+            skip.skipped,
+            skip.evaluated
+        );
+
+        // Nothing but the fire happens, and it falls on the Romans while it lasts.
+        let (mut felled, mut hampered) = (0, 0);
+        for e in skip.log.all() {
+            let roman = skip.bodies.side[e.man.0 as usize] == Side::A;
+            assert!(roman && (from..until).contains(&e.tick), "{rung:?}: {e:?}");
+            assert_eq!(e.causes[0], Cause::Missile, "{rung:?}: {e:?}");
+            match e.kind {
+                EventKind::Wound { to } if to >= Wound::Disabled => felled += 1,
+                EventKind::Wound { .. } => hampered += 1,
+                EventKind::Posture { to, .. } => assert_eq!(to, Posture::Down, "{rung:?}"),
+                _ => panic!("{rung:?}: {e:?}"),
+            }
+        }
+        // About 4 and 12 are expected of 162.
+        assert!((1..=12).contains(&felled), "{rung:?}: {felled} felled");
+        assert!(
+            (3..=26).contains(&hampered),
+            "{rung:?}: {hampered} hampered"
+        );
+
+        // What it leaves in the men: at rung 2, those who saw a man fall are shaken. Nobody
+        // turned, so the mark of rung 1 is on no one.
+        let memory = &skip.model.memory;
+        let men = (0..skip.bodies.len() as u32).map(ManId);
+        let shaken = men.clone().filter(|&m| memory.shaken(m, until) > 0).count();
+        assert_eq!(men.filter(|&m| memory.has_fled(m)).count(), 0, "{rung:?}");
+        if rung == Rung::Shaken {
+            assert!(shaken > 10 * felled, "{shaken} shaken by {felled} falls");
+        } else {
+            assert_eq!(shaken, 0, "{rung:?}");
+        }
     }
 }
 

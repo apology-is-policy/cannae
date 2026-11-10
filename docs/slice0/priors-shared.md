@@ -155,6 +155,7 @@ Reach is fixed at 1.5 m for every troop in the patch: all fight with swords.
 | Stamina, power, gait | 7 | 3 |
 | Crowd physics | 4 | 0 |
 | Ties, bouts, kits | 25 (ties 8, bouts 16, kit 1) | 5 (lead, lift reach, skill steps, leader skill, reach) |
+| Volleys | 0 | 3, written in the one scenario that has them: the dose of the `volleys` variant, per thousand men under it (75 hampered, 20 disabled, 5 killed). It is the script's, as the size of the band in `shock` is, and no engine reads it differently. |
 
 ## Sign-off
 

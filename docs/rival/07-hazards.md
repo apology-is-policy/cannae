@@ -189,6 +189,18 @@ rules shape how this man fights:
 
 Breath does not enter a bout's odds. It decides who is forward.
 
+**Volleys.** A volley is a fall of missiles on an area for a stretch of time, written in the
+scenario ([02](02-order-and-contact.md) §11). Nobody throws it.
+
+- While it lasts, every man standing in the area has the same small chance at each step of
+  being struck. A strike hampers, disables or kills him, in the shares the scenario gives.
+- It is resolved beside the bouts, from the same snapshot. A man struck by both takes the worse
+  wound.
+- A man felled by a missile is seen to fall exactly as a man felled in a bout is. That is all
+  anyone sees of a volley.
+- The thrower, the range and the target's shield are not modelled. The scenario's dose stands
+  for all three.
+
 ## 8. What is left out
 
 Each of these is in [01](01-the-man.md) and is not built. None enters before a named pattern
@@ -208,6 +220,7 @@ fails without it.
 | **Rallying on another body's standard** | A man rallies only on his own |
 | **Fatigue from marching** | A steady man is taken to be standing, even on the march |
 | ***Shaken* wearing off sooner with a leader in view** | It wears at one rate |
+| **A volley, or an enemy behind him, as a shock in itself** ([01](01-the-man.md) §9 names both) | Only falls raise *shaken*: a man of his side, his standard, his leader. An enemy behind alarms him for as long as he is there. A volley is felt through the men it fells, and a man it hampers carries the wound. Fear of the fire itself waits for Carrhae. |
 | **Skill at reading what he sees** | Veterans differ in nerve and in skill at arms only |
 
 Two rules of the frames matter for what breaks a body, and they are not weights of the man:

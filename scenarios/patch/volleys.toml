@@ -1,0 +1,81 @@
+# Slice 0 patch, variant `volleys`: missiles that cannot be answered and kill few, then the
+# front (rival 01 sec. 9, rival 06). It asks whether an earlier fright changes what happens
+# next. The base patch on the clock of `shock`, so that the two memory variants differ only in
+# the fright: the warband starts 51 m further off and stands until six minutes, and missiles
+# fall on the Roman line from one minute to three.
+#
+# Nobody throws them. The fall is scripted, as the band of `shock` is ordered off rather than
+# beaten off, so that every run has the same fire to remember. No enemy is within reach while
+# it lasts, so it starts no bout and the men under it have no one to answer.
+#
+# What men see of it is the falls. No man's table has a row for a missile that fells nobody
+# (rival 07 sec. 8), so this variant tests what seen falls leave behind, and not fear of the
+# fire itself.
+
+name = "patch-volleys"
+seed = 1
+duration_s = 7800
+
+[[body]]
+name = "hastati, first century"
+side = "A"
+troop = "hastati"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-9000, 0]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "hastati, second century"
+side = "A"
+troop = "hastati"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-9000, -18000]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "warband"
+side = "B"
+troop = "gallic-warband"
+files = 20
+ranks = 8
+file_mm = 1000
+rank_mm = 1200
+centre_mm = [60000, -9000]
+facing_deg = 180
+leader = "front-centre"
+tie = "loose"
+
+# The fire. The area is the ground the two centuries stand on, with their closers, and about
+# a metre around it: a man who runs out of it is no longer under it.
+#
+# The dose is for the whole two minutes, per thousand men who stand under it throughout. Of
+# 162 Romans it fells about 4 and hampers about 12.
+# - Its shape is that of a fight with missiles: 10 to 30 men wounded for each one killed, and
+#   most of the wounds light (Mae Enga; docs/slice0/lethality-line-fighting.md, A4). Here 19
+#   are wounded for each man killed.
+# - Its size is a choice and has no source. It is meant to be few: the losses are a fortieth
+#   of the line, so what the fire leaves behind is mostly what the men saw.
+[[volley]]
+from_s = 60
+until_s = 180
+area_mm = [[-18000, -27000], [-1000, 9000]]
+hampered_per_thousand = 75
+disabled_per_thousand = 20
+killed_per_thousand = 5
+
+# Then the pressure from the front, as in the base patch and at the same time as in `shock`:
+# the warband comes on from about 58 m and halts just out of reach.
+[[order]]
+body = "warband"
+at_s = 360
+order = "advance"

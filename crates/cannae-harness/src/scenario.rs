@@ -4,7 +4,8 @@
 use cannae_core::schedule::BASE_TICK;
 use cannae_core::view::Order;
 use cannae_core::{
-    Bodies, BodyFrames, BodyId, ManId, Observed, Posture, Role, Side, Tie, Turn, Vec2,
+    Bodies, BodyFrames, BodyId, ManId, Observed, Posture, Role, Side, Tie, Turn, Vec2, Volley,
+    Volleys,
 };
 use serde::Deserialize;
 
@@ -22,6 +23,27 @@ pub struct Scenario {
     /// Walls, handed to the substrate when it is built.
     #[serde(default, rename = "wall")]
     pub walls: Vec<WallSpec>,
+    /// Missiles falling on an area at set times, resolved beside the bouts.
+    #[serde(default, rename = "volley")]
+    pub volleys: Vec<VolleySpec>,
+}
+
+/// Missiles falling on an area for a stretch of time (docs/rival/02-order-and-contact.md,
+/// sec. 11). Nobody throws them: the fall is the script's, so that every run has the same
+/// fire, and it starts no bout.
+#[derive(Clone, Copy, Debug, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct VolleySpec {
+    pub from_s: u32,
+    pub until_s: u32,
+    /// Two opposite corners of the area, in mm. Whoever stands in it, of either side, is under
+    /// the fall.
+    pub area_mm: [[i32; 2]; 2],
+    /// Of every thousand men who stand under it from beginning to end, about how many it
+    /// hampers, disables and kills.
+    pub hampered_per_thousand: u32,
+    pub disabled_per_thousand: u32,
+    pub killed_per_thousand: u32,
 }
 
 /// A straight wall from one point to another, in mm.
@@ -44,6 +66,41 @@ impl Scenario {
                 )
             })
             .collect()
+    }
+
+    /// The scenario's volleys, for the resolver that runs beside the bouts. A scenario with
+    /// none gives a resolver that does nothing.
+    pub fn volleys(&self) -> Result<Volleys, String> {
+        let tick = |s: u32| s * 1000 / BASE_TICK.0;
+        let corner = |c: [i32; 2]| Vec2::new(c[0], c[1]);
+        self.volleys
+            .iter()
+            .map(|v| {
+                let dose = [
+                    v.hampered_per_thousand,
+                    v.disabled_per_thousand,
+                    v.killed_per_thousand,
+                ];
+                if v.until_s <= v.from_s {
+                    return Err(format!(
+                        "a volley from {} s until {} s lasts no time",
+                        v.from_s, v.until_s
+                    ));
+                }
+                if dose.iter().sum::<u32>() > 1000 {
+                    return Err(format!("a volley's dose of {dose:?} is over a thousand"));
+                }
+                let [a, b] = v.area_mm;
+                Ok(Volley::of_dose(
+                    tick(v.from_s),
+                    tick(v.until_s),
+                    corner(a),
+                    corner(b),
+                    dose,
+                ))
+            })
+            .collect::<Result<Vec<_>, _>>()
+            .map(Volleys::new)
     }
 }
 
@@ -405,6 +462,8 @@ mod tests {
             let (b, placed) = place(&s);
             assert_eq!(placed.len(), s.bodies.len());
             frames(&s, &placed, &b).unwrap_or_else(|e| panic!("{}: {e}", path.display()));
+            s.volleys()
+                .unwrap_or_else(|e| panic!("{}: {e}", path.display()));
             // Not necessarily at once: in `shock` the first order comes at one minute.
             assert!(
                 s.orders.iter().any(|o| o.order != OrderKind::Hold),
@@ -412,6 +471,79 @@ mod tests {
                 path.display()
             );
         }
+    }
+
+    const VOLLEY: &str = r#"
+        [[volley]]
+        from_s = 2
+        until_s = 5
+        area_mm = [[3000, -2000], [-1000, 4000]]
+        hampered_per_thousand = 60
+        disabled_per_thousand = 30
+        killed_per_thousand = 10
+    "#;
+
+    #[test]
+    fn a_volley_is_read_with_its_time_its_area_and_its_dose() {
+        let s = Scenario::from_toml(TWO_BY_THREE).unwrap();
+        assert!(s.volleys().unwrap().is_empty());
+        let s = Scenario::from_toml(&format!("{TWO_BY_THREE}{VOLLEY}")).unwrap();
+        let (a, b) = (Vec2::new(-1000, -2000), Vec2::new(3000, 4000));
+        // Twenty ticks to the second, and the dose in the order hampered, disabled, killed.
+        let v = Volley::of_dose(40, 100, a, b, [60, 30, 10]);
+        assert_eq!(s.volleys().unwrap().all(), [v]);
+        assert_eq!((v.lo, v.hi), (a, b));
+        assert!(v.kill < v.disable && v.disable < v.hamper);
+
+        let bad = |from: &str, to: &str| {
+            let text = format!("{TWO_BY_THREE}{}", VOLLEY.replace(from, to));
+            Scenario::from_toml(&text).map(|s| s.volleys().map(|_| ()))
+        };
+        assert!(bad("until_s = 5", "until_s = 2").unwrap().is_err());
+        assert!(
+            bad("killed_per_thousand = 10", "killed_per_thousand = 911")
+                .unwrap()
+                .is_err()
+        );
+        assert_eq!(
+            bad("killed_per_thousand = 10", "killed_per_thousand = 910").unwrap(),
+            Ok(())
+        );
+        assert!(bad("from_s", "form_s").is_err());
+    }
+
+    #[test]
+    fn the_patchs_volleys_fall_on_the_whole_roman_line_and_on_no_one_else() {
+        let s = Scenario::from_toml(include_str!("../../../scenarios/patch/volleys.toml")).unwrap();
+        let (b, _) = place(&s);
+        let volleys = s.volleys().unwrap();
+        let [v] = volleys.all() else {
+            panic!("one volley, not {}", volleys.all().len());
+        };
+        // From one minute to three.
+        assert_eq!((v.from, v.until), (1_200, 3_600));
+        let (mut romans, mut others) = (0, 0);
+        for i in 0..b.len() {
+            let under = v.covers(b.pos[i]);
+            assert_eq!(under, b.side[i] == Side::A, "man {i} at {:?}", b.pos[i]);
+            romans += under as u32;
+            others += !under as u32;
+            // About a metre to spare: a man a pace out of his place is still under it.
+            if under {
+                for step in [
+                    Vec2::new(900, 0),
+                    Vec2::new(-900, 0),
+                    Vec2::new(0, 900),
+                    Vec2::new(0, -900),
+                ] {
+                    assert!(v.covers(b.pos[i] + step), "man {i} at {:?}", b.pos[i]);
+                }
+            }
+        }
+        assert_eq!((romans, others), (162, 160));
+        // The base patch's Romans, where the base patch has them; only the warband is moved.
+        let base = Scenario::from_toml(include_str!("../../../scenarios/patch/base.toml")).unwrap();
+        assert_eq!(s.bodies[..2], base.bodies[..2]);
     }
 
     #[test]

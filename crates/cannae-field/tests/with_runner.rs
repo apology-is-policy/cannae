@@ -5,7 +5,10 @@
 //! scored run, and nothing here was used to choose a prior.
 
 use cannae_core::power::GaitSpeeds;
-use cannae_core::{BodyFrames, BoutParams, Bouts, EventKind, Posture, Rng};
+use cannae_core::{
+    BodyFrames, BoutParams, Bouts, Cause, EventKind, GridPerception, Perceive, Posture, Rng,
+    Volleys,
+};
 use cannae_field::{Contact, Field, FieldPerception, Params as FieldParams};
 use cannae_harness::scenario::frames;
 use cannae_harness::{Dormancy, Runner, Scenario, place};
@@ -116,6 +119,79 @@ fn the_engine_repeats_itself_and_keeps_dormancy_exact() {
         assert_eq!(skip.hashes, again.hashes, "{contact:?}");
         assert!(skip.skipped > 1_000, "only {} slept", skip.skipped);
     }
+}
+
+/// The patch's `volleys` variant on the field, with the troops it names and its volleys
+/// beside the bouts, under either perception.
+fn volleys<P: Perceive + Default>(
+    mode: Dormancy,
+) -> Runner<P, Men, Field, BodyFrames, (Bouts, Volleys)> {
+    let s = Scenario::from_toml(include_str!("../../../scenarios/patch/volleys.toml")).unwrap();
+    let (bodies, placed) = place(&s);
+    let f = frames(&s, &placed, &bodies).unwrap();
+    let rng = Rng::new(s.seed);
+    let troops: Vec<Troop> = s
+        .bodies
+        .iter()
+        .map(|b| Troop::named(&b.troop).unwrap())
+        .collect();
+    let men = Men::new(Rung::Shaken, Params::CENTRE, &bodies, &troops, &rng);
+    let fighting = (
+        Bouts::new(BoutParams::PLACEHOLDER, men.kits()),
+        s.volleys().unwrap(),
+    );
+    let mut r = Runner::new(
+        bodies,
+        P::default(),
+        men,
+        Field::new(FieldParams::CENTRE),
+        f,
+        fighting,
+        rng,
+        GaitSpeeds::PLACEHOLDER,
+    );
+    r.dormancy = mode;
+    r
+}
+
+#[test]
+fn under_the_patchs_volleys_dormancy_is_exact_and_both_perceptions_see_the_same() {
+    let mut skip = volleys::<FieldPerception>(Dormancy::Skip);
+    let mut all = volleys::<FieldPerception>(Dormancy::EvaluateAll);
+    let mut check = volleys::<FieldPerception>(Dormancy::Check);
+    let mut reference = volleys::<GridPerception>(Dormancy::Skip);
+    // One minute of quiet, two of fire, and ten seconds after.
+    skip.run_until(3_800);
+    all.run_until(3_800);
+    check.run_until(3_800);
+    reference.run_until(3_800);
+    assert_eq!(skip.hashes, all.hashes);
+    assert_eq!(skip.hashes, check.hashes);
+    assert_eq!(skip.hashes, reference.hashes);
+    assert!(skip.skipped > 3 * skip.evaluated, "{} slept", skip.skipped);
+    // Men fell to the missiles, and the men about them were shaken by it.
+    let falls = skip
+        .log
+        .all()
+        .iter()
+        .filter(|e| {
+            matches!(
+                e.kind,
+                EventKind::Posture {
+                    to: Posture::Down,
+                    ..
+                }
+            )
+        })
+        .inspect(|e| assert_eq!(e.causes[0], Cause::Missile))
+        .count();
+    let shaken = (0..skip.bodies.len() as u32)
+        .filter(|&m| skip.model.memory.shaken(cannae_core::ManId(m), 3_600) > 0)
+        .count();
+    assert!(
+        falls > 0 && shaken > 10 * falls,
+        "{falls} falls, {shaken} shaken"
+    );
 }
 
 #[test]
