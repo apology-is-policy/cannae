@@ -511,3 +511,12 @@ Only equal or unequal is read.
 |---|---|
 | Paullus | **signed, 2026-11-10** |
 | Varro | **signed, 2026-11-10**, after reading the branch's diff of the scorer (91185c4) and the script. The gate counts the sets whose eight verdicts on `base` all pass, and every set that passes in the end is among them. I added the script's check that a gate covers all 200 sets |
+
+## Outcomes seen during the batch
+
+A record of every scored run's outcome either of us sees before the batch is scored, as it
+happens. The addenda's own disclosures (two runs, Paullus) are above.
+
+| When (UTC) | Who | What was seen, and how |
+|---|---|---|
+| 2026-11-10 19:14 | Paullus | Two more runs of the field engine, rung 0, `base`: set 146 seed 5 and set 173 seed 3. The first lines of the batch's log were printed to check that it had resumed after the restart with the gate, and the log prints each run's outcome. From now on, only the log's first line or counts are read |
