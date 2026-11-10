@@ -3,9 +3,11 @@
 //!
 //! - The eight bands are scored on `base`, per parameter set, over its seeds ([`verdicts`]).
 //! - Pattern 6 passes only if, for the same set, the Roman line fares worse with recruits
-//!   than with veterans, worse in `flank` than in `base`, and worse in `base` than in
-//!   `relief`, each with a probability of superiority over seed pairs of at least 0.6
-//!   ([`fortune`]).
+//!   than with veterans and worse in `flank` than in `base`, each with a probability of
+//!   superiority over seed pairs of at least 0.6 ([`fortune`]).
+//! - The relief is reported for the cell, not scored for the set: one relief of a line whose
+//!   hazard does not rise steeply cannot reach 0.6, and ten seeds a side cannot tell 0.63
+//!   from 0.5 (call 0001, turn 48).
 //! - A cell passes if at least 10 % of its sets pass all eight, as observed.
 //!
 //! Everything else here is reported, not scored.
@@ -15,16 +17,16 @@ use crate::Record;
 use crate::draw::Cell;
 use cannae_core::Side;
 use cannae_harness::metrics::{
-    Bands, RunSummary, fortune, side_time_to_break_s, superiority, superiority_of, verdicts,
-    weibull_shape,
+    Bands, RunSummary, fortune, side_time_to_break_s, spearman, superiority, superiority_of,
+    verdicts, weibull_shape,
 };
 use std::collections::BTreeMap;
 use std::fmt::{self, Write as _};
 use std::path::Path;
 
 /// The patch variants, in the order the report gives them.
-pub const VARIANTS: [&str; 7] = [
-    "base", "veterans", "recruits", "flank", "relief", "volleys", "shock",
+pub const VARIANTS: [&str; 8] = [
+    "base", "veterans", "recruits", "flank", "backed", "relief", "volleys", "shock",
 ];
 
 /// The Roman line in every patch variant (tested against the scenario files).
@@ -173,7 +175,6 @@ impl Cellbook {
             let dose = [
                 compare("recruits", "veterans", d),
                 compare("flank", "base", d),
-                compare("base", "relief", d),
             ];
             let dose_ok = dose.iter().all(|x| x.is_some_and(|(f, _)| f >= DOSE_MIN));
             let mut full = v;
@@ -191,6 +192,8 @@ impl Cellbook {
                 passed: full.iter().filter(|p| **p == Some(true)).count(),
                 roman_broke,
                 shape: weibull_shape(&times, bands.holds_never_s),
+                drill: compare("backed", "relief", d).map(|(f, _)| f),
+                second_line: compare("base", "relief", d).map(|(f, _)| f),
                 shock: compare("shock", "base", d).map(|(f, _)| f),
                 volleys: compare("volleys", "base", d).map(|(f, _)| f),
             });
@@ -231,11 +234,17 @@ pub struct SetScore {
     pub draw: u32,
     /// On `base`, pattern 6 by its band alone.
     pub verdicts: [Option<bool>; 8],
-    /// Recruits against veterans, `flank` against `base`, `base` against `relief`: how the
-    /// Roman line fared (the rule), and its break time alone (reported beside it). `None`
-    /// where a variant's runs are missing.
-    pub dose: [Option<(f64, f64)>; 3],
-    /// All eight, with pattern 6 needing the three dose-response statistics.
+    /// Recruits against veterans, `flank` against `base`: how the Roman line fared (the
+    /// rule), and its break time alone (reported beside it). `None` where a variant's runs
+    /// are missing.
+    pub dose: [Option<(f64, f64)>; 2],
+    /// P(the Roman line fares worse in `backed` than in `relief`): the drill alone, reported
+    /// for the cell.
+    pub drill: Option<f64>,
+    /// P(it fares worse in `base` than in `relief`): the whole effect of a second line,
+    /// arithmetic included, reported.
+    pub second_line: Option<f64>,
+    /// All eight, with pattern 6 needing both dose-response statistics.
     pub passes_all: bool,
     /// How many of the eight passed, pattern 6 as scored: the second key for ranking rungs if
     /// none passes.
@@ -297,6 +306,18 @@ fn wilson(k: usize, n: usize) -> (f64, f64) {
     let mid = (p + z * z / (2.0 * n)) / (1.0 + z * z / n);
     let half = z * (p * (1.0 - p) / n + z * z / (4.0 * n * n)).sqrt() / (1.0 + z * z / n);
     ((mid - half).max(0.0), (mid + half).min(1.0))
+}
+
+/// The mean of `v` and its 95 % interval, from the spread between sets.
+fn mean_interval(v: &[f64]) -> Option<(f64, f64, f64)> {
+    if v.is_empty() {
+        return None;
+    }
+    let n = v.len() as f64;
+    let m = v.iter().sum::<f64>() / n;
+    let var = v.iter().map(|x| (x - m) * (x - m)).sum::<f64>() / (n - 1.0).max(1.0);
+    let half = 1.96 * (var / n).sqrt();
+    Some((m, m - half, m + half))
 }
 
 /// The quartiles of `v`, by nearest rank.
@@ -387,11 +408,7 @@ impl fmt::Display for Report {
             "  Patterns passed per set, of eight: {}",
             spread(self.sets.iter().map(|s| s.passed as f64).collect())
         )?;
-        let names = [
-            "recruits worse than veterans",
-            "flank worse than base",
-            "base worse than relief",
-        ];
+        let names = ["recruits worse than veterans", "flank worse than base"];
         writeln!(
             f,
             "\n  Dose-response, how the Roman line fared (the rule, at least {DOSE_MIN} to pass):"
@@ -422,6 +439,34 @@ impl fmt::Display for Report {
         writeln!(
             f,
             "    sets where the Roman line broke in fewer than 2 seeds of base: {few}"
+        )?;
+        let drill: Vec<f64> = self.sets.iter().filter_map(|s| s.drill).collect();
+        writeln!(
+            f,
+            "\n  The relief, P(the Roman line fares worse than relieved), reported:"
+        )?;
+        match mean_interval(&drill) {
+            Some((m, lo, hi)) => {
+                let above = drill.iter().filter(|&&x| x > 0.5).count();
+                let (with_shape, shapes): (Vec<f64>, Vec<f64>) = self
+                    .sets
+                    .iter()
+                    .filter_map(|s| s.drill.zip(s.shape))
+                    .unzip();
+                writeln!(
+                    f,
+                    "    backed, the drill alone: mean {m:.3} (95 % interval {lo:.3}-{hi:.3}) over {} \
+                     sets; {above} above 0.5; Spearman against the Weibull shape {}",
+                    drill.len(),
+                    spearman(&with_shape, &shapes).map_or("none".into(), |r| format!("{r:.2}"))
+                )?;
+            }
+            None => writeln!(f, "    backed, the drill alone: none")?,
+        }
+        writeln!(
+            f,
+            "    base, the whole second line: {}",
+            spread(self.sets.iter().filter_map(|s| s.second_line).collect())
         )?;
         writeln!(
             f,

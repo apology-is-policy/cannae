@@ -33,7 +33,9 @@ perception about 35 %.
   were like that, the batch would take about three days. Sets that hold longer cost more.
 
 `shock` is written and costs what `base` costs. `volleys` is being written by Varro, and
-should cost about the same. `relief` adds a second line, so it will cost more per run.
+should cost about the same. `relief` and `backed` add a second line, so each costs more per
+run. `backed` runs on all 200 sets, or on every fourth (`cell --every 4`) if the timings at
+the freeze say the batch will not fit in three nights; the freeze records which.
 
 ## The stop rule, proposed
 

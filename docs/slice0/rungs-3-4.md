@@ -44,6 +44,10 @@ not:
 - **A hazard that rises over a long fight.** Resolve drains while the lines are formed, so the
   time to break should have a Weibull shape above 1, and above rung 2's. If the shapes match,
   the gauges have not earned their place.
+- **Relief that helps.** A fresh century starts with full resolve, where the century it
+  relieves has spent some. So rung 3 should show a larger effect of the drill (`relief`
+  against `backed`) than rung 2, whose *shaken* rises only with the falls a man sees and
+  wears off. Breath is restored by the relief at every rung.
 - **A fright that lingers.** After a shock that is driven off (the `shock` variant), men
   should stay nearer the edge for minutes. *Shaken* does that in steps, so rung 3 must do it
   measurably better, or the ladder keeps rung 2.

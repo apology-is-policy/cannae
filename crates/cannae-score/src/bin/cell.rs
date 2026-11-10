@@ -1,10 +1,12 @@
-//! `cell --substrate pairwise|field --rung 0..3 [--variant base] [--draws D] [--seeds N]
-//! [--freeze-seed F] [--jobs J] [--secs S] [--whole yes] [--audit no] [--out DIR]
+//! `cell --substrate pairwise|field --rung 0..3 [--variant base] [--draws D] [--every E]
+//! [--seeds N] [--freeze-seed F] [--jobs J] [--secs S] [--whole yes] [--audit no] [--out DIR]
 //! [--nominal yes]`
 //!
 //! Runs one cell of the experiment: parameter sets 0 to D-1 (`cannae_score::draw`, from the
 //! freeze seed F), each on seeds 1 to N of a patch variant (`scenarios/patch/<variant>.toml`),
-//! J runs at a time. Prints one line per run and the cost of the batch. A run stops where
+//! J runs at a time. With `--every E`, only sets 0, E, 2E and so on below D are run (as
+//! `backed` may be, if the nights are short). Prints one line per run and the cost of the
+//! batch. A run stops where
 //! scoring stops, 15 minutes after a side breaks, unless `--whole yes`.
 //!
 //! **The audit** (preregistration step 3): sets 0, 20, 40 and so on are also run to the end on
@@ -41,6 +43,7 @@ fn main() -> ExitCode {
     let mut variant = "base".to_string();
     let mut seeds = 1u64;
     let mut draws = 1u32;
+    let mut every = 1u32;
     let mut freeze_seed = 0u64;
     let mut nominal_set = false;
     let mut jobs = 1usize;
@@ -63,6 +66,7 @@ fn main() -> ExitCode {
             "--variant" => variant = v,
             "--seeds" => seeds = v.parse().unwrap_or(1),
             "--draws" => draws = v.parse().unwrap_or(1),
+            "--every" => every = v.parse().unwrap_or(1).max(1),
             "--freeze-seed" => freeze_seed = v.parse().unwrap_or(0),
             "--jobs" => jobs = v.parse().unwrap_or(1),
             "--secs" => secs = v.parse().ok(),
@@ -93,6 +97,7 @@ fn main() -> ExitCode {
         nominal(cell).map(|d| vec![d])
     } else {
         (0..draws)
+            .step_by(every as usize)
             .map(|i| drawn(freeze_seed, cell, i))
             .collect::<Result<Vec<_>, _>>()
     } {
@@ -277,8 +282,8 @@ fn print_run(r: &Run) {
 fn usage() -> ExitCode {
     eprintln!(
         "usage: cell --substrate pairwise|field --rung 0..3 [--variant base] [--seeds N] \
-         [--draws D] [--freeze-seed F] [--jobs J] [--secs S] [--whole yes] [--audit no] \
-         [--out DIR] [--nominal yes]"
+         [--draws D] [--every E] [--freeze-seed F] [--jobs J] [--secs S] [--whole yes] \
+         [--audit no] [--out DIR] [--nominal yes]"
     );
     ExitCode::FAILURE
 }

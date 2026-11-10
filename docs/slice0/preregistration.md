@@ -53,10 +53,12 @@ For each cell of the experiment (each rung of the memory ladder on each substrat
 **Scoring a parameter set** (agreed in call 0001, turns 43-44; rival 06 §2):
 
 - **The eight bands are scored on `base`,** per parameter set, over its 10 seeds.
-- **Pattern 6 passes only if** its band passes on `base` **and** all three dose-response
+- **Pattern 6 passes only if** its band passes on `base` **and** both dose-response
   statistics below reach 0.6 for the same parameter set. The report gives pattern 6 both with
   and without them, so a reader sees which half failed.
 - **A set passes** when all eight patterns pass, pattern 6 as above.
+- **The relief is reported for the cell, not scored for the set** (below; call 0001,
+  turns 46-48).
 - **`shock` and `volleys` are reported only** (below).
 
 **Code:** `crates/cannae-score` (`cell` writes each run to disk, `score` scores a cell),
@@ -201,8 +203,8 @@ alone. The interval passage shows it, and it is reported as it comes.
 - **Pattern 8:** Caesar's centurion losses are high in a formed fight and lower in a repulse
   or a panic (rival 04 §5).
 
-**Dose-response, for pattern 6, across variants, with the casualty clock held fixed.** All
-three variants change the Roman side, so each statistic compares **how the Roman line fared**
+**Dose-response, for pattern 6, across variants, with the casualty clock held fixed.** The
+variants all change the Roman side, so each statistic compares **how the Roman line fared**
 (agreed in call 0001, turns 43-44). Each run gets one value, ordered worst for the Romans
 first:
 
@@ -216,20 +218,56 @@ the probability of superiority on that value over the 10 × 10 pairs of a parame
 seeds, ties counted half (`fortune` and `superiority_of` in the metrics):
 
 - the Roman line fares worse with recruits than with veterans: at least 0.6;
-- it fares worse attacked in the flank (`flank`) than not (`base`): at least 0.6;
-- it fares worse without relief (`base`) than with it (`relief`): at least 0.6.
+- it fares worse attacked in the flank (`flank`) than not (`base`): at least 0.6.
+
+Ten seeds a side give each statistic a standard error of about 0.13, so a set whose true
+value is 0.7 still fails about one time in five. Both engines carry that noise alike. The
+effects of troop quality and of a flank attack should be large, so it costs little there.
 
 **Why not the time to break alone.** The first break of either side, as a time, would score
 a warband that breaks sooner against recruits as recruits breaking sooner. The Roman side's
 break time alone, with "never" tied, gives a variant no room to respond in a set where the
-Romans usually win: `relief` could not reach 0.6 unless the unrelieved line broke in at least
-2 seeds of 10. That would fail a set for having no room to respond, not for responding
+Romans usually win: a variant that helps them could not reach 0.6 unless the line without
+it broke in at least 2 seeds of 10. That would fail a set for having no room to respond, not for responding
 wrongly. The value above lets one thing through, which the report names: veterans who hold
 no longer than recruits but beat the warband sooner pass on skill at arms alone.
 
-**Reported beside it:** the same three statistics on the Roman side's break time alone, with
+**Reported beside it:** the same two statistics on the Roman side's break time alone, with
 "never" later than any time, and the number of sets where the Roman line broke in fewer than
 2 seeds of `base`. A reader then sees whether any verdict hangs on the definition.
+
+**The relief, reported for the cell and not scored for the set** (call 0001, turns 46-48).
+The prereg first asked that a line relieved by a second line break later than one without
+relief, at 0.6 for each set. Two faults were found before any run:
+
+- **Against `base`, the leg passes by arithmetic** (Varro). A side breaks when 40 % of its
+  standing men have turned. With a second line the Roman side has twice the men, so the rout
+  of one century no longer breaks it, whether the second line ever moves or not.
+- **Against a line merely backed, it passes by chance** (Varro's sum, checked by Paullus).
+  Take an unrelieved line whose time to break is a Weibull with a mean life the pattern 6
+  band allows, relieved once by a fresh line of the same kind. The chance that it fares
+  better relieved than backed is 0.50 at shape 1 whatever the time of the relief, about 0.6
+  at shape 2, and 0.72-0.76 at shape 3 when relieved at 20-30 minutes. So 0.6 for one set
+  would band the shape, which is reported and not banded because no source gives it. And at
+  ten seeds a side, a set with no effect passes about one time in four, and a set with the
+  largest effect a shape of 2 allows passes about six times in ten.
+
+So:
+
+- **`backed`** is `relief` with no relief: the same two lines and the same men, with the
+  second line never moving. It runs on all 200 sets. If the timings at the freeze say the
+  batch will not fit in three nights, it runs on every fourth set (0, 4, 8 and so on) instead.
+  The freeze records which, before any scored run.
+- **The drill alone, reported for each cell:** the mean over sets of the probability that
+  the Roman line fares worse backed than relieved, with its 95 % interval; the share of sets
+  above 0.5; and its rank correlation with each set's Weibull shape, which should be
+  positive. Pooled over sets its standard error is about 0.01, where one set's is 0.13.
+- **The whole effect of a second line, reported:** the same statistic for `base` against
+  `relief`, arithmetic and all.
+- **Pattern 6 keeps two legs.** Dropping the third makes pattern 6 easier for both engines.
+  Neither side can say which it helps more.
+- **Expected, written beforehand:** rung 3 shows the drill's effect more than rung 2. Its
+  resolve drains through a fight, and a fresh century starts full ([rungs-3-4.md](rungs-3-4.md)).
 
 The absolute time to break is close to an input in both designs, so it is scored by direction
 and size, not by value (rival 04 §4).
@@ -248,6 +286,7 @@ contact up to 10 minutes in still leaves two hours to watch.
 | `base` | Two centuries side by side (10 files by 8 ranks each) against a warband of equal numbers (20 by 8) |
 | `veterans` / `recruits` | The Roman troop type: veterans and recruits against the same warband |
 | `flank` | A small third body arrives on one flank of the Roman line after contact |
+| `backed` | `relief` with no relief: the second line stands behind the first and never moves |
 | `relief` | A second Roman line stands behind the first and relieves it in a lull |
 | `volleys` | Missiles that cannot be answered and kill few, then pressure from the front |
 | `shock` | An attack from behind that is driven off, then pressure from the front |
