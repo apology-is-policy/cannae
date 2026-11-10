@@ -128,16 +128,19 @@ Varro's engine ran the same passages with every prior at its centre
 
 | | Measured | Field | Discs (300 mm) |
 |---|---|---|---|
-| Walking through a 3 m gate, Js | about 1.9 (1.6-2.3) | 1.17 | 2.91 |
-| Running and shoving through a 3 m gate, Js | about 4.0, at 0.7 m doors | 4.34 | 6.27 |
-| A maniple through a 3 m interval: nine in ten through | no data | 40 s | 24 s |
-| The same, with the enemy following | no data | 6-10 of 120 still not through after 5 min | 33 s |
+| Walking through a 3 m gate, Js | about 1.9 (1.6-2.3) | 1.80 (1.17 before calibration) | 2.91 |
+| Running and shoving through a 3 m gate, Js | about 4.0, at 0.7 m doors | 5.65 | 6.27 |
+| A maniple through a 3 m interval: nine in ten through | no data | 27 s | 24 s |
+| The same, with the enemy following | no data | 1-2 of 120 still not through after 5 min | 33 s |
 | Seyfried's 0.8-1.2 m corridor | 1.6-2.3 | cannot run: narrower than a cell | 1.7-2.4 |
 
+The field's figures are at its calibrated centre (below), and after both engines' lean fix: a
+lean now pushes only on men in the way.
+
 What it shows, as it stands:
-- **The two engines miss the walking flow in opposite directions.** The field passes the
-  capacity of its walking curve, which was fitted to people walking in the open. The discs keep
-  full speed until they touch.
+- **Before calibration, the two engines missed the walking flow in opposite directions.** The
+  field passed the capacity of its walking curve, which was fitted to people walking in the
+  open. The discs keep full speed until they touch.
 - **The field's three ways of touching give the same flow,** within 6 % at every width.
   Contact inside a crowd buys nothing at a gate of 3 m or more. It already fails on speed in
   the pocket, so it has no case left where it earns its place.
@@ -145,10 +148,19 @@ What it shows, as it stands:
   cannot resolve a gap narrower than a cell, about a metre. Intervals and camp gates are wider
   than that. If it matches there, it will be by calibration: before it, the field was 40 % low,
   and the report gives both numbers.
-- **Varro proposes calibrating the steepness of his walking curve** against the bottleneck
-  measurements before the freeze, as the discs' radius was calibrated. With it, the field
-  would match the measured walking flow at gates and intervals, and the discs would stay
-  30-50 % high.
+- **The field is now calibrated, and the discs are not.** Varro made the walking curve's
+  capacity a drawn parameter, U[1.6, 2.3] persons per metre per second, on the bottleneck
+  measurements and on no pattern, as the discs' radius was calibrated (F8 in
+  [priors-field.md](priors-field.md)). He checked it first on Liao et al.'s geometry: the flow
+  scales with the capacity at every width from 2.4 to 5 m. At its centre the field walks 1.80
+  through a 3 m gate, and the discs stay 30-50 % high.
+- **Running and shoving, both engines run high** where data exist only for narrow doors: the
+  field 5.65, the discs 6.27, against about 4.0 at 0.7 m.
+- **Some of the fall of flow with width may be the bench's steering.** Everyone from the wings
+  makes for the two edge points of the mouth. With the men spread across the mouth, the field
+  passes nearly its capacity at every width (Varro, `--spread` in his `gate_flow` example). The
+  discs fall with width on the same steering, so part of their fall may be the bench and not
+  the discs. Not yet checked.
 
 ## Waiting
 

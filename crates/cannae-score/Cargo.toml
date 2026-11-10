@@ -1,0 +1,18 @@
+[package]
+name = "cannae-score"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+description = "Slice 0 scored runs: a cell's runs in parallel, one run summary each"
+
+[dependencies]
+cannae-core = { path = "../cannae-core" }
+cannae-field = { path = "../cannae-field" }
+cannae-gauges = { path = "../cannae-gauges" }
+cannae-harness = { path = "../cannae-harness" }
+cannae-man = { path = "../cannae-man" }
+cannae-pairwise = { path = "../cannae-pairwise" }
+rayon = "1"
+
+[lints]
+workspace = true

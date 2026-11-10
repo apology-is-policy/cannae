@@ -53,6 +53,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "cannae-score"
+version = "0.1.0"
+dependencies = [
+ "cannae-core",
+ "cannae-field",
+ "cannae-gauges",
+ "cannae-harness",
+ "cannae-man",
+ "cannae-pairwise",
+ "rayon",
+]
+
+[[package]]
 name = "crossbeam-deque"
 version = "0.8.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
