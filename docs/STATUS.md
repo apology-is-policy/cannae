@@ -24,17 +24,25 @@ reviews his work and merges it.
 | S0.4 | Lethality bounds: literature search on skeletal trauma and experimental archaeology (Varro searches line-fighting ethnography and Collins) | f8cb2a6 Paullus's half; band proposed |
 | S0.5 | The pairwise substrate, where every body touches its neighbours, at patch scale; a perception conformance check for Varro | 14e919b |
 | S0.6 | The top two rungs of the memory ladder: continuous fear and resolve, then the full excitable psyche | |
-| S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | 1cce715, e6d2195 (pairwise 4x faster); sustained readings running |
+| S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | Pairwise done for the line, surge and pocket ([report](slice0/spike-pairwise.md)); the gates wait for walls (S0.8); Varro's field spike is his |
 | S0.8 | The passage study, against measured crowd-flow data | |
 | S0.9 | Scored runs and the report; then design review 2 | |
 
-**Speed readings (pairwise substrate only, no man model, 6 s bursts; the sustained 10-minute runs are going now):** 150,000 bodies run at about 9.9x real time on one core in a line battle and 15.5x on four; a pocket, the dense worst case, at 3.8x and 6.3x. The first version managed 2.5x and 2.4x. Its cost was not the contact search but building and summing a grid with a cell for every patch of empty ground. Results are bit-identical across versions and thread counts. The kill line for this engine is 3x sustained on all cores, with the man included.
+**Speed (pairwise substrate only, no man model yet; sustained readings on the fanless Air,
+[report](slice0/spike-pairwise.md)):** 150,000 bodies on 4 cores for 10 minutes ran at 12.1x
+real time in a line battle, 5.3x when every man keeps pushing, and 2.3x in a pocket (3.8x on 8
+cores). The kill line is 3x with the man included, so **the pocket is this engine's main risk**.
+The worst case was measured: everyone touching, a ring pressing forever, and no one ever
+falling. The sustained run also found a physics bug: men could walk through a standing crowd,
+up to 64 men per m². Now a man cannot walk into the men ahead of him, his lean fades as he
+presses to the bone, and bodies have a hard core. The pressed edge settles at about 5 per m²,
+the crowd-safety literature's onset of danger.
 
 **Priors (drafts, frozen with the pre-registration):** three files, so that both engines draw everything they share from one prior, and draw *i* is the same in every cell.
 
 - [priors-shared.md](slice0/priors-shared.md): stamina, power and gait (Paullus), plus ties, bouts and the troop table (Varro, to come). Power is now a multiple of each man's critical power, because the placeholders mixed cycling watts with metabolic ones.
 - [priors-pairwise.md](slice0/priors-pairwise.md): the pairwise substrate, with seven drawn parameters, and rungs 3-4 to come. The placeholder crush threshold was below the crowd-safety literature's onset of 5-8 men per m².
-- `priors-field.md`: Varro's, to come.
+- [priors-field.md](slice0/priors-field.md): Varro's, 29-32 drawn per rung plus troop inputs, with what he expects written down before any run.
 
 The sources behind them are in [crowd-physics.md](slice0/crowd-physics.md) and [physiology.md](slice0/physiology.md). The march speed is checked against Vegetius 1.9 in the Latin: 20 Roman miles in five summer hours, about 1.3 m/s.
 
@@ -43,16 +51,27 @@ The sources behind them are in [crowd-physics.md](slice0/crowd-physics.md) and [
 | Piece | Status |
 |---|---|
 | Frames (standards, slots, ties, drills) and the shared bout resolver, in the core | 84dce11, reviewed and merged to `main` |
-| `cannae-man` with rungs 0-2 (33 weights, a troop table) | compiles; tests next |
-| His priors file and behaviour table; his lines of priors-shared.md | next |
+| `cannae-man` with rungs 0-2, his priors file, the behaviour table (rival 07), his lines of priors-shared.md, his half of the lethality search | 9b29064, reviewed and merged |
+| The field substrate | in progress |
 | His half of the lethality search (line-fighting ethnography, Collins) | |
 | The field substrate, with contact where men are crowded and moving | |
 
-**Pre-registration, one change agreed:** Varro showed the first draft of pattern 6 could not be
-passed by a line whose chance of breaking stays the same every minute, so it quietly assumed
-that lines grow brittle. Now a line must not break within 5 minutes of contact in more than
-10 % of seeds, and must not still be unbroken two hours after contact in more than 25 %. The
-shape of the time to break is reported as a finding, not banded.
+**Pre-registration: five defects found and fixed so far,** four of them by Varro. All were found
+before any scored run, which is the point of writing it down first.
+
+1. **Holding then breaking:** the pass mark couldn't be met by a line whose chance of breaking
+   stays the same every minute. The horizon is now two hours, and the shape of the time to
+   break is reported, not banded.
+2. **Pulses and lulls:** "burstiness" was counted per time bin, where random fighting passes.
+   It is now measured on the gaps between bouts, per 9 m stretch of front.
+3. **Rear-first collapse and lateral spread:** one early runaway could set both statistics.
+   They are now measured over the collapse only, and runaways are counted separately.
+4. **No rule if no rung passes:** now written down. The rungs are still ranked, the report
+   says so plainly, and nobody narrows a prior and reruns.
+5. **Lethality per exchange:** the lower end of the band is now 0.002, set by Varro from his
+   half of the search, since it decides my engine's kill line.
+
+Fighting tempo is reported but not banded. The sources are too thin to fail an engine on.
 
 **Kill criteria, both ways.**
 

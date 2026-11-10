@@ -16,7 +16,7 @@ secondary or unconfirmed.
 
 ## The substrate (`crates/cannae-pairwise`, `Params`)
 
-**Drawn parameters: 7.** One is fixed.
+**Drawn parameters: 8.** One is fixed.
 
 | Parameter | Placeholder | Prior | Source or reason |
 |---|---|---|---|
@@ -26,8 +26,18 @@ secondary or unconfirmed.
 | `turn_per_tick`: fastest turn | 1,638 units (180° per s) | uniform 120-200° per s | Mason et al. 2022: turning in place peaks at 190 ± 27° per s and averages 124° per s; a 180° turn while walking peaks at 179-182° per s [primary]. The pace instruction is unconfirmed, so these are typical rates, not maximal ones. |
 | `press_mm_s`: how fast a man at full press edges forward | 300 | uniform 200-700 | No direct measurement. The nearest is Pastor et al. 2015: a crowd approaching a door advanced at 0.41 m/s when told to avoid contact and 0.72 m/s when pushing was allowed [primary]. |
 | `brace_mm_s`: how fast a standing man regains his spot after a shove | 600 | uniform 300-1,200 | A reason, not a source: a man shoved half a metre regains it in about a second. Checked with `press_mm_s` in the passage study (below). |
+| `core_mm`: overlap with one neighbour beyond which bodies give no more | 150 | uniform 100-200 | Chest depth of ANSUR II men is 254 mm on average [primary, computed]. Bodies and kit yield some way under crowd pressure, and then not at all. Check: at r = 280 and a core of 150 mm, men pressed to the bone stand 410 mm apart, about 6.9 per m², near Fruin's "almost a fluid mass" at about 7 per m² [primary]. Across the box, 5-15 per m²; the Hajj measurements found local densities above 10 [primary]. |
 | `stiffness_q8`: share of an overlap removed per pass, out of 256 | 128 | uniform 64-192 | Numerical: how soft the discs are. Together with `press_mm_s` it sets how far a pressed crowd compresses. Its effect on each pattern is reported, so that no verdict hinges on it alone. |
 | `iterations`: relaxation passes per base tick | 2 | fixed at 2 | Numerical, not drawn. A convergence check at 4 is reported for the base patch. |
+
+**Two rules with no parameter** (S0.7, after the sustained pocket run showed a ring of men
+walking straight through a standing crowd to 64 men per m²):
+- A man cannot walk into the men he touches ahead of him: his step loses its component
+  toward them, so he slides along them or stands.
+- His lean fades as his summed overlap with the men ahead, in the direction he faces, rises
+  toward `core_mm`: he cannot push further than bodies give.
+
+Crushing is drawn at the man's step (4 Hz), over the whole step.
 
 **Known simplification.** Crushing is read from the summed overlap, whatever its direction. In
 crowd deaths, a load front to back stops a man breathing and a load side to side does not
@@ -61,6 +71,6 @@ parameters are drawn here, on top of rung 3's.
 
 | Part | Drawn | Fixed |
 |---|---|---|
-| Substrate | 7 | 1 |
+| Substrate | 8 | 1 |
 | Rung 3 | (to come) | |
 | Rung 4 | (to come) | |

@@ -10,6 +10,7 @@
 //! Limitations, for now: the fallen are not obstacles, and there are no walls. The passage
 //! study (S0.8) adds walls.
 
+use cannae_core::schedule::{MAN_STEP, is_man_step};
 use cannae_core::{
     Bodies, Cause, Event, EventKind, Key, Posture, Prob, Rng, SimMs, Stream, Substrate, Target,
     Vec2, Wound,
@@ -37,6 +38,10 @@ pub struct Params {
     pub crush_mm: i32,
     /// Injury hazard per second for each mm of overlap above `crush_mm`, Q16.
     pub crush_rate_q16_per_mm: u32,
+    /// Overlap with one neighbour beyond which bodies give no more: the excess is removed in
+    /// full at every pass, not by `stiffness_q8`. A man squeezed by a crowd yields some way,
+    /// and then he is bone.
+    pub core_mm: i32,
 }
 
 impl Params {
@@ -50,6 +55,7 @@ impl Params {
         crush_mm: 250,
         // 0.01 per second per mm.
         crush_rate_q16_per_mm: 655,
+        core_mm: 150,
     };
 }
 
@@ -74,6 +80,17 @@ pub struct Pairwise {
     pressure: Vec<i32>,
     weight: Vec<i32>,
     old: Vec<Vec2>,
+    /// Where each man wants to go, as a direction 1024 long, or zero.
+    want: Vec<Vec2>,
+    /// The summed directions, 1024 long each, of the men he touched ahead of him (in the half
+    /// toward where he wanted to go) at the last pass. Sorted order during a pass, then by man.
+    blk: Vec<Vec2>,
+    block: Vec<Vec2>,
+    /// The direction each man leans in, 1024 long, or zero; and his summed overlap with the
+    /// men ahead of him in that direction at the last pass (sorted order, then by man).
+    lean: Vec<Vec2>,
+    fr: Vec<i32>,
+    front: Vec<i32>,
 }
 
 /// The standing men sorted by cell, row by row, ties by id, with their positions and weights
@@ -99,6 +116,8 @@ struct Grid {
     px: Vec<i32>,
     py: Vec<i32>,
     wt: Vec<i32>,
+    want: Vec<Vec2>,
+    lean: Vec<Vec2>,
     // Scratch: (key << 32 | id) per sorted man, and whether each man was in the last build.
     v: Vec<u64>,
     listed: Vec<bool>,
@@ -107,7 +126,15 @@ struct Grid {
 const UNLISTED: u64 = u64::MAX;
 
 impl Grid {
-    fn build(&mut self, diameter: i32, pos: &[Vec2], weight: &[i32], posture: &[Posture]) {
+    fn build(
+        &mut self,
+        diameter: i32,
+        pos: &[Vec2],
+        weight: &[i32],
+        want: &[Vec2],
+        lean: &[Vec2],
+        posture: &[Posture],
+    ) {
         let n = pos.len();
         let (x0, y0, x1, y1, m) = pos
             .par_chunks(MEN_PER_TASK)
@@ -197,6 +224,8 @@ impl Grid {
         self.px.resize(m, 0);
         self.py.resize(m, 0);
         self.wt.resize(m, 0);
+        self.want.resize(m, Vec2::ZERO);
+        self.lean.resize(m, Vec2::ZERO);
         let v = &self.v;
         self.id
             .par_chunks_mut(MEN_PER_TASK)
@@ -204,15 +233,19 @@ impl Grid {
             .zip(self.px.par_chunks_mut(MEN_PER_TASK))
             .zip(self.py.par_chunks_mut(MEN_PER_TASK))
             .zip(self.wt.par_chunks_mut(MEN_PER_TASK))
+            .zip(self.want.par_chunks_mut(MEN_PER_TASK))
+            .zip(self.lean.par_chunks_mut(MEN_PER_TASK))
             .zip(v.par_chunks(MEN_PER_TASK))
-            .for_each(|(((((ids, ks), xs), ys), ws), vs)| {
+            .for_each(|(((((((ids, ks), xs), ys), ws), wa), le), vs)| {
                 for k in 0..vs.len() {
-                    let i = vs[k] as u32;
-                    ids[k] = i;
+                    let i = vs[k] as u32 as usize;
+                    ids[k] = i as u32;
                     ks[k] = (vs[k] >> 32) as u32;
-                    xs[k] = pos[i as usize].x;
-                    ys[k] = pos[i as usize].y;
-                    ws[k] = weight[i as usize];
+                    xs[k] = pos[i].x;
+                    ys[k] = pos[i].y;
+                    ws[k] = weight[i];
+                    wa[k] = want.get(i).copied().unwrap_or(Vec2::ZERO);
+                    le[k] = lean.get(i).copied().unwrap_or(Vec2::ZERO);
                 }
             });
     }
@@ -248,21 +281,12 @@ fn insertion_sort(v: &mut [u64], budget: usize) -> bool {
     true
 }
 
-/// The contact between sorted men `a` and `b`, if any, added to `corr` and `over`, which
+/// The contact between sorted men `a` and `b`, if any, added to `corr`, `over` and `blk`, which
 /// start at sorted position `base`. Symmetric in `a` and `b` except for exact coincidence,
 /// which is broken by man id, so the result does not depend on which of the two finds the
 /// other.
 #[inline]
-#[allow(clippy::too_many_arguments)]
-fn contact(
-    g: &Grid,
-    p: &Params,
-    a: usize,
-    b: usize,
-    base: usize,
-    corr: &mut [Vec2],
-    over: &mut [i32],
-) {
+fn contact(g: &Grid, p: &Params, a: usize, b: usize, base: usize, out: &mut Out) {
     let reach = 2 * p.radius_mm as i64;
     let mut d = Vec2::new(g.px[b] - g.px[a], g.py[b] - g.py[a]);
     let d2 = d.len_sq();
@@ -277,26 +301,43 @@ fn contact(
     }
     let overlap = reach - dist;
     let (wa, wb) = (g.wt[a] as i64, g.wt[b] as i64);
-    let push = overlap * p.stiffness_q8 as i64;
+    let core = p.core_mm as i64;
+    let push = overlap.min(core) * p.stiffness_q8 as i64 + (overlap - core).max(0) * 256;
     let ma = push * wb / (wa + wb) / 256;
     let mb = push * wa / (wa + wb) / 256;
-    corr[a - base] -= d.mul_div(ma, dist);
-    corr[b - base] += d.mul_div(mb, dist);
-    over[a - base] += overlap as i32;
-    over[b - base] += overlap as i32;
+    let (i, j) = (a - base, b - base);
+    out.corr[i] -= d.mul_div(ma, dist);
+    out.corr[j] += d.mul_div(mb, dist);
+    out.over[i] += overlap as i32;
+    out.over[j] += overlap as i32;
+    // Each man is blocked by a neighbour in the half toward where he wants to go.
+    let unit = d.mul_div(1024, dist);
+    if g.want[a].dot(d) > 0 {
+        out.blk[i] += unit;
+    }
+    if g.want[b].dot(d) < 0 {
+        out.blk[j] -= unit;
+    }
+    if g.lean[a].dot(d) > 0 {
+        out.front[i] += overlap as i32;
+    }
+    if g.lean[b].dot(d) < 0 {
+        out.front[j] += overlap as i32;
+    }
+}
+
+/// One run's slices of the shared lists.
+struct Out<'a> {
+    corr: &'a mut [Vec2],
+    over: &'a mut [i32],
+    blk: &'a mut [Vec2],
+    front: &'a mut [i32],
 }
 
 /// All contacts of the sorted men in `run`: each man with those after him in his own cell and
 /// the cell to his east, and with the three cells below him in the next row, so each pair is
 /// found exactly once. Writes stay below `g.reach_end(run)`.
-fn pairs(
-    g: &Grid,
-    p: &Params,
-    run: Range<usize>,
-    base: usize,
-    corr: &mut [Vec2],
-    over: &mut [i32],
-) {
+fn pairs(g: &Grid, p: &Params, run: Range<usize>, base: usize, out: &mut Out) {
     if run.is_empty() {
         return;
     }
@@ -317,10 +358,10 @@ fn pairs(
             below_end += 1;
         }
         for b in a + 1..east {
-            contact(g, p, a, b, base, corr, over);
+            contact(g, p, a, b, base, out);
         }
         for b in below..below_end {
-            contact(g, p, a, b, base, corr, over);
+            contact(g, p, a, b, base, out);
         }
     }
 }
@@ -348,6 +389,12 @@ impl Pairwise {
             pressure: Vec::new(),
             weight: Vec::new(),
             old: Vec::new(),
+            want: Vec::new(),
+            blk: Vec::new(),
+            block: Vec::new(),
+            lean: Vec::new(),
+            fr: Vec::new(),
+            front: Vec::new(),
         }
     }
 
@@ -365,12 +412,16 @@ impl Pairwise {
             2 * self.p.radius_mm,
             &bodies.pos,
             &self.weight,
+            &self.want,
+            &self.lean,
             &bodies.posture,
         );
         let g = &self.grid;
         let m = g.id.len();
+        // Many more runs than threads: contacts per man vary a great deal between a packed edge
+        // and a loose interior, and work stealing evens that out only if there is work to steal.
         let mut runs = if self.threads > 1 {
-            4 * self.threads
+            16 * self.threads
         } else {
             1
         };
@@ -387,6 +438,10 @@ impl Pairwise {
         self.corr.resize(m, Vec2::ZERO);
         self.over.clear();
         self.over.resize(m, 0);
+        self.blk.clear();
+        self.blk.resize(m, Vec2::ZERO);
+        self.fr.clear();
+        self.fr.resize(m, 0);
         let p = &self.p;
         for parity in 0..2 {
             // Run j may write from cuts[j] up to cuts[j + 2].
@@ -399,22 +454,40 @@ impl Pairwise {
             let tasks: Vec<_> = split_at(&mut self.corr[lo..], &bounds)
                 .into_iter()
                 .zip(split_at(&mut self.over[lo..], &bounds))
+                .zip(split_at(&mut self.blk[lo..], &bounds))
+                .zip(split_at(&mut self.fr[lo..], &bounds))
                 .enumerate()
-                .map(|(i, (c, o))| (parity + 2 * i, c, o))
+                .map(|(i, (((corr, over), blk), front))| {
+                    (
+                        parity + 2 * i,
+                        Out {
+                            corr,
+                            over,
+                            blk,
+                            front,
+                        },
+                    )
+                })
                 .collect();
             let cuts = &cuts;
-            tasks.into_par_iter().for_each(|(j, c, o)| {
-                pairs(g, p, cuts[j]..cuts[j + 1], cuts[j], c, o);
+            tasks.into_par_iter().for_each(|(j, mut out)| {
+                pairs(g, p, cuts[j]..cuts[j + 1], cuts[j], &mut out);
             });
         }
         if last {
             self.pressure.clear();
             self.pressure.resize(bodies.len(), 0);
+            self.block.clear();
+            self.block.resize(bodies.len(), Vec2::ZERO);
+            self.front.clear();
+            self.front.resize(bodies.len(), 0);
         }
         for (k, &i) in g.id.iter().enumerate() {
             bodies.pos[i as usize] += self.corr[k];
             if last {
                 self.pressure[i as usize] = self.over[k];
+                self.block[i as usize] = self.blk[k];
+                self.front[i as usize] = self.fr[k];
             }
         }
     }
@@ -434,17 +507,41 @@ impl Pairwise {
         self.weight
             .extend(targets.iter().map(|t| 256 + t.press as i32));
         let p = self.p;
+        let n = bodies.len();
+        self.want.resize(n, Vec2::ZERO);
+        self.block.resize(n, Vec2::ZERO);
+        self.lean.resize(n, Vec2::ZERO);
+        self.front.resize(n, 0);
+        let (block, front) = (&self.block, &self.front);
         bodies
             .pos
             .par_chunks_mut(MEN_PER_TASK)
+            .zip(self.want.par_chunks_mut(MEN_PER_TASK))
+            .zip(self.lean.par_chunks_mut(MEN_PER_TASK))
             .zip(targets.par_chunks(MEN_PER_TASK))
             .zip(bodies.posture.par_chunks(MEN_PER_TASK))
-            .for_each(|((ps, ts), qs)| {
-                for ((pos, t), &q) in ps.iter_mut().zip(ts).zip(qs) {
+            .enumerate()
+            .for_each(|(chunk, ((((ps, ws), ls), ts), qs))| {
+                let first = chunk * MEN_PER_TASK;
+                for (k, ((((pos, want), lean_dir), t), &q)) in ps
+                    .iter_mut()
+                    .zip(ws.iter_mut())
+                    .zip(ls.iter_mut())
+                    .zip(ts)
+                    .zip(qs)
+                    .enumerate()
+                {
+                    *lean_dir = Vec2::ZERO;
                     if q == Posture::Down {
+                        *want = Vec2::ZERO;
                         continue;
                     }
                     let to = t.point - *pos;
+                    *want = if to == Vec2::ZERO {
+                        Vec2::ZERO
+                    } else {
+                        to.with_len(1024)
+                    };
                     let speed = if t.speed == 0 { p.brace_mm_s } else { t.speed };
                     let step = (speed as i64 * dt.0 as i64 / 1000) as i32;
                     let mut mv = if to.len_sq() <= step as i64 * step as i64 {
@@ -452,10 +549,23 @@ impl Pairwise {
                     } else {
                         to.with_len(step)
                     };
+                    // A man cannot walk into the men he touches ahead of him; he slides along
+                    // them, or stands. Only his lean, below, pushes them.
+                    let b = block[first + k];
+                    let along = mv.dot(b);
+                    if along > 0 {
+                        mv -= b.mul_div(along, b.len_sq());
+                    }
+                    // He leans into the men ahead until they are pressed to the bone: a man
+                    // cannot push further than bodies give.
                     if t.press > 0
                         && let Some(f) = t.face
                     {
-                        let lean = p.press_mm_s as i64 * t.press as i64 / 255 * dt.0 as i64 / 1000;
+                        *lean_dir = f.unit(1024);
+                        let room = (p.core_mm - front[first + k]).max(0) as i64;
+                        let lean = p.press_mm_s as i64 * t.press as i64 / 255 * dt.0 as i64 / 1000
+                            * room
+                            / p.core_mm.max(1) as i64;
                         mv += f.unit(lean as i32);
                     }
                     *pos += mv;
@@ -469,6 +579,7 @@ impl Pairwise {
             self.pressure.resize(bodies.len(), 0);
         }
         let (pos, old, pressure) = (&bodies.pos, &self.old, &self.pressure);
+        let crush_step = is_man_step(tick);
         let events: Vec<Vec<Event>> = bodies
             .vel
             .par_chunks_mut(MEN_PER_TASK)
@@ -488,11 +599,13 @@ impl Pairwise {
                     if let Some(face) = targets[i].face {
                         *f = f.rotate_toward(face, p.turn_per_tick);
                     }
+                    // Crushing is drawn at the man's step, over the whole step: the same hazard
+                    // as drawing every tick, at a fifth of the cost.
                     let excess = pressure[i] - p.crush_mm;
-                    if excess > 0 {
+                    if crush_step && excess > 0 {
                         let rate =
                             (excess as u64 * p.crush_rate_q16_per_mm as u64).min(u32::MAX as u64);
-                        let chance = Prob::from_rate(rate as u32, dt);
+                        let chance = Prob::from_rate(rate as u32, MAN_STEP);
                         if rng.chance(
                             chance,
                             Key::new(Stream::Substrate, i as u32, tick, PURPOSE_CRUSH),
@@ -613,6 +726,54 @@ mod tests {
         let mut s = Pairwise::new(Params::PLACEHOLDER);
         run(&mut s, &mut b, &t, 100);
         assert!(b.pos[walker].x < 2_000, "walker at {:?}", b.pos[walker]);
+    }
+
+    #[test]
+    fn a_pressing_ring_cannot_walk_through_a_standing_crowd() {
+        // A 20 x 20 crowd at 0.6 m, standing; a ring of men around it walking at its centre and
+        // leaning in with all their weight. They may press its edge, but not pass through it,
+        // and nobody is squeezed past the bone.
+        let mut b = Bodies::default();
+        for r in 0..20 {
+            for f in 0..20 {
+                b.push(man(f * 600 - 5_700, r * 600 - 5_700));
+            }
+        }
+        let inner = b.len();
+        for k in 0..240 {
+            let a = Turn((k * 65_536 / 240) as u16);
+            let ring = 9_000 + (k % 3) * 600;
+            b.push(Observed {
+                pos: a.unit(ring),
+                ..Default::default()
+            });
+        }
+        let mut t = stay(&b);
+        for (i, tt) in t.iter_mut().enumerate().skip(inner) {
+            *tt = Target {
+                point: Vec2::ZERO,
+                speed: 1_300,
+                face: Turn::of(-b.pos[i]),
+                press: 255,
+            };
+        }
+        let mut s = Pairwise::new(Params::PLACEHOLDER);
+        run(&mut s, &mut b, &t, 600);
+        // The crowd is squeezed from 2.8 men per m2 toward the bone, which for this disc and core
+        // is about 6.9 per m2 (contact at 2r - core = 410 mm): its side shrinks from 11.4 m to
+        // about 7.2 m. No ring man gets into its middle, and it is no denser than bone allows.
+        let inside = |i: usize, half: i32| b.pos[i].x.abs() <= half && b.pos[i].y.abs() <= half;
+        assert!(
+            (inner..b.len()).all(|i| !inside(i, 3_000)),
+            "a ring man got into the crowd"
+        );
+        let packed = (0..inner).filter(|&i| inside(i, 2_000)).count();
+        assert!(packed <= 120, "{packed} men in 16 m2");
+        let worst = *s.pressure().iter().max().unwrap();
+        assert!(
+            worst < 6 * Params::PLACEHOLDER.core_mm,
+            "summed overlap {worst} mm"
+        );
     }
 
     #[test]
