@@ -6,7 +6,7 @@
 
 use cannae_core::{EventKind, Posture, Side};
 use cannae_harness::{Scenario, place};
-use cannae_score::draw::{Cell, drawn};
+use cannae_score::draw::{Cell, nominal};
 use cannae_score::{Engine, Spec, run_logged};
 
 fn main() {
@@ -31,8 +31,8 @@ fn main() {
         let mut from = [0u32; 5];
         let mut first_moves = [[0u32; 5]; 5];
         for seed in 1..=seeds {
-            // Set 0 with every mapping at its centre, as in the costing runs.
-            let d = drawn(0, Cell { engine, rung }, 0).unwrap();
+            // Everything at its centre or placeholder, as in the costing runs.
+            let d = nominal(Cell { engine, rung }).unwrap();
             let spec = Spec {
                 seed,
                 duration_s: 1_200,

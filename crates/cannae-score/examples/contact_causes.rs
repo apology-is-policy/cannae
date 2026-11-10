@@ -9,7 +9,7 @@
 
 use cannae_core::{Cause, EventKind, Posture, Side};
 use cannae_harness::{Scenario, place};
-use cannae_score::draw::{Cell, drawn};
+use cannae_score::draw::{Cell, nominal};
 use cannae_score::{Engine, Spec, run_logged};
 use std::collections::BTreeMap;
 
@@ -30,7 +30,7 @@ fn main() {
     let (bodies, _) = place(&s);
     let romans = bodies.side.iter().filter(|&&x| x == Side::A).count();
     for engine in [Engine::Pairwise, Engine::Field] {
-        let mut d = drawn(0, Cell { engine, rung }, 0).unwrap();
+        let mut d = nominal(Cell { engine, rung }).unwrap();
         if let Some(f) = arg("--flank") {
             d.man.enemy_flank = f as i32;
         }

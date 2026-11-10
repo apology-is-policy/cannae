@@ -97,7 +97,8 @@ How a body keeps its order. A drilled body is a century or a maniple; a loose on
 Fixed: `lead_mm` 1.5 m (it only has to exceed one man step at a run) and `lift_reach_mm` 2.5 m
 (the men in the slots around the standard).
 
-**Count: 10** (S1 and S2 twice, S3 to S6 once).
+**Count: 8** (S1 and S2 twice, S3 to S6 once). An earlier draft of this file said 10, which was
+a miscount.
 
 ### Bouts (`bouts::BoutParams`)
 
@@ -136,13 +137,24 @@ Reach is fixed at 1.5 m for every troop in the patch: all fight with swords.
 
 **Count: 1.**
 
+**In the sampler** (`crates/cannae-score/src/draw.rs`, `VARRO_LINES`):
+
+- **Ties:** `tie.drilled.tolerance_mm`, `tie.loose.tolerance_mm`, `tie.drilled.close_after_ms`,
+  `tie.loose.close_after_ms`, `tie.drilled.lift_after_ms`, `tie.drilled.succeed_after_ms`,
+  `tie.standoff_mm` and `tie.contact_mm`. Times are drawn in ms and stored in base ticks of
+  50 ms, to the nearest.
+- **Bouts:** `bout.rate_q16` (bouts per second in Q16: 3,277 to 13,107), `bout.harm_ppm`
+  (parts per million: 3,000 to 100,000), and the fourteen multipliers and shares S9 to S22 in
+  per mille, each named `bout.<field>`.
+- **Kit:** `kit.warband.guard_pm`.
+
 ## Count
 
 | Part | Drawn | Fixed |
 |---|---|---|
 | Stamina, power, gait | 7 | 3 |
 | Crowd physics | 4 | 0 |
-| Ties, bouts, kits | 27 (ties 10, bouts 16, kit 1) | 5 (lead, lift reach, skill steps, leader skill, reach) |
+| Ties, bouts, kits | 25 (ties 8, bouts 16, kit 1) | 5 (lead, lift reach, skill steps, leader skill, reach) |
 
 ## Sign-off
 

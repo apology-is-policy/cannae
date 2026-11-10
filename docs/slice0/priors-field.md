@@ -21,6 +21,13 @@ hash, and at nothing else.
 - **U[a, b]** is uniform between a and b. **L[a, b]** is log-uniform: the logarithm is uniform.
 - Every draw is independent of the others unless the line says "derived".
 - Weights are in units (§1 of rival/07) and are stored in Q8, rounded to the nearest 1/256.
+- **The Centre column** is the value in the code's constants, the one each line's reason
+  argues from. It is inside the range and is not always its middle. Draws are uniform (or
+  log-uniform) over the range, and the centre plays no part in them.
+- **In the sampler** (`crates/cannae-score/src/draw.rs`, `VARRO_LINES`) each line is named
+  `man.<field>`, `troop.<troop>.<input>` or `field.<field>`, and drawn in its stored unit: Q8
+  for weights and densities, so a range of 0.2 to 0.5 is 51 to 128. Times are in ms, except
+  line 32, which is in base ticks of 50 ms.
 - Draw *i* of the 200 uses the same values on every rung: rung 1 is rung 0 plus line 30, and
   rung 2 is rung 1 plus lines 31 and 32. Paullus's rungs 3 and 4 read lines 1 to 29 and line
   33 unchanged.
@@ -60,7 +67,7 @@ Urge is in forward men: a man of his own side, forward, in view, is 1.
 | 22 | `own_unsteady` | Each man of his side giving ground or turned, to 6, against going forward | U[0.5, 1.5] | 1 | |
 | 23 | `breath` | Each level of being winded, against going forward | U[1, 3] | 2 | With half his breath gone, a man in a flurry of five behind his leader should be at the threshold of stepping back. How many seconds that takes is the shared cost of fighting. |
 | 24 | `k_urge` | Doublings of the hazard per unit of urge | U[2, 4] | 3 | When a leader goes, the men who see him should follow in seconds |
-| 25 | `go` | The urge at which a steady man steps out at the edge rate | derived | 4 | **Derived from an interval.** Draw T from L[300 s, 1200 s]: how often a centurion of the hastati steps out unprompted with the enemy standing before him. Then `go` = his ardour (line T5 below) + log2(T / 16 s) / `k_urge`. A formed fight has room for a flurry per stretch of front every 10 to 40 minutes. |
+| 25 | `go` | The urge at which a steady man steps out at the edge rate | derived | 4 | **Derived from an interval.** Draw T from L[300 s, 1200 s]: how often a centurion of the hastati steps out unprompted with the enemy standing before him. Then `go` = his ardour (line T5 below) + log2(T / 16 s) / `k_urge`. A formed fight has room for a flurry per stretch of front every 10 to 40 minutes. The centre of 4 is what T = 1,024 s gives at the other centres. In the sampler the line is `man.go_interval_ms`. |
 | 26 | `stay` | How far under `go` his urge must fall before a forward man steps back | U[0.5, 1.5] | 1 | |
 | 27 | `react` | The fastest a man changes posture | L[1, 4] per second | 2 | Reaction time of a quarter of a second to a second |
 
@@ -169,7 +176,7 @@ outside, before the freeze. No run of the patch prompted it.
 | F4 | Easing density: below this a crowd does not push its men apart | U[2, 3] | 2.5 | Bodies begin to touch at two to three per m² (Fruin's levels of service, from memory of the secondary literature; not checked). |
 | F5 | Spreading: mm/s for each man per m² of difference across a metre | U[50, 150] | 100 | No measurement. It sets how fast a released crowd eases: a few minutes from packing to walking density in the unit test. The widest prior relative to its centre, on purpose. |
 | F6 | Guard: the nearest two enemies on their feet can stand, centre to centre | U[500, 750] | 600 | The scutum was two and a half Roman feet wide, 740 mm (Polybius 6.23, from a secondary source; not checked in the Greek). Two men shield to shield cannot be nearer than a body's depth and a shield's boss; a man behind a narrower shield can. |
-| F7 | Crowd density: under `Contact::Crowd`, a man in thicker ground than this who is going somewhere touches the men of his own side | U[2.5, 3.5] | 3 | The same threshold as F4, moved up a little so that a crowd touches only once it is past easing. Not drawn under `Contact::Line`. |
+| F7 | Crowd density: under `Contact::Crowd`, a man in thicker ground than this who is going somewhere touches the men of his own side | U[2.5, 3.5] | 3 | The same threshold as F4, moved up a little so that a crowd touches only once it is past easing. Drawn in every set, and read only under `Contact::Crowd`. |
 | F8 | Walking capacity: the most a walking crowd passes through a gap, in persons per metre of width per second at a walk of 1.3 m/s. It sets how steeply walking slows as a crowd thickens | U[1.6, 2.3] | 1.95 | The range measured through bottlenecks with no pushing, about 1.9 (Seyfried et al. 2009), constant in width to 5 m (Liao et al.). **Added 2026-11-10, after the passage bench showed the field 40 % slow at gates.** Until then the steepness was fixed at Weidmann's value, fitted to people walking in the open, whose capacity is 1.19. Calibrated on those two experiments and on no pattern, as the pairwise engine's disc radius was ([passage-field.md](passage-field.md)). The people measured carried no shields, so this may run high for armed men; neither engine guesses a correction. |
 
 **Count: 7 under `Contact::Line`, 8 under `Contact::Crowd`.**

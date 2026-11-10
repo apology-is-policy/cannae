@@ -218,7 +218,7 @@ I said in the first draft that the whole man would take 25 to 35 parameters, and
 | *Shaken* and how fast it wears (rung 2) | 2 |
 | **The man: rung 0 / 1 / 2** | **29 / 30 / 32** |
 | Troop inputs of this engine (nerve, ardour and their spreads, officers), per troop type | 5 to 7 |
-| Shared with the other engine: ties (10), bouts (16), kit (1), and breath, power and gait | in [priors-shared.md](../slice0/priors-shared.md) |
+| Shared with the other engine: ties (8), bouts (16), kit (1), and breath, power and gait | in [priors-shared.md](../slice0/priors-shared.md) |
 
 Fixed, and not counted as free: the window and the reach (they are the shared perception), the
 caps on each count, the edge rate of one in sixteen seconds, the two sight distances, the top
