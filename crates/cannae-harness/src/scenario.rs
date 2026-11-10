@@ -1,7 +1,11 @@
 //! Scenario files: TOML a person can read. They place bodies of men; what the men are like is
 //! the man model's business, keyed by each body's troop type.
 
-use cannae_core::{Bodies, BodyId, Observed, Posture, Role, Side, Turn, Vec2};
+use cannae_core::schedule::BASE_TICK;
+use cannae_core::view::Order;
+use cannae_core::{
+    Bodies, BodyFrames, BodyId, ManId, Observed, Posture, Role, Side, Tie, Turn, Vec2,
+};
 use serde::Deserialize;
 
 #[derive(Clone, Debug, Deserialize, PartialEq)]
@@ -42,6 +46,17 @@ pub enum SideSpec {
     B,
 }
 
+/// How the body keeps its order: the tie of each man to his slot.
+#[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum TieSpec {
+    /// A maniple: files close, the standard is lifted, the closer succeeds the leader.
+    #[default]
+    Drilled,
+    /// A warband: slow to close, and no rule for who replaces whom.
+    Loose,
+}
+
 /// Where the body's leader stands.
 #[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]
@@ -72,6 +87,8 @@ pub struct BodySpec {
     /// A closer (the optio) behind the rear rank.
     #[serde(default)]
     pub closer: bool,
+    #[serde(default)]
+    pub tie: TieSpec,
 }
 
 impl Scenario {
@@ -118,6 +135,47 @@ impl Layout {
         }
         l
     }
+}
+
+/// The frames of every placed body, with the scenario's timed orders queued.
+pub fn frames(s: &Scenario, placed: &[Placed], bodies: &Bodies) -> Result<BodyFrames, String> {
+    let mut frames = BodyFrames::default();
+    for (b, p) in s.bodies.iter().zip(placed) {
+        frames.add(
+            cannae_core::Layout {
+                body: p.body,
+                centre: Vec2::new(b.centre_mm[0], b.centre_mm[1]),
+                facing: turn_of_deg(b.facing_deg),
+                files: b.files,
+                ranks: b.ranks,
+                file_mm: b.file_mm,
+                rank_mm: b.rank_mm,
+                first: ManId(p.first),
+                closer: b.closer,
+                tie: match b.tie {
+                    TieSpec::Drilled => Tie::DRILLED,
+                    TieSpec::Loose => Tie::LOOSE,
+                },
+            },
+            bodies,
+        );
+    }
+    for o in &s.orders {
+        let body = s
+            .bodies
+            .iter()
+            .position(|b| b.name == o.body)
+            .ok_or_else(|| format!("order for unknown body {:?}", o.body))?;
+        let order = match o.order {
+            OrderKind::Hold => Order::Hold,
+            OrderKind::Advance => Order::Advance,
+            OrderKind::Charge => Order::Charge,
+            OrderKind::Retire => Order::Retire,
+            OrderKind::Pursue => Order::Pursue,
+        };
+        frames.order_at(BodyId(body as u32), order, o.at_s * 1000 / BASE_TICK.0);
+    }
+    Ok(frames)
 }
 
 /// Lays out every body in ranks and files. Rank 0 is the front, toward the facing; file 0 is the
@@ -245,6 +303,37 @@ mod tests {
         let l = Layout::of(&p);
         assert_eq!((l.rank[4], l.file[4]), (1, 1));
         assert_eq!(l.rank[6], 2);
+    }
+
+    #[test]
+    fn frames_put_every_slot_where_the_man_was_placed() {
+        use cannae_core::{FrameQuery, Frames};
+        let text = format!(
+            "{}\n[[order]]\nbody = \"warband\"\nat_s = 2\norder = \"advance\"\n",
+            include_str!("../../../scenarios/patch/base.toml")
+        );
+        let s = Scenario::from_toml(&text).unwrap();
+        let (mut b, placed) = place(&s);
+        let mut f = frames(&s, &placed, &b).unwrap();
+        f.update(&mut b, 0, &mut Vec::new());
+        for i in 0..b.len() {
+            let slot = f.slot(ManId(i as u32)).expect("every man has a slot");
+            assert_eq!(slot.target, b.pos[i], "man {i}");
+            assert!(b.in_place[i]);
+        }
+        // The warband is told to advance two seconds in, and its slots then lead its men.
+        f.update(&mut b, 35, &mut Vec::new());
+        assert_eq!(f.body(BodyId(2)).unwrap().order, Order::Hold);
+        f.update(&mut b, 40, &mut Vec::new());
+        assert_eq!(f.body(BodyId(2)).unwrap().order, Order::Advance);
+        let w = placed[2].first as usize;
+        assert_eq!(
+            f.slot(ManId(w as u32)).unwrap().target.x,
+            b.pos[w].x - 1_500
+        );
+        let mut bad = s.clone();
+        bad.orders[0].body = "nobody".into();
+        assert!(frames(&bad, &placed, &b).is_err());
     }
 
     #[test]

@@ -8,8 +8,10 @@
 //! without rules about fused multiply-add or float libraries.
 
 pub mod angle;
+pub mod bouts;
 pub mod event;
 pub mod fixed;
+pub mod frames;
 pub mod hash;
 pub mod hazard;
 pub mod intent;
@@ -23,8 +25,10 @@ pub mod units;
 pub mod view;
 
 pub use angle::Turn;
+pub use bouts::{BoutParams, Bouts, Kit};
 pub use event::{BoutOutcome, Cause, Causes, Event, EventKind, EventLog};
 pub use fixed::Prob;
+pub use frames::{BodyFrames, Layout, Tie};
 pub use hazard::{Hazards, Transition};
 pub use intent::{Gait, Intent, Target};
 pub use model::{Decision, Frames, ManModel, NoBouts, Resolver, Substrate};

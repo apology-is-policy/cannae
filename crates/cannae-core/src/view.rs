@@ -9,7 +9,7 @@
 
 use crate::angle::Turn;
 use crate::event::{Event, EventKind};
-use crate::observe::{Bodies, BodyId, ManId, Observed, Posture, Side};
+use crate::observe::{Bodies, BodyId, ManId, Observed, Posture, Role, Side};
 use crate::units::Vec2;
 
 pub const CELL_MM: i32 = 2_000;
@@ -123,7 +123,10 @@ pub struct SlotView {
     /// The frame's facing.
     pub facing: Turn,
     pub in_place: bool,
-    /// Which adjacent slots are filled; see [`nb`].
+    /// Which adjacent slots exist; see [`nb`]. The edge of a body has none on that side.
+    pub slots: u8,
+    /// Which adjacent slots are filled by a man who is up and has not turned. A slot that
+    /// exists and is not filled is a gap.
     pub neighbours: u8,
 }
 
@@ -197,6 +200,8 @@ pub struct View {
     pub slot: Option<SlotView>,
     pub standard: Option<StandardSeen>,
     pub leader: Option<LeaderSeen>,
+    /// A closer of his own side stands behind him in his window, steady or forward.
+    pub closer_behind: bool,
     pub order: Order,
 }
 
@@ -217,6 +222,11 @@ pub struct Coarse {
     pub out_of_place: bool,
     /// His body was given an order since the last man step.
     pub order_new: bool,
+    /// A man of his own side in his window is giving ground or has turned. These are states,
+    /// not shocks: a man who turned ten seconds ago and now runs past still alarms.
+    pub own_unsteady: bool,
+    /// The order in force for his body. A charge keeps men awake until they have gone.
+    pub order: Order,
 }
 
 /// Builds Views. Each engine provides one; they must agree with the reference.
@@ -351,6 +361,10 @@ impl Perceive for GridPerception {
             let j = m.0 as usize;
             bodies.side[j] != side && bodies.posture[j] != Posture::Down
         });
+        let own_unsteady = self.window(p).any(|(_, _, m)| {
+            let j = m.0 as usize;
+            bodies.side[j] == side && matches!(bodies.posture[j], Posture::Back | Posture::Turned)
+        });
         let shock_near = self.shocks_for(bodies, frames, man).any();
         let body = bodies.body[i].and_then(|b| frames.body(b));
         Coarse {
@@ -358,6 +372,8 @@ impl Perceive for GridPerception {
             shock_near,
             out_of_place: bodies.body[i].is_some() && !bodies.in_place[i],
             order_new: body.is_some_and(|b| b.order_tick >= self.prev_step && self.tick > 0),
+            own_unsteady,
+            order: body.map_or(Order::Hold, |b| b.order),
         }
     }
 
@@ -368,6 +384,8 @@ impl Perceive for GridPerception {
         let mut counts = Counts::default();
         let mut near: Vec<(i64, NearEnemy)> = Vec::new();
         let mut crowding: u32 = 0;
+        let mut closer_behind = false;
+        let ahead = own.facing.unit(1 << 10);
         for (dx, dy, m) in self.window(own.pos) {
             if m == man {
                 continue;
@@ -387,6 +405,13 @@ impl Perceive for GridPerception {
             let c = &mut counts.0[g as usize][r as usize][bodies.posture[j] as usize];
             *c = c.saturating_add(1);
             let offset = bodies.pos[j] - own.pos;
+            if r == Rel::Own
+                && bodies.role[j] == Role::Closer
+                && matches!(bodies.posture[j], Posture::Steady | Posture::Forward)
+                && offset.dot(ahead) < 0
+            {
+                closer_behind = true;
+            }
             let d2 = offset.len_sq();
             if d2 <= CROWD_MM * CROWD_MM {
                 crowding += 1;
@@ -433,6 +458,7 @@ impl Perceive for GridPerception {
                 posture: bodies.posture[l.0 as usize],
                 dist_mm: dist(bodies.pos[l.0 as usize]),
             }),
+            closer_behind,
             order: body.map_or(Order::Hold, |b| b.order),
         }
     }
@@ -442,7 +468,7 @@ impl Perceive for GridPerception {
 mod tests {
     use super::*;
     use crate::event::Cause;
-    use crate::observe::{Observed, Wound};
+    use crate::observe::{Observed, Role, Wound};
 
     fn put(b: &mut Bodies, x: i32, y: i32, side: Side, posture: Posture, facing: u16) -> ManId {
         b.push(Observed {
@@ -475,6 +501,28 @@ mod tests {
         let v = g.view(&b, &NoFrames, me);
         assert_eq!(v.counts.get(Group::Behind, Rel::Enemy, Posture::Steady), 1);
         assert_eq!(v.counts.get(Group::Ahead, Rel::Own, Posture::Turned), 1);
+    }
+
+    #[test]
+    fn a_closer_counts_only_behind_and_standing() {
+        let mut b = Bodies::default();
+        let me = put(&mut b, 0, 0, Side::A, Posture::Steady, 0); // facing +x
+        let closer = put(&mut b, -1_500, 3_000, Side::A, Posture::Steady, 0);
+        b.role[closer.0 as usize] = Role::Closer;
+        let mut g = GridPerception::default();
+        g.rebuild(&b, &[], 5, 0);
+        assert!(g.view(&b, &NoFrames, me).closer_behind);
+        assert!(!g.coarse(&b, &NoFrames, me).own_unsteady);
+        // Once he gives ground he closes nothing, and he is one more man going back.
+        b.posture[closer.0 as usize] = Posture::Back;
+        g.rebuild(&b, &[], 5, 0);
+        assert!(!g.view(&b, &NoFrames, me).closer_behind);
+        assert!(g.coarse(&b, &NoFrames, me).own_unsteady);
+        // A closer ahead of him is no closer to him.
+        b.posture[closer.0 as usize] = Posture::Steady;
+        b.pos[closer.0 as usize] = Vec2::new(1_500, 3_000);
+        g.rebuild(&b, &[], 5, 0);
+        assert!(!g.view(&b, &NoFrames, me).closer_behind);
     }
 
     #[test]

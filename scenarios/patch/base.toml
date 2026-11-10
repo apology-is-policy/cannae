@@ -48,3 +48,4 @@ rank_mm = 1200
 centre_mm = [9000, -9000]
 facing_deg = 180
 leader = "front-centre"
+tie = "loose"

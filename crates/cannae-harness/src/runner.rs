@@ -331,3 +331,205 @@ mod tests {
         assert_ne!(a.hashes.last(), b.hashes.last());
     }
 }
+
+#[cfg(test)]
+mod with_frames_and_bouts {
+    use super::*;
+    use crate::kinematic::Kinematic;
+    use crate::scenario::{Scenario, frames, place};
+    use cannae_core::view::{Coarse, Rel, View};
+    use cannae_core::{
+        BodyFrames, BoutParams, Bouts, Cause, GridPerception, Hazards, Kit, Observed, Side,
+        Transition,
+    };
+
+    const CLASH: &str = r#"
+        name = "clash"
+        seed = 5
+        duration_s = 120
+
+        [[body]]
+        name = "line"
+        side = "A"
+        troop = "hastati"
+        files = 6
+        ranks = 4
+        file_mm = 1000
+        rank_mm = 1200
+        centre_mm = [0, 0]
+        facing_deg = 0
+        closer = true
+
+        [[body]]
+        name = "band"
+        side = "B"
+        troop = "warriors"
+        files = 6
+        ranks = 4
+        file_mm = 1000
+        rank_mm = 1200
+        centre_mm = [16000, 0]
+        facing_deg = 180
+        leader = "front-centre"
+        tie = "loose"
+
+        [[order]]
+        body = "band"
+        at_s = 1
+        order = "advance"
+    "#;
+
+    /// A test man, not a rung: side B steps forward at any enemy in his window and closes with
+    /// him; side A stands. Everyone counts the falls he sees.
+    struct Brawler {
+        falls_seen: Vec<u32>,
+    }
+
+    impl ManModel for Brawler {
+        fn dormant(&self, _: ManId, own: &Observed, c: &Coarse, _: u32) -> bool {
+            own.posture == Posture::Steady && !c.enemy_near && !c.shock_near
+        }
+
+        fn absorb(&mut self, man: ManId, v: &View) {
+            self.falls_seen[man.0 as usize] += v.shocks.falls as u32;
+        }
+
+        fn explain(&self, _: ManId, v: &View) -> Hazards {
+            let foes = v.counts.total(Rel::Enemy, Posture::Steady)
+                + v.counts.total(Rel::Enemy, Posture::Forward)
+                + v.counts.total(Rel::Enemy, Posture::Back);
+            let mut h = Hazards::NONE;
+            if v.own.side == Side::B && v.own.posture == Posture::Steady && foes > 0 {
+                h.ways[0] = Some(Transition {
+                    to: Posture::Forward,
+                    rate_q16: 1 << 16,
+                    causes: [Cause::Ardour, Cause::None, Cause::None],
+                });
+            }
+            h
+        }
+
+        fn intent(&self, _: ManId, v: &View, posture: Posture) -> (Intent, Gait) {
+            match (posture, v.near().next()) {
+                (Posture::Forward, Some(e)) => (
+                    Intent::Close {
+                        enemy: e.id,
+                        stand_off_mm: 1_000,
+                    },
+                    Gait::Walk,
+                ),
+                (Posture::Forward, None) => (
+                    Intent::HoldSlot {
+                        forward_mm: 3_000,
+                        press: 0,
+                    },
+                    Gait::Walk,
+                ),
+                _ => (
+                    Intent::HoldSlot {
+                        forward_mm: 0,
+                        press: 0,
+                    },
+                    Gait::Walk,
+                ),
+            }
+        }
+
+        fn on_event(&mut self, _: &Event) {}
+
+        fn inner_hash(&self) -> u64 {
+            let mut h = StateHasher::new();
+            for f in &self.falls_seen {
+                h.write_u64(*f as u64);
+            }
+            h.finish()
+        }
+    }
+
+    type Clash = Runner<GridPerception, Brawler, Kinematic, BodyFrames, Bouts>;
+
+    fn clash(mode: Dormancy) -> Clash {
+        let s = Scenario::from_toml(CLASH).unwrap();
+        let (bodies, placed) = place(&s);
+        let f = frames(&s, &placed, &bodies).unwrap();
+        let n = bodies.len();
+        // Deadlier than any prior, so that two minutes are enough to see men fall.
+        let params = BoutParams {
+            rate_q16: 1 << 15,
+            ..BoutParams::PLACEHOLDER
+        };
+        let mut r = Runner::new(
+            bodies,
+            GridPerception::default(),
+            Brawler {
+                falls_seen: vec![0; n],
+            },
+            Kinematic::default(),
+            f,
+            Bouts::new(params, vec![Kit::PLAIN; n]),
+            Rng::new(s.seed),
+            GaitSpeeds::PLACEHOLDER,
+        );
+        r.dormancy = mode;
+        r
+    }
+
+    #[test]
+    fn the_band_marches_in_order_fights_and_the_files_close() {
+        use cannae_core::view::nb;
+        use cannae_core::{FrameQuery, Role};
+        let mut r = clash(Dormancy::Skip);
+        let start = r.bodies.clone();
+        // Five seconds: the band was told to advance at one second and has walked for four, at
+        // 1.3 m/s, every man still in his place.
+        r.run_until(100);
+        let band: Vec<usize> = (0..r.bodies.len())
+            .filter(|&i| r.bodies.side[i] == Side::B)
+            .collect();
+        for &i in &band {
+            let walked = start.pos[i].x - r.bodies.pos[i].x;
+            assert!((4_800..=5_600).contains(&walked), "man {i} walked {walked}");
+            assert!(r.bodies.in_place[i], "man {i} lost his place on the march");
+        }
+        r.run_until(2_400);
+        let bouts = r
+            .log
+            .all()
+            .iter()
+            .filter(|e| matches!(e.kind, EventKind::Bout { .. }))
+            .count();
+        let down = |side: Side| {
+            (0..r.bodies.len())
+                .filter(|&i| r.bodies.side[i] == side && r.bodies.posture[i] == Posture::Down)
+                .count()
+        };
+        let fallen = down(Side::A) + down(Side::B);
+        assert!(bouts > 50, "{bouts} bouts");
+        assert!(fallen > 4, "{fallen} fell");
+        // Every fall by a bout is a posture event, so the men around saw it.
+        let seen: u32 = r.model.falls_seen.iter().sum();
+        assert!(seen as usize > fallen, "{seen} sightings of {fallen} falls");
+        // Files closed over the fallen: men who began behind the front rank now head a file.
+        let promoted = (0..r.bodies.len())
+            .filter(|&i| matches!(r.bodies.role[i], Role::Soldier | Role::Carrier))
+            .filter_map(|i| r.frames.slot(ManId(i as u32)))
+            .filter(|s| s.slots & nb::FRONT == 0)
+            .count();
+        assert!(promoted > 0, "no file closed");
+    }
+
+    #[test]
+    fn frames_and_bouts_keep_dormancy_exact() {
+        let mut skip = clash(Dormancy::Skip);
+        let mut all = clash(Dormancy::EvaluateAll);
+        let mut check = clash(Dormancy::Check);
+        let mut again = clash(Dormancy::Skip);
+        for r in [&mut skip, &mut all, &mut check, &mut again] {
+            r.run_until(2_400);
+        }
+        assert_eq!(skip.hashes, all.hashes);
+        assert_eq!(skip.hashes, check.hashes);
+        assert_eq!(skip.hashes, again.hashes);
+        assert!(skip.skipped > 0);
+    }
+}
