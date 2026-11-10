@@ -2,6 +2,7 @@
 resolver = "3"
 members = [
     "crates/cannae-core",
+    "crates/cannae-gauges",
     "crates/cannae-harness",
     "crates/cannae-man",
     "crates/cannae-pairwise",

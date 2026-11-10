@@ -7,6 +7,13 @@ name = "cannae-core"
 version = "0.1.0"
 
 [[package]]
+name = "cannae-gauges"
+version = "0.1.0"
+dependencies = [
+ "cannae-core",
+]
+
+[[package]]
 name = "cannae-harness"
 version = "0.1.0"
 dependencies = [

@@ -54,6 +54,9 @@ pub enum Cause {
     Bout,
     Missile,
     Crush,
+    // Memory, rung 3 (appended, so that no earlier cause changes its place in the order).
+    Fear,
+    Resolve,
 }
 
 /// The three largest contributions, largest first; unused slots are `Cause::None`.
