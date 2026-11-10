@@ -1,7 +1,7 @@
-# Slice 0: Priors for the pairwise engine (draft)
+# Slice 0: Priors for the pairwise engine
 
-**Status:** a draft by Paullus, 2026-11-10. It is frozen with the pre-registration
-([preregistration.md](preregistration.md)). Varro reads it before the freeze.
+**Status:** by Paullus, 2026-11-10, read by Varro. Frozen with the pre-registration
+([preregistration.md](preregistration.md), Sign-off).
 
 This file holds only what belongs to the vision of record's engine: the pairwise substrate,
 and the top two rungs of the memory ladder. The shared core (frames, bouts, the troop table,

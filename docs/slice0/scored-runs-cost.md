@@ -34,8 +34,9 @@ perception about 35 %.
 
 `shock` is written and costs what `base` costs. `volleys` is being written by Varro, and
 should cost about the same. `relief` and `backed` add a second line, so each costs more per
-run. `backed` runs on all 200 sets, or on every fourth (`cell --every 4`) if the timings at
-the freeze say the batch will not fit in three nights; the freeze records which.
+run, but both run on every fourth set only (`cell --every 4`), since nothing scored for a set
+reads them. With that, the batch costs what is costed here for seven plain variants. The
+top-up (preregistration, "The relief") would add at most about one night, if run.
 
 ## The stop rule, proposed
 

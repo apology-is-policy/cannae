@@ -16,6 +16,7 @@
 use crate::Record;
 use crate::draw::Cell;
 use cannae_core::Side;
+use cannae_core::schedule::BASE_TICK;
 use cannae_harness::metrics::{
     Bands, RunSummary, fortune, side_time_to_break_s, spearman, superiority, superiority_of,
     verdicts, weibull_shape,
@@ -37,6 +38,18 @@ pub const KNIFE_EDGE: f64 = 0.10;
 
 /// A dose-response statistic passes at this or above.
 pub const DOSE_MIN: f64 = 0.6;
+
+/// `relief` and `backed` are run on sets 0, 4, 8 and so on, since they are reported for the
+/// cell and not scored for the set (call 0001, turns 51-52).
+pub const RELIEF_EVERY: u32 = 4;
+
+/// The top-up, run only if there is machine time for it: `relief` and `backed` also on the
+/// other sets in which `base` was still being fought twenty minutes in, contact made and
+/// neither side broken, in at least two seeds; lowest numbers first, at most 25 sets a cell
+/// (call 0001, turn 52). Its twins are reported apart.
+pub const TOPUP_AT_S: u32 = 1_200;
+pub const TOPUP_MIN_SEEDS: usize = 2;
+pub const TOPUP_MAX_SETS: usize = 25;
 
 const PATTERNS: [&str; 8] = [
     "1 standoff",
@@ -138,6 +151,31 @@ impl Cellbook {
         (runs.len() == self.seeds).then_some(runs)
     }
 
+    /// The sets the top-up would run: off the stride, with `base` still being fought at
+    /// [`TOPUP_AT_S`] (contact made, neither side broken) in at least [`TOPUP_MIN_SEEDS`]
+    /// seeds, lowest first, at most [`TOPUP_MAX_SETS`].
+    pub fn topup(&self) -> Vec<u32> {
+        let at = TOPUP_AT_S * 1000 / BASE_TICK.0;
+        let fought = |r: &RunSummary| {
+            r.contact.is_some_and(|c| c < at)
+                && r.side_break.iter().all(|b| b.is_none_or(|t| t >= at))
+        };
+        let sets: Vec<u32> = self
+            .records
+            .get("base")
+            .map(|m| m.keys().copied().collect())
+            .unwrap_or_default();
+        sets.into_iter()
+            .filter(|d| d % RELIEF_EVERY != 0)
+            .filter(|&d| {
+                self.runs("base", d).is_some_and(|runs| {
+                    runs.iter().filter(|r| fought(r)).count() >= TOPUP_MIN_SEEDS
+                })
+            })
+            .take(TOPUP_MAX_SETS)
+            .collect()
+    }
+
     /// The cell scored.
     pub fn score(&self, bands: &Bands) -> Report {
         let mut rep = Report {
@@ -148,7 +186,8 @@ impl Cellbook {
             sets: Vec::new(),
             incomplete_sets: 0,
             audits: Vec::new(),
-            reliefs: Reliefs::default(),
+            reliefs: [Reliefs::default(), Reliefs::default()],
+            topup: self.topup(),
         };
         let base_sets: Vec<u32> = self
             .records
@@ -195,8 +234,12 @@ impl Cellbook {
                 passed: full.iter().filter(|p| **p == Some(true)).count(),
                 roman_broke,
                 shape: weibull_shape(&times, bands.holds_never_s),
-                drill: compare("backed", "relief", d).map(|(f, _)| f),
-                second_line: compare("base", "relief", d).map(|(f, _)| f),
+                drill: (d % RELIEF_EVERY == 0)
+                    .then(|| compare("backed", "relief", d).map(|(f, _)| f))
+                    .flatten(),
+                second_line: (d % RELIEF_EVERY == 0)
+                    .then(|| compare("base", "relief", d).map(|(f, _)| f))
+                    .flatten(),
                 shock: compare("shock", "base", d).map(|(f, _)| f),
                 volleys: compare("volleys", "base", d).map(|(f, _)| f),
             });
@@ -207,10 +250,10 @@ impl Cellbook {
             for (seed, s) in seeds {
                 let Some(r) = s.record() else { continue };
                 let ordered = r.relieved_s.iter().filter(|t| t.is_some()).count();
-                rep.reliefs.runs += 1;
-                rep.reliefs.relieved += usize::from(ordered > 0);
-                rep.reliefs.relieved_all +=
-                    usize::from(ordered > 0 && ordered == r.relieved_s.len());
+                let tally = &mut rep.reliefs[usize::from(d % RELIEF_EVERY != 0)];
+                tally.runs += 1;
+                tally.relieved += usize::from(ordered > 0);
+                tally.relieved_all += usize::from(ordered > 0 && ordered == r.relieved_s.len());
                 let twin = self
                     .records
                     .get("backed")
@@ -224,7 +267,7 @@ impl Cellbook {
                         Some(std::cmp::Ordering::Less) => 1,
                         _ => 2,
                     };
-                    rep.reliefs.twins[k] += 1;
+                    tally.twins[k] += 1;
                 }
             }
         }
@@ -325,7 +368,10 @@ pub struct Report {
     /// Sets with some `base` runs but not every seed.
     pub incomplete_sets: usize,
     pub audits: Vec<(String, AuditTally)>,
-    pub reliefs: Reliefs,
+    /// On the sets of the stride, and on the top-up's.
+    pub reliefs: [Reliefs; 2],
+    /// The sets the top-up would run, from `base` (empty until `base` is in).
+    pub topup: Vec<u32>,
 }
 
 impl Report {
@@ -512,19 +558,24 @@ impl fmt::Display for Report {
             "    base, the whole second line: {}",
             spread(self.sets.iter().filter_map(|s| s.second_line).collect())
         )?;
-        let r = &self.reliefs;
-        if r.runs > 0 {
+        for (r, which) in self.reliefs.iter().zip(["every fourth set", "the top-up"]) {
+            if r.runs == 0 {
+                continue;
+            }
             let [better, worse, same] = r.twins;
             writeln!(
                 f,
-                "    a relief was ordered in {} of {} runs of relief ({:.0} %), every relief in {}; \
-                 against its backed twin, the relieved line fared better in {better}, worse in \
-                 {worse}, the same in {same}",
+                "    {which}: a relief was ordered in {} of {} runs of relief ({:.0} %), every \
+                 relief in {}; against its backed twin, the relieved line fared better in \
+                 {better}, worse in {worse}, the same in {same}",
                 r.relieved,
                 r.runs,
                 100.0 * r.relieved as f64 / r.runs as f64,
                 r.relieved_all,
             )?;
+        }
+        if !self.topup.is_empty() {
+            writeln!(f, "    the top-up, if it is run: sets {:?}", self.topup)?;
         }
         writeln!(
             f,
@@ -639,11 +690,51 @@ mod tests {
         book.add(rec("backed", 1, 1, a, vec![]));
         // Relieved, with no twin on disk.
         book.add(rec("relief", 1, 2, None, vec![Some(1_200), None]));
-        let r = book
-            .score(&Bands::from_toml(include_str!("../../../scenarios/prereg.toml")).unwrap())
-            .reliefs;
-        assert_eq!((r.runs, r.relieved, r.relieved_all), (4, 3, 1));
-        assert_eq!(r.twins, [1, 0, 1]);
+        let bands = Bands::from_toml(include_str!("../../../scenarios/prereg.toml")).unwrap();
+        let rep = book.score(&bands);
+        // Set 0 is on the stride; set 1 is off it, as a top-up's would be, and counted apart.
+        let [r, top] = &rep.reliefs;
+        assert_eq!((r.runs, r.relieved, r.relieved_all), (2, 1, 0));
+        assert_eq!(r.twins, [1, 0, 0]);
+        assert_eq!((top.runs, top.relieved, top.relieved_all), (2, 2, 1));
+        assert_eq!(top.twins, [0, 0, 1]);
+    }
+
+    #[test]
+    fn the_top_up_takes_the_sets_off_the_stride_still_fought_at_twenty_minutes() {
+        let mut book = Cellbook {
+            cell: Cell {
+                engine: crate::Engine::Field,
+                rung: 1,
+            },
+            seeds: 2,
+            records: Records::new(),
+            freeze_seeds: Vec::new(),
+            skipped_lines: 0,
+        };
+        let at = TOPUP_AT_S * 1000 / BASE_TICK.0;
+        // (contact, the first break) for each of two seeds.
+        let base = |d: u32, runs: [(Option<u32>, Option<u32>); 2]| {
+            runs.into_iter()
+                .zip(1..)
+                .map(move |((contact, broke), seed)| {
+                    let mut r = rec("base", d, seed, None, vec![]);
+                    r.summary.contact = contact;
+                    r.summary.side_break = [broke, None];
+                    r
+                })
+        };
+        let fought = (Some(100), None);
+        let late = (Some(100), Some(at));
+        for r in base(0, [fought, fought]) // on the stride
+            .chain(base(1, [fought, late])) // both still fought at twenty minutes
+            .chain(base(2, [fought, (Some(100), Some(at - 1))])) // one broke a tick short
+            .chain(base(3, [fought, (None, None)])) // one never met the enemy
+            .chain(base(5, [late, late]))
+        {
+            book.add(r);
+        }
+        assert_eq!(book.topup(), [1, 5]);
     }
 
     #[test]

@@ -1,10 +1,10 @@
-# Slice 0: Pre-registration (draft)
+# Slice 0: Pre-registration
 
-**Status:** a draft by Paullus, 2026-11-10. It must be agreed with Varro and frozen before any
-scored run. Freezing means recording the commit and the SHA-256 of
-[`scenarios/prereg.toml`](../../scenarios/prereg.toml) and of both priors files in
-[STATUS](../STATUS.md). After that, changing a band or a definition voids the runs scored under
-it.
+**Status:** written by Paullus and agreed with Varro, 2026-11-10 (call 0001), and frozen
+before any scored run. Freezing records, in the sign-off below and in [STATUS](../STATUS.md),
+the commit and the SHA-256 of [`scenarios/prereg.toml`](../../scenarios/prereg.toml) and of
+the three priors files, the freeze seed, and the hash of the table of record. After that,
+changing a band or a definition voids the runs scored under it.
 
 The point is that neither of us can tune a pass band to his own engine after seeing results.
 That's the same reason the sealed battles are hash-committed.
@@ -34,7 +34,9 @@ For each cell of the experiment (each rung of the memory ladder on each substrat
 
 1. Draw 200 parameter sets: the shared parameters from the shared priors, the rest from the
    engine's own.
-2. Run each set on the same 10 seeds, for each scenario variant.
+2. Run each set on the same 10 seeds, for each scenario variant. `relief` and `backed` are run
+   on every fourth set only (0, 4, 8 and so on: 50 of 200), because nothing scored for a set
+   reads them (call 0001, turns 51-52). The audit's sets are all among them.
 3. Compute a run summary per run, from observable state and the event log only. After the
    first side breaks, the rout is scored for 15 minutes and no longer, so a run can stop there
    and score as if it had run on ([scored-runs-cost.md](scored-runs-cost.md); proposed by
@@ -126,7 +128,7 @@ alone. The interval passage shows it, and it is reported as it comes.
 
 ## The eight patterns
 
-| # | Pattern | Statistic | Proposed band |
+| # | Pattern | Statistic | Band |
 |---|---|---|---|
 | 1 | A stable standoff | The formed phase's length; the median gap while formed | At least 300 s; at least 1.0 m |
 | 2 | Pulses and lulls | Burstiness of the gaps between successive bouts while formed, per 9 m sector of front (by the defender's place at setup), median over sectors with at least three gaps; the share of 10 s bins at 20 % of the busiest or less | At least 0.2; 0.2-0.9 |
@@ -134,7 +136,7 @@ alone. The interval passage shows it, and it is reported as it comes.
 | 4 | Lateral spread | Spearman's rho between a 2 m bin's distance from the first break and its first turn within the side's collapse; the time for 80 % of the line's bins to turn | At least 0.3; 10-900 s |
 | 5 | Casualty asymmetry | The share of the loser's hits after the break | At least 0.6 |
 | 6 | Holds, then breaks | Across seeds: the share that break within 5 minutes of contact; the share still unbroken two hours after contact | At most 10 %; at most 25 % |
-| 7 | The casualty clock | Hits per front file per hour while formed, each side against its own first-line files; lethality per bout | 0.1-2.0; 0.002-0.15 (proposed) |
+| 7 | The casualty clock | Hits per front file per hour while formed, each side against its own first-line files; lethality per bout | 0.1-2.0; 0.002-0.15 |
 | 8 | The centurion gradient | Leaders' share of hits while formed, against after the break, pooled over seeds | Higher while formed |
 
 **The reasons for the bands:**
@@ -176,7 +178,7 @@ alone. The interval passage shows it, and it is reported as it comes.
 - **Pattern 7:** the casualty clock (rival 02 §9) gives one disabling hit per front position
   every 1.4-2.8 hours, at 1.8 and 0.9 m per file. Plausible inputs move that by a factor of
   two or three, hence 0.1-2.0.
-- **Pattern 7, lethality per bout (proposed: 0.002-0.15).** This is the chance that either
+- **Pattern 7, lethality per bout (0.002-0.15).** This is the chance that either
   man is disabled or killed in one committed bout. The skeletal and experimental half of the
   search is in [lethality-skeletal.md](lethality-skeletal.md). Its central range, 0.01-0.07,
   comes mostly from the casualty clock plus an assumed bout rate. Using it as the band would
@@ -255,9 +257,20 @@ relief, at 0.6 for each set. Two faults were found before any run:
 So:
 
 - **`backed`** is `relief` with no relief: the same two lines and the same men, with the
-  second line never moving. It runs on all 200 sets. If the timings at the freeze say the
-  batch will not fit in three nights, it runs on every fourth set (0, 4, 8 and so on) instead.
-  The freeze records which, before any scored run.
+  second line never moving. Both run on every fourth set (0, 4, 8 and so on). Pooled over
+  those 50 sets, the drill's statistic has a standard error of about 0.02.
+- **The top-up, registered now and run only if Michal gives the machine time for it**
+  (Varro, turn 52). `relief` and `backed` are also run on the other sets in which `base` was
+  still being fought twenty minutes in, with contact made and neither side broken, in at least
+  2 seeds of 10: lowest set numbers first, at most 25 sets a cell. Its twins and its share
+  relieved are reported apart from the first 50 sets'. Whether to run it is decided on the
+  machine time alone, before any relief statistic of the first 50 sets is read, and the report
+  says which. `score` names the sets (`report::topup`).
+  - What to expect (Varro): twins come only from sets whose line lasts twenty minutes. A cell
+    that passes the 10 % rule has about five such sets among the 50, so about 50 twins. Their
+    share of better against worse has a standard error near 0.07, and a difference between
+    two cells near 0.10. That shows a strong effect of the drill, but not rung 3 over rung 2
+    unless the difference is large.
 - **The drill alone, reported for each cell:** the mean over sets of the probability that
   the Roman line fares worse backed than relieved, with its 95 % interval; the share of sets
   above 0.5; and its rank correlation with each set's Weibull shape, which should be
@@ -398,7 +411,34 @@ and nothing else changed. A test holds the two files to that.
 
 ## Sign-off
 
-| | Agreed | Commit | SHA-256 of `prereg.toml` |
-|---|---|---|---|
-| Paullus | pending | | |
-| Varro | pending | | |
+**What the freeze pins.** The hashes pin the text of `scenarios/prereg.toml` and the three
+priors files. The commit pins everything else the runs read: the sampler's lines
+(`crates/cannae-score/src/draw.rs`), the metrics (`crates/cannae-harness/src/metrics.rs`), the
+scorer with its thresholds of 10 %, 0.6 and the relief's stride
+(`crates/cannae-score/src/report.rs`), both engines, and the scenario files in
+`scenarios/patch/`. So the hash alone is not the whole freeze (Varro, turn 52). Scored runs use
+the frozen commit's code and scenarios. A later commit may be used only if
+`git diff <frozen commit> -- crates scenarios Cargo.toml Cargo.lock` is empty, and the report
+names the commit it ran.
+
+**The record** (computed by Paullus, to be checked by Varro):
+
+| | |
+|---|---|
+| Commit | pending |
+| SHA-256 of `scenarios/prereg.toml` | pending |
+| SHA-256 of `docs/slice0/priors-shared.md` | pending |
+| SHA-256 of `docs/slice0/priors-pairwise.md` | pending |
+| SHA-256 of `docs/slice0/priors-field.md` | pending |
+| Freeze seed: the first 8 bytes, big-endian, of the SHA-256 over the four in that order | pending |
+| SHA-256 of the table of record, `table --freeze-seed <seed> --draws 200` | pending |
+
+| | Signed | What he checked |
+|---|---|---|
+| Paullus | pending | |
+| Varro | pending | |
+
+**Before the batch:** Michal sees the pass rules settled on 2026-11-10 (the eight on `base`,
+pattern 6 with two legs and how the Roman line fared, the 10 % share, the relief reported per
+cell, the stride), and gives the machine time. Signing binds nothing until the first scored
+run.

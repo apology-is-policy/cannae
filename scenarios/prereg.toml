@@ -1,6 +1,7 @@
-# Slice 0 pass bands. DRAFT: proposed by Paullus, to be agreed with Varro, then frozen
-# (commit and SHA-256 recorded in docs/STATUS.md) before any scored run. Definitions are in
-# docs/slice0/preregistration.md; the code is crates/cannae-harness/src/metrics.rs.
+# Slice 0 pass bands, agreed by Paullus and Varro (call 0001) and frozen before any scored
+# run: the commit and the SHA-256 are recorded in docs/slice0/preregistration.md (Sign-off)
+# and docs/STATUS.md. Definitions are in docs/slice0/preregistration.md; the code is
+# crates/cannae-harness/src/metrics.rs and crates/cannae-score/src/report.rs.
 
 # A body or side is broken when this share of its standing men have turned.
 break_share = 0.4
