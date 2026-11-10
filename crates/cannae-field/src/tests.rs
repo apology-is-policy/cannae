@@ -166,7 +166,7 @@ fn turning_takes_time() {
 }
 
 /// A walker in a standing crowd of his own side, two men to the square metre.
-fn through_a_crowd(in_place: bool, spacing: i32) -> i64 {
+fn through_a_crowd(in_place: bool, spacing: i32, flow_q8: u32) -> i64 {
     let mut b = Bodies::default();
     lattice(&mut b, 0, 0, 40, 20, spacing, spacing, Side::A, false);
     let mut t = stay(&b);
@@ -183,25 +183,38 @@ fn through_a_crowd(in_place: bool, spacing: i32) -> i64 {
         face: Some(Turn(0)),
         press: 0,
     });
-    let mut f = Field::new(Params::CENTRE);
+    let mut f = Field::new(Params {
+        flow_q8,
+        ..Params::CENTRE
+    });
     run(&mut f, &mut b, &t, 8);
     (b.pos[walker] - start).length()
 }
 
 #[test]
 fn walking_slows_as_the_crowd_thickens() {
-    // Two seconds. Alone he would cover 2.6 m; at two men to the square metre Weidmann's curve
-    // gives 0.46 of that.
-    let at_two = through_a_crowd(false, 707);
-    assert!((900..1_500).contains(&at_two), "{at_two}");
-    // At six and a quarter the crowd is past the jam density and he does not get through.
-    let at_six = through_a_crowd(false, 400);
-    assert!(at_six < 300, "{at_six}");
+    let centre = Params::CENTRE.flow_q8;
+    // Two seconds. Alone he would cover 2.6 m. At two men to the square metre the curve at
+    // the centre of its prior leaves him about 0.7 of that.
+    let at_two = through_a_crowd(false, 707, centre);
+    assert!((1_600..2_000).contains(&at_two), "{at_two}");
+    // Weidmann's own curve, fitted to walking in the open, passes less and leaves him 0.46.
+    let weidmanns = through_a_crowd(false, 707, 235);
+    assert!((900..1_500).contains(&weidmanns), "{weidmanns}");
+    // At six and a quarter the crowd is past the jam density and he does not get through,
+    // whatever the curve.
+    for flow_q8 in [235, centre, 453] {
+        let at_six = through_a_crowd(false, 400, flow_q8);
+        assert!(at_six < 300, "{at_six}");
+    }
 }
 
 #[test]
 fn a_man_in_his_place_is_moved_by_his_tie_alone() {
-    assert_eq!(through_a_crowd(true, 400), 2 * WALK as i64);
+    assert_eq!(
+        through_a_crowd(true, 400, Params::CENTRE.flow_q8),
+        2 * WALK as i64
+    );
 }
 
 #[test]
@@ -623,9 +636,17 @@ fn in_a_packed_moving_crowd_men_touch_only_if_asked() {
         }
         n
     };
-    let (field, touching) = (close(Contact::Line), close(Contact::Crowd));
+    let (field, crowd, all) = (
+        close(Contact::Line),
+        close(Contact::Crowd),
+        close(Contact::All),
+    );
     assert!(field > 40, "{field}");
-    assert!(touching * 3 < field, "{touching} against {field}");
+    // `Crowd` parts only men who are still going somewhere. Those who have stopped in the jam
+    // lie on each other as they do with no contact at all, so it removes a part of the
+    // overlaps, and a smaller part the longer the jam stands.
+    assert!(crowd * 4 < field * 3, "{crowd} against {field}");
+    assert_eq!(all, 0);
 }
 
 /// Two mobs of enemies pressing on each other: every part of the step is exercised.

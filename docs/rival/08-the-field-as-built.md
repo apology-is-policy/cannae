@@ -40,9 +40,11 @@ Between man steps nothing moves. The viewer interpolates.
 
 **He walks more slowly the thicker the crowd ahead.** The substrate reads the density one cell
 ahead of him along his way (farther if he would go farther in the step; at his target if that
-is nearer) and scales his gait by
-Weidmann's curve: full speed in the open, nothing at the jam density (5.4 men per m²). The
-curve is a table of 129 integers.
+is nearer) and scales his gait by a curve of Weidmann's form: full speed in the open, nothing
+at the jam density (5.4 men per m²). How steeply it falls between the two is set by the most
+a walking crowd may pass through a gap, which is drawn (1.6 to 2.3 persons per metre per
+second, as measured at bottlenecks). The curve is a table of 129 integers, built in integer
+arithmetic when the field is made, so that a run is the same on any machine.
 
 **Enemies ahead count for more than friends.** One enemy on his feet counts as much as it
 takes to make an open line of them a wall: at 0.8 enemies per m² ahead, walking stops. This is
@@ -176,12 +178,19 @@ only allowed for there.
    whether it stands between two rows of cells or on one. Against the threshold of 0.8 that is
    the difference between slowing a walker to a quarter of his pace and stopping him. The
    guard stops him in either case, so no one passes; what changes is how fast he arrives.
-5. **Men of one side overlap** under `Contact::Line`. In a jam of 900 men, 454 pairs stood
-   closer than three quarters of a body's width. The density is right; the picture is not. It
-   matters only to the viewer and to any measure that counts bodies in a gap.
-6. **It passes too few through a gate at a walk:** 1.17 persons per metre per second at 3 m,
-   against about 1.9 measured. That is the capacity of Weidmann's curve, which was fitted to
-   walking in the open. The steepness of the curve decides it, and it has no prior yet
+5. **Men of one side overlap** under `Contact::Line`. Fifteen seconds after 900 men began to
+   converge on one point, 654 pairs stood closer than three quarters of a body's width. The
+   density is right; the picture is not. It matters only to the viewer and to any measure
+   that counts bodies in a gap. `Crowd` removes only part of it (409 pairs), because it parts
+   only men who are still going somewhere, and men who have stopped in the jam lie on each
+   other as before. `All` leaves none.
+6. **Its flow through a gap is right only by calibration, and moves with the grid.** With
+   Weidmann's own curve, fitted to walking in the open, it passed 1.17 persons per metre per
+   second through a 3 m gate where about 1.9 is measured. The curve's capacity is now a prior
+   calibrated on bottleneck measurements, and the gate passes 1.80 at its centre. Two things
+   remain. How a gap sits on the cells moves its flow by about a tenth either way. And one
+   curve serves for the open and for gaps, so in an open crowd of two per m² a man now walks
+   at 0.7 of his free speed where Weidmann's fit gives 0.46
    ([passage-field.md](../slice0/passage-field.md)).
 7. **A passage narrower than a cell cannot be resolved.** It has no cell centre inside it, so
    its men are left with all four of their cells as if the walls were not there. Seyfried's

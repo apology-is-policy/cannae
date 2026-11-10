@@ -155,6 +155,10 @@ there was room, so a man who leaned with no one ahead went faster than his gait.
 that flaw in his own engine when the press rule (§1, line 33) went in, and the field had it
 too. A lean now gains only what the men ahead deny a man's walk.
 
+And F8 was added after I saw a result: the field's flow on the passage bench, which is the
+substrate alone with scripted bodies and no man model. It is calibration on measurements from
+outside, before the freeze. No run of the patch prompted it.
+
 ### Drawn for this substrate alone
 
 | # | Input | Prior | Centre | Reason |
@@ -166,11 +170,18 @@ too. A lean now gains only what the men ahead deny a man's walk.
 | F5 | Spreading: mm/s for each man per m² of difference across a metre | U[50, 150] | 100 | No measurement. It sets how fast a released crowd eases: a few minutes from packing to walking density in the unit test. The widest prior relative to its centre, on purpose. |
 | F6 | Guard: the nearest two enemies on their feet can stand, centre to centre | U[500, 750] | 600 | The scutum was two and a half Roman feet wide, 740 mm (Polybius 6.23, from a secondary source; not checked in the Greek). Two men shield to shield cannot be nearer than a body's depth and a shield's boss; a man behind a narrower shield can. |
 | F7 | Crowd density: under `Contact::Crowd`, a man in thicker ground than this who is going somewhere touches the men of his own side | U[2.5, 3.5] | 3 | The same threshold as F4, moved up a little so that a crowd touches only once it is past easing. Not drawn under `Contact::Line`. |
+| F8 | Walking capacity: the most a walking crowd passes through a gap, in persons per metre of width per second at a walk of 1.3 m/s. It sets how steeply walking slows as a crowd thickens | U[1.6, 2.3] | 1.95 | The range measured through bottlenecks with no pushing, about 1.9 (Seyfried et al. 2009), constant in width to 5 m (Liao et al.). **Added 2026-11-10, after the passage bench showed the field 40 % slow at gates.** Until then the steepness was fixed at Weidmann's value, fitted to people walking in the open, whose capacity is 1.19. Calibrated on those two experiments and on no pattern, as the pairwise engine's disc radius was ([passage-field.md](passage-field.md)). The people measured carried no shields, so this may run high for armed men; neither engine guesses a correction. |
 
-**Count: 6 under `Contact::Line`, 7 under `Contact::Crowd`.**
+**Count: 7 under `Contact::Line`, 8 under `Contact::Crowd`.**
 
-One constraint: packing must be denser than the jam. The ranges of F1 and F2 do not meet, so
-every draw keeps it.
+F8 is stored as `flow_q8`: men through a metre of width for each metre a free man walks, which
+is the figure above divided by 1.3. The prior is 315 to 453 in Q8, and the centre 384.
+
+Two constraints, which every draw keeps:
+- Packing must be denser than the jam. The ranges of F1 and F2 do not meet.
+- The capacity must be under about three quarters of the jam density, or no curve of this
+  shape has it. The most F8 asks is 1.8 men per m² of free walking, against a jam density of
+  at least 4.5.
 
 ### The four shared lines, as this substrate reads them
 
@@ -194,7 +205,7 @@ crushed. That is a property of the draw, as in the pairwise engine, and is not c
 |---|---|---|
 | Cell | 1.024 m | Structure. A check at 0.512 m will be reported with the results: the base patch re-run at the centre, and how far each of the eight measures moves. |
 | How far ahead a walker reads the density | One cell, or his target if nearer | It has to be about a stride or two, and no less than a cell or he reads his own presence |
-| The shape of the walking curve | Weidmann's: 1 − exp(−1.913 (1/ρ − 1/ρ_jam)), stretched to F1 | A measured shape; its end point is drawn (F1). **Open:** its steepness (the 1.913) decides the flow through a gate, and at this value the field passes 1.17 persons per metre per second where about 1.9 is measured. A prior for it is proposed in [passage-field.md](passage-field.md) and not yet made. |
+| The shape of the walking curve | Weidmann's form: 1 − exp(−k (1/s − 1)), with s the density as a share of the jam density | A measured shape. Its end point is drawn (F1), and so is its steepness, through F8: k is the least for which the curve's capacity is F8. Weidmann's own k, 1.913 / 5.4, gives 1.19. The table is built in integers when the field is made. |
 | The most that spreading moves a man | 300 mm/s | A shuffle. It only caps F5. |
 | "Going somewhere", under `Contact::Crowd` | His own walk and lean are at least 60 mm/s | A twentieth of a walk. Lowered from 200 to pass a test, as said above. |
 | Passes of the position solve | Enough that no two men cross in one, from 2 to 8; 2 more to settle; up to 8 moves of a man in a pass | Numerical. More passes change positions by millimetres. |

@@ -23,7 +23,7 @@
 //! Walls of the ground stop every man, in his place or out of it, and cut the grid where they
 //! run: see [`crate::walls`].
 
-use crate::curve::{STEPS, walk_q8};
+use crate::curve::{Curve, STEPS};
 use crate::tiles::{CELL_BITS, NONE, TILE, TILE_SHIFT, Tiles, local};
 use crate::walls::{Walls, into, stand_in};
 use cannae_core::schedule::{MAN_EVERY, is_man_step};
@@ -51,6 +51,9 @@ pub struct Params {
     pub cell_shift: u32,
     /// The density at which walking stops.
     pub jam_q8: u32,
+    /// The most a walking crowd passes: men through a metre of width for each metre a free
+    /// man walks. It sets how steeply walking slows as a crowd thickens.
+    pub flow_q8: u32,
     /// The density at which even a man who presses gains no ground. It also sets how near two
     /// bodies can be: discs at this density, packed as tightly as discs go.
     pub pack_q8: u32,
@@ -87,6 +90,7 @@ impl Params {
     pub const CENTRE: Params = Params {
         cell_shift: 10,
         jam_q8: 1_382,
+        flow_q8: 384,
         pack_q8: 2_304,
         hold_q8: 205,
         ease_q8: 640,
@@ -210,6 +214,7 @@ struct Grid {
     crush: i32,
     /// Steps of the walking curve per unit of density, Q16.
     walk_q16: i64,
+    curve: Curve,
     /// mm/s of spreading per unit of density difference across a cell, Q16.
     spread_q16: i64,
     /// The nearest two men of one side can stand in a packed, moving crowd.
@@ -243,6 +248,7 @@ impl Grid {
             crowd: units(p.crowd_q8),
             crush: units(p.crush_q8),
             walk_q16: ((STEPS as i64) << 16) / jam as i64,
+            curve: Curve::of_capacity(p.flow_q8, p.jam_q8),
             spread_q16: p.spread_mm_s as i64 * 1_000_000_000 * 256 / (cell * cell * cell),
             body_mm: 2 * (r2 as u64).isqrt() as i32,
         }
@@ -612,7 +618,7 @@ impl Field {
                 // What the men ahead leave him of his free speed. Enemies count for more than
                 // friends: an open line of them is a wall to a walking man.
                 let thick = mine as i64 + theirs as i64 * g.foe_q8 / 256;
-                let share = walk_q8(((thick * g.walk_q16) >> 16) as u32) as i64;
+                let share = g.curve.walk_q8(((thick * g.walk_q16) >> 16) as u32) as i64;
                 if dist > 0 {
                     let reach = tg.speed as i64 * share * dt / 256_000;
                     s += if reach >= dist {
