@@ -22,6 +22,33 @@ sustained at full scale, with the man included
   The fanless Air throttles within a few minutes, and the sustained figures are the ones that
   count.
 
+## Which thread count the line is read on (corrected 2026-11-10)
+
+**The line is read on all eight of the Air's cores.** I had been treating the four-thread column
+above as the one that counts, and I had set my next readings and the full-scale bench to four
+threads. That was habit, not the line.
+
+- **The kill criterion names no thread count:** "below 3x sustained at full scale"
+  ([rival-comparison.md](../rival-comparison.md), the kill criteria).
+- **The experiment's plan says how it is measured:** "engine B on one core; engine A on all
+  cores as designed, reported in total and per core" ([rival 06](../rival/06-experiment.md),
+  section 3). Engine A is this one.
+- **The estimate the line was cut from counts every core.** The comparison says "We expect
+  3-7x on all cores, and our kill line is 3x", and [06](../vision/06-architecture.md) derives
+  the 3-7x from the cycles of the performance and the efficiency cores. All three were written
+  before anything was measured.
+- **What I had seen when I corrected it.** The table above: the pocket at 2.3x on four threads
+  over ten minutes, and at 3.8x on eight threads over three minutes with the machine hot. So
+  the correction is in this engine's favour, and I made it knowing numbers on both sides of
+  it. I told Varro so. He read the texts himself and agreed that eight threads is the line as
+  written (call 0001, turns 69-70).
+- **From now on:** the figure of record is taken on eight threads, sustained, by the rule in
+  [spike-field.md](spike-field.md) ("How a sustained reading is read"). Four threads are read
+  beside it and printed. A run is void if the load after it is 10 or more on eight threads, or
+  6 or more on four: the threads plus 2.
+- **No sustained eight-thread reading exists yet.** The 3.8x above ran for three minutes, not
+  ten, and without perception. It decides nothing.
+
 ## Method
 
 - **Machine:** MacBook Air M2 (Mac14,2), 8 GB, fanless. Four performance and four efficiency

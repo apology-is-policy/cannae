@@ -2,7 +2,7 @@
 
 **Phase:** Slice 0, the experiment between the two designs. The shared core and harness run end to end with a toy man; the engines are next.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-10, evening.
+**Last updated:** 2026-11-10, late evening.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -158,6 +158,24 @@ do this. Candidates for a second round, none decided:
    already nearer to running, and nothing makes the men beside him step back to keep the line.
    Cannae needs a centre that is pushed back a long way without dissolving.
 
+**A defect found by watching (Michal, 2026-11-10).** When the man in front of a century's
+standard-bearer falls, the whole century steps back one rank, 1.8 m, two seconds later. A
+formation's place is fixed on its standard-bearer. When his file closes over the fallen man he
+should step up; instead the formation's place moves back to where he stands, and every other
+man follows it. Seen at about 30 s on my engine at rung 0, seed 1, and confirmed from the men's
+positions.
+- **It is in the frozen shared code,** so it is in every scored run, on both engines alike. The
+  comparison between cells stands. It may touch the absolute bands a little: a body that gives
+  1.8 m breaks contact for a second or two.
+- **The batch goes on and nothing is changed.** It is written into the pre-registration's
+  record of things seen during the batch. The report will count how often it happened in the
+  scored runs, and whether those runs differ. The fix waits for a second round.
+- **The alternative** is to stop, fix, freeze again and restart. The batch is about 2.5 % done,
+  so that is cheap today and dear later. I recommend against it, and it is Michal's call.
+
+**The replay page ran on the test physics,** where men walk through each other. The live viewer
+runs the real engines and marks the leaders; use it and not the replay.
+
 **Speed readings.** These need about two quiet hours on the Mac, through the other project's
 lock. My spike now times the perception as Varro's does. Testing it showed that the core's
 reference perception, which my engine uses, is very slow in the pocket. In a short test on a
@@ -165,6 +183,22 @@ loaded Mac, my engine ran the pocket ten times slower with it than with Varro's.
 engine can use it. Agreed with Varro: the perception is reported apart from the substrate, and
 my kill line is read with his perception. A sustained figure is read by one rule for both, fixed
 before any is taken ([spike-field.md](slice0/spike-field.md)).
+
+**My line is read on all eight cores, corrected 2026-11-10.** I had set my readings to four
+threads out of habit. The experiment's plan says "engine A on all cores as designed", and the
+estimate behind the line counts every core. The correction is in my engine's favour, and I had
+seen numbers on both sides of it; Varro read the texts and agreed
+([spike-pairwise.md](slice0/spike-pairwise.md)). **Still open, and Michal's to decide before I
+take a reading:** whether my 3x is read scene by scene, so that a pocket under 3x kills the
+engine, or over a whole battle, as the vision's estimate was written ("3-7x over a whole
+battle, falling toward 2x in the encirclement").
+
+**The full-scale bench with the real man is designed** and agreed with Varro: 150,000 men,
+real formations and fighting, either engine, each phase timed, in a package of its own outside
+the frozen code. Two scenes, a line and a pocket. What counts as a real crush in the pocket is
+written down before any run. Reading the code for it turned up a scan in the shared formation
+code that looks at every man for every body under orders; Varro is replacing it with an indexed
+one, bit for bit the same, on a branch that merges after the batch.
 
 **Pre-registration: five defects found and fixed so far,** four of them by Varro. All were found
 before any scored run, which is the point of writing it down first.
