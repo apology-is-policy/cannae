@@ -1,22 +1,40 @@
 # Status
 
-**Phase:** design revised after review 1. No code yet. Waiting for Michal's go-ahead.
+**Phase:** design. No code yet. A rival vision is being written by a second session, Varro.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
 **Last updated:** 2026-11-10.
 
-## Next step: waiting for Michal
+## Current arc: a rival vision (Phase 0b)
 
-1. **Proposed: design review 2 by Fable**, of the revised vision, before any code. CLAUDE.md
-   calls for a review after a major revision of `docs/vision/`. Not run.
-2. **Next arc, approved in principle: Slice 0, two spikes, about 1–2 weeks.** Starts on Michal's
-   go-ahead.
-   1. **A behaviour toy:** two short lines in one dimension, with the excitable psyche of
-      [04](vision/04-psyche.md) §5 and W′. Do a stable standoff, pulsing combat, rear-first
-      collapse and the casualty asymmetry appear over a non-trivial parameter region? Which of
-      the three kernels (smooth, two-threshold, cusp) is the simplest that does?
-   2. **A performance spike:** 150,000 agents, collision, a dummy think with realistic memory
-      traffic. Measure sustained cycles per agent-tick on the Air, and check that the hash is
-      identical on 1, 4 and 8 threads.
+Michal's idea, 2026-11-10. A second session, **Varro** (Fable 5.2, worktree `cannae-varro`,
+branch `varro`), builds a competing vision for the simulator and is free to relax our
+constraints. Paullus (the main session) leads, argues and reports. They talk over the yip line,
+and Michal watches on the switchboard. Nothing from the rival lands on `main` without Michal's
+decision.
+
+- **Varro's sketch, "Small men, many battles":** keep only what a witness could see of each man,
+  plus fixed dispositions; anchor formations on their standards; use a field-and-event substrate,
+  one battle per core; run full-scale Cannae a hundred times a night on the Air.
+- **Agreed so far:** the Slice 0 toy becomes a thin 2D patch; the casualty clock and the
+  centurions' share of losses become tests for both designs; Slice 0 becomes a bake-off, with one
+  harness, two engines, and kill criteria both ways.
+- **In progress:** Varro writes the full rival in `docs/rival/` (seven files, committed on
+  `varro`, not pushed).
+- **Next:** Paullus writes a short comparison, and both go to Michal.
+- **Questions for Michal:** does "a psyche" need inner per-man values, or is fear and morale shown
+  through behaviour enough? Is it acceptable for line-passage jams to be an input rather than an
+  emergent result?
+
+## Next arc
+
+**Slice 0, about 1–2 weeks, on Michal's go-ahead**, now proposed as a bake-off between the two
+designs. Michal chose the rival exercise over the design review 2 proposed at arc V's close.
+
+1. **Behaviour:** a thin 2D patch, two centuries against a warband (about 400 men), in each
+   engine. Scored on standoff, pulsing, rear-first collapse, the casualty asymmetry, the casualty
+   clock and the centurion share; parameter count and the share of prior volume that passes.
+2. **Performance:** 150,000 bodies in each substrate. Sustained simulated seconds per wall second
+   per core in an encirclement, and identical hashes across thread counts or cores.
 
 ## Last arc: V -- revise the vision after review 1 (closed 2026-11-10)
 
@@ -59,7 +77,7 @@ word is singular). This is recorded in the review's disposition table.
 
 **Blocking the next step:**
 
-- The go-ahead for Slice 0, and whether design review 2 runs first.
+- The go-ahead for Slice 0 in its bake-off form, after the rival arc reports.
 
 **Not blocking:**
 
