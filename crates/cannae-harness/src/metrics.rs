@@ -11,7 +11,7 @@
 use crate::scenario::{Layout, Placed};
 use cannae_core::schedule::BASE_TICK;
 use cannae_core::{Bodies, BoutOutcome, Event, EventKind, Posture, Role, Side, Vec2, Wound};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// One man step's tallies.
 #[derive(Clone, Debug, Default, PartialEq)]
@@ -106,11 +106,12 @@ impl Recorder {
 }
 
 /// What one run produced, pattern by pattern. `None` where a pattern does not apply (no break,
-/// no bouts).
-#[derive(Clone, Debug, Default, PartialEq)]
+/// no bouts). It is written to disk by the batch runner and read back by the scorer.
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub struct RunSummary {
     pub body_break: Vec<Option<u32>>,
     pub side_break: [Option<u32>; 2],
+    #[serde(with = "side_or_none")]
     pub loser: Option<Side>,
     pub contact: Option<u32>,
     /// Men of each side's front bodies disabled or killed before contact: what a shock or a
@@ -148,6 +149,28 @@ pub struct RunSummary {
     pub hits_formed: u32,
     pub leader_hits_rout: u32,
     pub hits_rout: u32,
+}
+
+/// `Option<Side>` on disk as `null`, 0 or 1, so the core needs no serde.
+mod side_or_none {
+    use cannae_core::Side;
+    use serde::{Deserialize, Deserializer, Serializer};
+
+    pub fn serialize<S: Serializer>(v: &Option<Side>, s: S) -> Result<S::Ok, S::Error> {
+        match v {
+            Some(side) => s.serialize_some(&(*side as u8)),
+            None => s.serialize_none(),
+        }
+    }
+
+    pub fn deserialize<'de, D: Deserializer<'de>>(d: D) -> Result<Option<Side>, D::Error> {
+        match Option::<u8>::deserialize(d)? {
+            None => Ok(None),
+            Some(0) => Ok(Some(Side::A)),
+            Some(1) => Ok(Some(Side::B)),
+            Some(n) => Err(serde::de::Error::custom(format!("no side {n}"))),
+        }
+    }
 }
 
 fn secs(ticks: u32) -> f64 {
@@ -736,17 +759,41 @@ fn front_bodies(inp: &Inputs, side: Side) -> Vec<usize> {
         .collect()
 }
 
-/// Probability of superiority: P(a < b) + P(a = b) / 2, with `None` (never broke) above every
-/// time. For dose-response: does variant `a` break sooner than `b`?
-pub fn superiority(a: &[Option<f64>], b: &[Option<f64>]) -> Option<f64> {
+/// Time from contact to the break of one side's front, `None` if it never broke within
+/// scoring. A side that broke before any contact broke at once. For the loser this is
+/// `time_to_break_s`; the dose-response and the memory variants read the Roman line's,
+/// whichever side lost.
+pub fn side_time_to_break_s(r: &RunSummary, side: Side) -> Option<f64> {
+    r.side_break[side as usize].map(|b| r.contact.map_or(0.0, |c| secs(b.saturating_sub(c))))
+}
+
+/// How one side's front fared in a run, as a value that orders worst for it first: it broke
+/// first (the earlier, the worse), then neither side broke, then the other side broke first
+/// (the earlier, the better). Times are from contact, as in `time_to_break_s`, so a front
+/// broken before the fronts met has the worst value there is. When both broke at the same
+/// tick, `loser` is side A, the Romans in every patch variant.
+///
+/// The dose-response statistics and the memory variants compare the Roman line's fortune
+/// (agreed in call 0001, turns 43-44): the variants all change the Roman side, and the first
+/// break of either side, compared as a time alone, would score a warband that breaks sooner
+/// against recruits as recruits breaking sooner.
+pub fn fortune(r: &RunSummary, side: Side) -> (u8, f64) {
+    match (r.loser, r.time_to_break_s) {
+        (Some(l), Some(t)) if l == side => (0, t),
+        (Some(_), Some(t)) => (2, -t),
+        _ => (1, 0.0),
+    }
+}
+
+/// Probability of superiority: P(a < b) + P(a = b) / 2 over every pair of one value from each.
+/// `None` if either is empty.
+pub fn superiority_of<K: PartialOrd>(a: &[K], b: &[K]) -> Option<f64> {
     if a.is_empty() || b.is_empty() {
         return None;
     }
-    let key = |v: &Option<f64>| v.unwrap_or(f64::INFINITY);
     let mut wins = 0.0;
     for x in a {
         for y in b {
-            let (x, y) = (key(x), key(y));
             wins += if x < y {
                 1.0
             } else if x == y {
@@ -757,6 +804,14 @@ pub fn superiority(a: &[Option<f64>], b: &[Option<f64>]) -> Option<f64> {
         }
     }
     Some(wins / (a.len() * b.len()) as f64)
+}
+
+/// [`superiority_of`] on times to break, with `None` (never broke) above every time: does
+/// variant `a` break sooner than `b`?
+pub fn superiority(a: &[Option<f64>], b: &[Option<f64>]) -> Option<f64> {
+    let key =
+        |v: &[Option<f64>]| -> Vec<f64> { v.iter().map(|t| t.unwrap_or(f64::INFINITY)).collect() };
+    superiority_of(&key(a), &key(b))
 }
 
 /// The shape k of a Weibull fitted to times to break by maximum likelihood, with seeds still
@@ -1063,6 +1118,27 @@ mod tests {
         assert_eq!(sum.stragglers, 1);
         assert_eq!(sum.loser_after_break, Some(0.75));
         assert_eq!(sum.time_to_break_s, Some(secs(1050)));
+        assert_eq!(side_time_to_break_s(&sum, Side::A), sum.time_to_break_s);
+        assert_eq!(side_time_to_break_s(&sum, Side::B), None);
+        let before_contact = RunSummary {
+            contact: None,
+            ..sum.clone()
+        };
+        assert_eq!(side_time_to_break_s(&before_contact, Side::A), Some(0.0));
+        // The Romans (A) broke first, at 52.5 s: worse for them than any run where they did
+        // not, better for the warband than any where it broke.
+        assert_eq!(fortune(&sum, Side::A), (0, secs(1050)));
+        assert_eq!(fortune(&sum, Side::B), (2, -secs(1050)));
+        let held = RunSummary {
+            loser: None,
+            time_to_break_s: None,
+            ..sum.clone()
+        };
+        assert_eq!(fortune(&held, Side::A), (1, 0.0));
+        let a = [fortune(&sum, Side::A)];
+        let b = [fortune(&held, Side::A), fortune(&sum, Side::B)];
+        assert_eq!(superiority_of(&a, &b), Some(1.0));
+        assert_eq!(superiority_of(&b, &b), Some(0.5));
         assert_eq!(sum.bouts_formed, 23);
         assert_eq!(sum.lethality_per_bout, Some(0.0));
         // One hit on A's 10 files in 1050 ticks (52.5 s) of formed fighting.
