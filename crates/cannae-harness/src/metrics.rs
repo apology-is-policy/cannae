@@ -20,7 +20,11 @@ pub struct Sample {
     /// Per body: men by posture, in `Posture` order.
     pub postures: Vec<[u16; 5]>,
     pub in_place: Vec<u16>,
-    /// Gap between the two sides' fronts in mm, if both have men facing the enemy.
+    /// Gap between the two sides' fronts in mm, if both have men facing the enemy. A side's
+    /// front is made by the facing men of its front bodies that are not in reserve: a body
+    /// wholly behind another of its side, which covers at least half its width, is a second
+    /// line, and the share of men behind the front must not move the front (call 0001,
+    /// turn 46).
     pub gap_mm: Option<i32>,
 }
 
@@ -75,17 +79,72 @@ impl Recorder {
         p.dot(self.axis) / self.axis_len
     }
 
+    /// Across the axis, in mm.
+    fn across(&self, p: Vec2) -> i64 {
+        (p.x as i64 * self.axis.y as i64 - p.y as i64 * self.axis.x as i64) / self.axis_len
+    }
+
     pub fn record(&mut self, tick: u32, bodies: &Bodies) {
         let mut postures = vec![[0u16; 5]; self.n_bodies];
         let mut in_place = vec![0u16; self.n_bodies];
+        // Per body: its side, and its facing front men along and across the axis.
+        let mut facing: Vec<(Option<Side>, Vec<i64>, Vec<i64>)> =
+            vec![(None, Vec::new(), Vec::new()); self.n_bodies];
+        // Men of no body are never in reserve.
         let mut fronts: [Vec<i64>; 2] = [Vec::new(), Vec::new()];
         for i in 0..bodies.len() {
-            if let Some(b) = bodies.body[i] {
-                postures[b.0 as usize][bodies.posture[i] as usize] += 1;
-                in_place[b.0 as usize] += bodies.in_place[i] as u16;
-            }
+            let Some(b) = bodies.body[i] else {
+                if self.front[i] && faces_enemy(bodies.posture[i]) {
+                    fronts[bodies.side[i] as usize].push(self.along(bodies.pos[i]));
+                }
+                continue;
+            };
+            let b = b.0 as usize;
+            postures[b][bodies.posture[i] as usize] += 1;
+            in_place[b] += bodies.in_place[i] as u16;
             if self.front[i] && faces_enemy(bodies.posture[i]) {
-                fronts[bodies.side[i] as usize].push(self.along(bodies.pos[i]));
+                let f = &mut facing[b];
+                f.0 = Some(bodies.side[i]);
+                f.1.push(self.along(bodies.pos[i]));
+                f.2.push(self.across(bodies.pos[i]));
+            }
+        }
+        // Each body's reach toward the enemy: its rear and its head, and its width, all from
+        // the 10th and 90th percentiles. Side B faces down the axis.
+        let mut extent = vec![None; self.n_bodies];
+        for (b, (side, along, across)) in facing.iter_mut().enumerate() {
+            let Some(side) = *side else { continue };
+            along.sort_unstable();
+            across.sort_unstable();
+            let (lo, hi) = (quantile(along, 0.1), quantile(along, 0.9));
+            let (rear, head) = if side == Side::A {
+                (lo, hi)
+            } else {
+                (-hi, -lo)
+            };
+            extent[b] = Some((
+                side,
+                rear,
+                head,
+                quantile(across, 0.1),
+                quantile(across, 0.9),
+            ));
+        }
+        let reserve = |x: usize| {
+            let Some((side, _, head, l, r)) = extent[x] else {
+                return false;
+            };
+            extent.iter().enumerate().any(|(y, e)| {
+                e.is_some_and(|(s, rear, _, ly, ry)| {
+                    y != x && s == side && head < rear && 2 * (r.min(ry) - l.max(ly)) >= r - l
+                })
+            })
+        };
+        for (b, (side, along, _)) in facing.iter().enumerate() {
+            if let Some(side) = side
+                && !reserve(b)
+            {
+                fronts[*side as usize].extend_from_slice(along);
             }
         }
         let gap_mm = if fronts[0].is_empty() || fronts[1].is_empty() {
@@ -1028,6 +1087,40 @@ mod tests {
         centre_mm = [8000, 0]
         facing_deg = 180
     "#;
+
+    #[test]
+    fn a_body_wholly_behind_another_that_covers_it_is_not_the_front() {
+        let gap = |extra: &str| {
+            let s = Scenario::from_toml(&format!("{LINE}{extra}")).unwrap();
+            let (bodies, placed) = place(&s);
+            let mut rec = Recorder::new(&bodies, &placed);
+            rec.record(0, &bodies);
+            rec.samples[0].gap_mm
+        };
+        let behind = |y: i32| {
+            format!(
+                r#"
+                [[body]]
+                name = "behind {y}"
+                side = "A"
+                troop = "t"
+                files = 10
+                ranks = 8
+                file_mm = 1000
+                rank_mm = 1000
+                centre_mm = [-24000, {y}]
+                facing_deg = 0
+                "#
+            )
+        };
+        assert_eq!(gap(""), Some(5_000));
+        // A second line 24 m behind the first: its men do not pull A's front back a rank, as
+        // they would as a share of A's men (6,000).
+        assert_eq!(gap(&behind(0)), Some(5_000));
+        // Bodies behind but beside the first, which covers neither, are part of the line, and
+        // the front is the share of all their men, as before.
+        assert_eq!(gap(&(behind(20_000) + &behind(-20_000))), Some(7_000));
+    }
 
     fn posture_event(tick: u32, man: u32, to: Posture) -> Event {
         Event {
