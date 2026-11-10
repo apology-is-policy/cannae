@@ -126,8 +126,63 @@ These are choices too. They are fixed because they are structure, not because th
 
 ## 4. The field substrate
 
-To be added with `cannae-field`: the equation of state, the contact rule, the cell size and the
-fallback. The freeze waits for these lines.
+What these numbers do is in [rival/08](../rival/08-the-field-as-built.md). Densities are men
+per m². The centre of each prior is the value in `cannae_field::Params::CENTRE`.
+
+**What I had seen when I wrote this section.** The unit tests of `cannae-field` (hand-built
+scenes of 2 to 900 men), the three spike scenes of 150,000 bodies with no man model, and the
+same three-minute clash of invented troops as above. No run of the patch. Three things here
+were shaped by what I saw in those scenes, and I name them: the held-ground rule and its
+density (F3) were added after two loose crowds walked through each other; `moving` was lowered
+from 200 to 60 mm/s to make a contact test pass; and the meaning of "moving" under
+`Contact::Crowd` was changed after the pocket spike. None of the three touches the patch under
+`Contact::Line`, except F3.
+
+### Drawn for this substrate alone
+
+| # | Input | Prior | Centre | Reason |
+|---|---|---|---|---|
+| F1 | Jam density: walking stops | U[4.5, 6.5] | 5.4 | Weidmann's fit puts it at 5.4. Measured crowds still shuffle at 4 to 5 (Helbing and Mukerji 2012) and flow collapses above 6 (Helbing et al. 2007), both in [crowd-physics.md](crowd-physics.md). |
+| F2 | Packing density: a press gains no more ground. It also sets a body's width under contact (discs packed as tightly as discs go: 358 mm at 9) | U[8, 10] | 9 | Local peaks above 10 were measured at the Hajj (Helbing et al. 2007); Fruin's "almost a fluid mass" is at about 7. Armed men with shields pack less tightly than pilgrims, so the range stops at 10. |
+| F3 | Held ground: the density of enemies on their feet at which no one walks or leans onto their ground | U[0.6, 1.0] | 0.8 | One open rank at a metre a file reads as 0.5 to 1.0 per m² along its own line, depending on where it stands on the grid. The threshold sits inside that range: one rank slows a walker to a crawl or stops him, two ranks always stop him, and the guard does the rest. Much lower, and a few scattered enemies would hold a field. |
+| F4 | Easing density: below this a crowd does not push its men apart | U[2, 3] | 2.5 | Bodies begin to touch at two to three per m² (Fruin's levels of service, from memory of the secondary literature; not checked). |
+| F5 | Spreading: mm/s for each man per m² of difference across a metre | U[50, 150] | 100 | No measurement. It sets how fast a released crowd eases: a few minutes from packing to walking density in the unit test. The widest prior relative to its centre, on purpose. |
+| F6 | Guard: the nearest two enemies on their feet can stand, centre to centre | U[500, 750] | 600 | The scutum was two and a half Roman feet wide, 740 mm (Polybius 6.23, from a secondary source; not checked in the Greek). Two men shield to shield cannot be nearer than a body's depth and a shield's boss; a man behind a narrower shield can. |
+| F7 | Crowd density: under `Contact::Crowd`, a man in thicker ground than this who is going somewhere touches the men of his own side | U[2.5, 3.5] | 3 | The same threshold as F4, moved up a little so that a crowd touches only once it is past easing. Not drawn under `Contact::Line`. |
+
+**Count: 6 under `Contact::Line`, 7 under `Contact::Crowd`.**
+
+One constraint: packing must be denser than the jam. The ranges of F1 and F2 do not meet, so
+every draw keeps it.
+
+### The four shared lines, as this substrate reads them
+
+These are drawn once for both substrates ([priors-shared.md](priors-shared.md), "Crowd physics
+both substrates have"). The field maps them directly.
+
+| Shared line | Field parameter | Mapping |
+|---|---|---|
+| Crush onset density, U[5, 8] | `crush_q8` | The same number. It is compared with the density of the men around a man, his own presence left out. |
+| Mean time to be disabled at 2 per m² above the onset, L[30, 600] s | `crush_rate_q16` | The hazard is linear in the density above the onset: rate = 1 / (2 T) per second for each man per m² above it. At T = 134 s that is 244 in Q16. |
+| Fastest turn, U[120, 200] degrees per second | `turn_per_tick` | The same number in turn units per base tick: 180 degrees per second is 1,638. A man turns once per man step, by five ticks' worth. |
+| Speed of a full press, U[200, 700] mm/s | `press_mm_s` | The same number: what a man at full press gains over open ground below the jam density. The centre here is 450; the pairwise placeholder is 300. Both are inside the prior. |
+
+A draw's crowd may never reach its own crush onset: the field does not pack past F2, and at the
+jam density (F1) walkers stop. With an onset of 8 and a packing density of 8 nobody is ever
+crushed. That is a property of the draw, as in the pairwise engine, and is not corrected.
+
+### Fixed, and not drawn
+
+| What | Value | Why fixed |
+|---|---|---|
+| Cell | 1.024 m | Structure. A check at 0.512 m will be reported with the results: the base patch re-run at the centre, and how far each of the eight measures moves. |
+| How far ahead a walker reads the density | One cell, or his target if nearer | It has to be about a stride or two, and no less than a cell or he reads his own presence |
+| The shape of the walking curve | Weidmann's: 1 − exp(−1.913 (1/ρ − 1/ρ_jam)), stretched to F1 | A measured shape; its end point is drawn (F1) |
+| The most that spreading moves a man | 300 mm/s | A shuffle. It only caps F5. |
+| "Going somewhere", under `Contact::Crowd` | His own walk and lean are at least 60 mm/s | A twentieth of a walk. Lowered from 200 to pass a test, as said above. |
+| Passes of the position solve | Enough that no two men cross in one, from 2 to 8; 2 more to settle; up to 8 moves of a man in a pass | Numerical. More passes change positions by millimetres. |
+| Which men touch (`Contact`) | `Line` in the patch | Not a prior: the three settings are the physics rungs, compared in the passage study ([rival/06](../rival/06-experiment.md) §2) |
+| Tiles of 32 by 32 cells; quarter cells in the perception | | They change speed and no result |
 
 ## 5. What I expect, written beforehand
 

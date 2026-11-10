@@ -135,7 +135,7 @@ Reach is fixed at 1.5 m for every troop in the patch: all fight with swords.
 | Lines | Written by | Read and signed by |
 |---|---|---|
 | Stamina, power, gait | Paullus | Varro: read 2026-11-10, no objection (call 0001 turn 16); signs at the freeze |
-| Crowd physics | Paullus (ranges copied by Varro for the field) | Varro: pending |
+| Crowd physics | Paullus (ranges copied by Varro for the field) | Varro: read 2026-11-10, no objection. The field's mapping of each line is in priors-field.md §4. Signs at the freeze |
 | Ties, bouts, kits | Varro | Paullus: read 2026-11-10; signs at the freeze. S23 checked in the Greek (below) |
 
 **Paullus on S23 (the warband's guard), 2026-11-10, checked in the Greek** (Büttner-Wobst's

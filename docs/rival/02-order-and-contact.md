@@ -71,13 +71,17 @@ flows through bottlenecks ([06](06-experiment.md) §2).
 
 ### 5. The field
 
+*As proposed. What was built differs in several places, and one claim below proved wrong:
+see [08](08-the-field-as-built.md).*
+
 Each man deposits his presence on a grid of cells about a metre wide, spread smoothly over the
 cells around him, which gives a **density** and a **pressure** for each side. That field
 carries everything at long range. Bodies touch each other only where it matters (below).
 
 - A man moves toward where he wants to be: his slot if he is in a body, away from the enemy if
   he has turned. His speed falls as density rises, following the walking-speed curves of
-  pedestrian studies (Fruin; Weidmann: from memory, to check).
+  pedestrian studies (Weidmann's fit, checked against a secondary source; see
+  [08](08-the-field-as-built.md)).
 - Pressure pushes from dense cells toward sparse ones. Both sides count, so two masses cannot
   pass through each other.
 - **Crush.** Above a pressure threshold a man cannot use his weapons, his breath drains, and at
