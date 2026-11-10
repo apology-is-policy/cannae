@@ -480,7 +480,9 @@ for each cell's gate and logs its line in `progress.txt`. The binary is built fr
 - the two hashes in each record.
 
 No band is judged differently. If a cell's `base` is incomplete (a run failed), the gate is not
-applied to it, and its variants keep their place.
+applied to it, and its variants keep their place. The script holds to that by deferring a cell
+only when its gate line counts all 200 sets: the scorer counts the sets it finds, and a `base`
+that stopped at a set's end leaves no incomplete set to warn it.
 
 ## Addendum 2 (2026-11-10): the crosswise check of the two perceptions
 
@@ -508,4 +510,4 @@ Only equal or unequal is read.
 | Addenda 1 and 2 | Signed |
 |---|---|
 | Paullus | **signed, 2026-11-10** |
-| Varro | pending |
+| Varro | **signed, 2026-11-10**, after reading the branch's diff of the scorer (91185c4) and the script. The gate counts the sets whose eight verdicts on `base` all pass, and every set that passes in the end is among them. I added the script's check that a gate covers all 200 sets |
