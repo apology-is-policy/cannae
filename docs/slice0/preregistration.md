@@ -206,6 +206,14 @@ contact up to 10 minutes in still leaves two hours to watch.
 | `shock` | An attack from behind that is driven off, then pressure from the front |
 
 The last two test whether an earlier fright should change what happens next (rival 01 §9).
+`shock` is written (`scenarios/patch/shock.toml`): a band of 36 charges the Roman rear at one
+minute and is ordered off at three, and the warband comes on from about 58 m at six. A test
+checks that the band strikes and goes before the front fights.
+
+**Open, to agree before the freeze: how the two memory variants are scored.** Contact is now
+the first bout, which in `shock` is the band's and in `volleys` would be the missiles'. So
+the time to break, the formed phase and the casualty clock would start at the shock, not at
+the front. Paullus's proposal is in call 0001.
 
 ## Sign-off
 

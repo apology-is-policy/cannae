@@ -16,8 +16,9 @@
 
 use crate::Engine;
 use cannae_core::fixed::exp_neg_q32;
-use cannae_core::power::GaitSpeeds;
+use cannae_core::power::{GaitSpeeds, PowerTable};
 use cannae_core::rng::philox4x32_10;
+use cannae_core::stamina::StaminaParams;
 use cannae_core::{BoutParams, Tie};
 use cannae_harness::scenario::TieSpec;
 use cannae_man::{Rung, Troop};
@@ -157,6 +158,8 @@ pub struct Drawn {
     /// The number of the draw.
     pub i: u32,
     pub speeds: GaitSpeeds,
+    /// What each activity costs, as a multiple of a man's critical power.
+    pub power: PowerTable,
     pub bouts: BoutParams,
     /// The weights and thresholds of the visible layer: the same at every rung.
     pub man: cannae_man::Params,
@@ -214,6 +217,7 @@ pub fn drawn(freeze_seed: u64, cell: Cell, i: u32) -> Result<Drawn, String> {
         cell,
         i,
         speeds: speeds(&d),
+        power: power(&d),
         bouts: bouts(&d),
         man: man(&d),
         gauges: gauges(&d),
@@ -229,9 +233,162 @@ pub fn drawn(freeze_seed: u64, cell: Cell, i: u32) -> Result<Drawn, String> {
 
 // The mappings. Each is at its centre until its author writes it (the module's head says who).
 
-/// priors-shared.md, "Stamina, power and gait" (Paullus).
-fn speeds(_d: &Draw) -> GaitSpeeds {
-    GaitSpeeds::PLACEHOLDER
+// Paullus's lines. Each name is its line's address among the draws, so it never changes
+// after the freeze. Values are in the stored unit of the field they fill.
+
+/// priors-shared.md, "Stamina, power and gait": W'/CP, 50-100 s.
+pub const RESERVE: Line = Line {
+    name: "stamina.reserve_us",
+    prior: Prior::Uniform(50_000_000, 100_000_000),
+};
+/// The scale on Skiba's recovery time constant, 0.7-1.4.
+pub const TAU_SCALE: Line = Line {
+    name: "stamina.tau_scale_pm",
+    prior: Prior::Uniform(700, 1_400),
+};
+/// Walking at 1.3 m/s in kit, 0.40-0.60 CP.
+pub const WALK_CP: Line = Line {
+    name: "power.walk_pm",
+    prior: Prior::Uniform(400, 600),
+};
+/// Running at the run gait, 1.2-1.6 CP.
+pub const RUN_CP: Line = Line {
+    name: "power.run_pm",
+    prior: Prior::Uniform(1_200, 1_600),
+};
+/// Leaning into the men in front, 0.9-1.8 CP.
+pub const PRESS_CP: Line = Line {
+    name: "power.press_pm",
+    prior: Prior::Uniform(900, 1_800),
+};
+/// A man forward, striking and warding, 1.1-2.0 CP.
+pub const FIGHT_CP: Line = Line {
+    name: "power.fight_pm",
+    prior: Prior::Uniform(1_100, 2_000),
+};
+/// The run gait, 3-5 m/s.
+pub const RUN_SPEED: Line = Line {
+    name: "gait.run_mm_s",
+    prior: Prior::Uniform(3_000, 5_000),
+};
+
+/// priors-shared.md, "Crowd physics both substrates have": drawn once for both, and each
+/// engine maps them onto its own mechanics. The density at which crushing begins, 5-8 men per
+/// m², in Q8.
+pub const CRUSH_ONSET: Line = Line {
+    name: "crowd.crush_onset_q8",
+    prior: Prior::Uniform(1_280, 2_048),
+};
+/// The mean time to be disabled at 2 men per m² above the onset, 30-600 s.
+pub const CRUSH_TIME: Line = Line {
+    name: "crowd.crush_time_ms",
+    prior: Prior::LogUniform(30_000, 600_000),
+};
+/// The fastest turn, 120-200 degrees per second, in turn units per base tick.
+pub const TURN: Line = Line {
+    name: "crowd.turn_per_tick",
+    prior: Prior::Uniform(1_092, 1_820),
+};
+/// How fast a man at full press edges forward, 200-700 mm/s.
+pub const PRESS_SPEED: Line = Line {
+    name: "crowd.press_mm_s",
+    prior: Prior::Uniform(200, 700),
+};
+
+/// priors-pairwise.md, the substrate.
+pub const RADIUS: Line = Line {
+    name: "pairwise.radius_mm",
+    prior: Prior::Uniform(280, 300),
+};
+pub const BRACE: Line = Line {
+    name: "pairwise.brace_mm_s",
+    prior: Prior::Uniform(300, 1_200),
+};
+pub const CORE: Line = Line {
+    name: "pairwise.core_mm",
+    prior: Prior::Uniform(100, 200),
+};
+pub const STIFFNESS: Line = Line {
+    name: "pairwise.stiffness_q8",
+    prior: Prior::Uniform(64, 192),
+};
+
+/// priors-pairwise.md, rung 3: read at rung 3 on both engines.
+pub const FEAR_TAU: Line = Line {
+    name: "gauges.fear_tau_ms",
+    prior: Prior::LogUniform(60_000, 600_000),
+};
+pub const KEEP: Line = Line {
+    name: "gauges.keep_pm",
+    prior: Prior::Uniform(250, 1_000),
+};
+pub const SPEND: Line = Line {
+    name: "gauges.spend_ms",
+    prior: Prior::LogUniform(600_000, 3_600_000),
+};
+pub const RESOLVE_TAU: Line = Line {
+    name: "gauges.resolve_tau_ms",
+    prior: Prior::LogUniform(600_000, 3_600_000),
+};
+pub const EMPTY: Line = Line {
+    name: "gauges.empty_q8",
+    prior: Prior::Uniform(256, 768),
+};
+
+/// Every line of Paullus's, for the checks.
+pub const PAULLUS_LINES: [&Line; 20] = [
+    &RESERVE,
+    &TAU_SCALE,
+    &WALK_CP,
+    &RUN_CP,
+    &PRESS_CP,
+    &FIGHT_CP,
+    &RUN_SPEED,
+    &CRUSH_ONSET,
+    &CRUSH_TIME,
+    &TURN,
+    &PRESS_SPEED,
+    &RADIUS,
+    &BRACE,
+    &CORE,
+    &STIFFNESS,
+    &FEAR_TAU,
+    &KEEP,
+    &SPEND,
+    &RESOLVE_TAU,
+    &EMPTY,
+];
+
+/// priors-shared.md, "Stamina, power and gait" (Paullus). The walk is fixed at Vegetius's
+/// military step.
+fn speeds(d: &Draw) -> GaitSpeeds {
+    GaitSpeeds {
+        walk: 1_300,
+        run: d.of(&RUN_SPEED) as i32,
+    }
+}
+
+/// The same section: rest and standing are fixed at 0.09 and 0.14 CP.
+fn power(d: &Draw) -> PowerTable {
+    PowerTable {
+        pm: [
+            90,
+            140,
+            d.of(&WALK_CP) as u32,
+            d.of(&RUN_CP) as u32,
+            d.of(&PRESS_CP) as u32,
+            d.of(&FIGHT_CP) as u32,
+        ],
+    }
+}
+
+/// The same section: one wind for every troop (Livy's Gauls fading at Sentinum would be a
+/// variant, not a prior).
+fn stamina(d: &Draw) -> StaminaParams {
+    StaminaParams {
+        reserve_us: d.of(&RESERVE) as u32,
+        tau_scale_pm: d.of(&TAU_SCALE) as u32,
+    }
 }
 
 /// priors-shared.md, "Bouts" (Varro).
@@ -253,18 +410,63 @@ fn man(_d: &Draw) -> cannae_man::Params {
 }
 
 /// priors-field.md, §2, with the kit and the stamina of priors-shared.md (Varro and Paullus).
-fn troop(_d: &Draw, name: &str) -> Troop {
-    Troop::named(name).unwrap_or(Troop::HASTATI)
+fn troop(d: &Draw, name: &str) -> Troop {
+    Troop {
+        stamina: stamina(d),
+        ..Troop::named(name).unwrap_or(Troop::HASTATI)
+    }
 }
 
-/// priors-gauges.md (Paullus).
-fn gauges(_d: &Draw) -> cannae_gauges::Params {
-    cannae_gauges::Params::CENTRE
+/// priors-pairwise.md, rung 3 (Paullus).
+fn gauges(d: &Draw) -> cannae_gauges::Params {
+    cannae_gauges::Params {
+        fear_tau_ms: d.of(&FEAR_TAU) as u32,
+        keep_pm: d.of(&KEEP) as u32,
+        spend_ms: d.of(&SPEND) as u32,
+        resolve_tau_ms: d.of(&RESOLVE_TAU) as u32,
+        empty_q8: d.of(&EMPTY) as i32,
+    }
 }
 
-/// priors-pairwise.md, and the crowd physics of priors-shared.md (Paullus).
-fn pairwise(_d: &Draw) -> cannae_pairwise::Params {
-    cannae_pairwise::Params::PLACEHOLDER
+/// priors-pairwise.md, and the crowd physics of priors-shared.md (Paullus). Relaxation passes
+/// are fixed at 2.
+fn pairwise(d: &Draw) -> cannae_pairwise::Params {
+    let radius_mm = d.of(&RADIUS) as i32;
+    let onset_q8 = d.of(&CRUSH_ONSET);
+    cannae_pairwise::Params {
+        radius_mm,
+        iterations: 2,
+        stiffness_q8: d.of(&STIFFNESS) as i32,
+        turn_per_tick: d.of(&TURN) as u16,
+        press_mm_s: d.of(&PRESS_SPEED) as i32,
+        brace_mm_s: d.of(&BRACE) as i32,
+        crush_mm: crush_mm(radius_mm, onset_q8),
+        crush_rate_q32_per_mm: crush_rate_q32_per_mm(d.of(&CRUSH_TIME), onset_q8),
+        core_mm: d.of(&CORE) as i32,
+    }
+}
+
+/// The spacing of discs packed hexagonally at a density in men per m², Q8, in hundredths of
+/// a mm: the square root of 2 / (√3 ρ).
+fn hex_spacing_cmm(density_q8: i64) -> i64 {
+    // 2 m² × 256 × 10^6 mm² per m² × 10^4, over √3 × 10^6 times the density.
+    let s2 = 5_120_000_000_000_000_000u64 / (1_732_051 * density_q8 as u64);
+    s2.isqrt() as i64
+}
+
+/// The summed overlap with six neighbours at which crushing begins: six contacts' overlap at
+/// the onset density in hexagonal packing, 6 (2r − s).
+fn crush_mm(radius_mm: i32, onset_q8: i64) -> i32 {
+    ((6 * (200 * radius_mm as i64 - hex_spacing_cmm(onset_q8))) / 100) as i32
+}
+
+/// The crush rate per mm of overlap beyond `crush_mm`, Q32 per second, such that a man is
+/// disabled in `time_ms` on average at 2 men per m² above the onset. The extra overlap there
+/// does not depend on the radius.
+fn crush_rate_q32_per_mm(time_ms: i64, onset_q8: i64) -> u32 {
+    let extra_cmm = 6 * (hex_spacing_cmm(onset_q8) - hex_spacing_cmm(onset_q8 + 512));
+    ((1u64 << 32) * 100_000 / (time_ms as u64 * extra_cmm.max(1) as u64)).min(u32::MAX as u64)
+        as u32
 }
 
 /// priors-field.md, §4, and the crowd physics of priors-shared.md (Varro).
@@ -409,6 +611,78 @@ mod tests {
             .is_err()
         );
         assert_eq!(first.troop("nobody"), None);
-        assert!(TROOPS.iter().all(|n| first.troop(n) == Troop::named(n)));
+        // Each troop is the named one, but for its drawn wind.
+        assert!(TROOPS.iter().all(|n| {
+            first.troop(n).map(|t| Troop {
+                stamina: StaminaParams::PLACEHOLDER,
+                ..t
+            }) == Troop::named(n).map(|t| Troop {
+                stamina: StaminaParams::PLACEHOLDER,
+                ..t
+            })
+        }));
+    }
+
+    #[test]
+    fn paullus_lines_have_distinct_names_and_stay_in_their_priors() {
+        let mut names: Vec<&str> = PAULLUS_LINES.iter().map(|l| l.name).collect();
+        names.sort_unstable();
+        names.dedup();
+        assert_eq!(names.len(), PAULLUS_LINES.len());
+        for line in PAULLUS_LINES {
+            let (lo, hi) = match line.prior {
+                Prior::Uniform(lo, hi) | Prior::LogUniform(lo, hi) => (lo, hi),
+            };
+            let (mut least, mut most) = (i64::MAX, i64::MIN);
+            for i in 0..2_000 {
+                let v = Draw::new(SEED, i).of(line);
+                least = least.min(v);
+                most = most.max(v);
+            }
+            assert!(lo <= least && most <= hi, "{}: {least}-{most}", line.name);
+            // Two thousand draws come within a twentieth of each end.
+            let reach = (hi - lo) / 20;
+            assert!(least <= lo + reach && most >= hi - reach, "{}", line.name);
+        }
+    }
+
+    #[test]
+    fn the_crush_lines_give_the_placeholders_at_the_centres() {
+        // Onset 6.5 per m² at r = 280: the placeholder's 831 mm and 134 s at 8.5 per m².
+        assert!((829..=833).contains(&crush_mm(280, 1_664)));
+        let rate = crush_rate_q32_per_mm(134_000, 1_664) as i64;
+        assert!((rate - 100_830).abs() <= 500, "{rate}");
+        // The corners of the onset prior at r = 280, as priors-shared.md gives them.
+        assert!((474..=479).contains(&crush_mm(280, 1_280)));
+        assert!((1_078..=1_083).contains(&crush_mm(280, 2_048)));
+        // Slower to disable at a later onset is not implied, but faster at a shorter time is.
+        assert!(crush_rate_q32_per_mm(30_000, 1_664) > crush_rate_q32_per_mm(600_000, 1_664));
+    }
+
+    #[test]
+    fn a_pairwise_set_fills_every_line_of_paullus() {
+        let s = drawn(
+            SEED,
+            Cell {
+                engine: Engine::Pairwise,
+                rung: 3,
+            },
+            5,
+        )
+        .unwrap();
+        let d = Draw::new(SEED, 5);
+        let SubstrateParams::Pairwise(p) = s.substrate else {
+            panic!("not pairwise")
+        };
+        assert_eq!(p.radius_mm as i64, d.of(&RADIUS));
+        assert_eq!(p.core_mm as i64, d.of(&CORE));
+        assert_eq!(p.press_mm_s as i64, d.of(&PRESS_SPEED));
+        assert_eq!(p.crush_mm, crush_mm(p.radius_mm, d.of(&CRUSH_ONSET)));
+        assert_eq!(s.speeds.run as i64, d.of(&RUN_SPEED));
+        assert_eq!(s.power.pm[5] as i64, d.of(&FIGHT_CP));
+        assert_eq!(s.gauges.spend_ms as i64, d.of(&SPEND));
+        let t = s.troop("hastati").unwrap();
+        assert_eq!(t.stamina.reserve_us as i64, d.of(&RESERVE));
+        assert_eq!(s.troop("gallic-warband").unwrap().stamina, t.stamina);
     }
 }

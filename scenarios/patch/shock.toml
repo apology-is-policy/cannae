@@ -1,0 +1,84 @@
+# Slice 0 patch, variant `shock`: an attack from behind that is driven off, then pressure from
+# the front (rival 01 sec. 9, rival 06). It asks whether an earlier fright changes what happens
+# next. The base patch, but the warband starts 51 m further off and stands until six minutes.
+# A small band of the same warriors charges the Roman rear at one minute, and is ordered off
+# at three. The Roman rear rank stands at about x = -15.3 m; the band starts 30 m behind it.
+#
+# The gap of three minutes between the shock and the front is a choice: it is the order of the
+# fear and *shaken* time constants in both priors (1-10 min), so a memory of the shock is still
+# there when the front comes on, and a hazard read only off what a man sees now has nothing.
+
+name = "patch-shock"
+seed = 1
+duration_s = 7800
+
+[[body]]
+name = "hastati, first century"
+side = "A"
+troop = "hastati"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-9000, 0]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "hastati, second century"
+side = "A"
+troop = "hastati"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-9000, -18000]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "warband"
+side = "B"
+troop = "gallic-warband"
+files = 20
+ranks = 8
+file_mm = 1000
+rank_mm = 1200
+centre_mm = [60000, -9000]
+facing_deg = 180
+leader = "front-centre"
+tie = "loose"
+
+# The shock: a band falls on the Roman rear at one minute and is gone at three. It is
+# ordered off rather than beaten off, so that every run has the same shock to remember.
+[[body]]
+name = "rear band"
+side = "B"
+troop = "gallic-warband"
+files = 6
+ranks = 6
+file_mm = 1000
+rank_mm = 1200
+centre_mm = [-45000, -9000]
+facing_deg = 0
+leader = "front-centre"
+tie = "loose"
+
+[[order]]
+body = "rear band"
+at_s = 60
+order = "charge"
+
+[[order]]
+body = "rear band"
+at_s = 180
+order = "retire"
+
+# Then the pressure from the front, as in the base patch, three minutes after the band has
+# gone: the warband comes on from about 58 m and halts just out of reach.
+[[order]]
+body = "warband"
+at_s = 360
+order = "advance"

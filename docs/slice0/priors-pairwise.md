@@ -61,6 +61,10 @@ narrowed. The pushing flow through narrow doors is about 40 % low at every radiu
 right, and walking flow through wide gaps 30-50 % high at every radius in the prior. Both are
 structural, so no part of the other boxes fixes them.
 
+**In the sampler** (`crates/cannae-score/src/draw.rs`): `pairwise.radius_mm`,
+`pairwise.brace_mm_s`, `pairwise.core_mm` and `pairwise.stiffness_q8`, in the units above.
+Relaxation passes are fixed at 2.
+
 ## Rung 3: continuous fear and resolve (S0.6)
 
 `crates/cannae-gauges`, `Params`; the design is [rungs-3-4.md](rungs-3-4.md). Two gauges per
@@ -76,6 +80,10 @@ his nerve for the resolve he has spent. Nothing here draws at runtime.
 | T_R, `spend_ms`: how long a fear of one alarm unit takes to empty full resolve | 30 min | log-uniform 10-60 min | Formed fights lasted hours, and lines were relieved (the triplex acies; vision 03, R2): resolve is spent over tens of minutes, not seconds |
 | τ_R, `resolve_tau_ms`: how long resolve takes to come back | 30 min | log-uniform 10-60 min | A relieved line rested long enough to go back in (vision 03, R2) |
 | w_R, `empty_q8`: alarm at empty resolve | 2 alarm units | uniform 1-3 | About a man's whole nerve (2, priors-field.md T1): a man with no resolve left has no nerve left |
+
+**In the sampler:** `gauges.fear_tau_ms`, `gauges.keep_pm`, `gauges.spend_ms`,
+`gauges.resolve_tau_ms` and `gauges.empty_q8`, in the stored units of the fields named above.
+Rung 3 reads them on both engines, so draw *i* has the same gauges in both.
 
 What each should do is written down beforehand in [rungs-3-4.md](rungs-3-4.md): a hazard of
 breaking that rises over a long fight (a Weibull shape above rung 2's), a fright that lingers

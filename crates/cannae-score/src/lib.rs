@@ -130,7 +130,8 @@ fn play<P: Perceive, M: Memory, S: Substrate>(
     let mut rec = Recorder::new(&initial, placed.len());
     let n = bodies.len();
     let rng = Rng::new(spec.seed);
-    let men = Men::with_memory(memory(n), d.man, &bodies, troops, &rng);
+    let mut men = Men::with_memory(memory(n), d.man, &bodies, troops, &rng);
+    men.power = d.power;
     let bouts = Bouts::new(d.bouts, men.kits());
     let mut r = Runner::new(bodies, perception, men, substrate, f, bouts, rng, d.speeds);
     let end = spec.duration_s * 1000 / BASE_TICK.0;

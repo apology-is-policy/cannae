@@ -47,6 +47,12 @@ a line says otherwise.
 | Run speed | 4.0 m/s | uniform 3.0-5.0 m/s | Vegetius 1.9: "quicquid addideris, iam cursus est, cuius spatium non potest definiri": anything faster than the full step is running, and its distance cannot be fixed. 4 m/s is about the speed at VO2max for fit men, unloaded [primary]. A charge over a short distance may go faster, and a shield and kit slow it. |
 | Troops differ in wind | none | not drawn: the same for every troop | Livy (10.28) blames the Gauls' fading at Sentinum partly on bodies that cannot bear toil and heat. That is a candidate variant, not a prior: building it in would hand one side a result the patterns are meant to test. |
 
+**In the sampler** (`crates/cannae-score/src/draw.rs`): each line's name is its address among
+the draws, fixed at the freeze, and its values are in the stored unit. `stamina.reserve_us`
+(W'/CP in µs), `stamina.tau_scale_pm`, `power.walk_pm`, `power.run_pm`, `power.press_pm` and
+`power.fight_pm` (per mille of CP), and `gait.run_mm_s`. Rest, stand and the walk are fixed in
+the code. Every troop gets the same drawn wind.
+
 ## Crowd physics both substrates have (Paullus, moved from priors-pairwise.md)
 
 Drawn once for both, so that neither substrate can be said to have had the kinder draw. Each
@@ -62,6 +68,14 @@ line; the field engine's goes in [priors-field.md](priors-field.md). Sources are
 | `press_mm_s`: how fast a man at full press edges forward | 300 | uniform 200-700 | No direct measurement. The nearest is Pastor et al. 2015: a crowd approaching a door advanced at 0.41 m/s when told to avoid contact and 0.72 m/s when pushing was allowed [primary]. |
 
 **Count: 4.**
+
+**In the sampler:** `crowd.crush_onset_q8` (men per m² in Q8, 1,280-2,048),
+`crowd.crush_time_ms` (log-uniform, 30,000-600,000), `crowd.turn_per_tick` (turn units per base
+tick, 1,092-1,820) and `crowd.press_mm_s`. Both engines read the same four lines, so draw *i*
+has the same crowd in both. The pairwise engine derives `crush_mm` and `crush_rate_q32_per_mm`
+from the first two and its drawn radius, in integers, by the formulas above. At the
+placeholders' point they give 831 mm and a rate within 0.5 % of 100,830 (tested). The field
+maps them in its own file.
 
 ## Ties, bouts and kits (Varro)
 
