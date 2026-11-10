@@ -55,8 +55,10 @@ if [ -n "${SCORE:-}" ]; then
     for c in $ALL; do
         g=$("$SCORE" --substrate "${c%:*}" --rung "${c#*:}" --dir "$OUT" --seeds 10 | grep "Base gate")
         echo "$(date -u +%FT%TZ) gate $c:${g:- no gate line}" >> "$OUT/progress.txt"
+        # Deferred only on a gate over all 200 sets. The scorer counts the sets it finds, so a
+        # cell whose `base` stopped short at a set's end would otherwise be judged on a part.
         case "$g" in
-        *"cannot pass"*) LAST="$LAST $c" ;;
+        *" of 200 sets "*"cannot pass"*) LAST="$LAST $c" ;;
         *) KEEP="$KEEP $c" ;;
         esac
     done
