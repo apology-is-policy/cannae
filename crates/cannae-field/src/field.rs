@@ -19,13 +19,17 @@
 //! Two crowds do not pass through each other for the same reason: enemies ahead count toward
 //! the jam at a weight that makes an open line of them a wall, so no one walks onto ground the
 //! enemy holds. He gets it only when they are pushed off it or leave it.
+//!
+//! Walls of the ground stop every man, in his place or out of it, and cut the grid where they
+//! run: see [`crate::walls`].
 
 use crate::curve::{STEPS, walk_q8};
 use crate::tiles::{CELL_BITS, NONE, TILE, TILE_SHIFT, Tiles, local};
+use crate::walls::{Walls, into, stand_in};
 use cannae_core::schedule::{MAN_EVERY, is_man_step};
 use cannae_core::{
     Bodies, Cause, Event, EventKind, Key, ManId, Posture, Prob, Rng, SimMs, Stream, Substrate,
-    Target, Vec2, Wound,
+    Target, Vec2, Wall, Wound,
 };
 
 /// Which men are kept apart by their exact positions.
@@ -248,6 +252,15 @@ impl Grid {
         (x >> self.shift, y >> self.shift, frac(x), frac(y))
     }
 
+    /// The centre of cell `k` of the block whose south-west cell is (`bx`, `by`).
+    fn centre(&self, bx: i32, by: i32, k: usize) -> Vec2 {
+        let half = self.cell >> 1;
+        Vec2::new(
+            ((bx + (k & 1) as i32) << self.shift) + half,
+            ((by + (k >> 1) as i32) << self.shift) + half,
+        )
+    }
+
     fn q8(&self, units: i64) -> i64 {
         units * 1_000_000 / (self.cell as i64 * self.cell as i64)
     }
@@ -256,6 +269,8 @@ impl Grid {
 pub struct Field {
     p: Params,
     g: Grid,
+    /// The ground's walls. They never move.
+    walls: Walls,
     tiles: Tiles,
     /// Presence by cell and side, 256 to a man.
     den: Vec<[u16; 2]>,
@@ -267,6 +282,9 @@ pub struct Field {
     step: Vec<Vec2>,
     /// By man: what exact positions add to that.
     corr: Vec<Vec2>,
+    /// By man, where there are walls: for a man out of his place who stands against one, the
+    /// way out from it, 1024 long; zero for the rest.
+    held: Vec<Vec2>,
     hot: Vec<u32>,
     /// Whether any man touches the men of his own side this step.
     touching: bool,
@@ -291,9 +309,17 @@ pub struct Field {
 
 impl Field {
     pub fn new(p: Params) -> Self {
+        Field::with_walls(p, &[])
+    }
+
+    /// A field on ground with walls. No one crosses them, and no man's centre comes nearer to
+    /// one than half a body's width.
+    pub fn with_walls(p: Params, walls: &[Wall]) -> Self {
+        let g = Grid::of(&p);
         Field {
             p,
-            g: Grid::of(&p),
+            g,
+            walls: Walls::new(walls, g.cell, g.body_mm / 2),
             tiles: Tiles::default(),
             den: Vec::new(),
             base: Vec::new(),
@@ -301,6 +327,7 @@ impl Field {
             kind: Vec::new(),
             step: Vec::new(),
             corr: Vec::new(),
+            held: Vec::new(),
             hot: Vec::new(),
             touching: false,
             crushing: Vec::new(),
@@ -351,6 +378,7 @@ impl Field {
         self.cell.resize(n, NONE);
         self.kind.clear();
         self.kind.resize(n, 0);
+        let walled = !self.walls.is_empty();
         for i in 0..n {
             if bodies.posture[i] == Posture::Down {
                 continue;
@@ -370,7 +398,11 @@ impl Field {
             if self.den.len() < self.tiles.cells() {
                 self.den.resize(self.tiles.cells(), [0; 2]);
             }
-            let w = weights(fx, fy);
+            let mut w = weights(fx, fy);
+            if walled && self.walls.near(bodies.pos[i]) {
+                let g = &self.g;
+                w = self.walls.cut(bodies.pos[i], |k| g.centre(bx, by, k), w).0;
+            }
             let side = bodies.side[i] as usize;
             for k in 0..4 {
                 let c = &mut self.den[blk[k] as usize][side];
@@ -388,21 +420,28 @@ impl Field {
         let Field {
             p,
             g,
+            walls,
             tiles,
             den,
             base,
             kind,
             step,
+            held,
             hot,
             crushing,
             touching,
             stats,
             ..
         } = self;
+        let walled = !walls.is_empty();
         *touching = false;
         let n = bodies.len();
         step.clear();
         step.resize(n, Vec2::ZERO);
+        held.clear();
+        if walled {
+            held.resize(n, Vec2::ZERO);
+        }
         hot.clear();
         crushing.clear();
         let moving = p.moving_mm_s as i64 * dt / 1000;
@@ -431,19 +470,38 @@ impl Field {
             free += 1;
             let side = bodies.side[i] as usize;
             let (bx, by, fx, fy) = g.split(pos);
-            let w = weights(fx, fy);
+            let mut w = weights(fx, fy);
             let own = if kind[i] & WHOLE != 0 {
                 whole(base[i])
             } else {
                 find_block(tiles, bx, by, (i32::MAX, i32::MAX, NONE))
             };
-            let d = read(den, &own);
+            let mut d = read(den, &own);
+            // Cells a wall hides from him: he reads nothing from them.
+            let mut seen = [true; 4];
+            if walled && walls.near(pos) {
+                held[i] = walls.held(pos);
+                (w, seen) = walls.cut(pos, |k| g.centre(bx, by, k), w);
+                for k in 0..4 {
+                    if !seen[k] {
+                        d[k] = [0, 0];
+                    }
+                }
+            }
             // The men around him: the field less his own share of it.
             let mut foe = 0u16;
             let mut t = [0i32; 4];
             for k in 0..4 {
                 foe |= d[k][1 - side];
                 t[k] = d[k][0] as i32 + d[k][1] as i32 - w[k];
+            }
+            if seen != [true; 4] {
+                let around = t;
+                for k in 0..4 {
+                    if !seen[k] {
+                        t[k] = around[stand_in(&seen, k)];
+                    }
+                }
             }
             let here = (t[0] * w[0] + t[1] * w[1] + t[2] * w[2] + t[3] * w[3]) / 256;
 
@@ -477,11 +535,24 @@ impl Field {
                 } else {
                     g.cell as i64
                 };
-                let q = pos + dir.mul_div(look, UNIT_Q);
+                let mut q = pos + dir.mul_div(look, UNIT_Q);
+                if walled {
+                    // He looks no farther than a wall lets him go.
+                    q = walls.clip(pos, q);
+                }
                 let (qx, qy, ux, uy) = g.split(q);
                 let hint = (bx >> TILE_SHIFT, by >> TILE_SHIFT, base[i] >> CELL_BITS);
-                let a = read(den, &find_block(tiles, qx, qy, hint));
-                let wq = weights(ux, uy);
+                let mut a = read(den, &find_block(tiles, qx, qy, hint));
+                let mut wq = weights(ux, uy);
+                if walled && walls.near(q) {
+                    let ahead;
+                    (wq, ahead) = walls.cut(q, |k| g.centre(qx, qy, k), wq);
+                    for k in 0..4 {
+                        if !ahead[k] {
+                            a[k] = [0, 0];
+                        }
+                    }
+                }
                 let (mut mine, mut theirs) = (0, 0);
                 for k in 0..4 {
                     foe |= a[k][1 - side];
@@ -548,11 +619,13 @@ impl Field {
         let Field {
             p,
             g,
+            walls,
             tiles,
             cell,
             kind,
             step,
             corr,
+            held,
             hot,
             touching,
             cstart,
@@ -588,6 +661,7 @@ impl Field {
             }
         }
 
+        let walled = !walls.is_empty();
         let far = (far2 as u64).isqrt() as i64;
         let widest = p.guard_mm.max(g.body_mm) as i64;
         // Room for what the solve itself may move a man.
@@ -644,8 +718,16 @@ impl Field {
                         if toward.len_sq() > lim * lim {
                             continue;
                         }
-                        let mine_q8 = if kj & HOT == 0 {
+                        // A man held by a wall cannot give toward it: the other gives all.
+                        let (i_held, j_held) = if walled {
+                            (into(held[iu], -toward), into(held[ju], toward))
+                        } else {
+                            (false, false)
+                        };
+                        let mine_q8 = if kj & HOT == 0 || (j_held && !i_held) {
                             256
+                        } else if i_held && !j_held {
+                            0
                         } else {
                             let closing = step[iu].dot(toward).max(0);
                             let his = (-step[ju].dot(toward)).max(0);
@@ -725,6 +807,14 @@ impl Field {
                         );
                         clear = false;
                     }
+                    if walled {
+                        // A wall gives nothing: all of it is his.
+                        let y = walls.clip(bodies.pos[iu], x);
+                        if y != x {
+                            x = y;
+                            clear = false;
+                        }
+                    }
                     if clear {
                         break;
                     }
@@ -769,12 +859,17 @@ impl Substrate for Field {
         } else {
             0
         };
+        let walled = !self.walls.is_empty();
         for (i, tg) in targets.iter().enumerate() {
             if self.base[i] == NONE {
                 bodies.vel[i] = Vec2::ZERO;
                 continue;
             }
-            let mv = self.step[i] + self.corr[i];
+            let mut mv = self.step[i] + self.corr[i];
+            if walled {
+                let at = bodies.pos[i];
+                mv = self.walls.clip(at, at + mv) - at;
+            }
             bodies.pos[i] += mv;
             bodies.vel[i] = if per_s != 0 {
                 Vec2::new(mv.x * per_s, mv.y * per_s)

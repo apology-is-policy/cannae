@@ -7,7 +7,8 @@
 //! - a man out of his place walks through the field, slower as it grows denser, and a packed
 //!   field pushes its men apart;
 //! - enemies are kept apart by their exact positions, never by cells;
-//! - where a crowd is both packed and moving, its men also touch each other.
+//! - where a crowd is both packed and moving, its men also touch each other;
+//! - no one crosses a wall, and a wall cuts the grid.
 //!
 //! One battle runs on one thread, and all state is integer.
 
@@ -15,6 +16,7 @@ pub mod curve;
 pub mod field;
 pub mod perceive;
 pub mod tiles;
+mod walls;
 
 #[cfg(test)]
 mod tests;

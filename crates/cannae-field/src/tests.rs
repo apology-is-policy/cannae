@@ -4,7 +4,7 @@ use crate::{Contact, Field, Params};
 use cannae_core::schedule::{BASE_TICK, MAN_EVERY};
 use cannae_core::{
     Bodies, Cause, Event, EventKind, Observed, Posture, Rng, Side, Substrate, Target, Turn, Vec2,
-    Wound,
+    Wall, Wound,
 };
 
 const WALK: i32 = 1_300;
@@ -621,4 +621,206 @@ fn the_three_ways_of_touching_differ() {
         let gap = nearest_pair(b, true);
         assert!(gap >= body * 3 / 4, "{gap}");
     }
+}
+
+/// A rampart along x = 0 with a gate 3 m wide at y = 0, and the gate's sides running 3 m back.
+fn gate() -> Vec<Wall> {
+    let mut walls = Vec::new();
+    for side in [-1, 1] {
+        walls.push(Wall::new(
+            Vec2::new(0, side * 1_500),
+            Vec2::new(0, side * 40_000),
+        ));
+        walls.push(Wall::new(
+            Vec2::new(0, side * 1_500),
+            Vec2::new(-3_000, side * 1_500),
+        ));
+    }
+    walls
+}
+
+fn clear_of(walls: &[Wall], p: Vec2) -> i64 {
+    walls
+        .iter()
+        .map(|w| (p - w.nearest(p)).length())
+        .min()
+        .unwrap()
+}
+
+#[test]
+fn no_one_crosses_a_wall_however_men_touch() {
+    for contact in [Contact::Line, Contact::Crowd, Contact::All] {
+        let walls = gate();
+        let mut b = Bodies::default();
+        lattice(&mut b, 2_000, -9_000, 15, 20, 900, 900, Side::A, false);
+        let mut f = Field::with_walls(
+            Params {
+                contact,
+                ..Params::CENTRE
+            },
+            &walls,
+        );
+        let clear = (f.body_mm() / 2) as i64;
+        // Every man runs and shoves straight for a point far inside, wherever he stands: most
+        // of them straight at the rampart.
+        let goal = Vec2::new(-30_000, 0);
+        for step in 0..240 {
+            let before = b.pos.clone();
+            let t = toward(&b, goal, RUN, 255);
+            run_from(&mut f, &mut b, &t, step, 1);
+            for (i, (&was, &is)) in before.iter().zip(&b.pos).enumerate() {
+                assert!(
+                    walls.iter().all(|w| !w.bars(was, is)),
+                    "{contact:?}: man {i} went through a wall, {was:?} to {is:?}"
+                );
+                assert!(
+                    clear_of(&walls, is) >= clear,
+                    "{contact:?}: man {i} is in a wall at {is:?}"
+                );
+            }
+        }
+        // Whoever is inside came by the gate, and some did.
+        let through = b.pos.iter().filter(|p| p.x < -3_000).count();
+        let beside = b
+            .pos
+            .iter()
+            .filter(|p| p.x < 0 && p.x >= -3_000 && p.y.abs() > 1_500)
+            .count();
+        assert_eq!(beside, 0, "{contact:?}");
+        assert!(through > 20, "{contact:?}: only {through} got through");
+    }
+}
+
+/// Men in a strip `from..to` mm from a wall along x = 0, within `half` either side of y = 0.
+fn strip(b: &Bodies, from: i32, to: i32, half: i32) -> usize {
+    b.pos
+        .iter()
+        .filter(|p| p.x >= from && p.x < to && p.y.abs() < half)
+        .count()
+}
+
+#[test]
+fn a_crowd_pressed_on_a_wall_is_no_denser_at_the_wall() {
+    // A wall on a cell's edge, where an uncut grid loses most of a man to the far side.
+    let walls = vec![Wall::new(Vec2::new(0, -40_000), Vec2::new(0, 40_000))];
+    let mut b = Bodies::default();
+    lattice(&mut b, 600, -7_800, 20, 40, 400, 400, Side::A, false);
+    let t: Vec<Target> = b
+        .pos
+        .iter()
+        .map(|p| Target {
+            point: Vec2::new(-20_000, p.y),
+            speed: WALK,
+            face: Some(Turn(Turn::HALF)),
+            press: 255,
+        })
+        .collect();
+    let mut f = Field::with_walls(Params::CENTRE, &walls);
+    run(&mut f, &mut b, &t, 480);
+    let (at_wall, behind) = (strip(&b, 0, 1_000, 5_000), strip(&b, 1_000, 2_000, 5_000));
+    // Two strips of 10 m2. As measured: 94 men at the wall and 90 behind it, so 9.4 and 9.0
+    // per m2 against a packing density of 9. With the grid uncut it was 135 at the wall.
+    assert!(at_wall < 100, "{at_wall} men in 10 m2 at the wall");
+    assert!(
+        at_wall * 100 < behind * 115,
+        "{at_wall} at the wall, {behind} behind"
+    );
+}
+
+#[test]
+fn two_crowds_either_side_of_a_wall_do_not_feel_each_other() {
+    let walls = vec![Wall::new(Vec2::new(0, -60_000), Vec2::new(0, 60_000))];
+    let walk = |others: bool| {
+        let mut b = Bodies::default();
+        lattice(&mut b, 200, -5_000, 6, 12, 500, 500, Side::A, false);
+        let walkers = b.len();
+        if others {
+            lattice(&mut b, -3_000, -8_000, 10, 60, 300, 300, Side::A, false);
+        }
+        let t: Vec<Target> = b
+            .pos
+            .iter()
+            .enumerate()
+            .map(|(i, &p)| Target {
+                point: if i < walkers {
+                    p + Vec2::new(0, 30_000)
+                } else {
+                    p
+                },
+                speed: if i < walkers { WALK } else { 0 },
+                ..Default::default()
+            })
+            .collect();
+        let mut f = Field::with_walls(Params::CENTRE, &walls);
+        run(&mut f, &mut b, &t, 60);
+        b.pos[..walkers].to_vec()
+    };
+    let (alone, beside) = (walk(false), walk(true));
+    assert!(alone[0].y > -2_000, "they did not walk: {:?}", alone[0]);
+    assert_eq!(alone, beside);
+}
+
+#[test]
+fn a_wall_stops_a_man_in_his_place_too() {
+    let walls = vec![Wall::new(Vec2::new(0, -5_000), Vec2::new(0, 5_000))];
+    let mut b = Bodies::default();
+    lattice(&mut b, 2_000, 0, 1, 1, 0, 0, Side::A, true);
+    let t = toward(&b, Vec2::new(-4_000, 0), WALK, 0);
+    let mut f = Field::with_walls(Params::CENTRE, &walls);
+    run(&mut f, &mut b, &t, 40);
+    let clear = f.body_mm() / 2;
+    assert!((clear..clear + 8).contains(&b.pos[0].x), "{:?}", b.pos[0]);
+}
+
+#[test]
+fn men_who_touch_are_not_shoved_into_a_wall_by_those_behind() {
+    // Under `All` every man keeps a body's width from every other. Pressed on a wall, the man
+    // at the wall cannot give, so the men behind him must.
+    let walls = vec![Wall::new(Vec2::new(0, -40_000), Vec2::new(0, 40_000))];
+    let mut b = Bodies::default();
+    lattice(&mut b, 600, -3_800, 12, 20, 400, 400, Side::A, false);
+    let t: Vec<Target> = b
+        .pos
+        .iter()
+        .map(|p| Target {
+            point: Vec2::new(-20_000, p.y),
+            speed: WALK,
+            face: Some(Turn(Turn::HALF)),
+            press: 255,
+        })
+        .collect();
+    let mut f = Field::with_walls(
+        Params {
+            contact: Contact::All,
+            ..Params::CENTRE
+        },
+        &walls,
+    );
+    run(&mut f, &mut b, &t, 240);
+    let body = f.body_mm() as i64;
+    // For the men in a strip: how many, and how many of them stand within three quarters of a
+    // body's width of someone.
+    let crowded = |from: i32, to: i32| {
+        let strip: Vec<usize> = (0..b.len())
+            .filter(|&i| b.pos[i].x >= from && b.pos[i].x < to)
+            .collect();
+        let close = strip
+            .iter()
+            .filter(|&&i| {
+                (0..b.len()).any(|j| j != i && b.pos[i].dist_sq(b.pos[j]) < (body * 3 / 4).pow(2))
+            })
+            .count();
+        (strip.len(), close)
+    };
+    let (at_wall, close_at_wall) = crowded(0, 400);
+    let (behind, close_behind) = crowded(800, 1_600);
+    assert!(at_wall > 20 && behind > 20);
+    // The solve is not exact where a row is squeezed along a wall (rival/08, "What it does
+    // badly"), so a few are left close: 4 of 62 as measured. Without the wall in the passes it
+    // was 21 of 67, and with the man at the wall giving his share, 12 of 66.
+    assert!(
+        close_at_wall * 10 <= at_wall,
+        "{close_at_wall} of {at_wall} at the wall, {close_behind} of {behind} behind"
+    );
+    assert_eq!(close_behind, 0);
 }

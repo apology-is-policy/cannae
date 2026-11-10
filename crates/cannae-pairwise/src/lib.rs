@@ -12,7 +12,7 @@
 use cannae_core::schedule::{MAN_STEP, is_man_step};
 use cannae_core::{
     Bodies, Cause, Event, EventKind, Key, Posture, Prob, Rng, SimMs, Stream, Substrate, Target,
-    Vec2, Wall, Wound,
+    Vec2, Wall, WallIndex, Wound,
 };
 use core::ops::Range;
 use rayon::prelude::*;
@@ -95,88 +95,6 @@ pub struct Pairwise {
     fr: Vec<i32>,
     front: Vec<i32>,
     walls_near: WallIndex,
-}
-
-/// The side of a cell in the wall index, mm.
-const WALL_CELL_MM: i32 = 4_000;
-
-/// The walls binned on a coarse grid, so that a man checks only the walls that may reach him,
-/// not all of them. A camp's rampart and gates are a dozen walls, and checking each of 150,000
-/// men against every one at every pass would cost more than all the contacts. Walls do not
-/// move, so the index is rebuilt only when they change.
-#[derive(Default)]
-struct WallIndex {
-    /// The walls and the reach it was built for.
-    walls: Vec<Wall>,
-    reach: i32,
-    origin: Vec2,
-    w: i32,
-    h: i32,
-    /// For each cell, the walls that come within `reach` of some point in it.
-    cells: Vec<Vec<u32>>,
-}
-
-impl WallIndex {
-    fn build(walls: &[Wall], reach: i32) -> WallIndex {
-        let mut ix = WallIndex {
-            walls: walls.to_vec(),
-            reach,
-            ..Default::default()
-        };
-        if walls.is_empty() {
-            return ix;
-        }
-        let lo = |f: fn(&Vec2) -> i32| walls.iter().map(|w| f(&w.a).min(f(&w.b))).min();
-        let hi = |f: fn(&Vec2) -> i32| walls.iter().map(|w| f(&w.a).max(f(&w.b))).max();
-        let (x0, y0) = (lo(|v| v.x).unwrap() - reach, lo(|v| v.y).unwrap() - reach);
-        let (x1, y1) = (hi(|v| v.x).unwrap() + reach, hi(|v| v.y).unwrap() + reach);
-        ix.origin = Vec2::new(x0, y0);
-        ix.w = (x1 - x0) / WALL_CELL_MM + 1;
-        ix.h = (y1 - y0) / WALL_CELL_MM + 1;
-        ix.cells = vec![Vec::new(); (ix.w * ix.h) as usize];
-        // A point within `reach` of the wall lies in a cell whose centre is within `reach`
-        // plus half the cell's diagonal of it; a whole cell's side is more than that.
-        let lim = (reach + WALL_CELL_MM) as i64;
-        for (k, wall) in walls.iter().enumerate() {
-            let (cx0, cy0) = ix.cell(Vec2::new(
-                wall.a.x.min(wall.b.x) - reach,
-                wall.a.y.min(wall.b.y) - reach,
-            ));
-            let (cx1, cy1) = ix.cell(Vec2::new(
-                wall.a.x.max(wall.b.x) + reach,
-                wall.a.y.max(wall.b.y) + reach,
-            ));
-            for cy in cy0..=cy1 {
-                for cx in cx0..=cx1 {
-                    let centre = ix.origin
-                        + Vec2::new(
-                            cx * WALL_CELL_MM + WALL_CELL_MM / 2,
-                            cy * WALL_CELL_MM + WALL_CELL_MM / 2,
-                        );
-                    if (centre - wall.nearest(centre)).len_sq() <= lim * lim {
-                        ix.cells[(cy * ix.w + cx) as usize].push(k as u32);
-                    }
-                }
-            }
-        }
-        ix
-    }
-
-    fn cell(&self, p: Vec2) -> (i32, i32) {
-        (
-            (p.x - self.origin.x).div_euclid(WALL_CELL_MM),
-            (p.y - self.origin.y).div_euclid(WALL_CELL_MM),
-        )
-    }
-
-    /// The walls that may come within `reach` of `p`.
-    fn near(&self, p: Vec2) -> &[u32] {
-        let (cx, cy) = self.cell(p);
-        if cx < 0 || cy < 0 || cx >= self.w || cy >= self.h {
-            return &[];
-        }
-        &self.cells[(cy * self.w + cx) as usize]
-    }
 }
 
 /// The standing men sorted by cell, row by row, ties by id, with their positions and weights
@@ -565,7 +483,8 @@ impl Pairwise {
         // Walls do not move, so a man touching one takes the whole correction. A wall counts
         // toward how hard he is pressed, and blocks his walking and his lean as a man would.
         if !self.walls.is_empty() {
-            if self.walls_near.walls != self.walls || self.walls_near.reach != self.p.radius_mm {
+            if self.walls_near.walls() != self.walls || self.walls_near.reach() != self.p.radius_mm
+            {
                 self.walls_near = WallIndex::build(&self.walls, self.p.radius_mm);
             }
             let (walls, near, r) = (&self.walls, &self.walls_near, self.p.radius_mm as i64);
@@ -905,44 +824,6 @@ mod tests {
         assert!(
             worst < 6 * Params::PLACEHOLDER.core_mm,
             "summed overlap {worst} mm"
-        );
-    }
-
-    #[test]
-    fn the_wall_index_never_misses_a_wall_in_reach() {
-        // Walls at all angles, short and long, and points scattered over and around them: every
-        // wall that reaches a point must be among those the index offers for it.
-        let mut x = 12_345u64;
-        let mut next = |m: i32| {
-            x = x
-                .wrapping_mul(6_364_136_223_846_793_005)
-                .wrapping_add(1_442_695_040_888_963_407);
-            ((x >> 33) % (2 * m as u64)) as i32 - m
-        };
-        let walls: Vec<Wall> = (0..40)
-            .map(|_| {
-                let a = Vec2::new(next(60_000), next(60_000));
-                let b = a + Vec2::new(next(20_000), next(20_000));
-                Wall::new(a, b)
-            })
-            .chain([Wall::new(Vec2::new(5, 5), Vec2::new(5, 5))])
-            .collect();
-        let reach = 300;
-        let ix = WallIndex::build(&walls, reach);
-        let mut checked = 0;
-        for _ in 0..200_000 {
-            let p = Vec2::new(next(85_000), next(85_000));
-            let near = ix.near(p);
-            for (k, w) in walls.iter().enumerate() {
-                if (p - w.nearest(p)).len_sq() < (reach as i64).pow(2) {
-                    checked += 1;
-                    assert!(near.contains(&(k as u32)), "wall {k} missed at {p:?}");
-                }
-            }
-        }
-        assert!(
-            checked > 100,
-            "too few points in reach of a wall: {checked}"
         );
     }
 
