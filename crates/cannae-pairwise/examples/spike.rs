@@ -2,7 +2,7 @@
 //! model yet), measured as simulated seconds per wall second.
 //!
 //! `cargo run --release -p cannae-pairwise --example spike -- <line|surge|pocket|rout>
-//!  [--threads N] [--seconds S] [--wall-s W] [--report-every-s R]`
+//!  [--threads N] [--perceive [grid|field]] [--seconds S] [--wall-s W] [--report-every-s R]`
 //!
 //! `line`: two armies of 75,000, 1,000 files by 75 ranks each, pressed together along 1.5 km.
 //! It settles into a still jam within seconds.
@@ -14,14 +14,58 @@
 //! mouth of the nearest gate, through it, and stops 300 m inside. Most of them are pressed
 //! against the rampart for most of the run: the worst case for contact with walls.
 //!
+//! `--perceive` adds the perception's work at each man step, as the field spike does: the
+//! rebuild, the dormancy test for every man, and a full View for every man with an enemy in
+//! his window, on one thread. `grid` (the default) is the core's reference perception, which
+//! this engine uses in the scored runs; `field` is Varro's, which depends only on the core and
+//! is held to the same View by `cannae-field/tests/perception.rs`, so either can serve either
+//! substrate.
+//!
 //! `--wall-s` stops after that much wall time, for sustained (throttled) readings; it cannot
 //! change the state reached at a given tick.
 #![allow(clippy::float_arithmetic)]
 
-use cannae_core::schedule::BASE_TICK;
-use cannae_core::{Bodies, EventKind, Observed, Rng, Side, Substrate, Target, Turn, Vec2, Wall};
+use cannae_core::schedule::{BASE_TICK, is_man_step};
+use cannae_core::view::NoFrames;
+use cannae_core::{
+    Bodies, EventKind, GridPerception, ManId, Observed, Perceive, Rng, Side, Substrate, Target,
+    Turn, Vec2, Wall,
+};
+use cannae_field::FieldPerception;
 use cannae_pairwise::{Pairwise, Params};
 use std::time::Instant;
+
+/// What a perception's work costs at one man step, as the field spike times it: the rebuild,
+/// the dormancy test for every man, and a View for each man with an enemy near. Adds the
+/// nanoseconds of each to `pp` and returns (views, total crowding seen).
+fn perceive_step<P: Perceive>(
+    p: &mut P,
+    bodies: &Bodies,
+    tick: u32,
+    awake: &mut Vec<ManId>,
+    pp: &mut [u64; 3],
+) -> (u64, u64) {
+    let t0 = Instant::now();
+    p.rebuild(bodies, &[], tick, tick.saturating_sub(5));
+    let t1 = Instant::now();
+    awake.clear();
+    for i in 0..bodies.len() {
+        let man = ManId(i as u32);
+        if p.coarse(bodies, &NoFrames, man).enemy_near {
+            awake.push(man);
+        }
+    }
+    let t2 = Instant::now();
+    let mut seen = 0u64;
+    for &man in awake.iter() {
+        let v = std::hint::black_box(p.view(bodies, &NoFrames, man));
+        seen += v.crowding as u64;
+    }
+    pp[0] += (t1 - t0).as_nanos() as u64;
+    pp[1] += (t2 - t1).as_nanos() as u64;
+    pp[2] += t2.elapsed().as_nanos() as u64;
+    (awake.len() as u64, seen)
+}
 
 fn line() -> (Bodies, Vec<Target>) {
     let mut b = Bodies::default();
@@ -164,15 +208,29 @@ fn rout_targets(b: &Bodies, t: &mut [Target]) {
 }
 
 fn main() {
-    let mut args = std::env::args().skip(1);
+    let mut args = std::env::args().skip(1).peekable();
     let mut config = String::from("line");
     let mut threads = 1usize;
     let mut seconds = 60u32;
     let mut report_every_s = 10u64;
     let mut wall_s = u64::MAX;
+    let mut perceive: Option<&str> = None;
     while let Some(a) = args.next() {
         match a.as_str() {
             "--threads" => threads = args.next().and_then(|v| v.parse().ok()).unwrap_or(1),
+            "--perceive" => {
+                perceive = Some(match args.peek().map(String::as_str) {
+                    Some("field") => {
+                        args.next();
+                        "field"
+                    }
+                    Some("grid") => {
+                        args.next();
+                        "grid"
+                    }
+                    _ => "grid",
+                })
+            }
             "--seconds" => seconds = args.next().and_then(|v| v.parse().ok()).unwrap_or(60),
             "--wall-s" => wall_s = args.next().and_then(|v| v.parse().ok()).unwrap_or(u64::MAX),
             "--report-every-s" => {
@@ -204,21 +262,37 @@ fn main() {
     let mut crushed = 0usize;
     let ticks = seconds * 1000 / BASE_TICK.0;
     println!(
-        "{config}: {} bodies, {threads} thread(s), {seconds} simulated s",
-        bodies.len()
+        "{config}: {} bodies, {threads} thread(s), perception {}, {seconds} simulated s",
+        bodies.len(),
+        perceive.unwrap_or("off")
     );
+    let (mut grid, mut field) = (GridPerception::default(), FieldPerception::default());
+    let mut awake: Vec<ManId> = Vec::new();
+    let mut pp = [0u64; 3];
+    let (mut viewed, mut seen) = (0u64, 0u64);
     let start = Instant::now();
     let (mut last_t, mut last_tick) = (start, 0u32);
     let mut done = 0u32;
     for tick in 0..ticks {
-        if config == "surge" && cannae_core::schedule::is_man_step(tick) {
+        if let Some(which) = perceive
+            && is_man_step(tick)
+        {
+            let (v, c) = if which == "field" {
+                perceive_step(&mut field, &bodies, tick, &mut awake, &mut pp)
+            } else {
+                perceive_step(&mut grid, &bodies, tick, &mut awake, &mut pp)
+            };
+            viewed += v;
+            seen += c;
+        }
+        if config == "surge" && is_man_step(tick) {
             for (i, t) in targets.iter_mut().enumerate() {
                 if let Some(f) = t.face {
                     t.point = bodies.pos[i] + f.unit(3_000);
                 }
             }
         }
-        if config == "rout" && cannae_core::schedule::is_man_step(tick) {
+        if config == "rout" && is_man_step(tick) {
             rout_targets(&bodies, &mut targets);
         }
         s.advance(&mut bodies, &targets, BASE_TICK, &rng, tick, &mut out);
@@ -241,12 +315,22 @@ fn main() {
                 String::new()
             };
             println!(
-                "  wall {:>5.0} s  sim {:>6.1} s  rate {:>5.2}x  touching {touching}  crushed {}{inside}",
+                "  wall {:>5.0} s  sim {:>6.1} s  rate {:>5.2}x  touching {touching}  crushed {}{inside}  views {viewed}",
                 now.duration_since(start).as_secs_f64(),
                 (tick + 1) as f64 * BASE_TICK.0 as f64 / 1000.0,
                 sim / wall,
                 crushed
             );
+            if perceive.is_some() {
+                let ms = |v: u64| v as f64 / 1e6;
+                println!(
+                    "    perception, ms: rebuild {:.0}, coarse {:.0}, views {:.0}",
+                    ms(pp[0]),
+                    ms(pp[1]),
+                    ms(pp[2])
+                );
+                pp = [0; 3];
+            }
             (last_t, last_tick) = (now, tick + 1);
         }
         if now.duration_since(start).as_secs() >= wall_s {
@@ -256,7 +340,8 @@ fn main() {
     let wall = start.elapsed().as_secs_f64();
     let sim = done as f64 * BASE_TICK.0 as f64 / 1000.0;
     println!(
-        "done: {sim:.0} simulated s in {wall:.0} s, {:.2}x real time overall, final hash {:016x}",
+        "done: {sim:.0} simulated s in {wall:.0} s, {:.2}x real time overall, views {viewed} \
+         (check {seen}), final hash {:016x}",
         sim / wall,
         bodies.state_hash()
     );

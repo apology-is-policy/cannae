@@ -10,6 +10,7 @@ cannae-core = { path = "../cannae-core" }
 rayon = "1"
 
 [dev-dependencies]
+cannae-field = { path = "../cannae-field" }
 cannae-harness = { path = "../cannae-harness" }
 
 [lints]
