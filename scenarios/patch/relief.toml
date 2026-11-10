@@ -101,20 +101,27 @@ closer = true
 # - no enemy who has stepped forward stands within its frontage, with a file's width to spare
 #   on each side, and within 20 m of its front rank or of its rear.
 #
-# Not before ten minutes, counted from the start of the scenario and not from contact: a
+# Not before twenty minutes, counted from the start of the scenario and not from contact: a
 # centurion relieves a tired line, not a fresh one. Where a line breaks sooner than that, it
-# is never relieved, and the run shows that.
+# is never relieved, and the run is then the run of `backed.toml`, man for man. Each run's
+# record says when its reliefs were ordered, if they were.
 #
-# The ten minutes, the twenty seconds, the 20 m and the 24 m between the lines are choices
+# Why twenty and not ten. If a line that is not relieved lasts about an hour, as the band for
+# pattern 6 asks, and grows more brittle with time, then one relief with a fresh line helps
+# least when it comes early: it takes off a line that has spent little of its life. By a sum
+# done before any run (preregistration.md, the relief), a line whose hazard doubles over its
+# life fares better relieved in 58 runs of 100 at ten minutes and in 63 at twenty or thirty.
+#
+# The twenty minutes, the twenty seconds, the 20 m and the 24 m between the lines are choices
 # and have no source. How relief worked is not known (vision 03 sec. 3).
 [[relief]]
 of = "hastati, first century"
 by = "second line, first century"
-not_before_s = 600
+not_before_s = 1200
 lull_s = 20
 
 [[relief]]
 of = "hastati, second century"
 by = "second line, second century"
-not_before_s = 600
+not_before_s = 1200
 lull_s = 20

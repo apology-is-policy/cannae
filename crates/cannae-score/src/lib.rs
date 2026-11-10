@@ -63,6 +63,10 @@ pub struct Run {
     /// For a run carried on to the end: what it did after the rout window closed. `None` if
     /// the run stopped there, or no side broke early enough for the window to close.
     pub audit: Option<Audit>,
+    /// For each relief the scenario scripts, the second at which it was ordered, or `None`
+    /// if its time or its lull never came. Where none was ordered, a run of `relief` is the
+    /// run of `backed`.
+    pub relieved_s: Vec<Option<u32>>,
 }
 
 /// What a run did after its rout window closed, among front men as scored: what stopping
@@ -102,6 +106,9 @@ pub struct Record {
     pub wall_ms: u64,
     pub summary: RunSummary,
     pub audit: Option<Audit>,
+    /// As [`Run::relieved_s`]. Empty for a scenario with no relief.
+    #[serde(default)]
+    pub relieved_s: Vec<Option<u32>>,
 }
 
 impl Record {
@@ -118,6 +125,7 @@ impl Record {
             wall_ms: r.wall.as_millis() as u64,
             summary: r.summary.clone(),
             audit: r.audit,
+            relieved_s: r.relieved_s.clone(),
         }
     }
 }
@@ -307,6 +315,12 @@ fn play<P: Perceive, M: Memory, S: Substrate>(
         evaluated: r.evaluated,
         skipped: r.skipped,
         audit,
+        relieved_s: r
+            .frames
+            .relieved()
+            .iter()
+            .map(|at| at.map(|t| t * BASE_TICK.0 / 1000))
+            .collect(),
         summary,
     };
     Ok((run, r.log.all().to_vec()))

@@ -613,7 +613,7 @@ mod tests {
         use cannae_core::{FrameQuery, Frames};
         // Not before 7 s, after a lull of 3 s; and nobody advances, so the front is quiet.
         let text = RELIEF
-            .replace("not_before_s = 600", "not_before_s = 7")
+            .replace("not_before_s = 1200", "not_before_s = 7")
             .replace("lull_s = 20", "lull_s = 3")
             .replace("order = \"advance\"", "order = \"hold\"");
         let s = Scenario::from_toml(&text).unwrap();
@@ -658,8 +658,8 @@ mod tests {
         for (k, r) in s.reliefs.iter().enumerate() {
             let (of, by) = (&s.bodies[k], &s.bodies[3 + k]);
             assert_eq!((&r.of, &r.by), (&of.name, &by.name));
-            // Not before ten minutes, in a lull of twenty seconds.
-            assert_eq!((r.not_before_s, r.lull_s), (600, 20));
+            // Not before twenty minutes, in a lull of twenty seconds.
+            assert_eq!((r.not_before_s, r.lull_s), (1200, 20));
             // The same men in the same array, 24 m back and half a file to the left.
             let moved = BodySpec {
                 name: of.name.clone(),
@@ -693,6 +693,23 @@ mod tests {
                 .collect::<Vec<_>>()
         };
         assert_eq!(see(&s), see(&base));
+    }
+
+    #[test]
+    fn the_backed_patch_is_the_relief_patch_without_its_reliefs() {
+        let relief = Scenario::from_toml(RELIEF).unwrap();
+        let backed =
+            Scenario::from_toml(include_str!("../../../scenarios/patch/backed.toml")).unwrap();
+        assert_eq!(backed.name, "patch-backed");
+        assert_eq!(relief.reliefs.len(), 2);
+        // The same bodies in the same order, so every man keeps his number; the same orders,
+        // the same seed and the same length.
+        let stripped = Scenario {
+            name: backed.name.clone(),
+            reliefs: Vec::new(),
+            ..relief
+        };
+        assert_eq!(backed, stripped);
     }
 
     #[test]

@@ -83,8 +83,11 @@ through file, which six feet to a man allows.
 
 **A lull** is twenty seconds in which no man of the tired century is forward, giving ground or
 in flight, and no enemy within its frontage and 20 m of it has stepped forward. The relief is
-not ordered before ten minutes, and each century is relieved once. The 24 m, the ten minutes,
-the twenty seconds and the 20 m are choices and have no source.
+not ordered before twenty minutes, and each century is relieved once. The 24 m, the twenty
+minutes, the twenty seconds and the 20 m are choices and have no source. The time was ten
+minutes at first; it was moved before any run, because one relief helps least when it takes
+off a line that has spent little of its life
+([preregistration](../slice0/preregistration.md), the relief).
 
 **Two things were found by running it, and each changed the drill:**
 
@@ -98,6 +101,28 @@ the twenty seconds and the 20 m are choices and have no source.
 
 With men who never fight, the fresh century came up in 18 s and the tired one was back in
 another 19 s, on both engines. Nobody was hurt and the enemy gained no ground.
+
+**With the patch's own men, at the nominal set** (one seed on each engine;
+`cannae-score/tests/relief.rs`):
+
+- **The onset has no lull.** Until the first Roman turned, at 50 s, the warband had men
+  forward on each century's front at every step: about ten of them, and never fewer than
+  five (a probe, not kept as a test).
+- **The Roman line broke before any lull, so no relief came,** even when one was allowed
+  from half a minute. The second line went with the first: two minutes in, every man of it
+  had turned. A run in which no relief is ordered is the run of `backed.toml`, man for man.
+- **With the same men made unable to flee, the fight has lulls, and the relief comes in the
+  first.** Allowed from half a minute, the two reliefs were ordered at 148 s and 149 s on
+  the pairwise engine and at 103 s and 107 s on the field. The tired centuries had halted
+  behind the fresh ones about 38 s after that.
+- **On the field the warband came on again in the ninth minute,** against the fresh line.
+  On the pairwise engine it had not by the end of the tenth (a probe; the kept test stops
+  at four minutes).
+- **Dormancy was exact** through the fight, the passage and the second fight.
+
+So the trigger does what it was written for, but only where a line outlasts the onset. That
+the nominal line does not is the finding already made against the central values: nothing
+here was changed to make a relief come.
 
 ### 5. The field
 

@@ -220,6 +220,8 @@ struct Relief {
     not_before: u32,
     /// How long the tired body's front must have been quiet, in ticks.
     lull: u32,
+    /// The tick at which the fresh body was ordered up, once it has been.
+    ordered: Option<u32>,
     state: Relieving,
 }
 
@@ -348,8 +350,16 @@ impl BodyFrames {
             fresh,
             not_before,
             lull,
+            ordered: None,
             state: Relieving::Waiting(None),
         });
+    }
+
+    /// For each relief, in the order they were given: the tick at which its fresh body was
+    /// ordered up, or `None` if it still waits for its time or its lull. A run in which no
+    /// relief was ordered is, to the last man, the run without them.
+    pub fn relieved(&self) -> Vec<Option<u32>> {
+        self.reliefs.iter().map(|r| r.ordered).collect()
     }
 
     /// Whether the body's standard is carried by a man on his feet and facing the enemy.
@@ -405,6 +415,7 @@ impl BodyFrames {
                         let from = fresh.origin;
                         self.order(r.fresh, Order::Advance, tick);
                         self.open_lanes(&r, true);
+                        self.reliefs[k].ordered = Some(tick);
                         Relieving::Coming(from)
                     } else {
                         Relieving::Waiting(since)
@@ -1080,10 +1091,13 @@ mod tests {
     /// Steps the frames at every man step from `from` to `to`, and gives the tick at which
     /// the relief was ordered, if it was: the fresh body is told to come up.
     fn relieved_at(f: &mut BodyFrames, b: &mut Bodies, from: u32, to: u32) -> Option<u32> {
-        (from..=to).step_by(5).find(|&t| {
+        let at = (from..=to).step_by(5).find(|&t| {
             step(f, b, t);
             orders(f)[1].0 == Order::Advance
-        })
+        });
+        // The frames say the same of it, for the run's record.
+        assert_eq!(f.relieved(), [at]);
+        at
     }
 
     #[test]

@@ -1,0 +1,89 @@
+# Slice 0 patch, variant `backed`: the `relief` variant without its relief. A second Roman line
+# stands behind the first and is given no order: nobody relieves anybody. It is the comparison
+# for `relief`, so that what the drill does can be told from what a second line does by standing
+# there (call 0001, turns 46-48).
+#
+# A side breaks when 40 % of its standing men have turned. With a second line the Roman side has
+# 324 men and not 162, so it is harder to break whether or not that line ever moves. `relief`
+# against `base` shows both effects together; `relief` against `backed` shows the drill alone.
+#
+# Everything here is `relief.toml` to the letter, but for the name and the two `[[relief]]`
+# blocks. A test holds the two files to that.
+
+name = "patch-backed"
+seed = 1
+duration_s = 7800
+
+[[body]]
+name = "hastati, first century"
+side = "A"
+troop = "hastati"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-9000, 0]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "hastati, second century"
+side = "A"
+troop = "hastati"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-9000, -18000]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "warband"
+side = "B"
+troop = "gallic-warband"
+files = 20
+ranks = 8
+file_mm = 1000
+rank_mm = 1200
+centre_mm = [9000, -9000]
+facing_deg = 180
+leader = "front-centre"
+tie = "loose"
+
+# The warband comes on; the Romans stand to receive it. Its frame halts just out of reach
+# (the tie's standoff); from there, whether anyone steps forward is the men's business.
+[[order]]
+body = "warband"
+at_s = 0
+order = "advance"
+
+# The second line. It comes last in the file, so that every man of the base patch keeps his
+# number, and with it the nerve and the luck the same seed gives him there.
+[[body]]
+name = "second line, first century"
+side = "A"
+troop = "hastati"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-33000, 900]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "second line, second century"
+side = "A"
+troop = "hastati"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-33000, -17100]
+facing_deg = 0
+leader = "front-right"
+closer = true

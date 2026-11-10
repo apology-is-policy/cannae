@@ -317,18 +317,35 @@ century a second century of the same men, 24 m back and half a file to one side.
 
 - **The drill** is in the shared frames ([rival 02](../rival/02-order-and-contact.md) §4, as
   built). Each century is relieved once, by the one behind it, in its own lull, and not before
-  ten minutes. The fresh century comes up through the tired one's files and takes the front;
-  only then does the tired one fall back, to where the fresh one stood.
+  twenty minutes. The fresh century comes up through the tired one's files and takes the
+  front; only then does the tired one fall back, to where the fresh one stood.
 - **A lull** is twenty seconds in which no man of the tired century is forward, giving ground
   or in flight, and no enemy before it has stepped forward.
-- **The 24 m, the ten minutes and the twenty seconds are Varro's choices and have no source.**
-  How relief worked is not known (vision 03 §3). They are the script's, not priors.
+- **The 24 m, the twenty minutes and the twenty seconds are Varro's choices and have no
+  source.** How relief worked is not known (vision 03 §3). They are the script's, not priors.
+  The time was ten minutes at first. The sum above moved it, before any run: one relief
+  helps least when it comes early.
+- **A line that breaks before its relief is never relieved, and its run is then the run of
+  `backed`, man for man** (tested on both engines through a fight and a rout). Every such
+  run pulls the drill's statistic toward 0.5. So each run's record says when its reliefs
+  were ordered (`relieved_s`), and the report has to give, for each cell, the share of
+  `relief` runs in which one was.
+- **At the nominal set no relief comes,** even when one is allowed from half a minute. The
+  warband's onset leaves no lull, and the Roman line breaks before the onset is spent. With
+  the same men made unable to flee, the first lull came about two minutes in on both
+  engines, and the reliefs were ordered in it
+  ([rival 02](../rival/02-order-and-contact.md) §4). So the drill can only show in sets
+  where a line lasts twenty minutes, which the band for pattern 6 asks of them anyway.
 - **Until a man turns his back, a run of `relief` is the run of `base` with the same seed,
   event for event** (tested on both engines). The second line stands out of every window, and
   it comes last in the file, so every man of the base patch keeps his number.
 - **Tests check** the drill with men placed by hand, and the passage on both engines with
   men who never fight: nobody is hurt, the enemy gains no ground, and every man ends in his
-  place.
+  place. With the patch's own men unable to flee, they check a relief in the first lull of a
+  real fight, and that dormancy is exact through it.
+
+`backed` is written (`scenarios/patch/backed.toml`): `relief.toml` without its two reliefs,
+and nothing else changed. A test holds the two files to that.
 
 **How the two memory variants are scored** (agreed in call 0001, turns 37-38):
 
