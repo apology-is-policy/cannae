@@ -521,9 +521,12 @@ starting over. The frozen code is untouched.
 **The defect.** When a file closes over a man who stood ahead of the body's standard-bearer,
 the standard-bearer is renumbered one rank forward while he stands where he was. The frame is
 anchored on him, so it is re-formed one rank back, and every other man of the body walks back a
-rank, still steady. It happens at most once for each man who carries the standard. It was seen
-in the viewer at the nominal set, not in a scored run; the sighting is in the table below. It is
-in every scored run, on both engines alike.
+rank, still steady. The same happens whenever his slot changes while he carries the standard:
+also at a succession in his file, and when the closer's post moves, if the closer carries it.
+It happens once for each rank he is moved up: once for the man who carries the standard at the
+start, who stands in the second rank, and more than once for a man who lifts it from further
+back. It was seen in the viewer at the nominal set, not in a scored run; the sighting is in the
+table below. It is in every scored run, on both engines alike.
 
 **What was known when it was written.** No record had been scored. The batch had finished
 `base` in one cell (the field engine, rung 0) and was part-way through the next. Every scored
