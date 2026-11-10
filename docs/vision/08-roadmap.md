@@ -1,28 +1,53 @@
-# 08 — Roadmap, Knowledge Base, Open Questions
+# 08 — Roadmap, Knowledge Base, Reviews
 
-## 1. Phases
+## 1. Vertical slices
 
-| Phase | Goal | Exit criterion |
-|---|---|---|
-| **0. Vision** (this document set) | A shared picture of the scope and the core ideas | You sign off on the vision and answer the open questions below |
-| **1. Knowledge base** | Every troop type, item, formation, commander and battle as a sourced entry. Every number carries a citation and an uncertainty range. | Complete coverage of [01](01-armies.md)–[03](03-formations-tactics.md) at citation level. Battle dossiers for the corpus. |
-| **2. Matchup research** | "How each fares against each": troop type against troop type, under conditions (terrain, frontal or flank, fresh or tired, weather, experience), argued from sources | A matchup matrix with justifications, which becomes the expected bands for the micro-tests |
-| **3. Engine skeleton** | Cargo workspace, deterministic tick, SoA, L1–L3 grids, crowd physics, formation slots and drill transitions, wgpu viewer, replay | 150,000 agents marching and deploying at Cannae scale in real time. Determinism hash stable. |
-| **4. Body and combat** | Melee opportunity model, missiles, wounds, W′ stamina, encumbrance, crowd pressure | Micro-tests M1, M3, M4, M14, M15 in band |
-| **5. Psyche** | Perception channels, appraisal, cusp dynamics, coupling, rumors, rout, pursuit, rally, surrender | M2, M6–M13, M16 in band. Stylized facts S1–S3 emerging. |
-| **6. Command and control** | Officers, belief maps, orders and messengers, signals, plans and triggers, commander personalities | Cynoscephalae, Sabis and Gergovia behaviors appear. A Philippi-style misreading is possible. |
-| **7. Calibration** | Fit to the calibration set. Score the hypothesis modes. | Calibration battles in band |
-| **8. Acceptance** | Run the holdout set, Cannae included | A1, A2 and A3 pass, or we learn precisely why not |
-| **9. Interaction** *(optional)* | Command one officer through his own belief map and channels | Decide after Phase 6 |
+The first roadmap ran in layers: physics, then combat, then psyche, then command. Design review 1
+showed that it met the real risks last. Nothing before the command phase could tell us whether
+A1 or A2 was reachable, and the combat phase's exit tests already needed rout and fear from the
+psyche phase. The roadmap is now a sequence of **vertical slices**. Each slice cuts through every
+layer (engine, body, psyche, command, validation) at a small scale, and each closes with a design
+review.
 
-Phases 1–2 (research) and 3 (engine) can run in parallel. The engine skeleton does not depend on
-the numbers.
+| Slice | Goal | Contents | Exit criterion |
+|---|---|---|---|
+| **0. Two spikes** (1–2 weeks) | Retire the two biggest unknowns before building anything else | **A behaviour toy:** two short lines in one dimension, with the psyche of [04](04-psyche.md) §5 and W′. **A performance spike:** 150,000 agents, collision, and a dummy think with realistic memory traffic. | Toy: a stable standoff, pulsing combat, rear-first collapse and the casualty asymmetry appear over a non-trivial parameter region, and the kernel comparison is decided. Spike: sustained cycles per agent-tick measured on the Air, and the hash is identical on 1, 4 and 8 threads. |
+| **1. Maniple against warband, and the turned flank** (500–5,000 agents) | The real core, at small scale | The deterministic core (observables lane, intent pass, hashed grid); the unit frame and three drills ([03](03-formations-tactics.md) §1); W′ and psyche v1; a centurion state machine; one superior with a two-task plan and a messenger; a minimal viewer with the inspector; batch metrics | Micro-tests M2, M7, M15 and M16 in band. The global sensitivity analysis has run. |
+| **2. Little Cannae at 1:10** | A1's structure, at a scale where a hundred seeds run overnight | Two cavalry types; rally and re-task; the scene graph; the plan representation with eight to ten plays ([09](09-intent-and-plans.md)); compression; the outcome classifiers; experimenter-mode takeover as the officers' test harness. Scenarios start after the skirmishers have withdrawn. | A1 at all three authoring tiers; the Dertosa and Trebia contrasts; the A2 variance decomposition; a scale study at 1:20, 1:10 and 1:5. **Before this slice can run full battles, the sealed battles are chosen and their dossiers hash-committed** ([07](07-validation.md) §5). |
+| **3. Scale up** | Full-scale Cannae, then breadth | Full-scale performance work; then the mechanisms the corpus demands, one at a time | A1 at full scale. The sealed battles run once (A3). |
+| **Later** | Breadth and interaction | Elephants, chariots, horse archers, the phalanx, fortifications, weather; the role-player mode in full | Pulled in as corpus battles need them |
 
-## 2. The knowledge base
+Large batch runs (acceptance at full scale) need a rented many-core machine, which costs money
+and needs Michal's approval ([06](06-architecture.md) §8).
 
-Planned format: one Markdown file per entity (troop type, item, formation, commander, battle)
-with structured front matter that the data crates can ingest. Each claim cites its source; each
-number carries a range and a confidence.
+## 2. Scope: what waits
+
+Cannae needs about ten mechanisms. The vision describes several times that many. They stay in the
+vision as later features, but a slice builds one only when a named historical pattern cannot be
+reproduced without it (pillar 8 in the [README](README.md)). Deferred until a slice needs them:
+
+- per-zone bleeding, helmet-specific hearing, shield drift;
+- glycogen and hydration;
+- language barriers, omens, looting;
+- elephants, chariots, horse archers, sarissa mechanics;
+- weather and field fortifications.
+
+## 3. The knowledge base: demand-driven
+
+Format: one Markdown file per entity (troop type, item, formation, commander, battle), with
+structured front matter that the data crates can ingest. Each claim cites its source; each number
+carries a range and a confidence.
+
+**Written as slices need it,** not ahead of need. The vision's 17,600 words needed thirteen
+factual corrections in review 1; a citation-level knowledge base written ahead of need would need
+more. The first entries are the troop types on the path to Slice 2: Roman heavy infantry, Gallic
+and Iberian infantry, Libyan heavy infantry, Roman and allied cavalry, Hasdrubal's Iberian and
+Gallic heavy horse, and Numidian light horse. After that, whatever the sensitivity analysis
+flags as mattering. Sealed-battle dossiers follow their own protocol ([07](07-validation.md) §5).
+
+**Checking sources.** A quotation is checked against the primary text, in the original language
+where translations differ, before it enters the docs. Review 1's correction about greaves came
+from an English translation; the Greek says one greave.
 
 ### Ancient sources (with caveats)
 
@@ -34,7 +59,7 @@ number carries a range and a confidence.
   Lucullus, Crassus, Pompey, Caesar, Brutus, Antony.
 - **Appian, Cassius Dio, Sallust** (*Jugurtha*), **Frontinus** (*Strategemata*), **Onasander**
   (*Strategikos*, 1st century AD), **Asclepiodotus**, **Aelian** and **Arrian** (*Tactica*), **Tacitus**
-  (*Germania*, *Annals*).
+  (*Germania*, *Annals*), **Aulus Gellius** (formation terms, 10.9).
 - **Vegetius**: late (4th–5th century AD). Use only with care.
 
 ### Modern scholarship
@@ -53,26 +78,40 @@ number carries a range and a confidence.
 - **The psychology of combat:** Ardant du Picq, *Battle Studies*; Keegan, *The Face of Battle*;
   Holmes, *Acts of War*; Marshall and Grossman, used critically.
 - **Modelling:**
-  - Zeeman, catastrophe theory models of aggression;
+  - FitzHugh and Nagumo, excitable systems; Zeeman, catastrophe models of aggression (the first
+    draft's inspiration);
   - Sethna et al., hysteresis and avalanches in the random-field Ising model;
   - Helbing, the social force and panic models;
   - Monod and Scherrer / Skiba, the critical-power and W′ models;
   - Grimm et al., pattern-oriented modelling;
+  - Saltelli et al., global sensitivity analysis; Craig et al. and Vernon et al., history
+    matching;
+  - Klein, recognition-primed decision making (for officers, [09](09-intent-and-plans.md));
   - Lanchester and Dupuy, as baselines to *beat*, not to adopt.
 
-## 3. Open questions for you
+## 4. Design reviews
 
-1. **Your role.** A pure observer and sandbox at first (my recommendation), with commanding one
-   officer through realistic C2 later? Or should playing as a commander be a goal from day one?
-2. **The time window.** Include Pyrrhus (280–275 BC) for calibration, and Idistaviso (AD 16) as a
-   stretch?
-3. **Out of scope.** Agree that naval warfare, sieges and the campaign layer stay out, apart from
-   initial conditions?
-4. **Conflicting sources.** Agree on variants per source, with the acceptance bands required to
-   hold across the plausible variants?
-5. **Determinism.** Same-machine reproducibility is enough to start. Cross-platform comes almost
-   free with pure-Rust `libm` and no FMA. Fine?
-6. **Hypothesis modes.** Do you want the contested mechanics (line relief, othismos, frontage)
-   switchable as a research feature? I recommend yes. It is cheap if we design for it now.
-7. **Next deliverable.** The Phase 1 knowledge base first (research-heavy), or Phase 3 engine
-   skeleton work in parallel so we have 150,000 circles on screen early?
+Independent reviews by the newest Fable model, as the model grows and changes. The cadence (from
+[CLAUDE.md](../../CLAUDE.md)):
+
+- at the close of every slice;
+- before changing an acceptance test or a core mechanism;
+- after a major revision of these documents;
+- whenever Michal asks.
+
+Each review is saved verbatim in [`docs/reviews/`](../reviews/) with a disposition table: accepted,
+partially accepted or rejected, and where it is addressed. Review 1 (2026-11-09) produced the
+revision of these documents in arc V.
+
+## 5. Questions, resolved and open
+
+| Question | Resolution |
+|---|---|
+| **The player's role** | Sets up battles, historical or invented, watches, and can pause and take over commanders. Two modes: experimenter and role-player. See the [README](README.md) and [09](09-intent-and-plans.md). *Michal, 2026-11-09.* |
+| **Contested mechanics** | Frontage, intervals and othismos are parameters. One relief mechanism (R2) is built, with a seam for the others ([03](03-formations-tactics.md) §3). *Michal, after review 1.* |
+| **Knowledge base or engine first** | Neither: the Slice 0 spikes first, and the knowledge base grows as slices need it. *Michal, after review 1.* |
+| **Conflicting sources** | Inputs are sampled continuously across the sources; genuinely discrete alternatives stay discrete ([07](07-validation.md) §1). *Review 1, accepted.* |
+| **Determinism** | Bit-exact across machines: pure-Rust `libm`, no FMA, no GPU compute on simulation state ([06](06-architecture.md) §3). *Review 1, accepted.* |
+| **The time window** | Open, not blocking. Default: Pyrrhus (280–275 BC) and Idistaviso (AD 16) as stretch scenarios only. |
+| **Out of scope** | Open, not blocking. Default: naval warfare, sieges and the campaign layer stay out, except as initial conditions. |
+| **Which battles to seal** | Open, decided with Michal before Slice 2 ([07](07-validation.md) §5). |

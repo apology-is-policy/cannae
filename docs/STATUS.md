@@ -19,8 +19,8 @@ one commit.
 | V4 | 04 psyche: excitable-system dynamics, contagion on observable acts, parsimony | landed |
 | V5 | 06 architecture: fanless 8 GB Air, revised performance, intent pass, observables lane, keyframes | landed |
 | V6 | 03 formations: line relief, R2 with a seam, feasibility instead of discrimination | landed |
-| V7 | 08 roadmap: vertical slices, demand-driven knowledge base, review cadence | next |
-| V8 | New 09: intent, plans and command AI | queued |
+| V7 | 08 roadmap: vertical slices, demand-driven knowledge base, review cadence | landed |
+| V8 | New 09: intent, plans and command AI | next |
 | V9 | New 10: the contact zone, combat and wounds | queued |
 
 **V1 note.** Each correction was checked against the primary text before it was applied. One

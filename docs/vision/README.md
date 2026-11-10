@@ -188,4 +188,4 @@ by the log-likelihood of the historical outcome against simple baselines. Detail
 | [05-command.md](05-command.md) | Officers, beliefs, orders and signals, commander personalities |
 | [06-architecture.md](06-architecture.md) | Tech stack, data layout, tick structure, performance budget on an M2 |
 | [07-validation.md](07-validation.md) | Validation method, stylized facts, battle corpus, statistical criteria |
-| [08-roadmap.md](08-roadmap.md) | Phases, the knowledge base and sources, open questions |
+| [08-roadmap.md](08-roadmap.md) | Vertical slices, what waits, the knowledge base, design reviews, open questions |
