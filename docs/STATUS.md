@@ -184,6 +184,10 @@ word is singular). This is recorded in the review's disposition table.
 - **Slice 0 (2026-11-10):** only men out of their places press, on both engines. Whether a
   formed line shoves (othismos) is put off to Slice 1, not settled, and the report says so.
   Rung 4 is built only if rungs 0-3 all fail.
+- **Terrain (2026-11-10):** no change to the vision now, but neither engine should be caught
+  out when a slice asks for high ground, a river or a marsh. Where each effect would plug in,
+  and the one rule that keeps it cheap (ground is handed to each part when it is built, as
+  walls already are): [terrain-seams.md](slice0/terrain-seams.md).
 
 - **Phase 0b (2026-11-10):** merge the two designs. Slice 0 is the experiment, each design built
   by its believer. The memory ladder decides whether each man carries fear gauges (no gauges
