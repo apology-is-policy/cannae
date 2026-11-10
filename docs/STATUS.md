@@ -43,9 +43,9 @@ any physics engine: a maniple of 120 falling back through an interval in the lin
 with and without the enemy shoving it, and a crowd of 600 making for a camp gate, walking or
 running and shoving ([report](slice0/passage.md)). On my engine:
 
-- **A maniple passes an interval in under a minute,** 17-31 s at every width from 3 to 12 m.
+- **A maniple passes an interval in under a minute,** 17-33 s at every width from 3 to 12 m.
 - **At a 3 m interval, the enemy's shove jams it.** The longest wait between two men rises
-  from half a second to six. This is the clogging measured at doors in experiments, and here
+  from half a second to seven. This is the clogging measured at doors in experiments, and here
   it comes out of the physics, with no rule for it.
 - **Two structural limits, reported, not fixed.** Walking without pushing matches measured
   flows through narrow corridors when a man's disc has a radius of 300 mm

@@ -608,12 +608,20 @@ impl Pairwise {
                         mv -= b.mul_div(along, b.len_sq());
                     }
                     // He leans into the men ahead until they are pressed to the bone: a man
-                    // cannot push further than bodies give.
+                    // cannot push further than bodies give. With no one touching him ahead
+                    // there is nothing to lean on, and leaning would only walk him faster
+                    // than his gait; the way he leans is still set, so that the next pass
+                    // finds who is ahead of him.
                     if t.press > 0
                         && let Some(f) = t.face
                     {
                         *lean_dir = f.unit(1024);
-                        let room = (p.core_mm - front[first + k]).max(0) as i64;
+                        let ahead = front[first + k];
+                        let room = if ahead > 0 {
+                            (p.core_mm - ahead).max(0) as i64
+                        } else {
+                            0
+                        };
                         let lean = p.press_mm_s as i64 * t.press as i64 / 255 * dt.0 as i64 / 1000
                             * room
                             / p.core_mm.max(1) as i64;

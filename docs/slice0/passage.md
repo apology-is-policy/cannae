@@ -38,23 +38,23 @@ their priors' centres, below).
 | Width | Pressed | Js | Nine in ten through | Longest wait | Densest at the mouth | Line pushed back |
 |---|---|---|---|---|---|---|
 | 3 m | no | 2.62 | 24.1 s | 0.5 s | 2.9 per m² | 0.59 m |
-| 3 m | yes | 1.69 | 30.6 s | **6.1 s** | 3.2 per m² | 0.61 m |
+| 3 m | yes | 1.49 | 33.1 s | **6.9 s** | 3.2 per m² | 0.51 m |
 | 6 m | no | 2.11 | 18.8 s | 0.5 s | 2.9 per m² | 0.38 m |
-| 6 m | yes | 2.08 | 18.9 s | 0.5 s | 2.9 per m² | 0.37 m |
+| 6 m | yes | 2.10 | 18.8 s | 0.5 s | 2.9 per m² | 0.37 m |
 | 9 m | no | 1.72 | 17.4 s | 0.6 s | 1.9 per m² | 0.05 m |
-| 9 m | yes | 1.74 | 17.2 s | 0.6 s | 2.2 per m² | 0.47 m |
+| 9 m | yes | 1.72 | 17.4 s | 0.6 s | 1.9 per m² | 0.21 m |
 | 12 m | no | 1.48 | 16.6 s | 0.8 s | 1.6 per m² | 0 |
-| 12 m | yes | 1.48 | 16.6 s | 0.8 s | 1.6 per m² | 0.30 m |
+| 12 m | yes | 1.48 | 16.6 s | 0.8 s | 1.6 per m² | 0.21 m |
 
 **The gate** (all 600 pass in every run):
 
 | Width | Walking: Js | Walking: nine in ten through | Running and shoving: Js | Running: nine in ten through |
 |---|---|---|---|---|
-| 3 m | 2.91 | 72.7 s | 6.44 | 31.0 s |
-| 4.5 m | 2.94 | 52.7 s | 6.51 | 21.9 s |
-| 6 m | 2.64 | 46.0 s | 6.24 | 17.9 s |
-| 9 m | 1.86 | 43.2 s | 4.53 | 16.4 s |
-| 12 m | 1.51 | 40.1 s | 4.09 | 14.2 s |
+| 3 m | 2.91 | 72.7 s | 6.27 | 31.9 s |
+| 4.5 m | 2.94 | 52.7 s | 6.35 | 22.4 s |
+| 6 m | 2.64 | 46.0 s | 6.05 | 18.6 s |
+| 9 m | 1.86 | 43.2 s | 4.75 | 16.1 s |
+| 12 m | 1.51 | 40.1 s | 3.78 | 15.2 s |
 
 Js is persons per metre of width per second, counted from the tenth to the ninetieth man in a
 hundred. It measures capacity only where a jam forms at the mouth; a wide gap passes what
@@ -62,16 +62,16 @@ arrives. No one was crushed in any run.
 
 ## What it shows
 
-1. **A maniple passes an interval in under a minute,** 17-31 s at every width from 3 to 12 m.
+1. **A maniple passes an interval in under a minute,** 17-33 s at every width from 3 to 12 m.
    At a walk, a relief fits inside a lull of a few minutes. The maniple's backward walk at
    1.3 m/s is fast for men facing an enemy, so these times are a lower bound.
 2. **Faster is slower, at the narrowest interval only.** At 3 m the enemy's shove jams the
-   maniple against the line. The longest wait between two men rises from 0.5 to 6.1 s, and the
-   time for nine in ten to pass from 24 to 31 s. This is the clogging Pastor et al. measured at
+   maniple against the line. The longest wait between two men rises from 0.5 to 6.9 s, and the
+   time for nine in ten to pass from 24 to 33 s. This is the clogging Pastor et al. measured at
    doors, and here it comes out of the physics with no rule for it. At 6 m and wider the shove
    changes nothing.
 3. **The line beside the interval is shoved** up to 0.6 m by men squeezing through a narrow
-   gap. At any width, men pushed against it by the enemy's shove move it 0.3-0.5 m. Each
+   gap. At any width, men pushed against it by the enemy's shove move it 0.2-0.5 m. Each
    man braces back to his slot afterwards.
 4. **In a jam, the flow runs about 40-50 % high.** Walking through a 3-6 m gate the discs pass
    2.6-2.9 persons per metre per second, against about 1.9 measured. The calibration shows the
@@ -79,7 +79,7 @@ arrives. No one was crushed in any run.
    Real walkers slow down as a crowd thickens. Discs do not slow until they touch, so a packed
    column streams through at full walking speed. Js also falls with width here, where Liao et
    al. found it constant.
-5. **Running and shoving more than doubles the flow** at the gate, to 6.2-6.5 at 3-6 m. There
+5. **Running and shoving more than doubles the flow** at the gate, to 6.0-6.4 at 3-6 m. There
    are no data for a crowd running through a wide gate. Garcimartín et al.'s pushing crowd,
    starting from standing at narrow doors, reached about 4.0. Discs running at 4 m/s in step
    are the same limit at speed: a real crowd at 4 per m² cannot run.
@@ -101,6 +101,10 @@ arrives. No one was crushed in any run.
   minutes.
 - **Running men faced straight at the rampart,** so the shove of every man beside the gate went
   into the wall. Each now faces where he is going.
+- **A man leaning with no one ahead of him walked faster than his gait,** because his lean was
+  added to his step. Now he leans only on someone he touches ahead (found when Varro's press
+  rule gave every man closing on an enemy a lean). The tables above are after the fix. Only
+  the pushing rows moved, by up to a tenth.
 
 ## A candidate remedy, not built
 
@@ -125,9 +129,9 @@ Varro's engine ran the same passages with every prior at its centre
 | | Measured | Field | Discs (300 mm) |
 |---|---|---|---|
 | Walking through a 3 m gate, Js | about 1.9 (1.6-2.3) | 1.17 | 2.91 |
-| Running and shoving through a 3 m gate, Js | about 4.0, at 0.7 m doors | 4.34 | 6.44 |
+| Running and shoving through a 3 m gate, Js | about 4.0, at 0.7 m doors | 4.34 | 6.27 |
 | A maniple through a 3 m interval: nine in ten through | no data | 40 s | 24 s |
-| The same, with the enemy following | no data | 6-10 of 120 still not through after 5 min | 31 s |
+| The same, with the enemy following | no data | 6-10 of 120 still not through after 5 min | 33 s |
 | Seyfried's 0.8-1.2 m corridor | 1.6-2.3 | cannot run: narrower than a cell | 1.7-2.4 |
 
 What it shows, as it stands:
@@ -139,7 +143,8 @@ What it shows, as it stands:
   the pocket, so it has no case left where it earns its place.
 - **Narrow gaps belong to the discs, and military widths may belong to the field.** The field
   cannot resolve a gap narrower than a cell, about a metre. Intervals and camp gates are wider
-  than that.
+  than that. If it matches there, it will be by calibration: before it, the field was 40 % low,
+  and the report gives both numbers.
 - **Varro proposes calibrating the steepness of his walking curve** against the bottleneck
   measurements before the freeze, as the discs' radius was calibrated. With it, the field
   would match the measured walking flow at gates and intervals, and the discs would stay

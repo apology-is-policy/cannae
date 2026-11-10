@@ -85,6 +85,11 @@ where shoulders matter less but the second limit applies instead. Bodies that tu
 or a radius that shrinks under press) are possible remedies, each with a cost, and none is
 built.
 
+**Who was measured.** Seyfried's and Liao's people carried no shields. A man with a scutum is
+wider than a man in a shirt, so this calibration, and the field's walking curve calibrated on
+the same data, may both run high for armed men. Neither engine has data for that, and neither
+guesses a correction (Varro, call 0001 turn 30).
+
 **Also seen:** between 1.0 and 1.1 m the flow jumps, as two discs begin to fit side
 by side. Seyfried found the growth continuous, with lanes whose spacing grows with width.
 Equal hard discs make steps; drawing the radius from a prior smears them across draws.
