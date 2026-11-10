@@ -77,15 +77,15 @@ would add:
    again, even with breath left.
 
 Neither is tied to a named pattern that rungs 0-3 obviously fail. By the parsimony invariant, a
-mechanism enters only when a named pattern cannot be reproduced without it. So the
-recommendation for Michal is: **build rung 4 only if rungs 0-3 all fail.** Rung 4 is in the
-approved arc, so this is a scope change and is his to decide.
+mechanism enters only when a named pattern cannot be reproduced without it. **Michal decided
+(2026-11-10): rung 4 is built only if rungs 0-3 all fail.**
 
-## One open question for both engines: the press
+## The press, decided
 
-No rung presses today: a steady man's intent is `HoldSlot { press: 0 }`. On the pairwise
-substrate that means lines never shove, so the othismos the vision describes cannot appear.
-Michal's ruling is that othismos is a parameter (STATUS, "Contested mechanics"). That points to
-a rule in the shared visible layer, the same on every rung and both substrates, with a shared
-prior that includes zero: for example, "a steady front-rank man with an enemy in contact ahead
-presses at p, and a forward man presses at p_forward". Raised with Varro; it is his crate.
+Varro found that in the field a man in his place moves by his tie alone, so a press for formed
+men would act on one substrate and not the other. We recommended, and **Michal decided
+(2026-11-10), that in Slice 0 only men out of their places press**, on both substrates.
+`Intent::Close` carries a press for that; `HoldSlot`'s stays zero. Whether a formed line shoves
+is put off to Slice 1, when the field gets a push at the level of the body. The rule and its
+shared prior, which includes zero, go in the visible layer (Varro's crate). See
+[preregistration.md](preregistration.md), "The press".

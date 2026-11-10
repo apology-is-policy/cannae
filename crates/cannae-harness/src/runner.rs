@@ -415,6 +415,7 @@ mod with_frames_and_bouts {
                     Intent::Close {
                         enemy: e.id,
                         stand_off_mm: 1_000,
+                        press: 0,
                     },
                     Gait::Walk,
                 ),

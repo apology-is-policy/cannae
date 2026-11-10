@@ -25,8 +25,14 @@ pub enum Intent {
     /// facing, and leaning into the press with `press` (0-255). How close he stands and how hard
     /// he leans live here, inside steady, and need no state.
     HoldSlot { forward_mm: i32, press: u8 },
-    /// Step to striking distance of an enemy.
-    Close { enemy: ManId, stand_off_mm: i32 },
+    /// Step to striking distance of an enemy, and lean into the press with `press` (0-255).
+    /// He is out of his place, so this is where a loose man shoves: in Slice 0 only men out
+    /// of their places press (Michal, 2026-11-10), and `HoldSlot`'s press stays zero.
+    Close {
+        enemy: ManId,
+        stand_off_mm: i32,
+        press: u8,
+    },
     /// Run on a heading, chosen when he turned.
     Flee { heading: Turn },
     /// Make for his body's standard.
@@ -78,6 +84,7 @@ pub fn resolve<F: FrameQuery>(
         Intent::Close {
             enemy,
             stand_off_mm,
+            press,
         } => {
             let e = bodies.pos[enemy.0 as usize];
             let to = e - pos;
@@ -85,7 +92,7 @@ pub fn resolve<F: FrameQuery>(
                 point: e - to.with_len(stand_off_mm),
                 speed,
                 face: Turn::of(to),
-                press: 0,
+                press,
             }
         }
         Intent::Flee { heading } => Target {
@@ -131,6 +138,7 @@ mod tests {
             Intent::Close {
                 enemy: foe,
                 stand_off_mm: 1_200,
+                press: 90,
             },
             Gait::Walk,
             &b,
@@ -140,6 +148,7 @@ mod tests {
         assert_eq!(t.point, Vec2::new(3_800, 0));
         assert_eq!(t.face, Some(Turn(0)));
         assert_eq!(t.speed, GaitSpeeds::PLACEHOLDER.walk);
+        assert_eq!(t.press, 90);
         // Without frames, holding a slot is standing.
         let h = resolve(
             me,
