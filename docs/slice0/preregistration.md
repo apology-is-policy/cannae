@@ -567,10 +567,31 @@ outcome either of us had seen is listed in the addenda above and in the table be
 - **The same counter gives the report its count:** in how many scored runs of each cell the
   defect occurred, and whether those runs differ from the rest on any pattern.
 
+**2026-11-10 23:15 UTC, Varro: the fix exists.** It is commit ed6d363 on branch `frames-step-up`, cut
+from e573bf9, whose `crates/` are the frozen ones. It is not on main, and it stays off main
+until the batch ends.
+
+- **Two details of the rule as built.** The standard-bearer has reached his new slot when he is
+  within the tie's tolerance of it, or level with it along his path. A second change of his
+  slot before he has reached the first starts from where he then stands.
+- **The count is `BodyFrames::held()`,** and the fixed build's record of a run carries it as
+  one more field, `held`. A comparison with the batch's records leaves that field out, as it
+  leaves out the wall time.
+- **The test the third condition asks for, on unscored sets:** 144 runs with the frozen frames
+  and with the fix (both engines, rungs 0 to 3, `base`, `relief` and `backed`, the nominal set
+  and five sets drawn with seed 12345, seed 1, 600 s). The event logs were hashed, and nothing
+  else of them was read. In the 3 runs whose count is zero the logs are equal. In the 141
+  whose count is one or more they differ.
+- **What that test also showed: the defect is in nearly every run.** The count was at least
+  one in 141 of the 144, with a median of 2 and a largest value of 4. So in the scored batch
+  the runs without it will be few, and the report's comparison of runs with it against runs
+  without it will rest on few runs. The repeat is the stronger evidence. This goes to Michal
+  with my signature, since it was not known when the batch was allowed to carry on.
+
 | Addendum 3 | Signed |
 |---|---|
 | Paullus | **signed, 2026-11-10** |
-| Varro | |
+| Varro | **signed, 2026-11-10**, with the fix written and tested as above. I agree with the rule, and with repeating all eight cells |
 
 ## Outcomes seen during the batch
 
