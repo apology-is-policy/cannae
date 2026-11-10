@@ -146,7 +146,7 @@ who gives ground, turns or goes down, with the model's own reasons, and a tally 
 of 81 broke three seconds after its centurion was killed, and the warband then stood formed
 beside an open Roman flank. Both are the model doing what its rules say, and both look wrong.
 Nothing is retuned under this pre-registration; the batch shows how often the 200 drawn sets
-do this. Candidates for a second round, none decided (5 and 6 came from later questions):
+do this. Candidates for a second round, none decided (5 to 10 came from Michal's later questions):
 
 1. **A fallen leader weighs too much** against a replacement that takes five seconds. Varro,
    who wrote the rule, thinks so too.
@@ -166,6 +166,18 @@ do this. Candidates for a second round, none decided (5 and 6 came from later qu
    relief by lines and units (Livy 8.8; Caesar, Civil War 1.45 and 3.94) and room between ranks
    to step forward and back (Polybius 18.30.8; Vegetius 3.14); none describes a drill for
    swapping single men.
+7. **A runner who cannot get out keeps frightening the men near him.** On my engine the first
+   century's first runner stood pinned 1.3 m behind his place for 16 seconds, and all that
+   time he counted as a turned comrade for everyone within about 5 m.
+8. **Nothing separates giving ground from running.** The second century's first runner went
+   from steady to giving ground to running in half a second, unwounded, with one man of his
+   century down. The model's reasons: an enemy on his flank, three Gauls within 1.2 m, and that
+   pinned runner in view.
+9. **No man holds back from being the first to run,** and neither shame nor punishment is an
+   input (Polybius 6.37-38). Support is a count of the men beside and behind him, his leader
+   and the rear officer.
+10. **The first to turn are front-rank men.** The sources and our own pre-registered pattern
+   say a collapse starts at the rear. The batch scores how often it does.
 
 **A defect found by watching (Michal, 2026-11-10).** When the man in front of a century's
 standard-bearer falls, the whole century steps back one rank, 1.8 m, two seconds later. A
