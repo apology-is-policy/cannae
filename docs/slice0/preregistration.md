@@ -512,6 +512,55 @@ Only equal or unequal is read.
 | Paullus | **signed, 2026-11-10** |
 | Varro | **signed, 2026-11-10**, after reading the branch's diff of the scorer (91185c4) and the script. The gate counts the sets whose eight verdicts on `base` all pass, and every set that passes in the end is among them. I added the script's check that a gate covers all 200 sets |
 
+## Addendum 3 (2026-11-10): a defect in the frames, and `base` repeated with it fixed
+
+Written after the freeze, while the batch ran, and agreed on call 0001 (turns 71-74). Michal
+decided on 2026-11-10 that the batch carries on, over stopping, fixing, freezing again and
+starting over. The frozen code is untouched.
+
+**The defect.** When a file closes over a man who stood ahead of the body's standard-bearer,
+the standard-bearer is renumbered one rank forward while he stands where he was. The frame is
+anchored on him, so it is re-formed one rank back, and every other man of the body walks back a
+rank, still steady. It happens at most once for each man who carries the standard. It was seen
+in the viewer at the nominal set, not in a scored run; the sighting is in the table below. It is
+in every scored run, on both engines alike.
+
+**What was known when it was written.** No record had been scored. The batch had finished
+`base` in one cell (the field engine, rung 0) and was part-way through the next. Every scored
+outcome either of us had seen is listed in the addenda above and in the table below.
+
+**The rule.**
+
+> The batch runs to its end on the frozen code. The pre-registered verdict of every cell is the
+> one scored from it.
+>
+> After the batch, `base` is repeated in all eight cells with this defect fixed and nothing else
+> changed: the same 200 sets, the same ten seeds, the same stop rule and audit. The repeat is
+> scored by the same scorer on the eight bands, pattern 6 by its band alone, as in Addendum 1.
+> The dose-response variants are not repeated. The report gives both verdicts for every cell,
+> side by side. The repeat changes no pre-registered verdict.
+>
+> All eight cells are repeated, and not only those that pass. A defect can hide a pass as well
+> as make one, and a check that could only take passes away would be one-sided.
+
+**What "only this defect fixed" means, in a form that can be checked** (Varro's conditions):
+
+- **The fix is named by what it does:** the frame is not re-formed on the standard-bearer
+  because his slot changed; he walks to his new slot. The commit's hash is added below as a
+  dated line when the commit exists.
+- **The fixed build counts** the times the defect would have occurred: a file closing renumbers
+  the standard-bearer while the frame is anchored on him.
+- **A run in which that count is zero must be unchanged by the fix.** Varro tests this on
+  unscored sets before the repeat, event log against event log. For the repeat itself the
+  report states it against the batch's records, field for field, all but the wall time.
+- **The same counter gives the report its count:** in how many scored runs of each cell the
+  defect occurred, and whether those runs differ from the rest on any pattern.
+
+| Addendum 3 | Signed |
+|---|---|
+| Paullus | **signed, 2026-11-10** |
+| Varro | |
+
 ## Outcomes seen during the batch
 
 A record of every scored run's outcome either of us sees before the batch is scored, as it

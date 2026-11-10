@@ -170,8 +170,10 @@ positions.
 - **The batch goes on and nothing is changed.** It is written into the pre-registration's
   record of things seen during the batch. The report will count how often it happened in the
   scored runs, and whether those runs differ. The fix waits for a second round.
-- **The alternative** is to stop, fix, freeze again and restart. The batch is about 2.5 % done,
-  so that is cheap today and dear later. I recommend against it, and it is Michal's call.
+- **Michal decided: carry on,** over stopping, fixing, freezing again and restarting. After the
+  batch, `base` is repeated in all eight cells with only this defect fixed, and the report
+  gives both verdicts. The verdict of record stays the frozen one
+  ([Addendum 3](slice0/preregistration.md#addendum-3-2026-11-10-a-defect-in-the-frames-and-base-repeated-with-it-fixed)).
 
 **The replay page ran on the test physics,** where men walk through each other. The live viewer
 runs the real engines and marks the leaders; use it and not the replay.
@@ -188,10 +190,15 @@ before any is taken ([spike-field.md](slice0/spike-field.md)).
 threads out of habit. The experiment's plan says "engine A on all cores as designed", and the
 estimate behind the line counts every core. The correction is in my engine's favour, and I had
 seen numbers on both sides of it; Varro read the texts and agreed
-([spike-pairwise.md](slice0/spike-pairwise.md)). **Still open, and Michal's to decide before I
-take a reading:** whether my 3x is read scene by scene, so that a pocket under 3x kills the
-engine, or over a whole battle, as the vision's estimate was written ("3-7x over a whole
-battle, falling toward 2x in the encirclement").
+([spike-pairwise.md](slice0/spike-pairwise.md)).
+
+**My 3x is read over a whole battle (Michal, 2026-11-10).** The criterion names no scene, and
+the vision's estimate behind it reads "3-7x over a whole battle, falling toward 2x in the
+encirclement". I had been reading it scene by scene, where a pocket under 3x kills the engine.
+The whole-battle reading is in my engine's favour, so I put both to Michal with Varro's view.
+Varro wrote the criterion's sentence and reads it as a whole battle. The figure of record: the
+line scene and the pocket at equal shares of simulated time, with the pocket's own figure
+printed beside it. Varro's line still names the pocket.
 
 **The full-scale bench with the real man is designed** and agreed with Varro: 150,000 men,
 real formations and fighting, either engine, each phase timed, in a package of its own outside
@@ -306,6 +313,10 @@ word is singular). This is recorded in the review's disposition table.
 
 **Michal's answers so far:**
 
+- **Speed line and the frames defect (2026-11-10):** the pairwise engine's 3x is read over a
+  whole battle (the line scene and the pocket at equal shares), not scene by scene. The batch
+  carries on with the frames defect in it; `base` is repeated afterwards with the defect fixed,
+  and both verdicts are reported.
 - **Slice 0 (2026-11-10):** only men out of their places press, on both engines. Whether a
   formed line shoves (othismos) is put off to Slice 1, not settled, and the report says so.
   Rung 4 is built only if rungs 0-3 all fail.

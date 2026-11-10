@@ -49,6 +49,37 @@ threads. That was habit, not the line.
 - **No sustained eight-thread reading exists yet.** The 3.8x above ran for three minutes, not
   ten, and without perception. It decides nothing.
 
+## What the line is read over: a whole battle (Michal, 2026-11-10)
+
+**The 3x is read over a whole battle, not scene by scene.** Michal decided it, with Varro's
+reading and mine put side by side, before any reading of record was taken.
+
+- **Why it was a question.** The criterion names no scene: "it cannot reach 3x real time
+  sustained at full scale on the Air. Below that, every A1 batch needs a rented machine"
+  ([rival 06](../rival/06-experiment.md), section 4). The estimate it was cut from is a figure
+  over a whole battle, and it already has the pocket near 2x: "About 3-7x real time over a whole
+  battle at full Cannae scale, falling toward 2x in the encirclement"
+  ([06](../vision/06-architecture.md), the performance table). Varro's line names the pocket;
+  this one does not.
+- **What I had been doing.** Reading it scene by scene: the verdict above calls the pocket "the
+  engine's main risk against its kill line", and I had proposed to Varro that either scene
+  under 3x be final. I found the vision's sentence after that.
+- **Whose favour it is in.** Mine, and I had seen the pocket at 2.3x and 3.8x. So I did not
+  settle it. Varro, who wrote the criterion's sentence, read it as a whole battle and proposed
+  the weighting below, knowing the same figures. The other choices put to Michal were scene by
+  scene, and a whole battle with a floor of 2x on the pocket.
+- **The figure of record.** No whole battle exists at full scale in Slice 0. So the line scene
+  and the pocket count at equal shares of simulated time:
+
+      2 / (1/line + 1/pocket)
+
+  Each scene's figure is its sustained mean by the reading rule, on eight threads, with
+  Varro's perception. Deployment and the approach are left out, which counts against this
+  engine. The pocket's own figure is printed beside it, against the vision's "toward 2x".
+- **In the full-scale bench** the figure of record is the same mean over the two scenes, each
+  from its first bout to its end, and the slowest simulated minute is printed beside it.
+  Varro's line stays the pocket's slowest minute, as his line names the pocket.
+
 ## Method
 
 - **Machine:** MacBook Air M2 (Mac14,2), 8 GB, fanless. Four performance and four efficiency
