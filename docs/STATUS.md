@@ -25,7 +25,7 @@ reviews his work and merges it.
 | S0.5 | The pairwise substrate, where every body touches its neighbours, at patch scale; a perception conformance check for Varro | 14e919b |
 | S0.6 | The top two rungs of the memory ladder: continuous fear and resolve, then the full excitable psyche | Design written ([rungs-3-4.md](slice0/rungs-3-4.md)); waits for Varro's `Memory` hook |
 | S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | Pairwise done for the line, surge and pocket ([report](slice0/spike-pairwise.md)); the gates wait for walls (S0.8); Varro's field spike is his |
-| S0.8 | The passage study, against measured crowd-flow data | |
+| S0.8 | The passage study, against measured crowd-flow data | Walls (`cannae_core::Wall`, `[[wall]]` in scenarios) and the pairwise calibration done ([report](slice0/passage-calibration.md)); the maniple and gate passages run three ways come next |
 | S0.9 | Scored runs and the report; then design review 2 | |
 
 **Speed (pairwise substrate only, no man model yet; sustained readings on the fanless Air,
@@ -37,6 +37,13 @@ falling. The sustained run also found a physics bug: men could walk through a st
 up to 64 men per m². Now a man cannot walk into the men ahead of him, his lean fades as he
 presses to the bone, and bodies have a hard core. The pressed edge settles at about 5 per m²,
 the crowd-safety literature's onset of danger.
+
+**Passage calibration (pairwise substrate):** a replication of Seyfried et al.'s bottleneck
+experiment. Walking without pushing matches the measured flow when a man's disc is 280-300 mm
+across in radius, so that prior is narrowed. People pushing through a door 0.7 m wide pass
+about 40 % faster in reality than discs can, because people turn their shoulders and a disc
+cannot. That is a structural limit of this engine, reported, not fixed: military intervals and
+gates are wider, where it matters less.
 
 **Priors (drafts, frozen with the pre-registration):** three files, so that both engines draw everything they share from one prior, and draw *i* is the same in every cell.
 

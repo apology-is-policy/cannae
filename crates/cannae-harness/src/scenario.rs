@@ -19,6 +19,32 @@ pub struct Scenario {
     /// Orders given at set times, executed by the frames module.
     #[serde(default, rename = "order")]
     pub orders: Vec<OrderSpec>,
+    /// Walls, handed to the substrate when it is built.
+    #[serde(default, rename = "wall")]
+    pub walls: Vec<WallSpec>,
+}
+
+/// A straight wall from one point to another, in mm.
+#[derive(Clone, Copy, Debug, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct WallSpec {
+    pub from_mm: [i32; 2],
+    pub to_mm: [i32; 2],
+}
+
+impl Scenario {
+    /// The scenario's walls, for the substrate.
+    pub fn walls(&self) -> Vec<cannae_core::Wall> {
+        self.walls
+            .iter()
+            .map(|w| {
+                cannae_core::Wall::new(
+                    Vec2::new(w.from_mm[0], w.from_mm[1]),
+                    Vec2::new(w.to_mm[0], w.to_mm[1]),
+                )
+            })
+            .collect()
+    }
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq, Eq)]

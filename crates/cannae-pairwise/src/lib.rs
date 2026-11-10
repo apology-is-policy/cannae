@@ -13,7 +13,7 @@
 use cannae_core::schedule::{MAN_STEP, is_man_step};
 use cannae_core::{
     Bodies, Cause, Event, EventKind, Key, Posture, Prob, Rng, SimMs, Stream, Substrate, Target,
-    Vec2, Wound,
+    Vec2, Wall, Wound,
 };
 use core::ops::Range;
 use rayon::prelude::*;
@@ -67,6 +67,8 @@ const MEN_PER_TASK: usize = 4_096;
 
 pub struct Pairwise {
     pub p: Params,
+    /// The ground's walls, from the scenario. No one passes through them.
+    pub walls: Vec<Wall>,
     /// Threads for the parallel phases. Results are identical for any count: every phase
     /// either writes disjoint slices, or sums integer corrections, and integer addition does
     /// not care about order.
@@ -381,6 +383,7 @@ impl Pairwise {
     pub fn new(p: Params) -> Self {
         Pairwise {
             p,
+            walls: Vec::new(),
             threads: 1,
             pool: None,
             grid: Grid::default(),
@@ -473,6 +476,46 @@ impl Pairwise {
             tasks.into_par_iter().for_each(|(j, mut out)| {
                 pairs(g, p, cuts[j]..cuts[j + 1], cuts[j], &mut out);
             });
+        }
+        // Walls do not move, so a man touching one takes the whole correction. A wall counts
+        // toward how hard he is pressed, and blocks his walking and his lean as a man would.
+        if !self.walls.is_empty() {
+            let (walls, r) = (&self.walls, self.p.radius_mm as i64);
+            self.corr
+                .par_chunks_mut(MEN_PER_TASK)
+                .zip(self.over.par_chunks_mut(MEN_PER_TASK))
+                .zip(self.blk.par_chunks_mut(MEN_PER_TASK))
+                .zip(self.fr.par_chunks_mut(MEN_PER_TASK))
+                .enumerate()
+                .for_each(|(chunk, (((cs, os), bs), fs))| {
+                    let first = chunk * MEN_PER_TASK;
+                    for k in 0..cs.len() {
+                        let a = first + k;
+                        let at = Vec2::new(g.px[a], g.py[a]);
+                        for w in walls {
+                            let d = at - w.nearest(at);
+                            let d2 = d.len_sq();
+                            if d2 >= r * r {
+                                continue;
+                            }
+                            let dist = (d2 as u64).isqrt() as i64;
+                            let unit = if dist == 0 {
+                                w.left()
+                            } else {
+                                d.mul_div(1_024, dist)
+                            };
+                            let overlap = r - dist;
+                            cs[k] += unit.mul_div(overlap, 1_024);
+                            os[k] += overlap as i32;
+                            if g.want[a].dot(unit) < 0 {
+                                bs[k] -= unit;
+                            }
+                            if g.lean[a].dot(unit) < 0 {
+                                fs[k] += overlap as i32;
+                            }
+                        }
+                    }
+                });
         }
         if last {
             self.pressure.clear();
@@ -774,6 +817,44 @@ mod tests {
             worst < 6 * Params::PLACEHOLDER.core_mm,
             "summed overlap {worst} mm"
         );
+    }
+
+    #[test]
+    fn walls_stop_men_and_a_gap_lets_them_through() {
+        // A wall across x = 2 m with a gap of 1.2 m at y = 0; men behind it walking at full
+        // press to a point beyond. Some get through the gap; none pass the wall elsewhere, and
+        // none ends up inside it.
+        let mut b = Bodies::default();
+        for r in 0..6 {
+            for f in 0..10 {
+                b.push(man(-r * 600, (f - 5) * 600 + 300));
+            }
+        }
+        let t: Vec<Target> = b
+            .pos
+            .iter()
+            .map(|_| Target {
+                point: Vec2::new(10_000, 0),
+                speed: 1_300,
+                face: Some(Turn(0)),
+                press: 255,
+            })
+            .collect();
+        let mut s = Pairwise::new(Params::PLACEHOLDER);
+        s.walls = vec![
+            Wall::new(Vec2::new(2_000, 600), Vec2::new(2_000, 10_000)),
+            Wall::new(Vec2::new(2_000, -600), Vec2::new(2_000, -10_000)),
+        ];
+        run(&mut s, &mut b, &t, 400);
+        let through: Vec<usize> = (0..b.len()).filter(|&i| b.pos[i].x > 2_300).collect();
+        assert!(through.len() >= 5, "{} through", through.len());
+        let r = Params::PLACEHOLDER.radius_mm;
+        for (i, p) in b.pos.iter().enumerate() {
+            for w in &s.walls {
+                let d = p.dist_sq(w.nearest(*p));
+                assert!(d >= (r as i64 - 60).pow(2), "man {i} is in a wall at {p:?}");
+            }
+        }
     }
 
     #[test]
