@@ -8,15 +8,27 @@
 //! without rules about fused multiply-add or float libraries.
 
 pub mod angle;
+pub mod event;
 pub mod fixed;
 pub mod hash;
+pub mod hazard;
+pub mod intent;
+pub mod model;
 pub mod observe;
+pub mod power;
 pub mod rng;
+pub mod schedule;
 pub mod stamina;
 pub mod units;
+pub mod view;
 
 pub use angle::Turn;
+pub use event::{Cause, Causes, Event, EventKind, EventLog};
 pub use fixed::Prob;
-pub use observe::{Bodies, BodyId, ManId, Posture, Role, Side, Wound};
+pub use hazard::{Hazards, Transition};
+pub use intent::{Gait, Intent, Target};
+pub use model::{Decision, ManModel, Substrate};
+pub use observe::{Bodies, BodyId, ManId, Observed, Posture, Role, Side, Wound};
 pub use rng::{Key, Rng, Stream};
 pub use units::{MilliJ, MilliW, SimMs, Vec2};
+pub use view::{Coarse, FrameQuery, GridPerception, Perceive, View};
