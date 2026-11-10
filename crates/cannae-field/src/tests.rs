@@ -108,6 +108,30 @@ fn a_lone_man_walks_to_his_target_and_stops_on_it() {
     assert_eq!(f.stats().free, 1);
 }
 
+/// A lean is a push on the men in the way. With no one ahead it gains nothing: a man walking
+/// or running goes at his gait, and a man standing stays where he is.
+#[test]
+fn a_man_who_leans_on_no_one_goes_no_faster_than_his_gait() {
+    for speed in [WALK, RUN, 0] {
+        // On a cell's centre, on its edge and between: what he reads of himself differs.
+        for x0 in [0, 100, 512, 800] {
+            let mut b = Bodies::default();
+            lattice(&mut b, x0, -700, 1, 1, 0, 0, Side::A, false);
+            let t = toward(&b, Vec2::new(x0 + 60_000, -700), speed, 255);
+            let mut f = Field::new(Params::CENTRE);
+            run(&mut f, &mut b, &t, 8);
+            // Two seconds, less at most a millimetre of rounding a step.
+            let gone = (b.pos[0].x - x0) as i64;
+            let gait = 2 * speed as i64;
+            assert!(
+                (gait - 40..=gait).contains(&gone),
+                "speed {speed} from {x0}: {gone}"
+            );
+            assert_eq!(b.pos[0].y, -700);
+        }
+    }
+}
+
 #[test]
 fn the_whole_step_is_taken_at_the_man_step() {
     let mut b = Bodies::default();

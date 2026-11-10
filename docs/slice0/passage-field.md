@@ -16,13 +16,13 @@ load.
    3 m, against about 1.9 measured** (1.6 to 2.3, Seyfried et al. 2009). It passes the capacity
    of its walking curve and no more. The curve is Weidmann's, fitted to people walking in the
    open, and its capacity is about 1.2.
-2. **Pushing through a gate it passes 4.3 at 3 m,** against about 4.0 measured at doors of
-   0.7 m (Garcimartín et al. 2016).
+2. **Pushing through a gate it passes 4.0 at 3 m,** against about 4.0 measured at doors of
+   0.7 m (Garcimartín et al. 2016). Nothing was fitted to that figure.
 3. **The three ways of touching give the same flow** to within 6 % at every width, walking or
    pushing. Contact inside the crowd changes how far the line beside an interval is pushed, and
    nothing else here.
 4. **A maniple falling back through a 3 m interval takes 40 s** for nine men in ten, against
-   24 s on the pairwise engine. With the enemy following, 6 to 10 of its 120 men are not
+   24 s on the pairwise engine. With the enemy following, 2 to 6 of its 120 men are not
    through after five minutes.
 5. **Seyfried's corridor cannot be run on the field at all.** It is 0.8 to 1.2 m wide and a
    cell is 1.024 m. A passage narrower than a cell has no cell centre inside it.
@@ -31,8 +31,14 @@ load.
 
 A crowd of 600, 36 m wide and 24 m deep, 10 m out from a gate in a rampart. Js is persons per
 second per metre of the gate's width, from the 60th man to the 540th. t90 is the time until
-540 are through. All 600 passed in every run and no one was crushed. The pairwise columns are
-at a disc of 300 mm, the radius its calibration settled on.
+540 are through. Walking, all 600 passed in every run and no one was crushed. The pairwise
+columns are at a disc of 300 mm, the radius its calibration settled on.
+
+**These figures are from after 2026-11-10's change to the lean** in both engines: a man who
+leans now pushes only on men in his way, and gains no speed over open ground. Before it the
+field's pushing figures were about a tenth higher (4.34 at 3 m), and 6 to 10 men of the
+pursued maniple were left behind instead of 2 to 6, because the enemy came on faster than a
+walk. The walking rows did not move.
 
 Walking at 1.3 m/s:
 
@@ -48,11 +54,14 @@ Running at 4 m/s and shoving:
 
 | Width | Js, `Line` | Js, `Crowd` | Js, `All` | t90, `Line` | Peak density | Js, pairwise | t90, pairwise |
 |---|---|---|---|---|---|---|---|
-| 3 m | 4.34 | 4.12 | 4.15 | 44 s | 7.3 | 6.44 | 31 s |
-| 4.5 m | 3.87 | 3.73 | 3.91 | 34 s | 6.4 | 6.51 | 22 s |
-| 6 m | 3.16 | 3.16 | 3.26 | 31 s | 6.0 | 6.24 | 18 s |
-| 9 m | 2.07 | 1.99 | 2.05 | 31 s | 6.4 | 4.53 | 16 s |
-| 12 m | 1.92 | 1.92 | 2.00 | 25 s | 5.7 | 4.09 | 14 s |
+| 3 m | 3.99 | 3.85 | 3.80 | 48 s | 7.3 | 6.27 | 32 s |
+| 4.5 m | 3.70 | 3.58 | 3.67 | 36 s | 6.7 | 6.35 | 22 s |
+| 6 m | 3.01 | 3.01 | 3.07 | 33 s | 6.0 | 6.05 | 19 s |
+| 9 m | 1.97 | 1.90 | 1.95 | 33 s | 6.4 | 4.75 | 16 s |
+| 12 m | 1.79 | 1.79 | 1.86 | 27 s | 5.7 | 3.78 | 15 s |
+
+At 3 m one man of the 600 was crushed under `Line` and one under `All`; the other 599 passed.
+No one was crushed at any other width, or on the pairwise engine.
 
 Peak density is the bench's measure, from positions: at each second, the 90th percentile over
 men within 5 m of the mouth of the bodies within a metre of each. Walking, it was 4.1 to 4.8
@@ -73,19 +82,20 @@ line beside the interval was pushed from his slot.
 | Width | Pursued | Through, `Line` / `Crowd` / `All` | t90, `Line` | Holder, `Line` / `Crowd` / `All` | t90, pairwise | Holder, pairwise |
 |---|---|---|---|---|---|---|
 | 3 m | no | 120 / 120 / 120 | 39.5 s | 87 / 89 / 63 mm | 24.1 s | 592 mm |
-| 3 m | yes | 110 / 112 / 114 | 40.0 s | 72 / 87 / 62 mm | 30.6 s | 609 mm |
+| 3 m | yes | 118 / 118 / 114 | 39.8 s | 85 / 89 / 61 mm | 33.1 s | 513 mm |
 | 6 m | no | 120 / 120 / 120 | 36.3 s | 298 / 298 / 131 mm | 18.8 s | 376 mm |
-| 6 m | yes | 120 / 120 / 118 | 37.3 s | 274 / 275 / 38 mm | 18.9 s | 374 mm |
+| 6 m | yes | 120 / 120 / 118 | 37.5 s | 289 / 286 / 37 mm | 18.8 s | 373 mm |
 | 9 m | no | 120 / 120 / 120 | 24.1 s | 0 / 0 / 0 mm | 17.4 s | 45 mm |
-| 9 m | yes | 120 / 120 / 120 | 24.1 s | 18 / 18 / 22 mm | 17.2 s | 469 mm |
+| 9 m | yes | 120 / 120 / 120 | 24.1 s | 19 / 21 / 18 mm | 17.4 s | 206 mm |
 | 12 m | no | 120 / 120 / 120 | 20.8 s | 0 / 0 / 0 mm | 16.6 s | 0 mm |
-| 12 m | yes | 120 / 120 / 120 | 20.8 s | 18 / 19 / 18 mm | 16.6 s | 304 mm |
+| 12 m | yes | 120 / 120 / 120 | 20.8 s | 16 / 16 / 15 mm | 16.6 s | 207 mm |
 
 All 120 passed in every pairwise run.
 
 - **The men not through.** I have not looked at where they stand. What I expect, and have not
   checked: the passage is slow, the enemy reaches its stop line before the last men are in,
-  and no one walks onto ground the enemy holds, so they are cut off.
+  and no one walks onto ground the enemy holds, so they are cut off. That fewer were left
+  once the enemy came on at a walk and no faster fits this, and does not prove it.
 - **The line beside the interval is not in its place in this bench.** The bench has no frames,
   so the holders are loose men who stand. In the field they are then pushed a little where the
   crowd is thick. In a battle they are in their places and the field does not move them at
@@ -109,10 +119,12 @@ of the curve is a parameter of this engine, and I had fixed it
 ([priors-field.md](priors-field.md) §4, "Fixed") at a value fitted to walking in the open.
 Measured flows through bottlenecks are about 1.6 times what that value allows.
 
-**Proposal, not yet made:** give the steepness a prior that runs from Weidmann's value to the
-value whose capacity is the measured 1.9, and draw it with the rest. It is a change to my
-priors before the freeze, on outside data and on no patch outcome, as the disc radius was for
-the pairwise engine. It needs Paullus's eye before it goes into the priors.
+**Agreed with Paullus on 2026-11-10, not yet built:** the steepness gets a prior, calibrated
+on the bottleneck measurements as the pairwise engine's disc radius was: the values whose
+flow on this bench spans the measured 1.6 to 2.3. It is a change to my priors before the
+freeze, on outside data and on no patch outcome. One check comes first: whether the flow still
+follows the curve's capacity when the crowd starts dense, as in Liao's experiment (3 per m²
+in front of the gap).
 
 ## What this says about contact inside crowds
 

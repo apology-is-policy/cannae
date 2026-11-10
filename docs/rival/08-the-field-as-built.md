@@ -49,10 +49,11 @@ takes to make an open line of them a wall: at 0.8 enemies per m² ahead, walking
 the rule "no one walks onto ground the enemy holds". He gets that ground only when they are
 pushed off it, fall, or leave.
 
-**A man who presses gains ground only where there is room.** If his target carries a press, he
-edges forward along his facing at up to 450 mm/s. The gain falls to nothing as the density
-ahead rises from the jam density to the packing density (9 per m²), and it falls to nothing on
-ground the enemy holds.
+**A man who presses pushes on the men in the way.** If his target carries a press, he gains
+ground along his facing at up to 450 mm/s. The gain is what the men ahead deny his walk:
+nothing over open ground, all of it at the jam density. So a lean never makes a man faster
+than his gait. Above the jam density the gain falls to nothing as the density ahead rises to
+the packing density (9 per m²), and it is nothing on ground the enemy holds.
 
 **A crowd that is no longer pressed eases.** Above 2.5 men per m² around him, a man is pushed
 from thicker ground toward thinner, at up to 300 mm/s.

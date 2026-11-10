@@ -150,6 +150,11 @@ from 200 to 60 mm/s to make a contact test pass; and the meaning of "moving" und
 `Contact::Crowd` was changed after the pocket spike. None of the three touches the patch under
 `Contact::Line`, except F3.
 
+One more change came from no scene at all. Until 2026-11-10 a lean gained ground wherever
+there was room, so a man who leaned with no one ahead went faster than his gait. Paullus found
+that flaw in his own engine when the press rule (§1, line 33) went in, and the field had it
+too. A lean now gains only what the men ahead deny a man's walk.
+
 ### Drawn for this substrate alone
 
 | # | Input | Prior | Centre | Reason |
@@ -177,7 +182,7 @@ both substrates have"). The field maps them directly.
 | Crush onset density, U[5, 8] | `crush_q8` | The same number. It is compared with the density of the men around a man, his own presence left out. |
 | Mean time to be disabled at 2 per m² above the onset, L[30, 600] s | `crush_rate_q16` | The hazard is linear in the density above the onset: rate = 1 / (2 T) per second for each man per m² above it. At T = 134 s that is 244 in Q16. |
 | Fastest turn, U[120, 200] degrees per second | `turn_per_tick` | The same number in turn units per base tick: 180 degrees per second is 1,638. A man turns once per man step, by five ticks' worth. |
-| Speed of a full press, U[200, 700] mm/s | `press_mm_s` | The same number: what a man at full press gains over open ground below the jam density. The centre here is 450; the pairwise placeholder is 300. Both are inside the prior. |
+| Speed of a full press, U[200, 700] mm/s | `press_mm_s` | The same number: what a man at full press gains against a jam, where walking has stopped and there is still room short of packing. Thinner ground ahead gives him less, in proportion to what it leaves of his walk, and open ground gives him nothing. The centre here is 450; the pairwise placeholder is 300. Both are inside the prior. |
 
 A draw's crowd may never reach its own crush onset: the field does not pack past F2, and at the
 jam density (F1) walkers stop. With an onset of 8 and a packing density of 8 nobody is ever

@@ -609,11 +609,11 @@ impl Field {
                     theirs += a[k][1 - side] as i32 * wq[k];
                 }
                 let (mine, theirs) = (mine / 256, theirs / 256);
+                // What the men ahead leave him of his free speed. Enemies count for more than
+                // friends: an open line of them is a wall to a walking man.
+                let thick = mine as i64 + theirs as i64 * g.foe_q8 / 256;
+                let share = walk_q8(((thick * g.walk_q16) >> 16) as u32) as i64;
                 if dist > 0 {
-                    // Enemies ahead count for more than friends: an open line of them is a
-                    // wall to a walking man.
-                    let thick = mine as i64 + theirs as i64 * g.foe_q8 / 256;
-                    let share = walk_q8(((thick * g.walk_q16) >> 16) as u32) as i64;
                     let reach = tg.speed as i64 * share * dt / 256_000;
                     s += if reach >= dist {
                         to
@@ -622,13 +622,16 @@ impl Field {
                     };
                 }
                 if let Some(face) = lean {
-                    // A press gains ground while there is room short of packing, and none on
-                    // ground the enemy holds: he must be pushed off it first.
+                    // A press is a push on the men in the way. It gains what they deny his
+                    // walk, so nothing over open ground, where it would only make him faster
+                    // than his gait. It gains while there is room short of packing, and none
+                    // on ground the enemy holds: he must be pushed off it first.
+                    let denied = 256 - share;
                     let room = ((g.pack - mine - theirs) as i64 * 256 / (g.pack - g.jam) as i64)
                         .clamp(0, 256);
                     let open = (g.hold - theirs).max(0) as i64;
-                    let gain = p.press_mm_s as i64 * tg.press as i64 * room * open * dt
-                        / (255 * 256 * 1000 * g.hold as i64);
+                    let gain = p.press_mm_s as i64 * tg.press as i64 * denied * room * open * dt
+                        / (255 * 256 * 256 * 1000 * g.hold as i64);
                     if gain > 0 {
                         s += face.unit(gain as i32);
                     }
