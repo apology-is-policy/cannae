@@ -20,8 +20,8 @@ one commit.
 | V5 | 06 architecture: fanless 8 GB Air, revised performance, intent pass, observables lane, keyframes | landed |
 | V6 | 03 formations: line relief, R2 with a seam, feasibility instead of discrimination | landed |
 | V7 | 08 roadmap: vertical slices, demand-driven knowledge base, review cadence | landed |
-| V8 | New 09: intent, plans and command AI | next |
-| V9 | New 10: the contact zone, combat and wounds | queued |
+| V8 | New 09: intent, plans and command AI | landed |
+| V9 | New 10: the contact zone, combat and wounds | next |
 
 **V1 note.** Each correction was checked against the primary text before it was applied. One
 half-item was overturned: Polybius 6.23 gives the hastatus one greave, not greaves (the Greek

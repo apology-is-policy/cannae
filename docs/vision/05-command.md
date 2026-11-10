@@ -98,6 +98,9 @@ Scenarios can include a planning phase or a historical plan. A plan is:
 Commanders with high *initiative* rewrite the plan in flight. Commanders with low initiative
 follow it into disaster.
 
+The plan representation, and the authoring tiers that limit how much of a historical plan may be
+scripted, are in [09](09-intent-and-plans.md) §4.
+
 ## 5. Commander personalities (presets to calibrate)
 
 | Commander | Style traits |
@@ -136,10 +139,11 @@ follow it into disaster.
   (Philippi). An enemy redeployment may be read as flight (Munda). A clash heard behind the line
   may be read as encirclement. Agents interpret *events*, so they can misinterpret them.
 
-## 7. Player role (to decide)
+## 7. Player role
 
-The simulation must run fully autonomously for Monte Carlo testing, with every officer an AI. A
-human could optionally take one officer's role, from commander down to a single tribune. He would
-see only that officer's belief map and issue orders through the same channels with the same
-latency. That gives the experience of commanding an ancient army, which no game has offered
-faithfully. See the open questions in [08](08-roadmap.md).
+The simulation runs fully autonomously for Monte Carlo testing, with every officer an AI. You can
+pause and take over officers, from the commander down to a tribune, in one of two modes. As an
+**experimenter** you see the truth and your orders take effect at once. As a **role-player** you
+see only your officer's belief map and issue orders through the same channels with the same
+latency, which gives the experience of commanding an ancient army. See
+[09](09-intent-and-plans.md) §2.
