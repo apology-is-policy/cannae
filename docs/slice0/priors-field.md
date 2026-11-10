@@ -177,7 +177,7 @@ crushed. That is a property of the draw, as in the pairwise engine, and is not c
 |---|---|---|
 | Cell | 1.024 m | Structure. A check at 0.512 m will be reported with the results: the base patch re-run at the centre, and how far each of the eight measures moves. |
 | How far ahead a walker reads the density | One cell, or his target if nearer | It has to be about a stride or two, and no less than a cell or he reads his own presence |
-| The shape of the walking curve | Weidmann's: 1 − exp(−1.913 (1/ρ − 1/ρ_jam)), stretched to F1 | A measured shape; its end point is drawn (F1) |
+| The shape of the walking curve | Weidmann's: 1 − exp(−1.913 (1/ρ − 1/ρ_jam)), stretched to F1 | A measured shape; its end point is drawn (F1). **Open:** its steepness (the 1.913) decides the flow through a gate, and at this value the field passes 1.17 persons per metre per second where about 1.9 is measured. A prior for it is proposed in [passage-field.md](passage-field.md) and not yet made. |
 | The most that spreading moves a man | 300 mm/s | A shuffle. It only caps F5. |
 | "Going somewhere", under `Contact::Crowd` | His own walk and lean are at least 60 mm/s | A twentieth of a walk. Lowered from 200 to pass a test, as said above. |
 | Passes of the position solve | Enough that no two men cross in one, from 2 to 8; 2 more to settle; up to 8 moves of a man in a pass | Numerical. More passes change positions by millimetres. |

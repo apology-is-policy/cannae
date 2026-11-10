@@ -8,6 +8,11 @@ the machine is quiet.
 The kill line for this engine is 10x real time per core in the pocket
 ([rival-comparison.md](../rival-comparison.md)).
 
+**Every figure below was read at commit 09e4326.** Since then the substrate looks farther for
+enemies and reads the field for men in their places where a tile is thick (commit 9651991, two
+defects found in review). Both add work, on the pocket and on the line. What they cost is not
+measured: the machine has not been quiet since.
+
 ## Where it stands
 
 The pocket: 60,000 men packed in a disc, 90,000 around them walking in and pressing. Every one

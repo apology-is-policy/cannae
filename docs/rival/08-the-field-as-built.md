@@ -1,10 +1,11 @@
 # 8. The Field as Built
 
-**Status:** Varro, 2026-11-10. This describes `crates/cannae-field` at commit 09e4326. It
+**Status:** Varro, 2026-11-10. This describes `crates/cannae-field` at commit 9651991. It
 replaces [02](02-order-and-contact.md) §5 wherever the two differ, and it lists what the
 substrate does badly and what it leaves out. Its parameters and their priors are in
 [priors-field.md](../slice0/priors-field.md) §4. Its speed is in
-[spike-field.md](../slice0/spike-field.md).
+[spike-field.md](../slice0/spike-field.md), and its figures on the passage bench are in
+[passage-field.md](../slice0/passage-field.md).
 
 ## What it is
 
@@ -29,15 +30,17 @@ slot (`bodies.in_place`).
 2. **Steps.** Each man out of his place reads the field and decides where he would go (below).
 3. **Exact positions.** Men near an enemy are moved apart wherever two enemies would stand
    closer than a guard's distance (600 mm).
-4. **Move, turn, crush.** Positions and velocities are written. A man turns toward his target's
-   facing at a limited rate. A man in a crush draws for being disabled.
+4. **Move, turn, crush.** Positions and velocities are written, and no move crosses a wall. A
+   man turns toward his target's facing at a limited rate. A man in a crush draws for being
+   disabled.
 
 Between man steps nothing moves. The viewer interpolates.
 
 ## How a man out of his place decides his step
 
 **He walks more slowly the thicker the crowd ahead.** The substrate reads the density one cell
-ahead of him along his way (or at his target, if that is nearer) and scales his gait by
+ahead of him along his way (farther if he would go farther in the step; at his target if that
+is nearer) and scales his gait by
 Weidmann's curve: full speed in the open, nothing at the jam density (5.4 men per m²). The
 curve is a table of 129 integers.
 
@@ -59,8 +62,11 @@ pressing stops at the packing density, so no stiff pressure is needed, and none 
 
 ## Exact positions
 
-A man out of his place is handled by position when there is any enemy presence in his own four
-cells or in the four ahead of him.
+A man out of his place is handled by position when an enemy stands anywhere he could come
+within a guard of during the step: on the ground he may cross, widened by a guard and by as far
+as he goes himself. Of two men who could meet, the one who goes farther always sees the other,
+and one is enough. (Until commit 9651991 he looked only at his own four cells and four ahead,
+and two runners could pass through each other. Paullus's review found it.)
 
 - For each such man the substrate lists the enemies near enough to matter this step.
 - The step is cut into passes short enough that no two men can cross within one (two to eight,
@@ -79,14 +85,36 @@ cells or in the four ahead of him.
 | `Crowd` | Enemies; and men of one side a body's width apart (358 mm), where the crowd is thicker than 3 per m² and the man is going somewhere by his own will |
 | `All` | Every man out of his place, with every man near him |
 
-These are the three physics rungs of [06](06-experiment.md) §2. The passage study decides
-between them.
+These are the three physics rungs of [06](06-experiment.md) §2. The passage study was to decide
+between them. On the bench as it stands they give the same flow to within 6 %
+([passage-field.md](../slice0/passage-field.md)).
 
 ## Crush
 
-A man with more than 6.5 men per m² around him is being crushed. He is disabled at a rate that
-rises with the density above that: a mean of 134 s at 2 per m² above the onset. The draw is on
-the substrate's own random stream.
+A man with more than 6.5 men per m² around him is being crushed, in his place or out of it. He
+is disabled at a rate that rises with the density above that: a mean of 134 s at 2 per m² above
+the onset. The draw is on the substrate's own random stream. His wound is logged, and then his
+fall, which is what the men around him see.
+
+## Walls
+
+The ground's walls are straight segments, handed to the field when it is built
+(`Field::with_walls`). Two rules, and both act only on men near a wall.
+
+**No one crosses a wall,** in his place or out of it, and no man's centre comes nearer to one
+than half a body's width (179 mm). A man who would walk into a wall is put back on the side he
+came from and keeps what he gained along it: he slides, and he rounds a post. Among men
+handled by position, a man standing against a wall cannot give ground toward it, so whoever
+leans on him gives all of the overlap.
+
+**A wall cuts the grid.** A man's presence is shared among the four cells whose centres
+surround him. A cell whose centre he cannot reach in a straight line for a wall gets none of
+it, and he reads nothing from it; the cells he can reach take its share.
+- A crowd pressed on a wall is then as dense at the wall as behind it: 9.4 per m² in the first
+  metre against 9.0 in the second. With the grid uncut it was 13.5 against 8.8, because a man
+  against a wall on a cell's edge read 0.63 of the density he stood in.
+- Men either side of a wall do not feel each other. A crowd walking along a wall takes the
+  same positions, bit for bit, whether or not a packed crowd stands on the far side.
 
 ## What it sees: the perception
 
@@ -150,11 +178,23 @@ only allowed for there.
 5. **Men of one side overlap** under `Contact::Line`. In a jam of 900 men, 454 pairs stood
    closer than three quarters of a body's width. The density is right; the picture is not. It
    matters only to the viewer and to any measure that counts bodies in a gap.
+6. **It passes too few through a gate at a walk:** 1.17 persons per metre per second at 3 m,
+   against about 1.9 measured. That is the capacity of Weidmann's curve, which was fitted to
+   walking in the open. The steepness of the curve decides it, and it has no prior yet
+   ([passage-field.md](../slice0/passage-field.md)).
+7. **A passage narrower than a cell cannot be resolved.** It has no cell centre inside it, so
+   its men are left with all four of their cells as if the walls were not there. Seyfried's
+   corridor (0.8 to 1.2 m) cannot be run.
+8. **Under `All`, a row pressed along a wall is squeezed.** In a crowd pressed on a wall, 4 of
+   the 62 men at the wall stood within three quarters of a body's width of another; none a
+   metre back did. The solve gives each of two men a fixed share of their overlap, and along
+   a wall that leaves some of it standing.
 
 ## Left out
 
-- **Walls.** The shared `Wall` type exists (`cannae-core`); the field does not read it yet.
-  Needed for the passage study.
+- **Walls with thickness.** A wall is a line. Enemies either side of one still keep a guard's
+  distance, since the guard is wider than a body.
+- **Walls in the perception.** A man sees through a wall, in both engines.
 - **Othismos.** A man in his place moves by his tie and ignores his press, so a formed line
   does not shove. For a formed body the push would have to act on the body: its frame gives
   ground under the enemy's press. That is not built, and whether to build it is an open

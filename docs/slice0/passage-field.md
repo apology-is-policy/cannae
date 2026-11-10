@@ -22,8 +22,8 @@ load.
    pushing. Contact inside the crowd changes how far the line beside an interval is pushed, and
    nothing else here.
 4. **A maniple falling back through a 3 m interval takes 40 s** for nine men in ten, against
-   22 s on the pairwise engine at a 280 mm disc. With the enemy following, 6 to 10 of its 120
-   men are not through after five minutes.
+   24 s on the pairwise engine. With the enemy following, 6 to 10 of its 120 men are not
+   through after five minutes.
 5. **Seyfried's corridor cannot be run on the field at all.** It is 0.8 to 1.2 m wide and a
    cell is 1.024 m. A passage narrower than a cell has no cell centre inside it.
 
@@ -31,27 +31,28 @@ load.
 
 A crowd of 600, 36 m wide and 24 m deep, 10 m out from a gate in a rampart. Js is persons per
 second per metre of the gate's width, from the 60th man to the 540th. t90 is the time until
-540 are through. All 600 passed in every run and no one was crushed.
+540 are through. All 600 passed in every run and no one was crushed. The pairwise columns are
+at a disc of 300 mm, the radius its calibration settled on.
 
 Walking at 1.3 m/s:
 
-| Width | Js, `Line` | Js, `Crowd` | Js, `All` | t90, `Line` | Js, pairwise 280 mm | t90, pairwise |
+| Width | Js, `Line` | Js, `Crowd` | Js, `All` | t90, `Line` | Js, pairwise | t90, pairwise |
 |---|---|---|---|---|---|---|
-| 3 m | 1.17 | 1.14 | 1.13 | 163 s | 3.33 | 65 s |
-| 4.5 m | 1.05 | 1.03 | 1.07 | 123 s | 3.23 | 49 s |
-| 6 m | 0.87 | 0.86 | 0.89 | 111 s | 2.78 | 44 s |
-| 9 m | 0.56 | 0.55 | 0.57 | 112 s | 1.98 | 42 s |
-| 12 m | 0.53 | 0.52 | 0.54 | 91 s | 1.64 | 38 s |
+| 3 m | 1.17 | 1.14 | 1.13 | 163 s | 2.91 | 73 s |
+| 4.5 m | 1.05 | 1.03 | 1.07 | 123 s | 2.94 | 53 s |
+| 6 m | 0.87 | 0.86 | 0.89 | 111 s | 2.64 | 46 s |
+| 9 m | 0.56 | 0.55 | 0.57 | 112 s | 1.86 | 43 s |
+| 12 m | 0.53 | 0.52 | 0.54 | 91 s | 1.51 | 40 s |
 
 Running at 4 m/s and shoving:
 
-| Width | Js, `Line` | Js, `Crowd` | Js, `All` | t90, `Line` | Peak density | Js, pairwise 280 mm | t90, pairwise |
+| Width | Js, `Line` | Js, `Crowd` | Js, `All` | t90, `Line` | Peak density | Js, pairwise | t90, pairwise |
 |---|---|---|---|---|---|---|---|
-| 3 m | 4.34 | 4.12 | 4.15 | 44 s | 7.3 | 7.29 | 28 s |
-| 4.5 m | 3.87 | 3.73 | 3.91 | 34 s | 6.4 | 7.32 | 20 s |
-| 6 m | 3.16 | 3.16 | 3.26 | 31 s | 6.0 | 6.94 | 17 s |
-| 9 m | 2.07 | 1.99 | 2.05 | 31 s | 6.4 | 4.93 | 15 s |
-| 12 m | 1.92 | 1.92 | 2.00 | 25 s | 5.7 | 3.82 | 15 s |
+| 3 m | 4.34 | 4.12 | 4.15 | 44 s | 7.3 | 6.44 | 31 s |
+| 4.5 m | 3.87 | 3.73 | 3.91 | 34 s | 6.4 | 6.51 | 22 s |
+| 6 m | 3.16 | 3.16 | 3.26 | 31 s | 6.0 | 6.24 | 18 s |
+| 9 m | 2.07 | 1.99 | 2.05 | 31 s | 6.4 | 4.53 | 16 s |
+| 12 m | 1.92 | 1.92 | 2.00 | 25 s | 5.7 | 4.09 | 14 s |
 
 Peak density is the bench's measure, from positions: at each second, the 90th percentile over
 men within 5 m of the mouth of the bodies within a metre of each. Walking, it was 4.1 to 4.8
@@ -71,14 +72,16 @@ line beside the interval was pushed from his slot.
 
 | Width | Pursued | Through, `Line` / `Crowd` / `All` | t90, `Line` | Holder, `Line` / `Crowd` / `All` | t90, pairwise | Holder, pairwise |
 |---|---|---|---|---|---|---|
-| 3 m | no | 120 / 120 / 120 | 39.5 s | 87 / 89 / 63 mm | 21.9 s | 479 mm |
-| 3 m | yes | 110 / 112 / 114 | 40.0 s | 72 / 87 / 62 mm | 23.5 s | 461 mm |
-| 6 m | no | 120 / 120 / 120 | 36.3 s | 298 / 298 / 131 mm | 18.6 s | 112 mm |
-| 6 m | yes | 120 / 120 / 118 | 37.3 s | 274 / 275 / 38 mm | 18.8 s | 275 mm |
-| 9 m | no | 120 / 120 / 120 | 24.1 s | 0 / 0 / 0 mm | 17.4 s | 9 mm |
-| 9 m | yes | 120 / 120 / 120 | 24.1 s | 18 / 18 / 22 mm | 17.2 s | 496 mm |
+| 3 m | no | 120 / 120 / 120 | 39.5 s | 87 / 89 / 63 mm | 24.1 s | 592 mm |
+| 3 m | yes | 110 / 112 / 114 | 40.0 s | 72 / 87 / 62 mm | 30.6 s | 609 mm |
+| 6 m | no | 120 / 120 / 120 | 36.3 s | 298 / 298 / 131 mm | 18.8 s | 376 mm |
+| 6 m | yes | 120 / 120 / 118 | 37.3 s | 274 / 275 / 38 mm | 18.9 s | 374 mm |
+| 9 m | no | 120 / 120 / 120 | 24.1 s | 0 / 0 / 0 mm | 17.4 s | 45 mm |
+| 9 m | yes | 120 / 120 / 120 | 24.1 s | 18 / 18 / 22 mm | 17.2 s | 469 mm |
 | 12 m | no | 120 / 120 / 120 | 20.8 s | 0 / 0 / 0 mm | 16.6 s | 0 mm |
-| 12 m | yes | 120 / 120 / 120 | 20.8 s | 18 / 19 / 18 mm | 16.6 s | 272 mm |
+| 12 m | yes | 120 / 120 / 120 | 20.8 s | 18 / 19 / 18 mm | 16.6 s | 304 mm |
+
+All 120 passed in every pairwise run.
 
 - **The men not through.** I have not looked at where they stand. What I expect, and have not
   checked: the passage is slow, the enemy reaches its stop line before the last men are in,
