@@ -1,0 +1,71 @@
+# Slice 0 patch, variant `flank`: the base patch, and ten minutes in, a small band of the
+# same warriors comes down on the open (left) flank of the Roman line and charges it. The
+# Roman left is +y; the first century's left-hand file stands at y = +8.1 m.
+
+name = "patch-flank"
+seed = 1
+duration_s = 7800
+
+[[body]]
+name = "hastati, first century"
+side = "A"
+troop = "hastati"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-9000, 0]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "hastati, second century"
+side = "A"
+troop = "hastati"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-9000, -18000]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "warband"
+side = "B"
+troop = "gallic-warband"
+files = 20
+ranks = 8
+file_mm = 1000
+rank_mm = 1200
+centre_mm = [9000, -9000]
+facing_deg = 180
+leader = "front-centre"
+tie = "loose"
+
+# The warband comes on; the Romans stand to receive it. Its frame halts just out of reach
+# (the tie's standoff); from there, whether anyone steps forward is the men's business.
+[[order]]
+body = "warband"
+at_s = 0
+order = "advance"
+
+[[body]]
+name = "flank band"
+side = "B"
+troop = "gallic-warband"
+files = 6
+ranks = 6
+file_mm = 1000
+rank_mm = 1200
+centre_mm = [-9000, 30000]
+facing_deg = 270
+leader = "front-centre"
+tie = "loose"
+
+[[order]]
+body = "flank band"
+at_s = 600
+order = "charge"

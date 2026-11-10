@@ -1,0 +1,53 @@
+# Slice 0 patch, variant `veterans`: the base patch with the Romans as men who have stood in a line before. What that
+# means is each engine's business, keyed by the troop type; the scenario changes nothing else.
+# Scored against `recruits`/`veterans` for dose-response (docs/slice0/preregistration.md).
+
+name = "patch-veterans"
+seed = 1
+duration_s = 7800
+
+[[body]]
+name = "hastati, first century"
+side = "A"
+troop = "hastati-veterans"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-9000, 0]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "hastati, second century"
+side = "A"
+troop = "hastati-veterans"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-9000, -18000]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "warband"
+side = "B"
+troop = "gallic-warband"
+files = 20
+ranks = 8
+file_mm = 1000
+rank_mm = 1200
+centre_mm = [9000, -9000]
+facing_deg = 180
+leader = "front-centre"
+tie = "loose"
+
+# The warband comes on; the Romans stand to receive it. Its frame halts just out of reach
+# (the tie's standoff); from there, whether anyone steps forward is the men's business.
+[[order]]
+body = "warband"
+at_s = 0
+order = "advance"

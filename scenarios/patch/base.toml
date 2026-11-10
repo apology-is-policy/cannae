@@ -49,3 +49,10 @@ centre_mm = [9000, -9000]
 facing_deg = 180
 leader = "front-centre"
 tie = "loose"
+
+# The warband comes on; the Romans stand to receive it. Its frame halts just out of reach
+# (the tie's standoff); from there, whether anyone steps forward is the men's business.
+[[order]]
+body = "warband"
+at_s = 0
+order = "advance"

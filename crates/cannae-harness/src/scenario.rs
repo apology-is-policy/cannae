@@ -312,7 +312,10 @@ mod tests {
             "{}\n[[order]]\nbody = \"warband\"\nat_s = 2\norder = \"advance\"\n",
             include_str!("../../../scenarios/patch/base.toml")
         );
-        let s = Scenario::from_toml(&text).unwrap();
+        let mut s = Scenario::from_toml(&text).unwrap();
+        // Only the order added here: the warband told to advance two seconds in.
+        s.orders.retain(|o| o.at_s == 2);
+        assert_eq!(s.orders.len(), 1);
         let (mut b, placed) = place(&s);
         let mut f = frames(&s, &placed, &b).unwrap();
         f.update(&mut b, 0, &mut Vec::new());
@@ -334,6 +337,30 @@ mod tests {
         let mut bad = s.clone();
         bad.orders[0].body = "nobody".into();
         assert!(frames(&bad, &placed, &b).is_err());
+    }
+
+    #[test]
+    fn every_patch_scenario_places_its_bodies_and_frames() {
+        let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../../scenarios/patch");
+        let mut names: Vec<_> = std::fs::read_dir(dir)
+            .unwrap()
+            .map(|e| e.unwrap().path())
+            .filter(|p| p.extension().is_some_and(|x| x == "toml"))
+            .collect();
+        names.sort();
+        assert!(names.len() >= 4);
+        for path in names {
+            let s = Scenario::from_toml(&std::fs::read_to_string(&path).unwrap())
+                .unwrap_or_else(|e| panic!("{}: {e}", path.display()));
+            let (b, placed) = place(&s);
+            assert_eq!(placed.len(), s.bodies.len());
+            frames(&s, &placed, &b).unwrap_or_else(|e| panic!("{}: {e}", path.display()));
+            assert!(
+                s.orders.iter().any(|o| o.at_s == 0),
+                "{}: someone must move",
+                path.display()
+            );
+        }
     }
 
     #[test]
