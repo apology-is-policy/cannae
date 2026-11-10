@@ -581,6 +581,23 @@ fn each_posture_has_its_way_of_moving() {
         m.intent(ME, &close, Posture::Forward),
         (at(ManId(9)), Gait::Run)
     );
+    // He leans only while he is kept from his striking distance by more than a pace, and then
+    // as hard as the parameter says. In his place he never leans.
+    let pressing = |mm: i32, level: u8| {
+        let mut m = men(Rung::NoMarks, Role::Soldier);
+        m.params.press = level;
+        let mut far = close;
+        far.near[1].as_mut().unwrap().offset = Vec2::new(mm, 0);
+        match m.intent(ME, &far, Posture::Forward).0 {
+            Intent::Close { press, .. } => press,
+            other => panic!("{other:?}"),
+        }
+    };
+    assert_eq!(pressing(1_500, 200), 0);
+    assert_eq!(pressing(1_501, 200), 200);
+    assert_eq!(pressing(2_900, 200), 200);
+    assert_eq!(pressing(2_900, 0), 0);
+    assert_eq!(pressing(2_900, Params::CENTRE.press), 128);
     // Turned, he runs the way his body's back was; with no slot left, the way he faces.
     let mut fled = v;
     fled.slot.as_mut().unwrap().facing = Turn(1_000);

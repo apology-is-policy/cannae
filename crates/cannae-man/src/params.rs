@@ -113,7 +113,14 @@ pub struct Params {
     pub step_back_mm: i32,
     /// How near a forward man closes with the enemy he has chosen.
     pub stand_off_mm: i32,
+    /// How hard a man going for an enemy leans on whatever is in front of him while he is kept
+    /// from that distance (0-255). Only men out of their places press in Slice 0.
+    pub press: u8,
 }
+
+/// How far short of his striking distance a man must be before he leans: a pace. Fixed, not
+/// drawn: it only says that a man who has got there is no longer kept from it.
+pub const KEPT_MM: i32 = 500;
 
 impl Params {
     pub const CENTRE: Params = Params {
@@ -150,6 +157,7 @@ impl Params {
         step_forward_mm: 2_250,
         step_back_mm: 1_000,
         stand_off_mm: 1_000,
+        press: 128,
     };
 }
 

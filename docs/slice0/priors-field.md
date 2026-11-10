@@ -22,7 +22,8 @@ hash, and at nothing else.
 - Every draw is independent of the others unless the line says "derived".
 - Weights are in units (§1 of rival/07) and are stored in Q8, rounded to the nearest 1/256.
 - Draw *i* of the 200 uses the same values on every rung: rung 1 is rung 0 plus line 30, and
-  rung 2 is rung 1 plus lines 31 and 32. Paullus's rungs 3 and 4 read lines 1 to 29 unchanged.
+  rung 2 is rung 1 plus lines 31 and 32. Paullus's rungs 3 and 4 read lines 1 to 29 and line
+  33 unchanged.
 
 ## 1. The man
 
@@ -69,6 +70,16 @@ How far he moves:
 |---|---|---|---|---|---|
 | 28 | `step_back_mm` | How far behind his slot a man giving ground stands | U[0.6, 1.5] m | 1.0 | A pace or two |
 | 29 | `stand_off_mm` | How near a forward man closes | U[0.8, 1.2] m | 1.0 | Inside a sword's reach of 1.5 m |
+| 33 | `press` | How hard a man going for an enemy leans on whatever is in front of him, while he is kept from his striking distance by more than a pace. Of 255 | U[0, 255] | 128 | No source gives a size, so the range is everything, none included. Added 2026-11-10 after Michal's ruling that only men out of their places press in Slice 0 ([preregistration.md](preregistration.md), "The press"). Read at every rung and by both engines. |
+
+**The press rule.** A man in his place never leans (`HoldSlot` press is zero). A man going for
+an enemy leans only while he is more than his stand-off and a pace (0.5 m, fixed) from that
+enemy: someone is in his way. Once he is where he would strike from he fences and does not
+lean, because leaning from there would deny the distance he chose. A man who runs away does
+not lean either; the gate in the passage bench is scripted, and Slice 0's patch has no gate.
+What a lean does is each substrate's own: in the pairwise engine it shoves whoever is in
+front, and in the field it gains ground only where the crowd is short of packing and the
+enemy does not hold it.
 
 The marks:
 
@@ -78,7 +89,7 @@ The marks:
 | 31 | `shaken` | 2 | Nerve lost per level of *shaken* (three levels at most) | U[0.4, 1.2] | 0.75 | At three levels a supported man of average nerve should be within reach of the edge |
 | 32 | `shaken_wear` | 2 | How long one level takes to wear off | L[2, 10] min | 5 | "Minutes" ([rival/01](../rival/01-the-man.md) §9). Shorter than a lull and it does nothing; longer than the fight and it is a gauge. |
 
-**Count: 29 at rung 0, 30 at rung 1, 32 at rung 2.**
+**Count: 30 at rung 0, 31 at rung 1, 33 at rung 2.**
 
 ## 2. Troop inputs
 
@@ -122,6 +133,7 @@ These are choices too. They are fixed because they are structure, not because th
 | Levels of *shaken* | 0 to 3 | |
 | Levels of being winded | One for each full quarter of his breath gone, to three | |
 | Forward step with no enemy in reach | 2.25 m | It must carry a man from any standoff the tie allows (at most 4.5 m) to within reach |
+| How far short of his striking distance a man must be before he leans | 0.5 m | A pace. It only says that a man who has got there is no longer kept from it |
 | Man step | 250 ms | The shared schedule |
 
 ## 4. The field substrate
@@ -200,5 +212,5 @@ crushed. That is a property of the draw, as in the pairwise engine, and is not c
 - **Rung 2 should break sooner than rung 1 and with a hazard that rises faster,** because falls
   in a flurry come together and stack. If the two rungs are indistinguishable, *shaken* has
   not earned its place.
-- **The knife-edge rule may well fail every rung.** There are 29 to 32 independent draws, most
+- **The knife-edge rule may well fail every rung.** There are 30 to 33 independent draws, most
   with ranges of a factor of two. I have not narrowed any range to help.

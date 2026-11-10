@@ -32,7 +32,7 @@ use cannae_core::{
     ManModel, Observed, Posture, Rng, Role, SimMs, Stream, Transition, Turn, View, Wound,
 };
 use curve::rate_q16;
-use params::{SIGHT_LEADER_MM, SIGHT_STANDARD_MM, UNIT};
+use params::{KEPT_MM, SIGHT_LEADER_MM, SIGHT_STANDARD_MM, UNIT};
 use std::cmp::Reverse;
 
 /// Purpose words for the dispositions drawn at setup, on the setup stream.
@@ -523,18 +523,29 @@ impl<M: Memory> ManModel for Men<M> {
                 Gait::Walk,
             ),
             Posture::Forward => match v.near().find(|e| e.posture != Posture::Down) {
-                Some(e) => (
-                    Intent::Close {
-                        enemy: e.id,
-                        stand_off_mm: p.stand_off_mm,
-                        press: 0,
-                    },
-                    if charging(v.order) || e.posture == Posture::Turned {
-                        run
+                Some(e) => {
+                    // A man who has got to where he would strike from fences and does not
+                    // lean: leaning from there would deny the distance he chose. A man kept
+                    // from it has someone in his way, and leans on him.
+                    let kept = (p.stand_off_mm + KEPT_MM) as i64;
+                    let press = if e.offset.len_sq() > kept * kept {
+                        p.press
                     } else {
-                        Gait::Walk
-                    },
-                ),
+                        0
+                    };
+                    (
+                        Intent::Close {
+                            enemy: e.id,
+                            stand_off_mm: p.stand_off_mm,
+                            press,
+                        },
+                        if charging(v.order) || e.posture == Posture::Turned {
+                            run
+                        } else {
+                            Gait::Walk
+                        },
+                    )
+                }
                 None => (
                     Intent::HoldSlot {
                         forward_mm: p.step_forward_mm,
