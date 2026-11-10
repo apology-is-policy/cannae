@@ -20,7 +20,7 @@ Michal's decision.
 | | Engine A: the vision of record | Engine B: the rival |
 |---|---|---|
 | The man | The excitable psyche of 04 §5, with its three kernels | Dispositions, postures and hazards ([01](01-the-man.md)) |
-| The substrate | Soft-body collision at 20 Hz, threaded | Field and events at 4 Hz, one core ([03](03-engine.md)) |
+| The substrate | Soft-body collision at 20 Hz, threaded | Field and events at 4 Hz, one core, with contact where men are crowded and moving ([03](03-engine.md)) |
 
 **Fairness.**
 
@@ -72,6 +72,14 @@ each on a fixed set of seeds, and score every pattern. Report:
 *shaken*. Engine A is also run with its resolve variable R removed. In each engine the lowest
 rung that passes is kept. That is the parsimony pillar applied to memory.
 
+**The passage.** One more scenario, for the substrate: a maniple falling back through an
+interval under pressure, and a crowd leaving through a gate. It is run three ways: field
+alone; field with contact where men are crowded and moving; contact everywhere. Each is scored
+against measured flows through bottlenecks from pedestrian studies (flow against gap width,
+and when clogging starts) and against the others. Those experiments are not armoured men under
+attack, but they are a fair check on any model of crowding. The lowest rung that matches is
+kept. Paullus proposed this item. The data still has to be found and read.
+
 A model that passes only on a knife-edge has failed, whichever engine it is. The vision of
 record already says so (04 §5.3).
 
@@ -80,10 +88,11 @@ reenactment. Neither of us has a source in hand. Without them pattern 7 has no t
 
 ## 3. The spike: speed
 
-150,000 bodies in each substrate, with realistic memory traffic, in two configurations:
+150,000 bodies in each substrate, with realistic memory traffic, in three configurations:
 
 - **a line battle:** two armies in contact along 1.5 km;
-- **a pocket:** 60,000 men encircled and compressed.
+- **a pocket:** 60,000 men encircled and compressed;
+- **a rout through gaps:** 20,000 men leaving through camp gates, the worst case for contact.
 
 Measured after ten minutes of sustained load on the fanless Air, never at burst:
 

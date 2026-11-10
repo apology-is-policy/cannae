@@ -209,6 +209,12 @@ gauges.** A mark is discrete, set by an event, and explained in the log.
 - one small mark where the vision of record has four slow variables (R, H, S, B);
 - bouts are led, not oscillated ([02](02-order-and-contact.md) §7).
 
+**The first difference may be smaller than it looks.** In the vision of record x, F and Φ have
+time constants of about a second. A variable that follows what a man sees with a second's lag
+is hard to tell from a hazard read off what he sees, with reaction time as a parameter. If
+that is right, what really divides the two men is the slow part (how much memory) and what
+sets the rhythm of a clash. Both are on the experiment's list.
+
 **What Michal would see.** Click a man: "Steady. Shaken, 2 of 3, since the standard fell four
 minutes ago. Chance to give ground: 4 % a second, because three neighbours have turned, the
 left is open, and no closer stands behind him." Click a unit: the shares steady, forward, back

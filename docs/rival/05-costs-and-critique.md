@@ -26,9 +26,11 @@ validation regime cost the same in both designs.
 - **The inner life.** No fear, fury or resolve gauges to inspect in a man. He gets
   dispositions, at most two marks, a posture history, and the cause of each change by name.
 - **Wounds by body zone and the blood pool.** Four classes, and flavour drawn afterwards.
-- **The jostle.** Men tied to slots in a pressure field will look more regular than soft
-  bodies shoving. The viewer may need to add visual life that is not state.
-- **Part of the line-relief study:** the man-to-man tangle.
+- **Some of the jostle.** Formed men tied to their slots will look more regular than soft
+  bodies shoving. Where order has gone, bodies touch as they do in the vision of record. The
+  viewer may still need to add visual life that is not state.
+- **Perhaps part of the line-relief study,** if contact only where men are crowded misses
+  something that contact everywhere catches. The experiment checks.
 - **Some evidence** ([04](04-acceptance.md) §4).
 
 ## 2. Where the vision of record is wrong
@@ -70,8 +72,10 @@ first slice.
 1. **It accepts that its own acceptance test cannot run on the machine it is built for.**
    Michal asked for his machine.
 2. **The toy asks which kernel, not whether a man needs a dynamical system.**
-3. **Parsimony is applied to mechanisms and never to the substrate.** Pairwise collision at 20
-   Hz entered without a named pattern that needs it. Asked, Paullus could not name one.
+3. **Parsimony is applied to mechanisms and never to the substrate.** Pairwise collision for
+   every body at 20 Hz entered without a named pattern that needs it everywhere. Paullus has
+   since named where it is needed: gaps, gates and banks, where crowds clog. That is a few per
+   cent of the men.
 
 ## 5. Where the rival is weak
 
@@ -84,7 +88,7 @@ first slice.
 | There is nowhere for fear to outlast its cause | **Accepted as a candidate.** *Shaken*: one small integer, raised by visible shocks, fading in minutes, kept only if the ablation needs it ([01](01-the-man.md) §9). |
 | Lattices and loose crowds are two representations | **Accepted.** One mechanism: a carrier and a tie. |
 | A horse moves 3.5 m in a step at 4 Hz | **Accepted.** Substeps, and the charge decided before contact. |
-| Line relief becomes an input | **Partly.** Flow capacity through an interval stays a result. The man-to-man tangle is lost. |
+| Line relief becomes an input; a field smooths away what is granular; a metre cell cannot resolve a three-metre gap | **Accepted.** Bodies touch where men are crowded and moving, so a jam is a result again ([02](02-order-and-contact.md) §5). Three rungs go into the experiment. |
 | The speed is arithmetic | **Accepted.** The spike decides. |
 | The centurion share does not discriminate | **Accepted** ([04](04-acceptance.md) §5). |
 

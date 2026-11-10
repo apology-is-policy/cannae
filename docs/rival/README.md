@@ -3,7 +3,7 @@
 **Status:** a proposal on branch `varro`. It is not the design of record; that is
 [`docs/vision/`](../vision/README.md). Michal asked for a competing vision, with leave to relax
 anything. Written by Varro (Claude Fable 5.2) on 2026-11-10, and revised the same day after
-Paullus's critique of the one-page sketch (yip call 0001, turn 3 and note 2).
+Paullus's critique of the one-page sketch (yip call 0001, turn 3 and notes 2 and 3).
 
 ## The thesis
 
@@ -34,7 +34,7 @@ statistics at full scale.
 | 2 | Each man is a dynamical system: x, F, Φ, R, H and more, about 100 bytes | **The man is small and discrete:** five dispositions, a posture, a wound class, W′, and at most two marks of memory. Every change is a logged event. | The sources constrain acts and rates, not inner gains. Every rout gets a traceable genealogy. |
 | 3 | The clash is a relaxation oscillation timed by W′ | **Fear is the default; fighting is led.** Standoff is the rest state. A bout starts when a bold man or a centurion steps forward and others follow. | The casualty clock: a formed fight has room for very little committed fighting ([02](02-order-and-contact.md) §9). |
 | 4 | A frame fitted to where the men are, and men steering to its slots | **The standard is the frame.** Every body has a carrier; drill sets how stiffly men are tied to it. Order is a measured quantity. | Better history, simpler code, and "loses its order" becomes a number. |
-| 5 | 20 Hz pairwise collisions on all cores; float state; double buffers and intent passes | **Fields and events, one battle per core.** Bodies move in a density and pressure field at 4 Hz. State is integers. The cores run seeds. | This is where the speed comes from. Determinism across machines comes free. |
+| 5 | 20 Hz pairwise collisions on all cores; float state; double buffers and intent passes | **Fields and events, one battle per core.** Bodies move in a density and pressure field at 4 Hz, and touch each other only where they are crowded and moving. State is integers. The cores run seeds. | This is where the speed comes from. Determinism across machines comes free. |
 | 6 | A learned predictor for A2; an emulator for calibration; a scale study | **Acceptance measured directly.** The ensemble of seeds is the predictor. Fate curves come from forking a live battle. | Cheap runs make the indirect machinery unnecessary. |
 
 ## What stays
@@ -60,8 +60,8 @@ Rust, the viewer, vertical slices, and the parsimony pillar, which the rival onl
 - the inner life in the inspector (no x, F, Φ, R to look at; marks, a posture history and
   their causes instead);
 - wounds by body zone and the blood pool (four wound classes instead);
-- the organic jostle of soft bodies, and the man-to-man detail of whether a line passage
-  tangles;
+- some of the organic jostle of soft bodies: formed men keep their places, and bodies touch
+  only where order has gone ([02](02-order-and-contact.md) §5);
 - "low losses while the lines are formed" as evidence: here it is an input.
 
 ## Documents
@@ -84,7 +84,7 @@ Rust, the viewer, vertical slices, and the parsimony pillar, which the rival onl
 | Caesar, *BC* 3.71, 3.89, 3.93, 3.99; *BG* 2.21, 7.51. Livy 10.28, 22.48 | Checked on 2026-11-10 against the Latin text at The Latin Library. |
 | Sabin, "The Face of Roman Battle", *JRS* 90 (2000) 1–17 | Reference confirmed. The argument is given from memory; the article must be re-read before any wording is quoted. |
 | Collins, *Violence: A Micro-sociological Theory* (Princeton, 2008) | Reference and the three concepts used (confrontational tension, forward panic, the violent few) confirmed from the publisher's summary and reviews. Details from memory. |
-| Du Picq; Appian on Pharsalus; Plutarch on Carrhae; pedestrian densities (Fruin, Weidmann) | From memory. To check before use. |
+| Du Picq; Appian on Pharsalus; Plutarch on Carrhae; pedestrian densities and bottleneck flows (Fruin, Weidmann, later experiments) | From memory. To check before use. |
 
 **One correction to the sketch.** It gave the centurions' share of a legion as 1.25 %. That is
 the paper figure: 60 in about 4,800. Caesar's legions at Pharsalus averaged about 2,750 men (80

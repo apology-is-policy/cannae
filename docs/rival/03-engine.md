@@ -37,6 +37,11 @@ performance-core equivalents (the vision of record's own 17 G cycles a second, l
 without a fan). That is about 30 battles an hour, 240 in a night. At 10× per core, the line
 below which I call the rival dead, it is 80 a night.
 
+**Contact is not in the table.** Bodies that are crowded and moving also touch each other
+([02](02-order-and-contact.md) §5). If a tenth of the men are in that state it adds about
+40 M cycles; if a whole pocket churned at once it could more than double the total. With
+contact the honest range is nearer 12–30× per core. The kill line stays at 10×.
+
 **Every cycle count in the table is a guess.** The Slice 0 spike measures them
 ([06](06-experiment.md)).
 
@@ -129,7 +134,7 @@ between field steps.
 
 | Dropped | Why |
 |---|---|
-| Pairwise soft-body collision at 20 Hz | The field ([02](02-order-and-contact.md) §5) |
+| Pairwise soft-body collision for every body at 20 Hz | The field, with contact only where men are crowded and moving ([02](02-order-and-contact.md) §5) |
 | Threads inside a battle, and everything that makes them deterministic | §5 |
 | Floating-point rules | §4 |
 | Three perception grids with sound, dust and rumour fields | One grid of counts (§3) |

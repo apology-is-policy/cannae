@@ -58,15 +58,15 @@ close up, open out, face about, wheel, form a ring.
 
 **Line relief** is built as R2, as in the vision of record: in a lull, the tired body's carrier
 steps back through the interval, the fresh body's carrier steps up, and the men follow. The men
-passing each other move through the field (§5), which has a flow capacity. So the question "can
-this interval pass this many men in the length of a lull?" stays answerable. What is lost is
-the tangle of man against man: shields catching, files interleaving. Michal should know he
-trades that part of the feasibility study.
+passing each other are crowded and moving, so their bodies touch (§5). Whether a passage jams
+is then a result, as it is in the vision of record, and it can be checked against measured
+flows through bottlenecks ([06](06-experiment.md) §2).
 
 ### 5. The field
 
-Bodies do not collide pair by pair. Each man deposits his presence on a grid of cells one to
-two metres wide, which gives a **density** and a **pressure** for each side.
+Each man deposits his presence on a grid of cells about a metre wide, spread smoothly over the
+cells around him, which gives a **density** and a **pressure** for each side. That field
+carries everything at long range. Bodies touch each other only where it matters (below).
 
 - A man moves toward where he wants to be: his slot if he is in a body, away from the enemy if
   he has turned. His speed falls as density rises, following the walking-speed curves of
@@ -80,9 +80,32 @@ two metres wide, which gives a **density** and a **pressure** for each side.
   oppressa suorum in terrore ac fuga sine ullo vulnere interiit* (*BC* 3.71).
 - **Othismos** stays a parameter: how much of the rear ranks' push reaches the front.
 
-Paullus could name no pattern in the corpus that needs contact forces between individual
-bodies in place of a pressure field with slots. Neither can I. If one appears, it enters under
-the parsimony pillar like anything else.
+**Where bodies touch.** Michal's read of the two substrates was that bodies feel more human
+and the field more mathematically pretty, and he asked Paullus and me to argue toward common
+ground. Paullus's case for bodies (call 0001, note 3) is that a field smooths away what is
+granular. Men arch and clog at a gap. Force runs in chains through a packed crowd. One man
+goes down and is trampled because of where he happened to stand. And a cell a metre wide
+cannot say how many men pass a gap three metres wide: there the grid would set the answer, not
+the men. He is right on each count.
+
+His middle is the one astrophysics uses: a mesh carries the long range, and a pairwise
+correction runs at short range where it matters. I accept it in this form. **Order decides the
+physics:**
+
+| A man who is | Moves by |
+|---|---|
+| In his place | His tie to his slot. Formed men do not shove each other. In both designs their jostle is mostly for the eye. |
+| Out of his place, with room | The field: he steers, and density slows him |
+| Out of his place, crowded and moving | **Contact with the bodies around him,** on top of the field: at a gap, a gate, a river bank, the churning edge of a pocket |
+
+The packed interior of a pocket is crowded but hardly moves, so it stays on the field. Contact
+is solved by position, a few passes a step, which stays stable at 4 Hz.
+
+This is the engine's own principle applied to physics: spend the work where something is
+happening. It also follows the sources, which keep formed bodies and crowds apart. Three
+rungs go into the experiment against measured bottleneck flows: field alone; field with
+contact where men are crowded and moving; contact everywhere. The lowest that passes is kept
+([06](06-experiment.md) §2). I expect the middle rung to be needed wherever men pass a gap.
 
 ### 6. Fast bodies
 
@@ -187,5 +210,6 @@ outcome. That is flavour, and the model says so.
 | The Gallic pattern | The bold stand in front, go in together, are spent together, and are not replaced |
 | Roman staying power | Leaders appointed and succeeded by rule; closers behind; relief that brings fresh breath and fresh bold men |
 | Compression | Pressure above the weapon-use threshold (§5) |
+| Clogging at a gate or a gap | Contact between crowded, moving bodies (§5) |
 | The inward surge at Cannae | Forward panic into a yielding centre; order lost; then compression |
 | Envelopment | Carriers moved by officers on their own reading of the field ([05](../vision/05-command.md), [09](../vision/09-intent-and-plans.md)) |
