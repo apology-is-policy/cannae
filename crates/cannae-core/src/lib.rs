@@ -23,7 +23,7 @@ pub mod units;
 pub mod view;
 
 pub use angle::Turn;
-pub use event::{Cause, Causes, Event, EventKind, EventLog};
+pub use event::{BoutOutcome, Cause, Causes, Event, EventKind, EventLog};
 pub use fixed::Prob;
 pub use hazard::{Hazards, Transition};
 pub use intent::{Gait, Intent, Target};

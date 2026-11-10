@@ -8,6 +8,8 @@ use cannae_core::schedule::{BASE_TICK, MAN_EVERY};
 use cannae_core::view::NoFrames;
 use cannae_core::{GridPerception, NoBouts, Rng};
 use cannae_harness::kinematic::Kinematic;
+use cannae_harness::metrics::{Inputs, Recorder, summarize};
+use cannae_harness::scenario::Layout;
 use cannae_harness::toy::Toy;
 use cannae_harness::{Runner, Scenario, place, svg};
 use std::path::PathBuf;
@@ -43,7 +45,10 @@ fn main() -> ExitCode {
             return ExitCode::FAILURE;
         }
     };
-    let (bodies, _) = place(&s);
+    let (bodies, placed) = place(&s);
+    let initial = bodies.clone();
+    let layout = Layout::of(&placed);
+    let mut rec = Recorder::new(&initial, placed.len());
     let n = bodies.len();
     let mut r = Runner::new(
         bodies,
@@ -74,8 +79,20 @@ fn main() -> ExitCode {
                 return ExitCode::FAILURE;
             }
         }
-        r.step();
+        if r.step() {
+            rec.record(r.tick - 1, &r.bodies);
+        }
     }
+    let summary = summarize(&Inputs {
+        initial: &initial,
+        placed: &placed,
+        layout: &layout,
+        samples: &rec.samples,
+        events: r.log.all(),
+        end_tick: end,
+        break_share: 0.4,
+    });
+    println!("{summary:#?}");
     println!(
         "{}: {} men, {} s, {} events, evaluated {} skipped {}, hash {:016x}",
         s.name,

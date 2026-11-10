@@ -1,0 +1,33 @@
+# Slice 0 pass bands. DRAFT: proposed by Paullus, to be agreed with Varro, then frozen
+# (commit and SHA-256 recorded in docs/STATUS.md) before any scored run. Definitions are in
+# docs/slice0/preregistration.md; the code is crates/cannae-harness/src/metrics.rs.
+
+# A body or side is broken when this share of its standing men have turned.
+break_share = 0.4
+
+# 1. A stable standoff.
+standoff_min_formed_s = 300.0
+standoff_min_median_gap_m = 1.0
+
+# 2. Pulses and lulls.
+pulses_min_burstiness = 0.2
+pulses_lull_share = [0.2, 0.9]
+
+# 3. Rear-first collapse (setup depth: 0 front rank, 1 rear rank).
+rear_first_min_depth = 0.6
+
+# 4. Lateral spread.
+spread_min_rho = 0.3
+spread_s = [10.0, 900.0]
+
+# 5. Casualty asymmetry.
+asymmetry_min_after_break = 0.6
+
+# 6. Holds, then breaks.
+holds_early_s = 300.0
+holds_max_early = 0.1
+holds_max_never = 0.2
+
+# 7. The casualty clock.
+clock_hits_per_file_hour = [0.1, 2.0]
+# clock_lethality_per_bout = [lo, hi]   # fixed after the S0.4 literature search

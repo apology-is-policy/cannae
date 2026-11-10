@@ -57,12 +57,41 @@ pub enum Cause {
 /// The three largest contributions, largest first; unused slots are `Cause::None`.
 pub type Causes = [Cause; 3];
 
+/// What one side of a bout suffered.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(u8)]
+pub enum BoutOutcome {
+    #[default]
+    Nothing = 0,
+    DrivenBack = 1,
+    Hampered = 2,
+    Disabled = 3,
+    Killed = 4,
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum EventKind {
-    Posture { from: Posture, to: Posture },
-    Wound { to: Wound },
-    StandardDown { body: BodyId },
-    StandardUp { body: BodyId },
+    Posture {
+        from: Posture,
+        to: Posture,
+    },
+    Wound {
+        to: Wound,
+    },
+    StandardDown {
+        body: BodyId,
+    },
+    StandardUp {
+        body: BodyId,
+    },
+    /// One bout, logged whatever its outcome, so that lethality per bout can be measured. The
+    /// event's man is the defender. Wounds and posture changes it causes are logged as their
+    /// own events.
+    Bout {
+        attacker: ManId,
+        defender: BoutOutcome,
+        attacker_took: BoutOutcome,
+    },
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]

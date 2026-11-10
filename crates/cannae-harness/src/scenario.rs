@@ -12,6 +12,28 @@ pub struct Scenario {
     pub duration_s: u32,
     #[serde(rename = "body")]
     pub bodies: Vec<BodySpec>,
+    /// Orders given at set times, executed by the frames module.
+    #[serde(default, rename = "order")]
+    pub orders: Vec<OrderSpec>,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum OrderKind {
+    Hold,
+    Advance,
+    Charge,
+    Retire,
+    Pursue,
+}
+
+#[derive(Clone, Debug, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct OrderSpec {
+    /// The body's `name`.
+    pub body: String,
+    pub at_s: u32,
+    pub order: OrderKind,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq, Eq)]
@@ -71,6 +93,31 @@ pub struct Placed {
     pub count: u32,
     pub leader: u32,
     pub carrier: u32,
+    pub files: u32,
+    pub ranks: u32,
+}
+
+/// Each man's place at setup: rank 0 is the front; a closer's rank is one past the rear.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct Layout {
+    pub rank: Vec<u16>,
+    pub file: Vec<u16>,
+}
+
+impl Layout {
+    pub fn of(placed: &[Placed]) -> Layout {
+        let mut l = Layout::default();
+        for p in placed {
+            for k in 0..p.count {
+                let in_grid = k < p.files * p.ranks;
+                l.rank
+                    .push(if in_grid { k / p.files } else { p.ranks } as u16);
+                l.file
+                    .push(if in_grid { k % p.files } else { p.files / 2 } as u16);
+            }
+        }
+        l
+    }
 }
 
 /// Lays out every body in ranks and files. Rank 0 is the front, toward the facing; file 0 is the
@@ -149,6 +196,8 @@ pub fn place(s: &Scenario) -> (Bodies, Vec<Placed>) {
             count: bodies.len() as u32 - first,
             leader,
             carrier,
+            files: b.files,
+            ranks: b.ranks,
         });
     }
     (bodies, placed)
@@ -193,6 +242,9 @@ mod tests {
         assert_eq!(b.role[6], Role::Closer);
         assert_eq!(b.pos[6], Vec2::new(-3000, 0));
         assert_eq!((p[0].leader, p[0].carrier), (2, 4));
+        let l = Layout::of(&p);
+        assert_eq!((l.rank[4], l.file[4]), (1, 1));
+        assert_eq!(l.rank[6], 2);
     }
 
     #[test]

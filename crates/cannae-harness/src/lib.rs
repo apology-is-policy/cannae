@@ -1,6 +1,7 @@
-//! The Slice 0 harness: scenarios, the runner, frame dumps. Metrics follow in S0.3.
+//! The Slice 0 harness: scenarios, the runner, metrics, frame dumps.
 
 pub mod kinematic;
+pub mod metrics;
 pub mod runner;
 pub mod scenario;
 pub mod svg;

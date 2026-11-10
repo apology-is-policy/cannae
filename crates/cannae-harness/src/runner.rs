@@ -54,7 +54,7 @@ pub fn apply(bodies: &mut Bodies, e: &Event) {
                 bodies.posture[i] = Posture::Down;
             }
         }
-        EventKind::StandardDown { .. } | EventKind::StandardUp { .. } => {}
+        EventKind::StandardDown { .. } | EventKind::StandardUp { .. } | EventKind::Bout { .. } => {}
     }
 }
 
@@ -192,8 +192,8 @@ where
         self.prev_step = t;
     }
 
-    /// One base tick.
-    pub fn step(&mut self) {
+    /// One base tick. Returns whether it was a man step, after which observers may record.
+    pub fn step(&mut self) -> bool {
         let t = self.tick;
         let man_step = is_man_step(t);
         if man_step {
@@ -209,6 +209,7 @@ where
             self.hashes.push(self.state_hash());
         }
         self.tick += 1;
+        man_step
     }
 
     pub fn run_until(&mut self, tick: u32) {
