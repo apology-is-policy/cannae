@@ -76,9 +76,19 @@ impl Resolver for NoBouts {
 }
 
 /// Moves bodies. The pairwise substrate moves every base tick; the field substrate may batch
-/// its work but must present the state at base-tick granularity to the runner.
+/// its work but must present the state at base-tick granularity to the runner. A substrate may
+/// emit events of its own (a man injured in a crush, with `Cause::Crush`), which the runner
+/// applies at the end of the base tick.
 pub trait Substrate {
-    fn advance(&mut self, bodies: &mut Bodies, targets: &[Target], dt: SimMs, rng: &Rng, tick: u32);
+    fn advance(
+        &mut self,
+        bodies: &mut Bodies,
+        targets: &[Target],
+        dt: SimMs,
+        rng: &Rng,
+        tick: u32,
+        out: &mut Vec<Event>,
+    );
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]

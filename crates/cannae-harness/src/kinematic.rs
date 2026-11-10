@@ -1,7 +1,7 @@
 //! A test substrate: every man walks straight to his target, through anyone in the way. It
 //! exists to exercise the runner and the man models before either real substrate is built.
 
-use cannae_core::{Bodies, Posture, Rng, SimMs, Substrate, Target, Vec2};
+use cannae_core::{Bodies, Event, Posture, Rng, SimMs, Substrate, Target, Vec2};
 
 pub struct Kinematic {
     /// The most a man turns in one base tick, in turn units.
@@ -18,7 +18,15 @@ impl Default for Kinematic {
 }
 
 impl Substrate for Kinematic {
-    fn advance(&mut self, bodies: &mut Bodies, targets: &[Target], dt: SimMs, _: &Rng, _: u32) {
+    fn advance(
+        &mut self,
+        bodies: &mut Bodies,
+        targets: &[Target],
+        dt: SimMs,
+        _: &Rng,
+        _: u32,
+        _: &mut Vec<Event>,
+    ) {
         for (i, t) in targets.iter().enumerate() {
             if bodies.posture[i] == Posture::Down {
                 bodies.vel[i] = Vec2::ZERO;

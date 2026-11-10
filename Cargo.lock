@@ -16,6 +16,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "cannae-pairwise"
+version = "0.1.0"
+dependencies = [
+ "cannae-core",
+ "cannae-harness",
+]
+
+[[package]]
 name = "equivalent"
 version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"

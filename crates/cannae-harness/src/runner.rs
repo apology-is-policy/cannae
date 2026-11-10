@@ -199,8 +199,18 @@ where
         if man_step {
             self.man_step();
         }
-        self.substrate
-            .advance(&mut self.bodies, &self.targets, BASE_TICK, &self.rng, t);
+        let mut moved = Vec::new();
+        self.substrate.advance(
+            &mut self.bodies,
+            &self.targets,
+            BASE_TICK,
+            &self.rng,
+            t,
+            &mut moved,
+        );
+        if !moved.is_empty() {
+            self.apply_phase(moved);
+        }
         if man_step {
             let mut out = Vec::new();
             self.resolver

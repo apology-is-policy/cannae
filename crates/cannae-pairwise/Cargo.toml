@@ -1,0 +1,15 @@
+[package]
+name = "cannae-pairwise"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+description = "The vision of record's substrate: soft bodies in pairwise contact, every base tick"
+
+[dependencies]
+cannae-core = { path = "../cannae-core" }
+
+[dev-dependencies]
+cannae-harness = { path = "../cannae-harness" }
+
+[lints]
+workspace = true
