@@ -4,6 +4,8 @@
 //! The troops here are made for short tests, not for any battle. Nothing in this file is a
 //! scored run, and nothing here was used to choose a prior.
 
+use cannae_core::View;
+use cannae_core::hash::StateHasher;
 use cannae_core::power::GaitSpeeds;
 use cannae_core::{
     BodyFrames, BoutParams, Bouts, Cause, Event, EventKind, FrameQuery, GridPerception, ManId,
@@ -12,7 +14,7 @@ use cannae_core::{
 use cannae_harness::kinematic::Kinematic;
 use cannae_harness::scenario::frames;
 use cannae_harness::{Dormancy, Runner, Scenario, place};
-use cannae_man::{Men, Params, Rung, Spread, Troop};
+use cannae_man::{Memory, Men, NO_PARTS, Params, Parts, Rung, Spread, Sums, Troop};
 
 const CLASH: &str = r#"
     name = "clash"
@@ -278,4 +280,93 @@ fn a_man_who_turned_for_nothing_rallies_and_takes_a_place_again() {
         assert_eq!(r.hashes, all.hashes, "{rung:?}");
         assert_eq!(r.hashes, check.hashes, "{rung:?}");
     }
+}
+
+/// A memory that grows a little more afraid at every step it is told of, and more where it
+/// was told of frightening acts. One call too many, or one too few, changes the battle.
+#[derive(Clone, Debug)]
+struct Wearing {
+    told: Vec<u32>,
+    acts: Vec<i64>,
+}
+
+impl Memory for Wearing {
+    const READS_SUMS: bool = true;
+
+    fn alarm_term(&self, man: ManId, _: u32) -> Parts {
+        let i = man.0 as usize;
+        let mut parts = NO_PARTS;
+        parts[0] = ((self.told[i] / 2).min(192) as i32, Cause::Fear);
+        parts[1] = ((self.acts[i] / 512).min(192) as i32, Cause::Resolve);
+        parts
+    }
+
+    fn absorb(&mut self, man: ManId, _: &View, sums: &Sums) {
+        self.told[man.0 as usize] += 1;
+        self.acts[man.0 as usize] += sums.acts as i64;
+    }
+
+    fn on_event(&mut self, _: &Event) {}
+
+    fn hash(&self, h: &mut StateHasher) {
+        for (&t, &a) in self.told.iter().zip(&self.acts) {
+            h.write_u64(t as u64 | (a as u64) << 32);
+        }
+    }
+}
+
+type Worn = Runner<GridPerception, Men<Wearing>, Kinematic, BodyFrames, Bouts>;
+
+fn wearing(mode: Dormancy) -> Worn {
+    let s = Scenario::from_toml(CLASH).unwrap();
+    let (bodies, placed) = place(&s);
+    let f = frames(&s, &placed, &bodies).unwrap();
+    let rng = Rng::new(s.seed);
+    let memory = Wearing {
+        told: vec![0; bodies.len()],
+        acts: vec![0; bodies.len()],
+    };
+    let men = Men::with_memory(memory, Params::CENTRE, &bodies, &[EAGER, BRITTLE], &rng);
+    let params = BoutParams {
+        rate_q16: 1 << 15,
+        ..BoutParams::PLACEHOLDER
+    };
+    let bouts = Bouts::new(params, men.kits());
+    let mut r = Runner::new(
+        bodies,
+        GridPerception::default(),
+        men,
+        Kinematic::default(),
+        f,
+        bouts,
+        rng,
+        GaitSpeeds::PLACEHOLDER,
+    );
+    r.dormancy = mode;
+    r
+}
+
+#[test]
+fn a_memory_is_told_only_of_steps_a_man_was_awake_for_in_every_dormancy_mode() {
+    let mut skip = wearing(Dormancy::Skip);
+    let mut all = wearing(Dormancy::EvaluateAll);
+    let mut check = wearing(Dormancy::Check);
+    for r in [&mut skip, &mut all, &mut check] {
+        r.run_until(3_600);
+    }
+    assert_eq!(skip.hashes, all.hashes);
+    assert_eq!(skip.hashes, check.hashes);
+    assert_eq!(skip.model.memory.told, all.model.memory.told);
+    assert_eq!(skip.model.memory.acts, all.model.memory.acts);
+    // The run tells the two apart: men slept, every man was awake at some step, no man at
+    // every step, and frightening acts were seen.
+    assert!(skip.skipped > 1_000, "only {} slept", skip.skipped);
+    let man_steps = 3_600 / 5;
+    let told = &skip.model.memory.told;
+    assert!(told.iter().all(|&t| t > 0 && t < man_steps), "{told:?}");
+    assert!(skip.model.memory.acts.iter().any(|&a| a > 0));
+    // And the memory mattered: it is a different battle from the one without it.
+    let mut plain = clash(Rung::NoMarks, Dormancy::Skip);
+    plain.run_until(3_600);
+    assert_ne!(skip.hashes, plain.hashes);
 }

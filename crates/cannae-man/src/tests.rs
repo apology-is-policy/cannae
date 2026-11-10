@@ -78,7 +78,7 @@ fn facing_the_enemy(posture: Posture) -> View {
     v
 }
 
-fn rate(m: &Men, v: &View, to: Posture) -> u32 {
+fn rate<M: Memory>(m: &Men<M>, v: &View, to: Posture) -> u32 {
     m.explain(ME, v)
         .ways
         .iter()
@@ -87,7 +87,7 @@ fn rate(m: &Men, v: &View, to: Posture) -> u32 {
         .map_or(0, |t| t.rate_q16)
 }
 
-fn causes(m: &Men, v: &View, to: Posture) -> Causes {
+fn causes<M: Memory>(m: &Men<M>, v: &View, to: Posture) -> Causes {
     m.explain(ME, v)
         .ways
         .iter()
@@ -645,4 +645,124 @@ fn men_differ_and_the_same_seed_makes_the_same_men() {
     assert_eq!(Troop::named("gallic-warband"), Some(Troop::WARBAND));
     assert_eq!(Troop::named("hastati-veterans"), Some(Troop::VETERANS));
     assert_eq!(Troop::named("nobody"), None);
+}
+
+/// A memory that writes down what it is told, and adds what the test sets.
+#[derive(Clone, Debug)]
+struct Told {
+    seen: Vec<(u32, Sums)>,
+    alarm: Parts,
+    urge: (i32, Cause),
+}
+
+impl Memory for Told {
+    const READS_SUMS: bool = true;
+
+    fn alarm_term(&self, _: ManId, _: u32) -> Parts {
+        self.alarm
+    }
+
+    fn urge_term(&self, _: ManId, _: u32) -> (i32, Cause) {
+        self.urge
+    }
+
+    fn absorb(&mut self, _: ManId, v: &View, sums: &Sums) {
+        self.seen.push((v.tick, *sums));
+    }
+
+    fn on_event(&mut self, _: &Event) {}
+
+    fn hash(&self, h: &mut StateHasher) {
+        h.write_u64(self.seen.len() as u64);
+    }
+}
+
+fn told(alarm: Parts, urge: (i32, Cause)) -> Men<Told> {
+    let mut b = Bodies::default();
+    b.push(Observed {
+        body: Some(BodyId(0)),
+        ..Default::default()
+    });
+    let memory = Told {
+        seen: Vec::new(),
+        alarm,
+        urge,
+    };
+    Men::with_memory(memory, Params::CENTRE, &b, &[PLAIN], &Rng::new(1))
+}
+
+#[test]
+fn a_memory_is_told_what_an_awake_man_saw_and_nothing_else() {
+    let p = Params::CENTRE;
+    let mut m = told(NO_PARTS, (0, Cause::None));
+    // Nothing to see: he sleeps, and his memory is not troubled, however often it is asked.
+    let mut quiet = view(Posture::Steady);
+    for tick in 0..50 {
+        quiet.tick = tick;
+        m.absorb(ME, &quiet);
+    }
+    assert!(m.memory.seen.is_empty());
+    // The enemy ahead, one of his side turned, two standing beside him, an open slot at his
+    // left, and his leader standing in view.
+    let mut v = facing_the_enemy(Posture::Steady);
+    v.tick = 60;
+    set(&mut v, Group::Ahead, Rel::Own, Posture::Turned, 1);
+    set(&mut v, Group::Beside, Rel::Own, Posture::Steady, 2);
+    if let Some(s) = v.slot.as_mut() {
+        s.neighbours &= !nb::LEFT;
+    }
+    m.absorb(ME, &v);
+    let want = Sums {
+        acts: UNIT,
+        conditions: p.gap,
+        support: 2 * p.beside + ((p.leader * p.beside) >> 8),
+        urge: -p.own_unsteady,
+    };
+    assert_eq!(m.memory.seen, [(60, want)]);
+    // Being told changes nothing he does: with no term, he is the man of rung 0.
+    let plain = men(Rung::NoMarks, Role::Soldier);
+    for to in [Posture::Back, Posture::Forward] {
+        assert_eq!(rate(&m, &v, to), rate(&plain, &v, to));
+    }
+}
+
+#[test]
+fn what_a_memory_adds_moves_his_hazards_and_is_named() {
+    let plain = men(Rung::NoMarks, Role::Soldier);
+    let mut v = facing_the_enemy(Posture::Steady);
+    set(&mut v, Group::Ahead, Rel::Own, Posture::Turned, 1);
+    let mut worse = v;
+    set(&mut worse, Group::Ahead, Rel::Own, Posture::Turned, 2);
+
+    // A unit of remembered fear counts exactly as one more man of his side turning in view.
+    let mut afraid = NO_PARTS;
+    afraid[2] = (UNIT, Cause::Fear);
+    let m = told(afraid, (0, Cause::None));
+    assert_eq!(
+        rate(&m, &v, Posture::Back),
+        rate(&plain, &worse, Posture::Back)
+    );
+    assert!(causes(&m, &v, Posture::Back).contains(&Cause::Fear));
+
+    // A part below zero steadies him by as much, and is named among what holds him.
+    let mut steadied = NO_PARTS;
+    steadied[0] = (-UNIT, Cause::Resolve);
+    let m = told(steadied, (0, Cause::None));
+    assert_eq!(
+        rate(&m, &worse, Posture::Back),
+        rate(&plain, &v, Posture::Back)
+    );
+    assert!(!causes(&m, &worse, Posture::Back).contains(&Cause::Resolve));
+    let mut back = worse;
+    back.own.posture = Posture::Back;
+    assert!(causes(&m, &back, Posture::Steady).contains(&Cause::Resolve));
+
+    // A unit of urge counts as one more man of his side going forward.
+    let mut led = v;
+    set(&mut led, Group::Beside, Rel::Own, Posture::Forward, 1);
+    let m = told(NO_PARTS, (UNIT, Cause::Resolve));
+    let pushed = rate(&m, &v, Posture::Forward);
+    assert_eq!(pushed, rate(&plain, &led, Posture::Forward));
+    assert!(pushed > rate(&plain, &v, Posture::Forward));
+    assert!(causes(&m, &v, Posture::Forward).contains(&Cause::Resolve));
 }

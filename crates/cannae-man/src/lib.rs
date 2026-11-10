@@ -6,17 +6,20 @@
 //! the two sums against a threshold.
 //!
 //! What he carries from one moment to the next is his wounds and posture (which everyone can
-//! see), his breath, and the marks of his rung of the memory ladder ([`Rung`]). Nothing else:
-//! no fear level, no morale. Other men never read any of it.
+//! see), his breath, and his memory: whatever his rung of the ladder gives him
+//! ([`memory::Memory`]). At rungs 0 to 2 that is the marks ([`Marks`]); nothing else, no fear
+//! level, no morale. Other men never read any of it.
 //!
 //! Dormancy is exact. A steady man with no enemy in his window, no shock, no one of his side
 //! wavering in view and no order to charge has no hazards at all, by a gate and not by a small
-//! number. Breath and *shaken* are stored with the tick they were last written and read in
+//! number. Breath and every memory are stored with the tick they were last written and read in
 //! closed form, so skipping a man can never change a bit.
 
 pub mod curve;
+pub mod memory;
 pub mod params;
 
+pub use memory::{Marks, Memory, NO_PARTS, Parts, Sums};
 pub use params::{Params, Rung, Spread, Troop};
 
 use cannae_core::hash::StateHasher;
@@ -29,7 +32,7 @@ use cannae_core::{
     ManModel, Observed, Posture, Rng, Role, SimMs, Stream, Transition, Turn, View, Wound,
 };
 use curve::rate_q16;
-use params::{SHAKEN_MAX, SIGHT_LEADER_MM, SIGHT_STANDARD_MM, UNIT};
+use params::{SIGHT_LEADER_MM, SIGHT_STANDARD_MM, UNIT};
 use std::cmp::Reverse;
 
 /// Purpose words for the dispositions drawn at setup, on the setup stream.
@@ -47,26 +50,22 @@ struct Man {
     breath: CpUs,
     breath_tick: u32,
     activity: Activity,
-    has_fled: bool,
-    /// *Shaken* as it stood at `shaken_tick`. Written only when a fright raises it.
-    shaken: u8,
-    shaken_tick: u32,
 }
 
-/// The men of a battle, at one rung of the memory ladder.
+/// The men of a battle, with the memory of one rung of the ladder.
 #[derive(Clone, Debug)]
-pub struct Men {
-    pub rung: Rung,
+pub struct Men<M = Marks> {
     pub params: Params,
     /// What each activity costs. Shared with the other engine; not a parameter of this one.
     pub power: PowerTable,
+    pub memory: M,
     men: Vec<Man>,
 }
 
 /// The named parts of a sum, so that an exit can say what moved it most.
 #[derive(Clone, Copy, Default)]
 struct Terms {
-    parts: [(i32, Cause); 12],
+    parts: [(i32, Cause); 16],
     len: usize,
 }
 
@@ -171,10 +170,38 @@ fn way(to: Posture, rate_q16: u32, causes: Causes) -> Option<Transition> {
     })
 }
 
-impl Men {
-    /// Draws every man's dispositions from his troop's, on the setup stream. `troops` is
-    /// indexed by body; a man of no body is taken for the reference troop.
+impl Men<Marks> {
+    /// Men at one of the rungs 0 to 2.
     pub fn new(rung: Rung, params: Params, bodies: &Bodies, troops: &[Troop], rng: &Rng) -> Men {
+        let marks = Marks::new(rung, &params, bodies.len());
+        Men::with_memory(marks, params, bodies, troops, rng)
+    }
+
+    pub fn rung(&self) -> Rung {
+        self.memory.rung()
+    }
+
+    /// His level of *shaken* at `tick`: always zero below rung 2.
+    pub fn shaken(&self, man: ManId, tick: u32) -> u8 {
+        self.memory.shaken(man, tick)
+    }
+
+    pub fn has_fled(&self, man: ManId) -> bool {
+        self.memory.has_fled(man)
+    }
+}
+
+impl<M: Memory> Men<M> {
+    /// Draws every man's dispositions from his troop's, on the setup stream. `troops` is
+    /// indexed by body; a man of no body is taken for the reference troop. The dispositions do
+    /// not depend on the memory, so the same seed makes the same men at every rung.
+    pub fn with_memory(
+        memory: M,
+        params: Params,
+        bodies: &Bodies,
+        troops: &[Troop],
+        rng: &Rng,
+    ) -> Men<M> {
         let men = (0..bodies.len())
             .map(|i| {
                 let t = bodies.body[i].map_or(Troop::HASTATI, |b| troops[b.0 as usize]);
@@ -207,16 +234,13 @@ impl Men {
                     breath: t.stamina.reserve_us,
                     breath_tick: 0,
                     activity: Activity::Stand,
-                    has_fled: false,
-                    shaken: 0,
-                    shaken_tick: 0,
                 }
             })
             .collect();
         Men {
-            rung,
             params,
             power: PowerTable::PLACEHOLDER,
+            memory,
             men,
         }
     }
@@ -239,15 +263,6 @@ impl Men {
         self.breath_at(&self.men[man.0 as usize], tick)
     }
 
-    /// His level of *shaken* at `tick`: always zero below rung 2.
-    pub fn shaken(&self, man: ManId, tick: u32) -> u8 {
-        self.shaken_at(&self.men[man.0 as usize], tick)
-    }
-
-    pub fn has_fled(&self, man: ManId) -> bool {
-        self.men[man.0 as usize].has_fled
-    }
-
     fn breath_at(&self, m: &Man, tick: u32) -> CpUs {
         let dt = SimMs(tick.saturating_sub(m.breath_tick) * BASE_TICK.0);
         stamina::step(m.breath, self.power.of(m.activity), &m.stamina, dt)
@@ -260,21 +275,14 @@ impl Men {
         3 - left.min(3) as i32
     }
 
-    fn shaken_at(&self, m: &Man, tick: u32) -> u8 {
-        let worn = tick.saturating_sub(m.shaken_tick) / self.params.shaken_wear.max(1);
-        m.shaken.saturating_sub(worn.min(u8::MAX as u32) as u8)
-    }
-
-    /// His alarm: what he sees that pushes him toward flight, less what holds him, less his
-    /// nerve. Zero is the edge. Also returns what frightens and what steadies him, by name.
-    fn alarm(&self, m: &Man, v: &View) -> (i32, Terms, Terms) {
+    /// What he sees that bears on his alarm, in its three kinds: frightening acts, standing
+    /// conditions, and support. Names each part among his fears or among what holds him.
+    fn seen(&self, v: &View, fear: &mut Terms, calm: &mut Terms) -> (i32, i32, i32) {
         let p = &self.params;
         let c = &v.counts;
         let own = |posture| c.total(Rel::Own, posture);
-        let mut fear = Terms::default();
-        let mut a = 0;
 
-        // Acts.
+        let mut a = 0;
         a += fear.add(
             UNIT * capped(own(Posture::Turned), 8),
             Cause::NeighboursTurned,
@@ -314,55 +322,85 @@ impl Men {
             Some(Posture::Down) => a += fear.add(p.leader_down, Cause::LeaderDown),
             _ => {}
         }
+        let acts = a;
 
-        // Conditions.
+        let mut conditions = 0;
         if let Some(s) = v.slot {
             let open = s.slots & !s.neighbours & (nb::LEFT | nb::RIGHT);
-            a += fear.add(p.gap * open.count_ones() as i32, Cause::EmptySlot);
+            conditions += fear.add(p.gap * open.count_ones() as i32, Cause::EmptySlot);
         }
         if standard_lost(v) {
-            a += fear.add(p.standard_down, Cause::StandardDown);
+            conditions += fear.add(p.standard_down, Cause::StandardDown);
+        }
+        if v.own.wound == Wound::Hampered {
+            conditions += fear.add(p.hampered, Cause::Wounded);
         }
 
-        // Support.
-        let mut calm = Terms::default();
+        let mut support = 0;
         let stand = |g| {
             c.get(g, Rel::Own, Posture::Steady) as u32 + c.get(g, Rel::Own, Posture::Forward) as u32
         };
-        a -= calm.add(
+        support += calm.add(
             p.beside * capped(stand(Group::Beside) + stand(Group::Ahead), 6),
             Cause::SteadyNeighbours,
         );
-        a -= calm.add(
+        support += calm.add(
             p.behind * capped(stand(Group::Behind), 6),
             Cause::RanksBehind,
         );
         if leader_seen(v).is_some_and(standing) {
-            a -= calm.add((p.leader * p.beside) >> 8, Cause::LeaderInView);
+            support += calm.add((p.leader * p.beside) >> 8, Cause::LeaderInView);
         }
+        (acts, conditions, support)
+    }
 
-        // His nerve, and what has worn it.
-        a -= m.nerve;
-        if v.own.wound == Wound::Hampered {
-            a += fear.add(p.hampered, Cause::Wounded);
-        }
-        if self.rung >= Rung::HasFled && m.has_fled {
-            a += fear.add(p.has_fled, Cause::HasFled);
-        }
-        if self.rung >= Rung::Shaken {
-            a += fear.add(p.shaken * self.shaken_at(m, v.tick) as i32, Cause::Shaken);
+    /// His alarm: what he sees that pushes him toward flight, less what holds him, less his
+    /// nerve, with what his memory adds. Zero is the edge. Also returns what frightens and
+    /// what steadies him, by name.
+    fn alarm(&self, man: ManId, v: &View) -> (i32, Terms, Terms) {
+        let (mut fear, mut calm) = (Terms::default(), Terms::default());
+        let (acts, conditions, support) = self.seen(v, &mut fear, &mut calm);
+        let mut a = acts + conditions - support - self.men[man.0 as usize].nerve;
+        for (value, cause) in self.memory.alarm_term(man, v.tick) {
+            a += value;
+            fear.add(value, cause);
+            calm.add(-value, cause);
         }
         (a, fear, calm)
     }
 
+    /// The visible layer's sums, for a memory that reads them.
+    fn sums(&self, man: ManId, v: &View) -> Sums {
+        let (acts, conditions, support) =
+            self.seen(v, &mut Terms::default(), &mut Terms::default());
+        let m = &self.men[man.0 as usize];
+        let urge = self.urge_seen(m, v, &mut Terms::default(), &mut Terms::default());
+        Sums {
+            acts,
+            conditions,
+            support,
+            urge,
+        }
+    }
+
     /// His urge to go forward, with what drives it and what checks it, by name.
-    fn urge(&self, m: &Man, v: &View) -> (i32, Terms, Terms) {
+    fn urge(&self, man: ManId, v: &View) -> (i32, Terms, Terms) {
+        let (mut drive, mut check) = (Terms::default(), Terms::default());
+        let m = &self.men[man.0 as usize];
+        let mut u = self.urge_seen(m, v, &mut drive, &mut check);
+        let (value, cause) = self.memory.urge_term(man, v.tick);
+        u += value;
+        drive.add(value, cause);
+        check.add(-value, cause);
+        (u, drive, check)
+    }
+
+    /// His urge before his memory's term.
+    fn urge_seen(&self, m: &Man, v: &View, drive: &mut Terms, check: &mut Terms) -> i32 {
         let p = &self.params;
         let c = &v.counts;
         let own = |posture| c.total(Rel::Own, posture);
         let ahead = |posture| c.get(Group::Ahead, Rel::Enemy, posture) as u32;
-        let mut drive = Terms::default();
-        let mut check = Terms::default();
         let mut u = drive.add(m.ardour, Cause::Ardour);
         u += drive.add(
             UNIT * capped(own(Posture::Forward), 8),
@@ -384,11 +422,11 @@ impl Men {
             Cause::NeighboursBack,
         );
         u -= check.add(p.breath * self.winded(m, v.tick), Cause::Breath);
-        (u, drive, check)
+        u
     }
 }
 
-impl ManModel for Men {
+impl<M: Memory> ManModel for Men<M> {
     fn dormant(&self, _: ManId, own: &Observed, c: &Coarse, _: u32) -> bool {
         own.posture == Posture::Steady
             && !c.enemy_near
@@ -397,22 +435,18 @@ impl ManModel for Men {
             && !charging(c.order)
     }
 
-    /// Rung 2 only: each fall he sees, and the fall of his standard or his leader, raises
-    /// *shaken* a level. A rule, not a draw, so the seam needs no generator here.
+    /// Hands his memory what he saw, if he is awake. The runner may call this for every man
+    /// or only for those it did not skip; the wake test here makes the two the same.
     fn absorb(&mut self, man: ManId, v: &View) {
-        if self.rung < Rung::Shaken {
+        if !awake(v) {
             return;
         }
-        let frights = v.shocks.falls.min(SHAKEN_MAX)
-            + v.shocks.standard_fell as u8
-            + v.shocks.leader_fell as u8;
-        if frights == 0 {
-            return;
-        }
-        let now = self.shaken_at(&self.men[man.0 as usize], v.tick);
-        let m = &mut self.men[man.0 as usize];
-        m.shaken = (now + frights).min(SHAKEN_MAX);
-        m.shaken_tick = v.tick;
+        let sums = if M::READS_SUMS {
+            self.sums(man, v)
+        } else {
+            Sums::default()
+        };
+        self.memory.absorb(man, v, &sums);
     }
 
     fn explain(&self, man: ManId, v: &View) -> Hazards {
@@ -420,8 +454,7 @@ impl ManModel for Men {
             return Hazards::NONE;
         }
         let p = &self.params;
-        let m = &self.men[man.0 as usize];
-        let (a, fear, calm) = self.alarm(m, v);
+        let (a, fear, calm) = self.alarm(man, v);
         let rate = |k: i32, margin: i32| rate_q16(k, margin, p.react_q16);
         let enemy = enemy_in_view(v);
         let mut h = Hazards::NONE;
@@ -430,7 +463,7 @@ impl ManModel for Men {
                 // He goes forward only at an enemy he can see, or on an order, and never
                 // with a wound that hampers him.
                 if (enemy || charging(v.order)) && v.own.wound == Wound::Sound {
-                    let (u, drive, _) = self.urge(m, v);
+                    let (u, drive, _) = self.urge(man, v);
                     h.ways[0] = way(Posture::Forward, rate(p.k_urge, u - p.go), drive.top());
                 }
                 h.ways[1] = way(Posture::Back, rate(p.k_alarm, a), fear.top());
@@ -442,7 +475,7 @@ impl ManModel for Men {
                     // No one left to go at.
                     (p.react_q16, [Cause::None; 3])
                 } else {
-                    let (u, _, check) = self.urge(m, v);
+                    let (u, _, check) = self.urge(man, v);
                     (rate(p.k_urge, p.go - p.stay - u), check.top())
                 };
                 h.ways[0] = way(Posture::Steady, rate_q16, causes);
@@ -531,6 +564,7 @@ impl ManModel for Men {
     }
 
     fn on_event(&mut self, e: &Event) {
+        self.memory.on_event(e);
         let EventKind::Posture { to, .. } = e.kind else {
             return;
         };
@@ -545,24 +579,20 @@ impl ManModel for Men {
             Posture::Turned => Activity::Run,
             Posture::Down => Activity::Rest,
         };
-        if to == Posture::Turned && self.rung >= Rung::HasFled {
-            m.has_fled = true;
-        }
     }
 
     fn inner_hash(&self) -> u64 {
         let mut h = StateHasher::new();
         for m in &self.men {
             h.write_u64(m.breath as u64);
-            h.write_u64((m.breath_tick as u64) << 32 | m.shaken_tick as u64);
             h.write_u64(
                 m.activity as u64
-                    | (m.has_fled as u64) << 8
-                    | (m.shaken as u64) << 16
-                    | (m.nerve as u16 as u64) << 32
-                    | (m.ardour as u16 as u64) << 48,
+                    | (m.nerve as u16 as u64) << 8
+                    | (m.ardour as u16 as u64) << 24
+                    | (m.breath_tick as u64) << 32,
             );
         }
+        self.memory.hash(&mut h);
         h.finish()
     }
 }
