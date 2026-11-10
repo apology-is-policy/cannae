@@ -264,6 +264,13 @@ So:
   positive. Pooled over sets its standard error is about 0.01, where one set's is 0.13.
 - **The whole effect of a second line, reported:** the same statistic for `base` against
   `relief`, arithmetic and all.
+- **Whether the drill happened, reported:** the share of a cell's `relief` runs in which a
+  relief was ordered, and in which both were. A run with none is its `backed` twin, man for
+  man, and pulls the drill's statistic toward 0.5.
+- **Each relieved run beside its twin, reported** (Varro, turn 50). A run of `relief` and the
+  run of `backed` with the same set and seed are the same battle until the relief is ordered.
+  For the relieved runs, the report gives how many fared better than their twin, how many
+  worse and how many the same. That comparison carries none of the noise between seeds.
 - **Pattern 6 keeps two legs.** Dropping the third makes pattern 6 easier for both engines.
   Neither side can say which it helps more.
 - **Expected, written beforehand:** rung 3 shows the drill's effect more than rung 2. Its

@@ -57,12 +57,14 @@ struct Seed {
 }
 
 impl Seed {
-    /// The summary scored: the stopped run's, or the whole run's, which equals it.
+    /// The record scored: the stopped run's, or the whole run's, which summarises the same.
+    fn record(&self) -> Option<&Record> {
+        self.stopped.as_ref().or(self.whole.as_ref())
+    }
+
+    /// The summary scored.
     fn summary(&self) -> Option<&RunSummary> {
-        self.stopped
-            .as_ref()
-            .or(self.whole.as_ref())
-            .map(|r| &r.summary)
+        self.record().map(|r| &r.summary)
     }
 }
 
@@ -146,6 +148,7 @@ impl Cellbook {
             sets: Vec::new(),
             incomplete_sets: 0,
             audits: Vec::new(),
+            reliefs: Reliefs::default(),
         };
         let base_sets: Vec<u32> = self
             .records
@@ -197,6 +200,33 @@ impl Cellbook {
                 shock: compare("shock", "base", d).map(|(f, _)| f),
                 volleys: compare("volleys", "base", d).map(|(f, _)| f),
             });
+        }
+        // Whether the drill happened at all, and each relieved run against its `backed` twin:
+        // the same battle until the relief was ordered (call 0001, turn 50).
+        for (d, seeds) in self.records.get("relief").into_iter().flatten() {
+            for (seed, s) in seeds {
+                let Some(r) = s.record() else { continue };
+                let ordered = r.relieved_s.iter().filter(|t| t.is_some()).count();
+                rep.reliefs.runs += 1;
+                rep.reliefs.relieved += usize::from(ordered > 0);
+                rep.reliefs.relieved_all +=
+                    usize::from(ordered > 0 && ordered == r.relieved_s.len());
+                let twin = self
+                    .records
+                    .get("backed")
+                    .and_then(|m| m.get(d))
+                    .and_then(|m| m.get(seed))
+                    .and_then(Seed::summary);
+                if let (true, Some(b)) = (ordered > 0, twin) {
+                    let (relieved, backed) = (fortune(&r.summary, ROMANS), fortune(b, ROMANS));
+                    let k = match relieved.partial_cmp(&backed) {
+                        Some(std::cmp::Ordering::Greater) => 0,
+                        Some(std::cmp::Ordering::Less) => 1,
+                        _ => 2,
+                    };
+                    rep.reliefs.twins[k] += 1;
+                }
+            }
         }
         for (variant, sets) in &self.records {
             let mut audit = AuditTally::default();
@@ -257,6 +287,19 @@ pub struct SetScore {
     pub volleys: Option<f64>,
 }
 
+/// Whether the relief happened, over a cell's runs of `relief`, and how each relieved run
+/// fared against its `backed` twin (reported).
+#[derive(Default)]
+pub struct Reliefs {
+    pub runs: usize,
+    /// Runs in which some relief was ordered, and in which every one was.
+    pub relieved: usize,
+    pub relieved_all: usize,
+    /// Relieved runs with a `backed` twin in which the Roman line fared better, worse, and
+    /// the same.
+    pub twins: [usize; 3],
+}
+
 /// What the whole runs of one variant showed after the window, and what the memory variants
 /// cost the fronts before contact.
 #[derive(Default)]
@@ -282,6 +325,7 @@ pub struct Report {
     /// Sets with some `base` runs but not every seed.
     pub incomplete_sets: usize,
     pub audits: Vec<(String, AuditTally)>,
+    pub reliefs: Reliefs,
 }
 
 impl Report {
@@ -468,6 +512,20 @@ impl fmt::Display for Report {
             "    base, the whole second line: {}",
             spread(self.sets.iter().filter_map(|s| s.second_line).collect())
         )?;
+        let r = &self.reliefs;
+        if r.runs > 0 {
+            let [better, worse, same] = r.twins;
+            writeln!(
+                f,
+                "    a relief was ordered in {} of {} runs of relief ({:.0} %), every relief in {}; \
+                 against its backed twin, the relieved line fared better in {better}, worse in \
+                 {worse}, the same in {same}",
+                r.relieved,
+                r.runs,
+                100.0 * r.relieved as f64 / r.runs as f64,
+                r.relieved_all,
+            )?;
+        }
         writeln!(
             f,
             "\n  Shape of the time to break on base (Weibull k, reported): {}",
@@ -528,6 +586,65 @@ impl fmt::Display for Report {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn rec(
+        variant: &str,
+        draw: u32,
+        seed: u64,
+        loser: Option<Side>,
+        relieved: Vec<Option<u32>>,
+    ) -> Record {
+        Record {
+            engine: crate::Engine::Field,
+            rung: 1,
+            variant: variant.into(),
+            freeze_seed: Some(1),
+            draw,
+            seed,
+            whole: false,
+            sim_s: 0,
+            wall_ms: 0,
+            summary: RunSummary {
+                loser,
+                time_to_break_s: loser.map(|_| 100.0),
+                ..RunSummary::default()
+            },
+            audit: None,
+            relieved_s: relieved,
+        }
+    }
+
+    #[test]
+    fn the_report_says_whether_the_relief_came_and_how_each_relieved_run_did_beside_its_twin() {
+        let cell = Cell {
+            engine: crate::Engine::Field,
+            rung: 1,
+        };
+        let mut book = Cellbook {
+            cell,
+            seeds: 2,
+            records: Records::new(),
+            freeze_seeds: Vec::new(),
+            skipped_lines: 0,
+        };
+        let (a, b) = (Some(Side::A), Some(Side::B));
+        // Relieved, and the warband broke where in its twin the Romans did: better.
+        book.add(rec("relief", 0, 1, b, vec![Some(1_300), None]));
+        book.add(rec("backed", 0, 1, a, vec![]));
+        // Never relieved: no twin comparison, whatever happened.
+        book.add(rec("relief", 0, 2, a, vec![None, None]));
+        book.add(rec("backed", 0, 2, b, vec![]));
+        // Both centuries relieved, and the same outcome as the twin.
+        book.add(rec("relief", 1, 1, a, vec![Some(1_250), Some(1_400)]));
+        book.add(rec("backed", 1, 1, a, vec![]));
+        // Relieved, with no twin on disk.
+        book.add(rec("relief", 1, 2, None, vec![Some(1_200), None]));
+        let r = book
+            .score(&Bands::from_toml(include_str!("../../../scenarios/prereg.toml")).unwrap())
+            .reliefs;
+        assert_eq!((r.runs, r.relieved, r.relieved_all), (4, 3, 1));
+        assert_eq!(r.twins, [1, 0, 1]);
+    }
 
     #[test]
     fn wilson_brackets_ten_percent_of_two_hundred() {
