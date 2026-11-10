@@ -2,7 +2,7 @@
 
 **Phase:** Slice 0, the experiment between the two designs. The shared core and harness run end to end with a toy man; the engines are next.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-10.
+**Last updated:** 2026-11-10, evening.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -85,7 +85,9 @@ The sources behind them are in [crowd-physics.md](slice0/crowd-physics.md) and [
 | A scene of first contact and examples that trace the early breaks | 712022c, reviewed and merged. He found a fault in his rule for an enemy on the flank: it counted the men fighting a neighbour, against his own written design. The fix is agreed, and it adds a field to the shared view. The rest of the early breaks is his table doing what he wrote; no prior moves |
 | His 81 lines of the sampler, the table of record (`--bin table`) and a nominal set; the flank fix (`NearEnemy::strikes_another`, mirroring the resolver's choice of opponent) | c49201d, 0c78ffb, reviewed and merged. After the fix a century still breaks about a minute in at the centres, as expected; no prior moved |
 | `volleys` (missiles on an area, resolved beside the bouts) and the relief drill (a century relieved by the one behind it in a lull, in the shared frames) | 79957e5, e187489, ca38f3a, reviewed and merged |
-| `backed`, the relief from twenty minutes, his sustained speed readings | in progress |
+| `backed`, and the relief from twenty minutes | b00dcf1, reviewed and merged |
+| The rule for reading sustained figures, fixed before any is taken | b373249, merged (c9379c0) |
+| His sustained speed readings | waiting for a quiet window on the Mac |
 
 **The freeze (2026-11-10).** The pre-registration's text is final at commit dd9d90a. The record
 is in its [sign-off](slice0/preregistration.md#sign-off): the SHA-256 of `prereg.toml` and of
@@ -99,10 +101,34 @@ the pass rules.
 **The scored batch is running** on Michal's Raspberry Pi 400 (4 × Cortex-A72), so that the
 Mac stays free: started 2026-11-10 at 17:49 UTC by `tools/s09-batch.sh`, at the frozen code.
 Before the batch, the same 32 runs were made on the Pi and the Mac, and every result agreed
-bit for bit. The Pi is about 4-5 times slower per core than a quiet Mac, so the batch should
-take about four to five days if most lines break early, and one to two weeks if many hold.
-`base` runs first in every cell, so the pattern verdicts come in early. The speed readings
-for the kill criteria still need about two quiet hours on the Mac.
+bit for bit.
+
+**How long it will take.** Measured on its first cell: 12 runs a minute, about 3 hours for each
+cell and variant of the field engine. The pairwise engine costs about twice as much. That makes
+**about 11 days on the Pi alone** (it could be 9-15). Michal chose that over splitting the
+batch with the Mac or renting a machine. `base` runs first on both engines, so the eight
+patterns' verdicts for all eight cells come in **about 1.6 days**.
+
+**Two addenda to the pre-registration** (agreed with Varro, written before any record was
+scored, [addenda](slice0/preregistration.md#addendum-1-2026-11-10-cells-that-base-rules-out-run-their-variants-last)):
+
+1. **A cell ruled out on `base` runs its variants last.** Such a cell has fewer than 10 % of
+   its sets passing the eight bands on `base`, so it cannot pass whatever its variants do. Its
+   variants run after those of the cells that can still pass. This changes the order only:
+   everything still runs, and nothing is scored differently.
+2. **A crosswise check of the two perceptions.** The two engines see through different code,
+   held to the same view by tests but never compared on a scored battle. A sample of 160 runs
+   is redone with the perceptions swapped, and every run must end in the same state with the
+   same event log. If any run differs, the scoring stops and Michal is told. It is running on
+   the Pi now, beside the batch.
+
+**Speed readings.** These need about two quiet hours on the Mac, through the other project's
+lock. My spike now times the perception as Varro's does. Testing it showed that the core's
+reference perception, which my engine uses, is very slow in the pocket. In a short test on a
+loaded Mac, my engine ran the pocket ten times slower with it than with Varro's. His perception depends only on the core and is held to the same view, so either
+engine can use it. Agreed with Varro: the perception is reported apart from the substrate, and
+my kill line is read with his perception. A sustained figure is read by one rule for both, fixed
+before any is taken ([spike-field.md](slice0/spike-field.md)).
 
 **Pre-registration: five defects found and fixed so far,** four of them by Varro. All were found
 before any scored run, which is the point of writing it down first.
