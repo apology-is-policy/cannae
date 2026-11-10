@@ -42,54 +42,131 @@ Physical combat (weapons, armour, missiles, shoving) is the substrate everything
    commander. Commanders act on beliefs that are partial, stale and sometimes wrong. At Philippi,
    Cassius killed himself because he misread a dust-obscured scene.
 4. **Historically calibrated, not historically scripted.** Parameters come from the sources,
-   experimental archaeology and scholarship. They are validated against a corpus of battles in
-   Monte Carlo runs. Calibration and test battles are kept apart so we do not overfit to Cannae.
+   experimental archaeology and scholarship. As many as possible are fixed from independent
+   evidence: physiology, load-carriage studies, reconstruction trials. Sensitivity analysis
+   finds the few that matter, and history matching rules out implausible values for those.
+   Cannae is the development scenario, so it cannot be the proof. The proof is a set of sealed
+   battles the model was never tuned on (A3).
 5. **The model is independent of rendering.** The simulation is a headless library. Viewers and
    batch runners are thin clients.
 6. **Deterministic.** A seed plus a scenario reproduces a battle bit for bit. That gives us
    replays, regression tests, and a way to find behavior bugs by bisection.
-7. **A historical hypothesis testbed.** Contested mechanics are switchable modes, not hard-coded
-   assumptions: how line relief worked, whether there were maniple intervals, *othismos*
-   (shoving), frontage per man. The simulator can then help argue those questions.
+7. **A historical hypothesis testbed, within limits.** Contested mechanics are parameters, not
+   hard-coded assumptions: frontage per man, maniple intervals, the strength of *othismos*
+   (shoving). One line-relief mechanism is built first, with a seam for the others. The
+   simulator can show what is mechanically feasible (does a line passage jam, and when?) and
+   how much an outcome depends on each assumption. Fitting battle outcomes cannot settle these
+   debates on its own, and we do not claim it can.
+8. **Parsimony.** A mechanism enters the model only when a named historical pattern cannot be
+   reproduced without it. Many plausible mechanisms explain the same few patterns, and the
+   corpus is a few dozen battles. Every extra knob makes a good fit mean less.
+
+## The player
+
+You set up a battle, historical or invented (now and then something a little crazy, just to see
+how it plays out), and watch it unfold. At any moment you can pause and take over commanders,
+from the consul down to a tribune. You give them orders, or small visual scripts: "when half of
+these maniples are past this line, send the right-wing cavalry against their flank".
+
+There are two modes:
+
+- **Experimenter.** You see the truth, and your orders take effect at once.
+- **Role-player.** You see only your officer's beliefs, and your orders travel by voice, signal
+  and messenger, with the same delays and losses as everyone else's.
+
+Without you, the simulation runs fully autonomously, so batches of seeds can run for testing.
+Your inputs are recorded in the replay. Intent, plans and the command AI are described in
+[09-intent-and-plans.md](09-intent-and-plans.md).
 
 ## Acceptance tests
 
-**A1 — Cannae.** Run with the historical setup, a high (but not certain) share of seeds must
-reproduce the battle's structure:
+Cannae is the **development scenario**. We will watch it constantly while building, so passing
+it is a requirement, not evidence. The evidence comes from battles the model was never tuned on
+(A3).
+
+**A1 — Cannae.** Run with the historical setup, a high (but not certain) share of seeds must end
+the way the battle did. "The way it did" means what survives every reading of the sources, not
+one reconstruction:
 
 - Hasdrubal's Iberian and Gallic heavy horse breaks the Roman citizen cavalry on the river flank.
 - The Numidians pin the allied cavalry on the other wing. That cavalry breaks when Hasdrubal
   arrives in its rear.
-- The Gallo-Iberian crescent holds for a time, then gives way under the deep Roman mass and is
-  driven in (Polybius 3.115; Livy 22.47). The Roman maniples crowd into the gap and lose their
-  order.
-- The Libyans, posted half at each end of the line and held back as a reserve (Polybius 3.113),
-  face inwards and attack the Roman flanks once the Romans are between them. Their formation is
-  not recorded; the deep columns of many reconstructions are a scenario variant.
-- Hasdrubal's cavalry closes the rear. The Roman mass is compressed and destroyed.
-- Casualties fall within the range the sources give. Polybius: about 70,000 Roman dead and
-  10,000 captured, against 5,700 Carthaginian dead, 4,000 of them Gauls. Livy: 48,200 Roman dead
-  and 19,300 captured, against about 8,000 Carthaginian dead.
+- The Roman infantry pushes into the Carthaginian centre, crowds together and loses its order.
+- The Libyans, posted half at each end of the line (Polybius 3.113), strike both of its flanks.
+  Cavalry closes the rear.
+- No formed Roman body of several thousand men gets out. The encircled mass is compressed and
+  destroyed.
 
-A minority of seeds must go differently, for the right reasons. The Gauls give way too early and
-the Romans break through, as the Roman centre did at Trebia. Or Hasdrubal's horsemen over-pursue.
-Hannibal's plan was a gamble, and the simulation must treat it as one.
+The Gallo-Iberian centre may hold or break. Polybius (3.115) says it held for a time, then gave
+way; Livy (22.47) has the Romans pressing on through a column of fleeing men until no one
+resisted them. The trap closed anyway. Whether a centre that breaks still serves the trap is a
+real historical question. The simulator reports the answer; it does not presume one.
 
-**A2 — Pre-battle indeterminacy.** Looking at two armies before the battle, it should not be
-obvious how it will end. This needs to be measurable:
+The Libyans' formation is not recorded. The deep columns of many reconstructions are a scenario
+variant.
 
-- In balanced scenarios, the side favored by a naive predictor (numbers × troop quality) should
-  win a clearly non-certain share of seeds.
-- The spread of outcomes comes from mechanisms you can name: a wing collapsing, the timing of a
-  reserve, a commander's death, a rumor. It should not be noise.
-- Blind prediction trials: you look at a deployment, predict the result, and we track how well
-  calibrated your predictions are.
+**Outcome classes**, computed from the event log by tested classifier code:
 
-**A3 — The battle corpus.** A suite of battles chosen because different factors decided each
-one: terrain, weather, surprise, elephants, horse archers, the experience gap, command failure.
-Each battle has expected outcome bands (see [07-validation.md](07-validation.md)). The Trebia,
-Lake Trasimene, Zama, Cynoscephalae, Pydna, Magnesia, Carrhae, Sabis, Pharsalus, Munda and
-Teutoburg are among them. Caesar alone supplies a dozen test cases.
+| Class | Definition |
+|---|---|
+| **(a) Encirclement** (historical) | The structure above. Sub-classes: **(a1)** the centre holds until the trap closes; **(a2)** the centre breaks, and the trap closes anyway. |
+| **(b) Victory without a pocket** | The Romans lose and flee, but the rear is never closed and no formed body gets out |
+| **(c) Breakout** | A formed Roman body of several thousand leaves the field in order, as 10,000 men did through the Carthaginian centre at the Trebia (Polybius 3.74) |
+| **(d) Other** | A Roman victory, a draw, anything else |
+
+**What passes:**
+
+- **Class (a) is the most common outcome, but not a certainty.** The design target is
+  0.6 ≤ P(a) ≤ 0.95. That is a target, not a measurement: history gives one draw.
+- **The minority outcomes respond to the right causes.** A rare outcome cannot be pinned down
+  with a few hundred seeds: with 100 seeds, a 3 % outcome fails to appear about one time in
+  twenty. So A1 tests how the classes move when a cause is varied:
+  - P(c) rises as the Carthaginian centre gets weaker. Dertosa (215 BC) is the contrast: there
+    the Iberian centre gave way at the first clash, the pila barely thrown, and a similar plan
+    failed (Livy 23.29).
+  - P(c) rises with the Roman infantry's cohesion in defeat. The Trebia is the contrast.
+  - P(rear closed) falls as Hasdrubal's cavalry advantage shrinks, or as his horsemen become
+    likelier to over-pursue.
+- **The authored plan does not carry the result.** Polybius records no orders for Cannae, and a
+  scripted "Hannibal plan" would write the outcome into the input. A1 runs at three authoring
+  tiers, and all three are reported: **tier 0** is deployment plus generic doctrine; **tier 1**
+  adds each commander's stated purpose; **tier 2** adds explicit triggers. The claim is made at
+  tier 0 or 1.
+- **Casualties fall within the sources' envelope.** They are compared only after a fixed
+  stopping rule and a fixed mapping from simulated states (dead, wounded, captured, fled) to the
+  sources' categories, because the source totals include the pursuit and the capture of the
+  camps. Polybius: about 70,000 Roman dead and 10,000 captured, against 5,700 Carthaginian dead,
+  4,000 of them Gauls. Livy: 48,200 Roman dead and 19,300 captured, against about 8,000
+  Carthaginian dead.
+
+**A2 — Pre-battle indeterminacy.** Looking at two armies before a battle, it should not be
+obvious how it will end. The uncertainty must come from the battle, not from noise.
+
+- **A strong predictor.** We train a predictor on thousands of small simulated battles, using
+  only what is observable before the battle. A2 is its residual uncertainty on balanced
+  scenarios. On lopsided scenarios it must be confident and right: indeterminacy must not mean
+  noise.
+- **Variance decomposition.** Each kind of randomness has its own RNG stream: hidden traits
+  drawn at setup, combat dice, perception noise, command and messengers. Re-randomising one
+  stream with the others frozen tells us how much of the outcome was fixed at setup, how much
+  is dice, and how much is command friction. "Not noise" becomes a number.
+- **Predictability over time.** Re-run during the battle, the predictor should grow more
+  certain in steps at identifiable events (a wing breaking, a reserve committed, a commander
+  falling), rather than drift smoothly.
+- **Balanced scenarios from a generator.** Historical battles are ones both commanders chose to
+  accept, which is a selection effect. "Balanced" is defined by a scenario generator instead.
+- **Blind trials.** You look at deployments and predict outcomes with probabilities, and we
+  track your calibration. If you can predict perfectly, A2 fails.
+
+**A3 — Sealed battles and the corpus.** A corpus of battles, chosen because different factors
+decided each one: terrain, weather, surprise, elephants, horse archers, the experience gap,
+command failure. The Trebia, Lake Trasimene, Zama, Cynoscephalae, Pydna, Magnesia, Carrhae,
+Sabis, Pharsalus, Munda and Teutoburg are among them; Caesar alone supplies a dozen. Most of the
+corpus is calibration material. Three to five battles are **sealed**: their dossiers (numbers,
+deployment, troop ratings, commander profiles) are written from a fixed rubric and
+hash-committed before the engine can run them, then run once, as pre-registered. They are scored
+by the log-likelihood of the historical outcome against simple baselines. Details are in
+[07-validation.md](07-validation.md).
 
 ## Scope
 

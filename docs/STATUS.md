@@ -14,8 +14,8 @@ one commit.
 |---|---|---|
 | C0 | Continuity contract: `CLAUDE.md`, self-compaction tooling, this file, the review record | landed |
 | V1 | The 13 factual corrections from the review | landed |
-| V2 | README: Cannae outcome classes (centre may break), indeterminacy test redefined | next |
-| V3 | 07 validation: Cannae as development scenario, sealed battles, script tiers, variance decomposition, contrasts, sensitivity analysis and history matching | queued |
+| V2 | README: Cannae outcome classes (centre may break), indeterminacy test redefined | landed |
+| V3 | 07 validation: Cannae as development scenario, sealed battles, script tiers, variance decomposition, contrasts, sensitivity analysis and history matching | next |
 | V4 | 04 psyche: excitable-system dynamics, contagion on observable acts, parsimony | queued |
 | V5 | 06 architecture: fanless 8 GB Air, revised performance, intent pass, observables lane, keyframes | queued |
 | V6 | 03 formations: line relief, R2 with a seam, feasibility instead of discrimination | queued |
