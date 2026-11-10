@@ -1,0 +1,38 @@
+# A hand-built scene for looking at the table of hazards in the first seconds of contact: one
+# century of the reference troop receives a warband one and a half times its number. It is not
+# the patch, no pattern is scored on it, and no prior was chosen from it.
+
+name = "first-contact"
+seed = 1
+duration_s = 900
+
+[[body]]
+name = "century"
+side = "A"
+troop = "hastati"
+files = 8
+ranks = 5
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-8000, 0]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "warband"
+side = "B"
+troop = "gallic-warband"
+files = 12
+ranks = 5
+file_mm = 1000
+rank_mm = 1200
+centre_mm = [8000, 0]
+facing_deg = 180
+leader = "front-centre"
+tie = "loose"
+
+[[order]]
+body = "warband"
+at_s = 0
+order = "advance"
