@@ -278,7 +278,14 @@ reach to answer, and the warband comes on at six by the base patch's order.
 - **Only the fronts are scored.** A body marked `front = false` in the scenario, such as
   `shock`'s band, starts no contact, breaks no side, and a hit on one of its men counts in no
   pattern. Contact is the first bout between two men of front bodies, or a gap of 3 m or
-  less between the front bodies. The formed phase and the casualty clock start there. For the
+  less between the front bodies.
+- **A second line is not the front** (call 0001, turn 46). A side's front, for the gap, is
+  made by the facing men of its front bodies that are not in reserve. A body is in reserve
+  while it is wholly behind another body of its side that covers at least half its width.
+  Without this, a second line's men, counted as a share of the side, would pull the front
+  back a rank. Before a relief, `relief`'s first line then meets the enemy exactly as
+  `base`'s does. 40 run summaries over five variants, both engines and two rungs came out
+  the same before and after. The formed phase and the casualty clock start there. For the
   variants with no such body nothing changes: 24 run summaries over three variants, both
   engines and two rungs came out the same before and after.
 - **Reported:** each side's front losses before contact, so that a shock that killed men can
