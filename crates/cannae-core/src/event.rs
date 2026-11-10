@@ -15,6 +15,8 @@ pub enum Cause {
     // Alarm.
     NeighboursTurned,
     NeighboursBack,
+    /// A man of his side went down in his view at this step.
+    NeighbourFell,
     EmptySlot,
     EnemyOnFlank,
     EnemyBehind,

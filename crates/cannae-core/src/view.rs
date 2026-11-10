@@ -176,8 +176,15 @@ impl FrameQuery for NoFrames {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum StandardSeen {
-    Up { dist_mm: i32 },
-    Down { dist_mm: i32 },
+    /// Carried. The bearer's posture says whether it stands, goes forward, or is being carried
+    /// off: a standard in flight is no place to rally.
+    Up {
+        dist_mm: i32,
+        posture: Posture,
+    },
+    Down {
+        dist_mm: i32,
+    },
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -451,6 +458,7 @@ impl Perceive for GridPerception {
             standard: body.map(|b| match b.standard {
                 Standard::Carried(c) => StandardSeen::Up {
                     dist_mm: dist(bodies.pos[c.0 as usize]),
+                    posture: bodies.posture[c.0 as usize],
                 },
                 Standard::Down(p) => StandardSeen::Down { dist_mm: dist(p) },
             }),

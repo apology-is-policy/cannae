@@ -61,9 +61,12 @@ or behind him, and what they are doing.
 | Steady → forward | Ardour. A leader forward in view. Neighbours forward. Enemy backs. The order to charge. | Spent breath. Wounds. A steady enemy in numbers. His own side going back. |
 | Forward → steady | Spent breath. A hit. Few neighbours forward with him. | Enemy backs in view |
 | Steady → back | **Alarm above nerve.** Alarm counts turned backs of his own side, an empty slot beside him, enemies on flank or rear, his leader or standard down, pressure from the front. | **Support:** steady neighbours, ranks behind him, a leader, the standard, a fresh line behind. An order to retire makes going back the expected act, and then it alarms no one. |
+| Back → steady | Alarm well below nerve again: the men around him stand. | Anything that still alarms him |
 | Back → turned | Alarm still above nerve. Room to run. | A closer behind him: the optio's staff. |
 | Turned → steady (rally) | No pursuer in view. A standing carrier in view, with steady men around it. Drill. | The *has fled* mark |
 | Any → down | A bout, a missile, a crush ([02](02-order-and-contact.md)) | Shield, armour, room to move |
+
+The weights, the thresholds and what was left out are in [07](07-hazards.md).
 
 "Alarm above nerve" is a threshold with a little noise: the hazard is near zero below it and
 high above it. Thresholds differ from man to man, so a collapse runs through a body as an
@@ -196,8 +199,9 @@ lower. I accept it as the first candidate for a memory of fear, on three conditi
 it inside the witness rule:
 
 1. **Events set it and clear it,** and each is logged with its cause.
-2. **It has signs.** A shaken body can be seen, as a winded one can, and the share of a unit's
-   men who are shaken is shown.
+2. **It shows only through what he does,** and in the viewer, where the share of a unit's men
+   who are shaken is shown. Other men never read it. (The first draft said "it has signs", as
+   if his neighbours could see it. They cannot: they see him give ground sooner.)
 3. **It earns its place on a ladder.** No marks; *has fled*; *shaken*; and above them the
    vision of record's continuous fear and resolve, then its full excitable psyche. All rungs
    share the postures, the hazards and the log. The lowest rung that passes is kept

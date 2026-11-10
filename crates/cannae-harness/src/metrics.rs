@@ -679,7 +679,7 @@ mod tests {
     fn the_bands_file_parses() {
         let b = Bands::from_toml(include_str!("../../../scenarios/prereg.toml")).unwrap();
         assert_eq!(b.break_share, 0.4);
-        assert_eq!(b.clock_lethality_per_bout, Some([0.005, 0.15]));
+        assert_eq!(b.clock_lethality_per_bout, Some([0.002, 0.15]));
         let empty = verdicts(&[], &b);
         assert!(empty.iter().all(Option::is_none));
     }

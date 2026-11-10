@@ -49,16 +49,69 @@ a line says otherwise.
 
 ## Ties, bouts and kits (Varro)
 
-To be written by Varro: the frames' `Tie` values (drilled and loose), `BoutParams`, and the
-troop table of kits (reach, guard and skill per troop type: `hastati`, `hastati-veterans`,
-`hastati-recruits`, `gallic-warband`).
+**U[a, b]** is uniform; **L[a, b]** is log-uniform. Draws are independent.
+
+### Ties (`frames::Tie`)
+
+How a body keeps its order. A drilled body is a century or a maniple; a loose one is a warband.
+
+| # | Field | What it is | Drilled | Loose | Reason |
+|---|---|---|---|---|---|
+| S1 | `tolerance_mm` | A man this near his slot is in his place. Also how far a halted body's standard must be driven before the body gives ground. | U[0.4, 0.9] m | U[0.8, 1.8] m | A quarter to a half of the drilled interval of 1.8 m; a warband is twice as slack |
+| S2 | `close_after` | How long before a file closes over a man who has fallen or fled | L[1, 5] s | L[5, 30] s | A drilled file steps up at once; a warband fills in as men notice |
+| S3 | `lift_after` | How long a fallen standard lies before a man beside it lifts it | L[1, 10] s | never | A rule of the drilled body. A warband's standard, once down, stays down. |
+| S4 | `succeed_after` | How long before the closer takes a fallen leader's place | L[2, 15] s | never | The optio succeeds the centurion. A warband has no second. |
+| S5 | `standoff_mm` | The gap between fronts at which an advance halts | U[3, 4.5] m, one draw for both | | Just out of reach of a lunge ([rival/02](../rival/02-order-and-contact.md) §7). The upper end is tied to the man's forward step. |
+| S6 | `contact_mm` | The same for a charge | U[1.0, 1.4] m, one draw for both | | Inside a sword's reach of 1.5 m |
+
+Fixed: `lead_mm` 1.5 m (it only has to exceed one man step at a run) and `lift_reach_mm` 2.5 m
+(the men in the slots around the standard).
+
+**Count: 10** (S1 and S2 twice, S3 to S6 once).
+
+### Bouts (`bouts::BoutParams`)
+
+Multipliers apply to the chance that a strike wounds.
+
+| # | Field | What it is | Prior | Centre | Reason |
+|---|---|---|---|---|---|
+| S7 | `rate` | Bouts per second for a forward man with an enemy in reach | L[0.05, 0.2] | 0.1 | An exchange every 5 to 20 s between men who are at it. Elite epeeists, who must attack, fence in actions of 18 s ([lethality-line-fighting.md](lethality-line-fighting.md), C3), so this is one to four bouts in such an action. No source counts passes. |
+| S8 | `harm` | The chance that one strike wounds: striker forward, target steady and facing him, both sound, equal skill, the reference shield and armour | L[0.003, 0.1] | 0.05 | With the shares below, the chance that a bout disables or kills either man is about equal to `harm` between a forward man and a steady one, and 1.5 times it between two forward men. Pattern 7's band for that chance is 0.002 to 0.15; this range sits inside it. Both halves of the lethality search put the plausible part at 0.005 to 0.07. |
+| S9 | `target_forward` | The target has himself stepped forward | U[1, 2] | 1.5 | He has come out from behind his shield |
+| S10 | `target_back` | The target is giving ground | U[0.7, 1.3] | 1 | Harder to reach, easier to hurry: unknown sign |
+| S11 | `target_turned` | The target has turned his back | U[4, 12] | 8 | Most killing is done in flight (du Picq; Towton, Alken Enge in [lethality-skeletal.md](lethality-skeletal.md)). This is the slaughter. |
+| S12 | `shield_side` | The strike comes at his left | U[0.7, 1] | 1 | |
+| S13 | `open_side` | The strike comes at his right | U[1.3, 3] | 2 | |
+| S14 | `behind` | The strike comes from behind a man who has not turned | U[2, 6] | 4 | |
+| S15 | `unattended` | The target is attending to a nearer attacker | U[1.5, 3] | 2 | Two on one |
+| S16 | `target_hampered` | The target has a hampering wound | U[1.2, 2] | 1.5 | |
+| S17 | `striker_hampered` | The striker has one | U[0.4, 0.8] | 0.6 | |
+| S18 | `answer` | The answering strike of a man who did not step forward | U[0.5, 1] | 0.7 | A parry and riposte against a committed attack |
+| S19 | `skill_step` | Each step by which the striker out-skills his target | U[1.1, 1.4] | 1.25 | |
+| S20 | `disable` | Of wounds, the share that disable | U[0.25, 0.45] | 0.35 | Hampering wounds should be at least as common as disabling ones (healed trauma at Ephesus and Towton) |
+| S21 | `kill` | Of wounds, the share that kill outright | U[0.08, 0.25] | 0.15 | 10 to 30 % of disabling outcomes (lethality-skeletal.md) |
+| S22 | `drive_back` | The chance that a strike which does not wound drives its target back a step | U[0.1, 0.5] | 0.3 | |
+
+**Count: 16.**
+
+### Kit, per troop (`bouts::Kit`)
+
+| # | Input | Hastati | Veterans | Recruits | Warband | Reason |
+|---|---|---|---|---|---|---|
+| S23 | Guard: shield and armour, as a multiplier on harm taken | 1 (the reference) | 1 | 1 | U[1, 1.5] | A shield and no body armour against scutum and mail. Polybius on Gallic shields and swords (2.30, 2.33) is from memory, to check. |
+| S24 | Skill, in steps | 0 (the reference) | +1 | −1 | 0 | Fixed. The size of a step is S19. |
+| S25 | Skill of the leader, in steps above his troop | +2 | +2 | +2 | +2 | Fixed |
+
+Reach is fixed at 1.5 m for every troop in the patch: all fight with swords.
+
+**Count: 1.**
 
 ## Count
 
 | Part | Drawn | Fixed |
 |---|---|---|
 | Stamina, power, gait | 7 | 3 |
-| Ties, bouts, kits | (Varro) | |
+| Ties, bouts, kits | 27 (ties 10, bouts 16, kit 1) | 5 (lead, lift reach, skill steps, leader skill, reach) |
 
 ## Sign-off
 
