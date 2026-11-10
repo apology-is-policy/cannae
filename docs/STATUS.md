@@ -24,8 +24,8 @@ reviews his work and merges it.
 | S0.4 | Lethality bounds: literature search on skeletal trauma and experimental archaeology (Varro searches line-fighting ethnography and Collins) | f8cb2a6 Paullus's half; band proposed |
 | S0.5 | The pairwise substrate, where every body touches its neighbours, at patch scale; a perception conformance check for Varro | 14e919b |
 | S0.6 | The top two rungs of the memory ladder: continuous fear and resolve, then the full excitable psyche | Design written ([rungs-3-4.md](slice0/rungs-3-4.md)); waits for Varro's `Memory` hook |
-| S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | Pairwise done for the line, surge and pocket ([report](slice0/spike-pairwise.md)); the gates wait for walls (S0.8); Varro's field spike is his |
-| S0.8 | The passage study, against measured crowd-flow data | Walls (`cannae_core::Wall`, `[[wall]]` in scenarios) and the pairwise calibration done ([report](slice0/passage-calibration.md)); the maniple and gate passages run three ways come next |
+| S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | Pairwise done for the line, surge and pocket ([report](slice0/spike-pairwise.md)); the gates have walls now and are not yet run; Varro's field spike is his |
+| S0.8 | The passage study, against measured crowd-flow data | Walls (`cannae_core::Wall`, `[[wall]]` in scenarios) and the pairwise calibration done ([report](slice0/passage-calibration.md)). The bench for the two passages is built, and the pairwise substrate has run on it ([report](slice0/passage.md)); Varro's field runs on the same bench when it lands |
 | S0.9 | Scored runs and the report; then design review 2 | |
 
 **Speed (pairwise substrate only, no man model yet; sustained readings on the fanless Air,
@@ -38,12 +38,25 @@ up to 64 men per m². Now a man cannot walk into the men ahead of him, his lean 
 presses to the bone, and bodies have a hard core. The pressed edge settles at about 5 per m²,
 the crowd-safety literature's onset of danger.
 
-**Passage calibration (pairwise substrate):** a replication of Seyfried et al.'s bottleneck
-experiment. Walking without pushing matches the measured flow when a man's disc is 280-300 mm
-across in radius, so that prior is narrowed. People pushing through a door 0.7 m wide pass
-about 40 % faster in reality than discs can, because people turn their shoulders and a disc
-cannot. That is a structural limit of this engine, reported, not fixed: military intervals and
-gates are wider, where it matters less.
+**The passage study (pairwise substrate so far).** A bench runs the same scripted passages on
+any physics engine: a maniple of 120 falling back through an interval in the line behind it,
+with and without the enemy shoving it, and a crowd of 600 making for a camp gate, walking or
+running and shoving ([report](slice0/passage.md)). On my engine:
+
+- **A maniple passes an interval in under a minute,** 17-31 s at every width from 3 to 12 m.
+- **At a 3 m interval, the enemy's shove jams it.** The longest wait between two men rises
+  from half a second to six. This is the clogging measured at doors in experiments, and here
+  it comes out of the physics, with no rule for it.
+- **Two structural limits, reported, not fixed.** Walking without pushing matches measured
+  flows through narrow corridors when a man's disc has a radius of 300 mm
+  ([calibration](slice0/passage-calibration.md)). Through wide gaps it runs 30-50 % too fast,
+  because real walkers slow down as a crowd thickens and discs do not until they touch. And
+  people pushing through a 0.7 m door pass about 40 % faster than discs can, because people
+  turn their shoulders.
+- **The crush settings were unusable, now fixed.** The old stand-in values disabled half a
+  running crowd at a gate within five minutes, and the rate's units could not even hold the
+  agreed prior. At the prior's centres, no one is crushed in a passage. A crowd shoved against
+  a wall reaches 5.4-8 men per m², in line with the formula behind the crush prior.
 
 **Priors (drafts, frozen with the pre-registration):** three files, so that both engines draw everything they share from one prior, and draw *i* is the same in every cell.
 

@@ -15,39 +15,78 @@ use cannae_core::schedule::BASE_TICK;
 use cannae_core::{Bodies, Observed, Rng, Substrate, Target, Turn, Vec2, Wall};
 use cannae_pairwise::{Pairwise, Params};
 
-const EXIT_X: i32 = 2_800;
+/// One experiment's layout: the crowd in its waiting area, and the bottleneck's length.
+struct Layout {
+    /// Men across the waiting area, and their spacing, mm.
+    wide: i32,
+    dy: i32,
+    /// Men deep, and their spacing, mm.
+    deep: i32,
+    dx: i32,
+    /// Half the waiting area's width, mm.
+    half_area: i32,
+    /// The bottleneck's length, mm.
+    exit_x: i32,
+}
 
-/// Seconds for each man to pass the corridor's far end, in order; `None` if he never did.
-fn run(width_mm: i32, press: u8, params: Params) -> Vec<f64> {
+/// Seyfried et al. 2009: sixty men in a waiting area 4.8 m wide, 3.3 m deep from 0.5 m short
+/// of a corridor 2.8 m long; 6 deep by 10 across, about 4 per m², slightly staggered.
+const SEYFRIED: Layout = Layout {
+    wide: 10,
+    dy: 450,
+    deep: 6,
+    dx: 550,
+    half_area: 2_400,
+    exit_x: 2_800,
+};
+
+/// Liao et al.'s wide bottlenecks (arXiv 1506.02433, Table 2, experiment AO): 350 people at
+/// 3.0 per m² in front of a bottleneck 1.0 m long, in a waiting area 18 m wide. Here 360, 30
+/// across by 12 deep.
+const LIAO: Layout = Layout {
+    wide: 30,
+    dy: 600,
+    deep: 12,
+    dx: 540,
+    half_area: 9_000,
+    exit_x: 1_000,
+};
+
+/// Seconds for each man to pass the bottleneck's far end, in order, for those who did.
+fn run(layout: &Layout, width_mm: i32, press: u8, params: Params) -> Vec<f64> {
     let mut b = Bodies::default();
-    // Sixty men in a waiting area 3.3 m deep and 4.5 m wide, ending 0.5 m short of the
-    // corridor: 6 columns by 10 rows, about 4 per m², slightly staggered.
-    for row in 0..10 {
-        for col in 0..6 {
+    for row in 0..layout.wide {
+        for col in 0..layout.deep {
             b.push(Observed {
-                pos: Vec2::new(-500 - col * 550 - (row % 2) * 150, (row - 5) * 450 + 225),
+                pos: Vec2::new(
+                    -500 - col * layout.dx - (row % 2) * 150,
+                    (2 * row - (layout.wide - 1)) * layout.dy / 2,
+                ),
                 facing: Turn(0),
                 ..Default::default()
             });
         }
     }
     let half = width_mm / 2;
+    let (area, exit_x) = (layout.half_area, layout.exit_x);
     let mut s = Pairwise::new(params);
     s.walls = vec![
         // The waiting area's sides.
-        Wall::new(Vec2::new(-6_000, 2_400), Vec2::new(0, 2_400)),
-        Wall::new(Vec2::new(-6_000, -2_400), Vec2::new(0, -2_400)),
+        Wall::new(Vec2::new(-12_000, area), Vec2::new(0, area)),
+        Wall::new(Vec2::new(-12_000, -area), Vec2::new(0, -area)),
         // The face of the bottleneck, either side of its mouth.
-        Wall::new(Vec2::new(0, half), Vec2::new(0, 2_400)),
-        Wall::new(Vec2::new(0, -half), Vec2::new(0, -2_400)),
-        // The corridor.
-        Wall::new(Vec2::new(0, half), Vec2::new(EXIT_X, half)),
-        Wall::new(Vec2::new(0, -half), Vec2::new(EXIT_X, -half)),
+        Wall::new(Vec2::new(0, half), Vec2::new(0, area)),
+        Wall::new(Vec2::new(0, -half), Vec2::new(0, -area)),
+        // The bottleneck.
+        Wall::new(Vec2::new(0, half), Vec2::new(exit_x, half)),
+        Wall::new(Vec2::new(0, -half), Vec2::new(exit_x, -half)),
     ];
     let rng = Rng::new(1);
     let mut out = Vec::new();
     let mut passed: Vec<Option<f64>> = vec![None; b.len()];
-    let ticks = 120_000 / BASE_TICK.0;
+    // Men aim at the nearest point of the mouth, a body's radius and a hand in from its edges.
+    let lane = (half - 400).max(0);
+    let ticks = 240_000 / BASE_TICK.0;
     for tick in 0..ticks {
         // The least steering a person does: head for the mouth of the bottleneck, then down
         // the corridor, then straight on. Aiming past the mouth from beside it would walk a man
@@ -57,9 +96,9 @@ fn run(width_mm: i32, press: u8, params: Params) -> Vec<f64> {
             .iter()
             .map(|p| Target {
                 point: if p.x < 0 {
-                    Vec2::new(300, 0)
-                } else if p.x < EXIT_X {
-                    Vec2::new(EXIT_X + 5_000, 0)
+                    Vec2::new(300, p.y.clamp(-lane, lane))
+                } else if p.x < exit_x {
+                    Vec2::new(exit_x + 5_000, p.y.clamp(-lane, lane))
                 } else {
                     Vec2::new(p.x + 5_000, p.y)
                 },
@@ -72,7 +111,7 @@ fn run(width_mm: i32, press: u8, params: Params) -> Vec<f64> {
         out.clear();
         let t = (tick + 1) as f64 * BASE_TICK.0 as f64 / 1000.0;
         for (i, p) in b.pos.iter().enumerate() {
-            if passed[i].is_none() && p.x >= EXIT_X {
+            if passed[i].is_none() && p.x >= exit_x {
                 passed[i] = Some(t);
             }
         }
@@ -85,56 +124,77 @@ fn run(width_mm: i32, press: u8, params: Params) -> Vec<f64> {
     times
 }
 
-/// Persons per second over the middle of the stream: from the 6th to the 54th to pass, so the
-/// start and the stragglers do not count.
-fn flow(times: &[f64]) -> Option<f64> {
-    if times.len() < 55 {
+/// Persons per second over the middle of the stream, from the tenth to the ninetieth man in a
+/// hundred (the 6th to the 54th of sixty), so the start and the stragglers do not count.
+fn flow(times: &[f64], n: usize) -> Option<f64> {
+    let (a, z) = (n / 10 - 1, n * 9 / 10 - 1);
+    if times.len() <= z {
         return None;
     }
-    let (a, z) = (times[5], times[53]);
-    (z > a).then(|| 48.0 / (z - a))
+    let (ta, tz) = (times[a], times[z]);
+    (tz > ta).then(|| (z - a) as f64 / (tz - ta))
 }
 
 fn main() {
     println!("Pairwise substrate, placeholder parameters but the disc radius; specific flow Js");
-    println!(
-        "in persons per metre of width per second, by disc radius (all 60 pass unless marked)"
-    );
-    println!(
-        "{:>8} {:>6} {:>8} {:>8} {:>8}",
-        "width", "press", "r 240", "r 280", "r 300"
-    );
-    for (press, widths) in [
-        (0u8, vec![800, 900, 1_000, 1_100, 1_200]),
-        (128, vec![690, 750, 1_000, 1_200]),
-        (255, vec![690, 750, 1_000, 1_200]),
+    println!("in persons per metre of width per second, by disc radius (all pass unless marked");
+    println!("with how many did)");
+    for (name, layout, cases) in [
+        (
+            "Seyfried et al. 2009 (60 people)",
+            &SEYFRIED,
+            vec![
+                (0u8, vec![800, 900, 1_000, 1_100, 1_200]),
+                (128, vec![690, 750, 1_000, 1_200]),
+                (255, vec![690, 750, 1_000, 1_200]),
+            ],
+        ),
+        (
+            "Liao et al., wide bottlenecks (360 people)",
+            &LIAO,
+            vec![(0u8, vec![2_400, 3_000, 3_600, 4_400, 5_000])],
+        ),
     ] {
-        for w in widths {
-            let cells: Vec<String> = [240, 280, 300]
-                .iter()
-                .map(|&r| {
-                    let times = run(
-                        w,
-                        press,
-                        Params {
-                            radius_mm: r,
-                            ..Params::PLACEHOLDER
-                        },
-                    );
-                    match flow(&times) {
-                        Some(j) if times.len() == 60 => format!("{:.2}", j / (w as f64 / 1000.0)),
-                        Some(j) => format!("{:.2}*{}", j / (w as f64 / 1000.0), times.len()),
-                        None => format!("-*{}", times.len()),
-                    }
-                })
-                .collect();
-            println!(
-                "{:>5} mm {:>6} {:>8} {:>8} {:>8}",
-                w, press, cells[0], cells[1], cells[2]
-            );
+        let n = (layout.wide * layout.deep) as usize;
+        println!();
+        println!("{name}");
+        println!(
+            "{:>8} {:>6} {:>8} {:>8} {:>8}",
+            "width", "press", "r 240", "r 280", "r 300"
+        );
+        for (press, widths) in cases {
+            for w in widths {
+                let cells: Vec<String> = [240, 280, 300]
+                    .iter()
+                    .map(|&r| {
+                        let times = run(
+                            layout,
+                            w,
+                            press,
+                            Params {
+                                radius_mm: r,
+                                ..Params::PLACEHOLDER
+                            },
+                        );
+                        let js = |j: f64| j / (w as f64 / 1000.0);
+                        match flow(&times, n) {
+                            Some(j) if times.len() == n => format!("{:.2}", js(j)),
+                            Some(j) => format!("{:.2}*{}", js(j), times.len()),
+                            None => format!("-*{}", times.len()),
+                        }
+                    })
+                    .collect();
+                println!(
+                    "{:>5} mm {:>6} {:>8} {:>8} {:>8}",
+                    w, press, cells[0], cells[1], cells[2]
+                );
+            }
         }
     }
+    println!();
     println!("Measured: Seyfried et al. 2009, no pushing, Js 1.6-2.3 (J = 1.9 b, linear in b);");
+    println!("          Liao et al.: \"the flow per unit width is constant as bottleneck width");
+    println!("          changes\", out to 5.0 m;");
     println!("          Garcimartin et al. 2016, doors 0.69-0.75 m, Js about 4.0 at every level");
     println!("          of competitiveness.");
 }

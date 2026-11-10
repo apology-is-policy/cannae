@@ -16,34 +16,62 @@ Seyfried et al. 2009: 60 people start in a waiting area at about 3.3-4 per m², 
 corridor 2.8 m long and 0.8-1.2 m wide. They were told not to push. Here:
 - the same geometry, walls from the scenario's new `[[wall]]` entries
   (`cannae_core::Wall`);
-- the least steering a person does: head for the mouth, then down the corridor;
+- the least steering a person does: head for the nearest point of the mouth, 0.4 m in from its
+  edges, then straight down the corridor;
 - walking at 1.3 m/s;
 - flow measured from the 6th to the 54th man out.
 
 Garcimartín et al. 2016 used doors of 0.69 and 0.75 m with pushing allowed. They found about
 4.0 persons per metre per second at every level of competitiveness.
 
+Liao et al. (arXiv 1506.02433, experiment AO in their Table 2) ran wide bottlenecks: 350 people
+at 3.0 per m² in a waiting area 18 m wide, through a bottleneck 1.0 m long and 2.4-5.0 m wide.
+They report that "the flow per unit width is constant as bottleneck width changes". Their
+values are only in a figure, so the comparison here uses Seyfried's 1.9 and that constancy.
+Here: 360 men, 30 across by 12 deep.
+
 ## Result
 
-Specific flow in persons per metre of width per second. All 60 passed in every run.
+Specific flow in persons per metre of width per second. All passed in every run.
+
+**Seyfried's corridor** (60 men):
 
 | Width | Press | r = 240 mm | r = 280 mm | r = 300 mm | Measured |
 |---|---|---|---|---|---|
 | 0.8 m | none | 3.10 | 2.19 | 1.77 | 1.6-1.9 |
-| 0.9 m | none | 3.45 | 2.30 | 1.81 | 1.9-2.1 |
-| 1.0 m | none | 3.79 | 2.15 | 2.10 | 1.9-2.2 |
-| 1.1 m | none | 3.53 | 2.65 | 2.24 | 1.8-1.9 |
-| 1.2 m | none | 3.90 | 2.78 | 2.19 | 1.8-2.3 |
+| 0.9 m | none | 3.50 | 2.31 | 1.95 | 1.9-2.1 |
+| 1.0 m | none | 3.90 | 2.34 | 1.73 | 1.9-2.2 |
+| 1.1 m | none | 3.75 | 2.94 | 2.38 | 1.8-1.9 |
+| 1.2 m | none | 4.08 | 2.94 | 2.37 | 1.8-2.3 |
 | 0.69 m | half | 3.48 | 2.16 | 1.58 | about 4.0 |
 | 0.75 m | half | 3.61 | 2.32 | 1.98 | about 4.0 |
 | 0.69 m | full | 3.75 | 2.44 | 1.99 | about 4.0 |
 | 0.75 m | full | 4.27 | 2.79 | 2.11 | about 4.0 |
 
-**Walking without pushing matches at r = 300 mm, and at 280 mm up to 1 m.** At 300 mm the flow
-is inside Seyfried's measured range at three widths of five. It is just under it at 0.9 m (1.81
-against 1.86-2.06) and a sixth over it at 1.1 m (2.24 against 1.78-1.93), and it rises roughly
-linearly with width. Smaller discs pass far too fast. The original prior on the radius (240-300 mm) is narrowed to
-**280-300 mm**.
+**Liao's wide bottlenecks** (360 men, no pushing):
+
+| Width | r = 240 mm | r = 280 mm | r = 300 mm | Measured |
+|---|---|---|---|---|
+| 2.4 m | 4.44 | 3.30 | 2.87 | constant, about 1.9 |
+| 3.0 m | 4.29 | 3.39 | 2.94 | |
+| 3.6 m | 3.84 | 3.30 | 2.89 | |
+| 4.4 m | 3.19 | 2.85 | 2.56 | |
+| 5.0 m | 2.98 | 2.69 | 2.42 | |
+
+**Walking through a narrow corridor matches best at r = 300 mm.** It is inside Seyfried's
+measured range at 0.8 and 0.9 m, 9 % under it at 1.0 m, and over it by 3-23 % at 1.1-1.2 m.
+At 280 mm it is 15-50 % high. Smaller discs pass far too fast. The prior on the radius stays
+at **280-300 mm**, narrowed from 240-300. A first version of this table aimed every man at the
+middle of the mouth. Aiming at its nearest point, as here, moves the flow by up to a tenth,
+and leaves r = 300 still the best fit.
+
+**Walking through a wide bottleneck runs 30-50 % high at every radius in the prior.** At
+2.4-5.0 m, discs of 300 mm pass 2.4-2.9 persons per metre per second, against a constant 1.9
+or so. Real walkers slow down as a crowd thickens. A disc keeps full walking speed until it
+touches the one ahead, so a packed column streams through at full speed. In a narrow corridor
+of one or two lanes this hardly shows. In a wide one it does. This is the substrate's second
+structural limit. The remedy, a speed that depends on the gap ahead, is discussed in
+[passage.md](passage.md) and not built.
 
 **Pushing through a narrow door does not match at any radius that also matches walking.** The
 measured 4.0 needs discs of about 240 mm, which walk through an open bottleneck nearly twice
@@ -51,14 +79,13 @@ too fast. People pushing through a gap turn their shoulders, and are about 0.3 m
 to back but 0.5 m across. A disc is as long as it is wide, so in single file it caps a 0.7 m
 door at about 1.5-2 persons a second, against the 2.8 measured.
 
-This is a structural limit of the pairwise engine: it underestimates the flow of a pushing
-crowd through gaps of one or two bodies' width by about 40 %. Two things soften it. Military
-passages are wider: an interval between maniples, or a camp gate, is several bodies across,
-where lanes form and shoulders matter less. And the passage study proper scores the three
-physics models against each other at those widths. Bodies that turn (ellipses, or a radius
-that shrinks under press) are possible remedies, each with a cost, and none is built.
+This is the first structural limit: the pairwise engine underestimates the flow of a pushing
+crowd through gaps of one or two bodies' width by about 40 %. Military passages are wider,
+where shoulders matter less but the second limit applies instead. Bodies that turn (ellipses,
+or a radius that shrinks under press) are possible remedies, each with a cost, and none is
+built.
 
-**Also seen:** between 1.0 and 1.1 m at r = 280 the flow jumps, as two discs begin to fit side
+**Also seen:** between 1.0 and 1.1 m the flow jumps, as two discs begin to fit side
 by side. Seyfried found the growth continuous, with lanes whose spacing grows with width.
 Equal hard discs make steps; drawing the radius from a prior smears them across draws.
 

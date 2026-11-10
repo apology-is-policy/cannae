@@ -36,8 +36,9 @@ pub struct Params {
     pub brace_mm_s: i32,
     /// Summed overlap, in mm, above which a man is being crushed.
     pub crush_mm: i32,
-    /// Injury hazard per second for each mm of overlap above `crush_mm`, Q16.
-    pub crush_rate_q16_per_mm: u32,
+    /// Injury hazard per second for each mm of overlap above `crush_mm`, Q32: the prior's
+    /// rates are a few parts in a hundred thousand per mm.
+    pub crush_rate_q32_per_mm: u32,
     /// Overlap with one neighbour beyond which bodies give no more: the excess is removed in
     /// full at every pass, not by `stiffness_q8`. A man squeezed by a crowd yields some way,
     /// and then he is bone.
@@ -52,9 +53,10 @@ impl Params {
         turn_per_tick: 1_638,
         press_mm_s: 300,
         brace_mm_s: 600,
-        crush_mm: 250,
-        // 0.01 per second per mm.
-        crush_rate_q16_per_mm: 655,
+        // The centres of the shared priors (priors-shared.md) at this radius: crushing begins
+        // at 6.5 men per m², and at 8.5 a man is disabled in 134 s on average.
+        crush_mm: 831,
+        crush_rate_q32_per_mm: 100_830,
         core_mm: 150,
     };
 }
@@ -646,8 +648,8 @@ impl Pairwise {
                     // as drawing every tick, at a fifth of the cost.
                     let excess = pressure[i] - p.crush_mm;
                     if crush_step && excess > 0 {
-                        let rate =
-                            (excess as u64 * p.crush_rate_q16_per_mm as u64).min(u32::MAX as u64);
+                        let rate = ((excess as u64 * p.crush_rate_q32_per_mm as u64) >> 16)
+                            .min(u32::MAX as u64);
                         let chance = Prob::from_rate(rate as u32, MAN_STEP);
                         if rng.chance(
                             chance,
@@ -907,7 +909,12 @@ mod tests {
                 press: 255,
             })
             .collect();
-        let mut s = Pairwise::new(Params::PLACEHOLDER);
+        // An early onset and a fast rate, so ten seconds show it.
+        let mut s = Pairwise::new(Params {
+            crush_mm: 250,
+            crush_rate_q32_per_mm: 42_949_673,
+            ..Params::PLACEHOLDER
+        });
         let hurt = run(&mut s, &mut dense, &squeeze, 200);
         assert!(!hurt.is_empty());
         assert!(hurt.iter().all(|e| e.causes[0] == Cause::Crush));
