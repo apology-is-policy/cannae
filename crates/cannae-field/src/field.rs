@@ -25,7 +25,7 @@
 
 use crate::curve::{Curve, STEPS};
 use crate::tiles::{CELL_BITS, NONE, TILE, TILE_SHIFT, Tiles, local};
-use crate::walls::{Walls, into, stand_in};
+use crate::walls::{Walls, stand_in};
 use cannae_core::schedule::{MAN_EVERY, is_man_step};
 use cannae_core::{
     Bodies, Cause, Event, EventKind, Key, ManId, Posture, Prob, Rng, SimMs, Stream, Substrate,
@@ -297,9 +297,6 @@ pub struct Field {
     step: Vec<Vec2>,
     /// By man: what exact positions add to that.
     corr: Vec<Vec2>,
-    /// By man, where there are walls: for a man out of his place who stands against one, the
-    /// way out from it, 1024 long; zero for the rest.
-    held: Vec<Vec2>,
     hot: Vec<u32>,
     /// Whether any man touches the men of his own side this step.
     touching: bool,
@@ -344,7 +341,6 @@ impl Field {
             kind: Vec::new(),
             step: Vec::new(),
             corr: Vec::new(),
-            held: Vec::new(),
             hot: Vec::new(),
             touching: false,
             crushing: Vec::new(),
@@ -465,7 +461,6 @@ impl Field {
             base,
             kind,
             step,
-            held,
             hot,
             crushing,
             touching,
@@ -480,10 +475,6 @@ impl Field {
         let n = bodies.len();
         step.clear();
         step.resize(n, Vec2::ZERO);
-        held.clear();
-        if walled {
-            held.resize(n, Vec2::ZERO);
-        }
         hot.clear();
         crushing.clear();
         let moving = p.moving_mm_s as i64 * dt / 1000;
@@ -527,7 +518,6 @@ impl Field {
             // Cells a wall hides from him: he reads nothing from them.
             let mut seen = [true; 4];
             if walled && walls.near(pos) {
-                held[i] = walls.held(pos);
                 (w, seen) = walls.cut(pos, |k| g.centre(bx, by, k), w);
                 for k in 0..4 {
                     if !seen[k] {
@@ -707,7 +697,6 @@ impl Field {
             kind,
             step,
             corr,
-            held,
             hot,
             touching,
             cstart,
@@ -800,16 +789,8 @@ impl Field {
                         if toward.len_sq() > lim * lim {
                             continue;
                         }
-                        // A man held by a wall cannot give toward it: the other gives all.
-                        let (i_held, j_held) = if walled {
-                            (into(held[iu], -toward), into(held[ju], toward))
-                        } else {
-                            (false, false)
-                        };
-                        let mine_q8 = if kj & HOT == 0 || (j_held && !i_held) {
+                        let mine_q8 = if kj & HOT == 0 {
                             256
-                        } else if i_held && !j_held {
-                            0
                         } else {
                             let closing = step[iu].dot(toward).max(0);
                             let his = (-step[ju].dot(toward)).max(0);

@@ -6,8 +6,10 @@
 //! Here the steepness is set by what it decides, the most a walking crowd passes through a
 //! gap, which is drawn (docs/slice0/priors-field.md, F8).
 //!
-//! The curve is a table, so that no float touches a step. It is built in integers when the
-//! field is made, with no library exponential, so that a run is the same on any machine.
+//! The curve is a table, so that no float touches a step. It is built when the field is made,
+//! with the core's integer exponential, so that a run is the same on any machine.
+
+use cannae_core::fixed::exp_neg_q32;
 
 /// Steps of the table from an empty field to the jam density.
 pub const STEPS: u32 = 128;
@@ -16,36 +18,14 @@ pub const STEPS: u32 = 128;
 /// three quarters of the jam density.
 const STEEPEST_Q16: u32 = 16 << 16;
 
-/// 65536 * 2^(-i/64).
-const HALVING: [u32; 65] = [
-    65_536, 64_830, 64_132, 63_441, 62_757, 62_081, 61_413, 60_751, 60_097, 59_449, 58_809, 58_176,
-    57_549, 56_929, 56_316, 55_709, 55_109, 54_515, 53_928, 53_347, 52_773, 52_204, 51_642, 51_085,
-    50_535, 49_991, 49_452, 48_920, 48_393, 47_871, 47_356, 46_846, 46_341, 45_842, 45_348, 44_859,
-    44_376, 43_898, 43_425, 42_958, 42_495, 42_037, 41_584, 41_136, 40_693, 40_255, 39_821, 39_392,
-    38_968, 38_548, 38_133, 37_722, 37_316, 36_914, 36_516, 36_123, 35_734, 35_349, 34_968, 34_591,
-    34_219, 33_850, 33_486, 33_125, 32_768,
-];
-
-/// 65536 * exp(-x) for x in Q16, to within 2.
-fn exp_neg_q16(x_q16: u64) -> u32 {
-    // exp(-x) = 2^(-x / ln 2), and 1 / ln 2 is 94,548 in Q16.
-    let y = (x_q16 * 94_548) >> 16;
-    let whole = y >> 16;
-    if whole > 16 {
-        return 0;
-    }
-    let frac = (y & 0xFFFF) as u32;
-    let (i, r) = ((frac >> 10) as usize, frac & 1_023);
-    ((HALVING[i] * (1_024 - r) + HALVING[i + 1] * r) >> 10) >> whole
-}
-
 /// Speed as a share of free speed, Q16, at `step` of `STEPS` toward the jam density.
 fn share_q16(steep_q16: u32, step: u32) -> u32 {
     if step == 0 {
         return 65_536;
     }
     let step = step.min(STEPS) as u64;
-    65_536 - exp_neg_q16(steep_q16 as u64 * (STEPS as u64 - step) / step)
+    let x_q32 = (steep_q16 as u64 * (STEPS as u64 - step) / step) << 16;
+    65_536 - ((exp_neg_q32(x_q32) + (1 << 15)) >> 16) as u32
 }
 
 /// The most the curve passes: the greatest product of density and speed, in steps times Q16.
@@ -132,22 +112,6 @@ mod tests {
 
     /// 1.913 / 5.4 in Q16.
     const WEIDMANN_STEEP_Q16: u32 = 23_217;
-
-    #[test]
-    #[allow(clippy::float_arithmetic)]
-    fn the_exponential_is_right_to_two_parts_in_65536() {
-        for i in 0..40_000u64 {
-            let x_q16 = i * i / 64;
-            let want = 65_536.0 * (-(x_q16 as f64) / 65_536.0).exp();
-            let got = exp_neg_q16(x_q16) as f64;
-            assert!(
-                (got - want).abs() <= 2.0,
-                "at {x_q16}: {got} against {want}"
-            );
-        }
-        assert_eq!(exp_neg_q16(0), 65_536);
-        assert_eq!(exp_neg_q16(u32::MAX as u64 * 4_096), 0);
-    }
 
     #[test]
     #[allow(clippy::float_arithmetic)]

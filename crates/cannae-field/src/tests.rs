@@ -825,7 +825,7 @@ fn a_crowd_pressed_on_a_wall_is_no_denser_at_the_wall() {
     let mut f = Field::with_walls(Params::CENTRE, &walls);
     run(&mut f, &mut b, &t, 480);
     let (at_wall, behind) = (strip(&b, 0, 1_000, 5_000), strip(&b, 1_000, 2_000, 5_000));
-    // Two strips of 10 m2. As measured: 94 men at the wall and 90 behind it, so 9.4 and 9.0
+    // Two strips of 10 m2. As measured: 91 men at the wall and 93 behind it, so 9.1 and 9.3
     // per m2 against a packing density of 9. With the grid uncut it was 135 at the wall.
     assert!(at_wall < 100, "{at_wall} men in 10 m2 at the wall");
     assert!(
@@ -903,11 +903,10 @@ fn men_who_touch_are_not_shoved_into_a_wall_by_those_behind() {
         },
         &walls,
     );
-    run(&mut f, &mut b, &t, 240);
     let body = f.body_mm() as i64;
     // For the men in a strip: how many, and how many of them stand within three quarters of a
     // body's width of someone.
-    let crowded = |from: i32, to: i32| {
+    let crowded = |b: &Bodies, from: i32, to: i32| {
         let strip: Vec<usize> = (0..b.len())
             .filter(|&i| b.pos[i].x >= from && b.pos[i].x < to)
             .collect();
@@ -919,17 +918,31 @@ fn men_who_touch_are_not_shoved_into_a_wall_by_those_behind() {
             .count();
         (strip.len(), close)
     };
-    let (at_wall, close_at_wall) = crowded(0, 400);
-    let (behind, close_behind) = crowded(800, 1_600);
-    assert!(at_wall > 20 && behind > 20);
+    // Any one instant is a matter of chance: from none to 12 of some 63 men at the wall. So
+    // sixteen instants are summed, five seconds apart, once the crowd has packed.
+    run(&mut f, &mut b, &t, 160);
+    let (mut at_wall, mut close_at_wall, mut behind, mut close_behind) = (0, 0, 0, 0);
+    for k in 0..16 {
+        run_from(&mut f, &mut b, &t, 160 + 20 * k, 20);
+        let (n, close) = crowded(&b, 0, 400);
+        at_wall += n;
+        close_at_wall += close;
+        let (n, close) = crowded(&b, 800, 1_600);
+        behind += n;
+        close_behind += close;
+    }
+    assert!(at_wall > 320 && behind > 320);
     // The solve is not exact where a row is squeezed along a wall (rival/08, "What it does
-    // badly"), so a few are left close: 4 of 62 as measured. Without the wall in the passes it
-    // was 21 of 67, and with the man at the wall giving his share, 12 of 66.
+    // badly"), so some are left close: about one in twenty-five at the wall, and one in three
+    // hundred behind. Without the wall in the passes it was one in three at the wall.
     assert!(
         close_at_wall * 10 <= at_wall,
-        "{close_at_wall} of {at_wall} at the wall, {close_behind} of {behind} behind"
+        "{close_at_wall} of {at_wall} at the wall"
     );
-    assert_eq!(close_behind, 0);
+    assert!(
+        close_behind * 50 <= behind,
+        "{close_behind} of {behind} behind"
+    );
 }
 
 /// Two enemies out of their places, `gap` apart along x with the first at `x`, each going for

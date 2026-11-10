@@ -107,15 +107,16 @@ The ground's walls are straight segments, handed to the field when it is built
 **No one crosses a wall,** in his place or out of it, and no man's centre comes nearer to one
 than half a body's width (179 mm). A man who would walk into a wall is put back on the side he
 came from and keeps what he gained along it: he slides, and he rounds a post. Among men
-handled by position, a man standing against a wall cannot give ground toward it, so whoever
-leans on him gives all of the overlap.
+handled by position the wall is applied inside every pass: a man whom the men he touches
+would move into a wall is put back, and they take up the overlap in the passes that follow.
 
 **A wall cuts the grid.** A man's presence is shared among the four cells whose centres
 surround him. A cell whose centre he cannot reach in a straight line for a wall gets none of
 it, and he reads nothing from it; the cells he can reach take its share.
-- A crowd pressed on a wall is then as dense at the wall as behind it: 9.4 per m² in the first
-  metre against 9.0 in the second. With the grid uncut it was 13.5 against 8.8, because a man
-  against a wall on a cell's edge read 0.63 of the density he stood in.
+- A crowd pressed on a wall is then as dense at the wall as behind it: 9.1 per m² in the first
+  metre against 9.3 in the second. When the cut was written, with the lean as it then was, it
+  was 9.4 against 9.0, and with the grid uncut 13.5 against 8.8, because a man against a wall
+  on a cell's edge read 0.63 of the density he stood in.
 - Men either side of a wall do not feel each other. A crowd walking along a wall takes the
   same positions, bit for bit, whether or not a packed crowd stands on the far side.
 
@@ -187,7 +188,7 @@ only allowed for there.
 6. **Its flow through a gap is right only by calibration, and moves with the grid.** With
    Weidmann's own curve, fitted to walking in the open, it passed 1.17 persons per metre per
    second through a 3 m gate where about 1.9 is measured. The curve's capacity is now a prior
-   calibrated on bottleneck measurements, and the gate passes 1.80 at its centre. Two things
+   calibrated on bottleneck measurements, and the gate passes 1.81 at its centre. Two things
    remain. How a gap sits on the cells moves its flow by about a tenth either way. And one
    curve serves for the open and for gaps, so in an open crowd of two per m² a man now walks
    at 0.7 of his free speed where Weidmann's fit gives 0.46
@@ -195,10 +196,17 @@ only allowed for there.
 7. **A passage narrower than a cell cannot be resolved.** It has no cell centre inside it, so
    its men are left with all four of their cells as if the walls were not there. Seyfried's
    corridor (0.8 to 1.2 m) cannot be run.
-8. **Under `All`, a row pressed along a wall is squeezed.** In a crowd pressed on a wall, 4 of
-   the 62 men at the wall stood within three quarters of a body's width of another; none a
-   metre back did. The solve gives each of two men a fixed share of their overlap, and along
-   a wall that leaves some of it standing.
+8. **Under `All`, a row pressed along a wall is squeezed.** In a crowd pressed on a wall,
+   about one man in twenty-five at the wall stands within three quarters of a body's width of
+   another (44 of 1,023, summed over sixteen instants five seconds apart), against one in
+   three hundred a metre back. The solve gives each of two men a share of their overlap, and
+   along a wall that leaves some of it standing.
+   - **A correction.** Any one instant gives from none to 12 of some 63 men. I first read a
+     single instant, took "4 of 62, against 12 of 66" as the effect of a rule that a man held
+     by a wall gives nothing toward it, and built the rule on that. Summed over instants the
+     rule made no difference (38 to 48 of about 1,050 without it, 41 to 57 with it), so it has
+     been taken out. Applying the wall inside every pass is what matters: without that it is
+     one in three.
 
 ## Left out
 

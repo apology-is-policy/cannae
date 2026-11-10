@@ -107,25 +107,6 @@ impl Walls {
         if free { q } else { from }
     }
 
-    /// For a man standing against a wall: the way out from it, 1024 long. Zero for anyone else.
-    /// Such a man cannot give ground toward the wall, whoever leans on him.
-    pub fn held(&self, p: Vec2) -> Vec2 {
-        let walls = self.index.walls();
-        let r = self.clear + 2 * SPARE;
-        let mut best = (r * r + 1, Vec2::ZERO);
-        for &k in self.index.near(p) {
-            let off = p - walls[k as usize].nearest(p);
-            let d2 = off.len_sq();
-            if d2 < best.0 && d2 > 0 {
-                best = (d2, off);
-            }
-        }
-        if best.1 == Vec2::ZERO {
-            return Vec2::ZERO;
-        }
-        best.1.mul_div(1_024, (best.0 as u64).isqrt() as i64)
-    }
-
     /// The shares of a man at `p` among the four cells of his block, of 256, and which of the
     /// four he can see. `centre(k)` is the centre of cell `k`; `w` are his shares with no wall.
     /// The shares returned sum to 256, and a cell he cannot see has none.
@@ -167,13 +148,6 @@ impl Walls {
 /// For a cell a man cannot see, the cell of his block that stands for it when he reads how the
 /// crowd thickens: the one beside it, else the one above or below, else the one across. So the
 /// crowd neither pushes him through a wall nor pulls him to it.
-/// Whether a man held by a wall, with `out` the way out from it, is being pushed into it by a
-/// push along `push`: more into the wall than along it.
-pub(crate) fn into(out: Vec2, push: Vec2) -> bool {
-    let d = push.dot(out);
-    d < 0 && d * d > push.len_sq() * (512 * 512)
-}
-
 pub(crate) fn stand_in(seen: &[bool; 4], k: usize) -> usize {
     [k ^ 1, k ^ 2, k ^ 3]
         .into_iter()
@@ -307,23 +281,6 @@ mod tests {
         };
         let shares = [10, 20, 100, 126];
         assert_eq!(w.cut(Vec2::new(0, 0), centre, shares), (shares, [true; 4]));
-    }
-
-    #[test]
-    fn a_man_against_a_wall_is_held_and_knows_which_way_is_out() {
-        let walls = post();
-        let w = Walls::new(&walls, 1_024, CLEAR);
-        let out = w.held(Vec2::new(CLEAR + 4, 5_000));
-        assert_eq!(out, Vec2::new(1_024, 0));
-        assert_eq!(w.held(Vec2::new(CLEAR + 40, 5_000)), Vec2::ZERO);
-        assert_eq!(w.held(Vec2::new(30_000, 0)), Vec2::ZERO);
-        // Pushed straight at the wall or mostly at it, he cannot give; along it or away, he can.
-        assert!(into(out, Vec2::new(-300, 0)));
-        assert!(into(out, Vec2::new(-300, 300)));
-        assert!(!into(out, Vec2::new(-100, 300)));
-        assert!(!into(out, Vec2::new(0, 300)));
-        assert!(!into(out, Vec2::new(300, 0)));
-        assert!(!into(Vec2::ZERO, Vec2::new(-300, 0)));
     }
 
     #[test]
