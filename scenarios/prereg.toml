@@ -33,7 +33,8 @@ holds_max_never = 0.25
 
 # 7. The casualty clock.
 clock_hits_per_file_hour = [0.1, 2.0]
-# Either man disabled or killed in one committed bout. Proposed from the skeletal and
-# experimental half of S0.4 (docs/slice0/lethality-skeletal.md); the lower end is the weakest
-# number here and is Varro's to set or accept.
-clock_lethality_per_bout = [0.005, 0.15]
+# Either man disabled or killed in one committed bout: an outer envelope. The upper end is
+# from the skeletal and experimental half of S0.4 (docs/slice0/lethality-skeletal.md). The
+# lower end was Varro's to set, and he moved it from 0.005 to 0.002 on the other half
+# (docs/slice0/lethality-line-fighting.md). Paullus has yet to sign it.
+clock_lethality_per_bout = [0.002, 0.15]

@@ -1,0 +1,15 @@
+[package]
+name = "cannae-man"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+description = "The rival's man: five postures, hazards read off what he sees, and the three lower rungs of the memory ladder"
+
+[dependencies]
+cannae-core = { path = "../cannae-core" }
+
+[dev-dependencies]
+cannae-harness = { path = "../cannae-harness" }
+
+[lints]
+workspace = true

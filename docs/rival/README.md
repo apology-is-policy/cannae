@@ -98,6 +98,7 @@ contact holds a crowd at a believable density.
 | [04-acceptance.md](04-acceptance.md) | A1 at 1:1, A2 from the ensemble, what is evidence and what is input |
 | [05-costs-and-critique.md](05-costs-and-critique.md) | What it costs, where the vision of record is wrong, overbuilt or timid, and where the rival is weak |
 | [06-experiment.md](06-experiment.md) | The Slice 0 experiment: one harness, two engines, kill criteria both ways |
+| [07-hazards.md](07-hazards.md) | The man as built: the two sums, the six changes of posture, what he carries, what was left out, and how many numbers it takes |
 
 ## Status of the claims
 

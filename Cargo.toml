@@ -1,6 +1,11 @@
 [workspace]
 resolver = "3"
-members = ["crates/cannae-core", "crates/cannae-harness", "crates/cannae-pairwise"]
+members = [
+    "crates/cannae-core",
+    "crates/cannae-harness",
+    "crates/cannae-man",
+    "crates/cannae-pairwise",
+]
 
 [workspace.package]
 edition = "2024"
