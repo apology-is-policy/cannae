@@ -1,9 +1,9 @@
 //! What each activity costs in power, for W'. One table for both engines.
 //!
-//! The values are placeholders. Their priors are fixed in S0.3 from published locomotion and
-//! load-carriage physiology, before any scored run.
+//! Power is a multiple of the man's own critical power, in per mille (see `stamina`). The values
+//! are the middles of the priors in docs/slice0/priors-shared.md.
 
-use crate::units::MilliW;
+use crate::stamina::CpPerMille;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 #[repr(u8)]
@@ -22,20 +22,22 @@ pub enum Activity {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct PowerTable {
-    pub mw: [MilliW; 6],
+    pub pm: [CpPerMille; 6],
 }
 
 impl PowerTable {
+    /// Rest 0.09, stand 0.14, walk 0.5, run 1.4, press 1.35 and fight 1.55 CP.
     pub const PLACEHOLDER: PowerTable = PowerTable {
-        mw: [80_000, 120_000, 200_000, 450_000, 400_000, 500_000],
+        pm: [90, 140, 500, 1_400, 1_350, 1_550],
     };
 
-    pub const fn of(&self, a: Activity) -> MilliW {
-        self.mw[a as usize]
+    pub const fn of(&self, a: Activity) -> CpPerMille {
+        self.pm[a as usize]
     }
 }
 
-/// Speeds by gait in mm/s. Placeholders, like the power table.
+/// Speeds by gait in mm/s. Walking is Vegetius's military step (1.9): 20 Roman miles in five
+/// summer hours, about 1.3 m/s.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct GaitSpeeds {
     pub walk: i32,

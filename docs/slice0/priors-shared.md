@@ -20,7 +20,7 @@ scales. Critical power was 250 W, a cycling figure for the work done at the cran
 table read like metabolic watts, about five times larger at a gross efficiency near 20 %
 (Hopker et al. 2010 [primary]). The literature agrees on ratios more than on absolute watts,
 so the core will express every activity as a multiple of the man's own critical power (CP),
-and W' in CP-seconds, i.e. W'/CP. Working at 2 CP, a man spends it in W'/CP seconds. The engines
+and W' in CP-seconds, i.e. W'/CP. Working at 2 CP, a man spends it in W'/CP seconds. (The code counts it in CP-microseconds.) The engines
 read breath only through `stamina::step` and the power table, so the seam does not change.
 
 Skiba's recovery constant, τ = 546 exp(−0.01 D_CP) + 316 s, was fitted in mechanical watts on

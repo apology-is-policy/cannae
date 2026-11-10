@@ -34,5 +34,6 @@ pub use intent::{Gait, Intent, Target};
 pub use model::{Decision, Frames, ManModel, NoBouts, Resolver, Substrate};
 pub use observe::{Bodies, BodyId, ManId, Observed, Posture, Role, Side, Wound};
 pub use rng::{Key, Rng, Stream};
-pub use units::{MilliJ, MilliW, SimMs, Vec2};
+pub use stamina::{CpPerMille, CpUs, StaminaParams};
+pub use units::{SimMs, Vec2};
 pub use view::{Coarse, FrameQuery, GridPerception, Perceive, View};

@@ -116,12 +116,6 @@ impl SimMs {
     }
 }
 
-/// Energy in millijoules. A W' capacity of 20-30 kJ is 2-3 x 10^7, well inside `i32`.
-pub type MilliJ = i32;
-
-/// Power in milliwatts. A critical power of 250 W is 250,000.
-pub type MilliW = i32;
-
 #[cfg(test)]
 mod tests {
     use super::*;
