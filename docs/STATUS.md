@@ -23,7 +23,7 @@ reviews his work and merges it.
 | S0.3 | Metrics and pre-registration: the eight patterns computed from observable state; pass bands and both sides' parameter priors written down before any scored run | 0fbcc74 metrics and draft; freeze after Varro agrees |
 | S0.4 | Lethality bounds: literature search on skeletal trauma and experimental archaeology (Varro searches line-fighting ethnography and Collins) | f8cb2a6 Paullus's half; band proposed |
 | S0.5 | The pairwise substrate, where every body touches its neighbours, at patch scale; a perception conformance check for Varro | 14e919b |
-| S0.6 | The top two rungs of the memory ladder: continuous fear and resolve, then the full excitable psyche | |
+| S0.6 | The top two rungs of the memory ladder: continuous fear and resolve, then the full excitable psyche | Design written ([rungs-3-4.md](slice0/rungs-3-4.md)); waits for Varro's `Memory` hook |
 | S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | Pairwise done for the line, surge and pocket ([report](slice0/spike-pairwise.md)); the gates wait for walls (S0.8); Varro's field spike is his |
 | S0.8 | The passage study, against measured crowd-flow data | |
 | S0.9 | Scored runs and the report; then design review 2 | |
@@ -142,6 +142,13 @@ word is singular). This is recorded in the review's disposition table.
 **Blocking the next step:** none.
 
 **Not blocking:**
+
+- **Rung 4, the full excitable psyche** (S0.6): build it only if rungs 0-3 all fail? Since I
+  conceded that its fast layer behaves like a hazard with a reaction lag, and Varro's layer
+  already ties breath to going forward, what rung 4 alone adds is graded intensity (how hard a
+  man leans, how close he stands) and refractoriness beyond breath. No named pattern obviously
+  needs either. Parsimony says build it only if needed, but it is in the approved arc, so it is
+  Michal's call. I will ask properly when rung 3 is done.
 
 - The time window: Pyrrhus (280–275 BC) and Idistaviso (AD 16) as stretch scenarios only?
 - Out of scope: naval warfare, sieges and the campaign layer, except as initial conditions?
