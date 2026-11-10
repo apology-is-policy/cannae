@@ -24,19 +24,27 @@ reviews his work and merges it.
 | S0.4 | Lethality bounds: literature search on skeletal trauma and experimental archaeology (Varro searches line-fighting ethnography and Collins) | f8cb2a6 Paullus's half; band proposed |
 | S0.5 | The pairwise substrate, where every body touches its neighbours, at patch scale; a perception conformance check for Varro | 14e919b |
 | S0.6 | The top two rungs of the memory ladder: continuous fear and resolve, then the full excitable psyche | |
-| S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | (this) in progress: pairwise substrate only, burst readings |
+| S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | 1cce715, e6d2195 (pairwise 4x faster); sustained readings running |
 | S0.8 | The passage study, against measured crowd-flow data | |
 | S0.9 | Scored runs and the report; then design review 2 | |
 
-**First speed readings (pairwise substrate only, no man model, 6 s bursts, not yet the sustained 10 minutes):** 150,000 bodies run at about 2.5x real time on one core in a line battle and 2.4x in a pocket; 4-8 threads give only 2.9x so far, because the serial parts now dominate. Hashes are identical across thread counts. The kill line for this engine is 3x sustained on all cores, with the man included, so it is close.
+**Speed readings (pairwise substrate only, no man model, 6 s bursts; the sustained 10-minute runs are going now):** 150,000 bodies run at about 9.9x real time on one core in a line battle and 15.5x on four; a pocket, the dense worst case, at 3.8x and 6.3x. The first version managed 2.5x and 2.4x. Its cost was not the contact search but building and summing a grid with a cell for every patch of empty ground. Results are bit-identical across versions and thread counts. The kill line for this engine is 3x sustained on all cores, with the man included.
+
+**Priors (drafts, frozen with the pre-registration):** three files, so that both engines draw everything they share from one prior, and draw *i* is the same in every cell.
+
+- [priors-shared.md](slice0/priors-shared.md): stamina, power and gait (Paullus), plus ties, bouts and the troop table (Varro, to come). Power is now a multiple of each man's critical power, because the placeholders mixed cycling watts with metabolic ones.
+- [priors-pairwise.md](slice0/priors-pairwise.md): the pairwise substrate, with seven drawn parameters, and rungs 3-4 to come. The placeholder crush threshold was below the crowd-safety literature's onset of 5-8 men per m².
+- `priors-field.md`: Varro's, to come.
+
+The sources behind them are in [crowd-physics.md](slice0/crowd-physics.md) and [physiology.md](slice0/physiology.md). The march speed is checked against Vegetius 1.9 in the Latin: 20 Roman miles in five summer hours, about 1.3 m/s.
 
 **Varro's work:**
 
 | Piece | Status |
 |---|---|
 | Frames (standards, slots, ties, drills) and the shared bout resolver, in the core | 84dce11, reviewed and merged to `main` |
-| His priors file and behaviour table | next |
-| The visible layer (postures, hazards) and the bottom three rungs of the memory ladder | |
+| `cannae-man` with rungs 0-2 (33 weights, a troop table) | compiles; tests next |
+| His priors file and behaviour table; his lines of priors-shared.md | next |
 | His half of the lethality search (line-fighting ethnography, Collins) | |
 | The field substrate, with contact where men are crowded and moving | |
 

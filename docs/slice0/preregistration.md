@@ -15,16 +15,25 @@ That's the same reason the sealed battles are hash-committed.
 - **The metrics code:** [`metrics.rs`](../../crates/cannae-harness/src/metrics.rs) at the frozen
   commit.
 - **The pass bands:** [`scenarios/prereg.toml`](../../scenarios/prereg.toml).
-- **The priors:** each builder lists every free parameter of his engine with a prior, in
-  `docs/slice0/priors-pairwise.md` and `docs/slice0/priors-field.md`, counted line by line. The
-  two builders swap lists and read them before the freeze.
+- **The priors,** in three files, counted line by line:
+  - `docs/slice0/priors-shared.md`: every parameter of the shared core that both engines run.
+    That covers the frames' ties, the bout resolver, and a troop table (reach, guard and skill;
+    critical power and W' per troop type). Varro writes the ties, bouts and kits, Paullus the
+    stamina, power and gait. Each signs the other's.
+  - `docs/slice0/priors-field.md` (Varro) and `docs/slice0/priors-pairwise.md` (Paullus):
+    only what is the engine's own. That means the substrate, and the man's rungs: what a troop
+    is like inside, as opposed to what it fights with.
+
+  If each builder drew the shared parameters from his own prior, the experiment would compare
+  priors as much as engines.
 - **The lethality bounds** from the S0.4 literature search.
 
 ## The procedure
 
 For each cell of the experiment (each rung of the memory ladder on each substrate):
 
-1. Draw 200 parameter sets from the builder's priors.
+1. Draw 200 parameter sets: the shared parameters from the shared priors, the rest from the
+   engine's own.
 2. Run each set on the same 10 seeds, for each scenario variant.
 3. Compute a run summary per run, from observable state and the event log only.
 4. Pool each per-run statistic over a parameter set's seeds by its median, and compare it with
@@ -39,6 +48,14 @@ For each cell of the experiment (each rung of the memory ladder on each substrat
 **The knife-edge rule.** A cell passes only if at least 10 % of its parameter sets pass all
 eight patterns. A model that passes only on a knife-edge has failed, whichever engine it is
 (vision 04 §5.3). The 10 % is proposed, to be agreed.
+
+**Common draws.** Draw *i* uses the same shared values in every cell, from a seed fixed at
+the freeze, so cells do not differ by the noise of the shared priors. The ladder is nested in
+the same way. What a man sees, and how much each thing he sees weighs (the alarm and urge sums
+of the visible layer), is one set of weights for all five rungs. On one substrate, draw *i* of
+a rung is draw *i* of the rung below plus that rung's new parameters. So rungs 3 and 4 (the
+continuous gauges, then the full excitable psyche) add memory on top of the same perception
+weights as rungs 0-2, and nothing else changes.
 
 **The memory ladder.** Within each substrate, the lowest rung that passes is kept.
 
