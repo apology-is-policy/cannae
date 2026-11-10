@@ -1,11 +1,17 @@
 //! The S0.7 speed spike for the pairwise substrate: 150,000 bodies, substrate only (no man
 //! model yet), measured as simulated seconds per wall second.
 //!
-//! `cargo run --release -p cannae-pairwise --example spike -- <line|pocket> [--threads N]
-//!  [--seconds S] [--report-every-s R]`
+//! `cargo run --release -p cannae-pairwise --example spike -- <line|surge|pocket> [--threads N]
+//!  [--seconds S] [--wall-s W] [--report-every-s R]`
 //!
 //! `line`: two armies of 75,000, 1,000 files by 75 ranks each, pressed together along 1.5 km.
+//! It settles into a still jam within seconds.
+//! `surge`: the same line, but every man is re-targeted 3 m ahead of where he stands at each
+//! man step, so the jam never settles.
 //! `pocket`: 60,000 men packed in a disc, 90,000 around them pressing inward.
+//!
+//! `--wall-s` stops after that much wall time, for sustained (throttled) readings; it cannot
+//! change the state reached at a given tick.
 #![allow(clippy::float_arithmetic)]
 
 use cannae_core::schedule::BASE_TICK;
@@ -92,19 +98,25 @@ fn main() {
     let mut threads = 1usize;
     let mut seconds = 60u32;
     let mut report_every_s = 10u64;
+    let mut wall_s = u64::MAX;
     while let Some(a) = args.next() {
         match a.as_str() {
             "--threads" => threads = args.next().and_then(|v| v.parse().ok()).unwrap_or(1),
             "--seconds" => seconds = args.next().and_then(|v| v.parse().ok()).unwrap_or(60),
+            "--wall-s" => wall_s = args.next().and_then(|v| v.parse().ok()).unwrap_or(u64::MAX),
             "--report-every-s" => {
                 report_every_s = args.next().and_then(|v| v.parse().ok()).unwrap_or(10)
             }
             other => config = other.to_string(),
         }
     }
-    let (mut bodies, targets) = match config.as_str() {
+    let (mut bodies, mut targets) = match config.as_str() {
         "pocket" => pocket(),
-        _ => line(),
+        "line" | "surge" => line(),
+        other => {
+            eprintln!("unknown configuration {other:?}: line, surge or pocket");
+            std::process::exit(2);
+        }
     };
     let mut s = Pairwise::new(Params::PLACEHOLDER);
     s.threads = threads;
@@ -118,8 +130,17 @@ fn main() {
     );
     let start = Instant::now();
     let (mut last_t, mut last_tick) = (start, 0u32);
+    let mut done = 0u32;
     for tick in 0..ticks {
+        if config == "surge" && cannae_core::schedule::is_man_step(tick) {
+            for (i, t) in targets.iter_mut().enumerate() {
+                if let Some(f) = t.face {
+                    t.point = bodies.pos[i] + f.unit(3_000);
+                }
+            }
+        }
         s.advance(&mut bodies, &targets, BASE_TICK, &rng, tick, &mut out);
+        done = tick + 1;
         crushed += out.len();
         out.clear();
         let now = Instant::now();
@@ -137,11 +158,15 @@ fn main() {
             );
             (last_t, last_tick) = (now, tick + 1);
         }
+        if now.duration_since(start).as_secs() >= wall_s {
+            break;
+        }
     }
     let wall = start.elapsed().as_secs_f64();
+    let sim = done as f64 * BASE_TICK.0 as f64 / 1000.0;
     println!(
-        "done: {:.2}x real time overall, final hash {:016x}",
-        seconds as f64 / wall,
+        "done: {sim:.0} simulated s in {wall:.0} s, {:.2}x real time overall, final hash {:016x}",
+        sim / wall,
         bodies.state_hash()
     );
 }

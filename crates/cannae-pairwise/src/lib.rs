@@ -14,6 +14,8 @@ use cannae_core::{
     Bodies, Cause, Event, EventKind, Key, Posture, Prob, Rng, SimMs, Stream, Substrate, Target,
     Vec2, Wound,
 };
+use core::ops::Range;
+use rayon::prelude::*;
 
 /// Every value here is a placeholder until the priors are fixed in S0.3.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -54,130 +56,213 @@ impl Params {
 /// The purpose word for a crush injury draw on the substrate stream.
 pub const PURPOSE_CRUSH: u32 = 1;
 
+/// Men per task in the per-man phases: large enough that scheduling costs little.
+const MEN_PER_TASK: usize = 4_096;
+
 pub struct Pairwise {
     pub p: Params,
-    /// Threads for the contact passes. Results are identical for any count: corrections are
-    /// integers summed per thread and then across threads, and integer addition does not care
-    /// about order.
+    /// Threads for the parallel phases. Results are identical for any count: every phase
+    /// either writes disjoint slices, or sums integer corrections, and integer addition does
+    /// not care about order.
     pub threads: usize,
+    pool: Option<(usize, rayon::ThreadPool)>,
     grid: Grid,
+    /// Corrections and summed overlaps of one pass, in the grid's sorted order.
     corr: Vec<Vec2>,
+    over: Vec<i32>,
+    /// Summed overlaps of the last pass, by man.
     pressure: Vec<i32>,
     weight: Vec<i32>,
     old: Vec<Vec2>,
-    bufs: Vec<(Vec<Vec2>, Vec<i32>)>,
 }
 
-/// Men sorted by cell into a dense row-major grid over their bounding box, with their positions
-/// and weights copied into that order, so a cell's neighbours are contiguous in memory. Cells
-/// are at least one diameter wide, and wider when men are spread thin, which keeps the grid's
-/// size proportional to their number.
+/// The standing men sorted by cell, row by row, ties by id, with their positions and weights
+/// copied into that order. A cell's men are contiguous, and so are the three cells below it in
+/// the next row, so the neighbours of a man are two runs of the sorted list whose bounds only
+/// ever move forward. No array is kept per cell, so empty ground costs nothing.
+///
+/// Cells are at least one diameter wide, and wider when men are spread thin. Their edges sit on
+/// multiples of the cell size, so they stay put as the men move, and a column of empty cells
+/// pads each side of every row, so a cell's neighbour to the east or below-left can never wrap
+/// into another row's men.
+///
+/// Men rarely change cells between passes, so each build re-sorts the last order by insertion,
+/// and falls back to a full sort when too many have moved. Both give the one order by (cell,
+/// id), so which ran cannot change a result.
 #[derive(Default)]
 struct Grid {
-    size: i32,
-    x0: i32,
-    y0: i32,
-    w: i32,
-    h: i32,
-    start: Vec<u32>,
-    /// Man ids in cell order (ties by id).
+    w: u32,
+    /// Cell key (`row * w + col`) of each sorted man.
+    key: Vec<u32>,
+    /// Man ids in sorted order.
     id: Vec<u32>,
     px: Vec<i32>,
     py: Vec<i32>,
     wt: Vec<i32>,
-    slot: Vec<u32>,
+    // Scratch: (key << 32 | id) per sorted man, and whether each man was in the last build.
+    v: Vec<u64>,
+    listed: Vec<bool>,
 }
 
+const UNLISTED: u64 = u64::MAX;
+
 impl Grid {
-    fn build(
-        &mut self,
-        diameter: i32,
-        pos: &[Vec2],
-        weight: &[i32],
-        active: impl Fn(usize) -> bool,
-    ) {
-        let (mut x0, mut y0, mut x1, mut y1) = (i32::MAX, i32::MAX, i32::MIN, i32::MIN);
-        let mut m = 0usize;
-        for (i, p) in pos.iter().enumerate() {
-            if active(i) {
-                x0 = x0.min(p.x);
-                y0 = y0.min(p.y);
-                x1 = x1.max(p.x);
-                y1 = y1.max(p.y);
-                m += 1;
-            }
-        }
-        if m == 0 {
-            (x0, y0, x1, y1) = (0, 0, 0, 0);
-        }
+    fn build(&mut self, diameter: i32, pos: &[Vec2], weight: &[i32], posture: &[Posture]) {
+        let n = pos.len();
+        let (x0, y0, x1, y1, m) = pos
+            .par_chunks(MEN_PER_TASK)
+            .zip(posture.par_chunks(MEN_PER_TASK))
+            .map(|(ps, qs)| {
+                let mut b = (i32::MAX, i32::MAX, i32::MIN, i32::MIN, 0usize);
+                for (p, &q) in ps.iter().zip(qs) {
+                    if q != Posture::Down {
+                        b = (
+                            b.0.min(p.x),
+                            b.1.min(p.y),
+                            b.2.max(p.x),
+                            b.3.max(p.y),
+                            b.4 + 1,
+                        );
+                    }
+                }
+                b
+            })
+            .reduce(
+                || (i32::MAX, i32::MAX, i32::MIN, i32::MIN, 0),
+                |a, b| {
+                    (
+                        a.0.min(b.0),
+                        a.1.min(b.1),
+                        a.2.max(b.2),
+                        a.3.max(b.3),
+                        a.4 + b.4,
+                    )
+                },
+            );
+        let (x0, y0, x1, y1) = if m == 0 {
+            (0, 0, 0, 0)
+        } else {
+            (x0, y0, x1, y1)
+        };
         let (spanx, spany) = ((x1 - x0) as i64 + 1, (y1 - y0) as i64 + 1);
         let mut size = diameter as i64;
-        // At most about eight cells per man.
+        // At most about eight cells per man, which keeps keys small.
         let cap = 8 * m as i64 + 4096;
         while (spanx / size + 1) * (spany / size + 1) > cap {
             size *= 2;
         }
-        self.size = size as i32;
-        (self.x0, self.y0) = (x0, y0);
-        self.w = (spanx / size + 1) as i32;
-        self.h = (spany / size + 1) as i32;
-        let cells = (self.w * self.h) as usize;
-        self.slot.clear();
-        self.slot.resize(pos.len(), u32::MAX);
-        self.start.clear();
-        self.start.resize(cells + 1, 0);
-        for (i, &p) in pos.iter().enumerate() {
-            if active(i) {
-                let c = self.cell_index(p);
-                self.slot[i] = c as u32;
-                self.start[c + 1] += 1;
+        let size = size as i32;
+        let (x0, y0) = (x0.div_euclid(size) * size, y0.div_euclid(size) * size);
+        let w = ((x1 - x0) / size + 3) as u32;
+        self.w = w;
+        let cell = |p: Vec2| -> u64 {
+            let row = ((p.y - y0) / size) as u64;
+            let col = ((p.x - x0) / size) as u64 + 1;
+            (row * w as u64 + col) << 32
+        };
+        // The last order, with the fallen dropped, then anyone newly standing, by id.
+        let prev = core::mem::take(&mut self.id);
+        self.v.resize(prev.len(), 0);
+        self.v
+            .par_chunks_mut(MEN_PER_TASK)
+            .zip(prev.par_chunks(MEN_PER_TASK))
+            .for_each(|(vs, ids)| {
+                for (v, &i) in vs.iter_mut().zip(ids) {
+                    let i = i as usize;
+                    *v = if i < n && posture[i] != Posture::Down {
+                        cell(pos[i]) | i as u64
+                    } else {
+                        UNLISTED
+                    };
+                }
+            });
+        self.v.retain(|&v| v != UNLISTED);
+        self.listed.clear();
+        self.listed.resize(n, false);
+        for &v in &self.v {
+            self.listed[v as u32 as usize] = true;
+        }
+        for i in 0..n {
+            if !self.listed[i] && posture[i] != Posture::Down {
+                self.v.push(cell(pos[i]) | i as u64);
             }
         }
-        for c in 0..cells {
-            self.start[c + 1] += self.start[c];
+        debug_assert_eq!(self.v.len(), m);
+        if !insertion_sort(&mut self.v, 4 * m + 64) {
+            self.v.sort_unstable();
         }
-        self.id.clear();
+        self.id = prev;
         self.id.resize(m, 0);
-        let mut fill = self.start.clone();
-        for i in 0..pos.len() {
-            let c = self.slot[i];
-            if c != u32::MAX {
-                let k = fill[c as usize] as usize;
-                self.id[k] = i as u32;
-                fill[c as usize] += 1;
-            }
-        }
-        self.px.clear();
-        self.py.clear();
-        self.wt.clear();
-        for &i in &self.id {
-            let i = i as usize;
-            self.px.push(pos[i].x);
-            self.py.push(pos[i].y);
-            self.wt.push(weight[i]);
-        }
+        self.key.resize(m, 0);
+        self.px.resize(m, 0);
+        self.py.resize(m, 0);
+        self.wt.resize(m, 0);
+        let v = &self.v;
+        self.id
+            .par_chunks_mut(MEN_PER_TASK)
+            .zip(self.key.par_chunks_mut(MEN_PER_TASK))
+            .zip(self.px.par_chunks_mut(MEN_PER_TASK))
+            .zip(self.py.par_chunks_mut(MEN_PER_TASK))
+            .zip(self.wt.par_chunks_mut(MEN_PER_TASK))
+            .zip(v.par_chunks(MEN_PER_TASK))
+            .for_each(|(((((ids, ks), xs), ys), ws), vs)| {
+                for k in 0..vs.len() {
+                    let i = vs[k] as u32;
+                    ids[k] = i;
+                    ks[k] = (vs[k] >> 32) as u32;
+                    xs[k] = pos[i as usize].x;
+                    ys[k] = pos[i as usize].y;
+                    ws[k] = weight[i as usize];
+                }
+            });
     }
 
-    fn cell_index(&self, p: Vec2) -> usize {
-        let cx = (p.x - self.x0) / self.size;
-        let cy = (p.y - self.y0) / self.size;
-        (cy * self.w + cx) as usize
-    }
-
-    fn range(&self, cx: i32, cy: i32) -> core::ops::Range<usize> {
-        if cx < 0 || cy < 0 || cx >= self.w || cy >= self.h {
-            return 0..0;
+    /// One past the last sorted man that the men of `run` can touch: the end of the cells
+    /// below-right of the run's last man.
+    fn reach_end(&self, run: Range<usize>) -> usize {
+        if run.is_empty() {
+            return run.start;
         }
-        let c = (cy * self.w + cx) as usize;
-        self.start[c] as usize..self.start[c + 1] as usize
+        let k = self.key[run.end - 1] + self.w + 1;
+        self.key.partition_point(|&x| x <= k)
     }
 }
 
-/// The contact between sorted men `a` and `b`, if any, added to `corr` and `pressure` (indexed
-/// by sorted position). Symmetric in `a` and `b` except for exact coincidence, which is broken by
-/// man id, so the result does not depend on which of the two finds the other.
+/// Sorts `v` by insertion if that takes at most `budget` moves, and says whether it did. Cheap
+/// when the list is nearly sorted already, which it is from one pass to the next.
+fn insertion_sort(v: &mut [u64], budget: usize) -> bool {
+    let mut moves = 0;
+    for i in 1..v.len() {
+        let x = v[i];
+        let mut j = i;
+        while j > 0 && v[j - 1] > x {
+            v[j] = v[j - 1];
+            j -= 1;
+        }
+        v[j] = x;
+        moves += i - j;
+        if moves > budget {
+            return false;
+        }
+    }
+    true
+}
+
+/// The contact between sorted men `a` and `b`, if any, added to `corr` and `over`, which
+/// start at sorted position `base`. Symmetric in `a` and `b` except for exact coincidence,
+/// which is broken by man id, so the result does not depend on which of the two finds the
+/// other.
 #[inline]
-fn contact(g: &Grid, p: &Params, a: usize, b: usize, corr: &mut [Vec2], pressure: &mut [i32]) {
+#[allow(clippy::too_many_arguments)]
+fn contact(
+    g: &Grid,
+    p: &Params,
+    a: usize,
+    b: usize,
+    base: usize,
+    corr: &mut [Vec2],
+    over: &mut [i32],
+) {
     let reach = 2 * p.radius_mm as i64;
     let mut d = Vec2::new(g.px[b] - g.px[a], g.py[b] - g.py[a]);
     let d2 = d.len_sq();
@@ -195,42 +280,60 @@ fn contact(g: &Grid, p: &Params, a: usize, b: usize, corr: &mut [Vec2], pressure
     let push = overlap * p.stiffness_q8 as i64;
     let ma = push * wb / (wa + wb) / 256;
     let mb = push * wa / (wa + wb) / 256;
-    corr[a] -= d.mul_div(ma, dist);
-    corr[b] += d.mul_div(mb, dist);
-    pressure[a] += overlap as i32;
-    pressure[b] += overlap as i32;
+    corr[a - base] -= d.mul_div(ma, dist);
+    corr[b - base] += d.mul_div(mb, dist);
+    over[a - base] += overlap as i32;
+    over[b - base] += overlap as i32;
 }
 
-/// All contacts of men in grid rows `rows`: within each cell, and with the half of the
-/// neighbouring cells that come later (east, and the three cells of the next row), so each pair
-/// is found exactly once.
+/// All contacts of the sorted men in `run`: each man with those after him in his own cell and
+/// the cell to his east, and with the three cells below him in the next row, so each pair is
+/// found exactly once. Writes stay below `g.reach_end(run)`.
 fn pairs(
     g: &Grid,
     p: &Params,
-    rows: core::ops::Range<i32>,
+    run: Range<usize>,
+    base: usize,
     corr: &mut [Vec2],
-    pressure: &mut [i32],
+    over: &mut [i32],
 ) {
-    for cy in rows {
-        for cx in 0..g.w {
-            let here = g.range(cx, cy);
-            for a in here.clone() {
-                for b in a + 1..here.end {
-                    contact(g, p, a, b, corr, pressure);
-                }
-                for (nx, ny) in [
-                    (cx + 1, cy),
-                    (cx - 1, cy + 1),
-                    (cx, cy + 1),
-                    (cx + 1, cy + 1),
-                ] {
-                    for b in g.range(nx, ny) {
-                        contact(g, p, a, b, corr, pressure);
-                    }
-                }
-            }
+    if run.is_empty() {
+        return;
+    }
+    let (key, w, m) = (&g.key, g.w, g.key.len());
+    let k0 = key[run.start];
+    let mut east = key.partition_point(|&x| x <= k0 + 1);
+    let mut below = key.partition_point(|&x| x < k0 + w - 1);
+    let mut below_end = key.partition_point(|&x| x <= k0 + w + 1);
+    for a in run {
+        let k = key[a];
+        while east < m && key[east] <= k + 1 {
+            east += 1;
+        }
+        while below < m && key[below] < k + w - 1 {
+            below += 1;
+        }
+        while below_end < m && key[below_end] <= k + w + 1 {
+            below_end += 1;
+        }
+        for b in a + 1..east {
+            contact(g, p, a, b, base, corr, over);
+        }
+        for b in below..below_end {
+            contact(g, p, a, b, base, corr, over);
         }
     }
+}
+
+/// Splits `s`, which starts at sorted position `bounds[0]`, at each of `bounds[1..]`.
+fn split_at<'a, T>(mut s: &'a mut [T], bounds: &[usize]) -> Vec<&'a mut [T]> {
+    let mut parts = Vec::with_capacity(bounds.len());
+    for pair in bounds.windows(2) {
+        let (head, tail) = s.split_at_mut(pair[1] - pair[0]);
+        parts.push(head);
+        s = tail;
+    }
+    parts
 }
 
 impl Pairwise {
@@ -238,12 +341,13 @@ impl Pairwise {
         Pairwise {
             p,
             threads: 1,
+            pool: None,
             grid: Grid::default(),
             corr: Vec::new(),
+            over: Vec::new(),
             pressure: Vec::new(),
             weight: Vec::new(),
             old: Vec::new(),
-            bufs: Vec::new(),
         }
     }
 
@@ -253,50 +357,162 @@ impl Pairwise {
         &self.pressure
     }
 
-    /// One relaxation pass.
-    fn relax(&mut self, bodies: &mut Bodies) {
-        let n = bodies.len();
-        let posture = &bodies.posture;
-        self.grid
-            .build(2 * self.p.radius_mm, &bodies.pos, &self.weight, |i| {
-                posture[i] != Posture::Down
-            });
-        let m = self.grid.id.len();
-        let threads = self.threads.max(1);
-        self.bufs.resize_with(threads, Default::default);
-        let h = self.grid.h;
-        let per = (h as usize).div_ceil(threads).max(1) as i32;
-        let (g, p) = (&self.grid, &self.p);
-        let work = |k: usize, buf: &mut (Vec<Vec2>, Vec<i32>)| {
-            buf.0.clear();
-            buf.0.resize(m, Vec2::ZERO);
-            buf.1.clear();
-            buf.1.resize(m, 0);
-            let lo = (k as i32 * per).min(h);
-            pairs(g, p, lo..(lo + per).min(h), &mut buf.0, &mut buf.1);
-        };
-        if threads == 1 {
-            work(0, &mut self.bufs[0]);
+    /// One relaxation pass. The sorted list is cut into runs of men; a run's contacts reach at
+    /// most into the next run, so the even runs can be done together, and then the odd ones,
+    /// each writing into the one shared list of corrections.
+    fn relax(&mut self, bodies: &mut Bodies, last: bool) {
+        self.grid.build(
+            2 * self.p.radius_mm,
+            &bodies.pos,
+            &self.weight,
+            &bodies.posture,
+        );
+        let g = &self.grid;
+        let m = g.id.len();
+        let mut runs = if self.threads > 1 {
+            4 * self.threads
         } else {
-            std::thread::scope(|sc| {
-                for (k, buf) in self.bufs.iter_mut().enumerate() {
-                    sc.spawn(move || work(k, buf));
-                }
+            1
+        };
+        let cuts = loop {
+            let cuts: Vec<usize> = (0..=runs).map(|j| j * m / runs).collect();
+            let fits =
+                (0..runs).all(|j| g.reach_end(cuts[j]..cuts[j + 1]) <= cuts[(j + 2).min(runs)]);
+            if fits || runs == 1 {
+                break cuts;
+            }
+            runs /= 2;
+        };
+        self.corr.clear();
+        self.corr.resize(m, Vec2::ZERO);
+        self.over.clear();
+        self.over.resize(m, 0);
+        let p = &self.p;
+        for parity in 0..2 {
+            // Run j may write from cuts[j] up to cuts[j + 2].
+            let mut bounds: Vec<usize> = (parity..=runs).step_by(2).map(|j| cuts[j]).collect();
+            if *bounds.last().expect("at least one bound") != m {
+                bounds.push(m);
+            }
+            let lo = bounds[0];
+            // The i-th slice belongs to run parity + 2i.
+            let tasks: Vec<_> = split_at(&mut self.corr[lo..], &bounds)
+                .into_iter()
+                .zip(split_at(&mut self.over[lo..], &bounds))
+                .enumerate()
+                .map(|(i, (c, o))| (parity + 2 * i, c, o))
+                .collect();
+            let cuts = &cuts;
+            tasks.into_par_iter().for_each(|(j, c, o)| {
+                pairs(g, p, cuts[j]..cuts[j + 1], cuts[j], c, o);
             });
         }
-        self.corr.clear();
-        self.corr.resize(n, Vec2::ZERO);
-        self.pressure.clear();
-        self.pressure.resize(n, 0);
-        for buf in &self.bufs {
-            for (k, &i) in self.grid.id.iter().enumerate() {
-                self.corr[i as usize] += buf.0[k];
-                self.pressure[i as usize] += buf.1[k];
+        if last {
+            self.pressure.clear();
+            self.pressure.resize(bodies.len(), 0);
+        }
+        for (k, &i) in g.id.iter().enumerate() {
+            bodies.pos[i as usize] += self.corr[k];
+            if last {
+                self.pressure[i as usize] = self.over[k];
             }
         }
-        for i in 0..n {
-            bodies.pos[i] += self.corr[i];
+    }
+
+    fn advance_in_pool(
+        &mut self,
+        bodies: &mut Bodies,
+        targets: &[Target],
+        dt: SimMs,
+        rng: &Rng,
+        tick: u32,
+        out: &mut Vec<Event>,
+    ) {
+        self.old.clear();
+        self.old.extend_from_slice(&bodies.pos);
+        self.weight.clear();
+        self.weight
+            .extend(targets.iter().map(|t| 256 + t.press as i32));
+        let p = self.p;
+        bodies
+            .pos
+            .par_chunks_mut(MEN_PER_TASK)
+            .zip(targets.par_chunks(MEN_PER_TASK))
+            .zip(bodies.posture.par_chunks(MEN_PER_TASK))
+            .for_each(|((ps, ts), qs)| {
+                for ((pos, t), &q) in ps.iter_mut().zip(ts).zip(qs) {
+                    if q == Posture::Down {
+                        continue;
+                    }
+                    let to = t.point - *pos;
+                    let speed = if t.speed == 0 { p.brace_mm_s } else { t.speed };
+                    let step = (speed as i64 * dt.0 as i64 / 1000) as i32;
+                    let mut mv = if to.len_sq() <= step as i64 * step as i64 {
+                        to
+                    } else {
+                        to.with_len(step)
+                    };
+                    if t.press > 0
+                        && let Some(f) = t.face
+                    {
+                        let lean = p.press_mm_s as i64 * t.press as i64 / 255 * dt.0 as i64 / 1000;
+                        mv += f.unit(lean as i32);
+                    }
+                    *pos += mv;
+                }
+            });
+        for pass in 0..self.p.iterations {
+            self.relax(bodies, pass + 1 == self.p.iterations);
         }
+        if self.p.iterations == 0 {
+            self.pressure.clear();
+            self.pressure.resize(bodies.len(), 0);
+        }
+        let (pos, old, pressure) = (&bodies.pos, &self.old, &self.pressure);
+        let events: Vec<Vec<Event>> = bodies
+            .vel
+            .par_chunks_mut(MEN_PER_TASK)
+            .zip(bodies.facing.par_chunks_mut(MEN_PER_TASK))
+            .zip(bodies.posture.par_chunks(MEN_PER_TASK))
+            .enumerate()
+            .map(|(chunk, ((vs, fs), qs))| {
+                let mut ev = Vec::new();
+                let first = chunk * MEN_PER_TASK;
+                for (k, ((v, f), &q)) in vs.iter_mut().zip(fs.iter_mut()).zip(qs).enumerate() {
+                    let i = first + k;
+                    if q == Posture::Down {
+                        *v = Vec2::ZERO;
+                        continue;
+                    }
+                    *v = (pos[i] - old[i]).mul_div(1000, dt.0 as i64);
+                    if let Some(face) = targets[i].face {
+                        *f = f.rotate_toward(face, p.turn_per_tick);
+                    }
+                    let excess = pressure[i] - p.crush_mm;
+                    if excess > 0 {
+                        let rate =
+                            (excess as u64 * p.crush_rate_q16_per_mm as u64).min(u32::MAX as u64);
+                        let chance = Prob::from_rate(rate as u32, dt);
+                        if rng.chance(
+                            chance,
+                            Key::new(Stream::Substrate, i as u32, tick, PURPOSE_CRUSH),
+                        ) {
+                            ev.push(Event {
+                                tick,
+                                man: cannae_core::ManId(i as u32),
+                                pos: pos[i],
+                                kind: EventKind::Wound {
+                                    to: Wound::Disabled,
+                                },
+                                causes: [Cause::Crush, Cause::None, Cause::None],
+                            });
+                        }
+                    }
+                }
+                ev
+            })
+            .collect();
+        out.extend(events.into_iter().flatten());
     }
 }
 
@@ -310,69 +526,16 @@ impl Substrate for Pairwise {
         tick: u32,
         out: &mut Vec<Event>,
     ) {
-        let n = bodies.len();
-        self.old.clear();
-        self.old.extend_from_slice(&bodies.pos);
-        self.weight.clear();
-        self.weight
-            .extend(targets.iter().map(|t| 256 + t.press as i32));
-        for (i, t) in targets.iter().enumerate() {
-            if bodies.posture[i] == Posture::Down {
-                continue;
-            }
-            let to = t.point - bodies.pos[i];
-            let speed = if t.speed == 0 {
-                self.p.brace_mm_s
-            } else {
-                t.speed
-            };
-            let step = (speed as i64 * dt.0 as i64 / 1000) as i32;
-            let mut mv = if to.len_sq() <= step as i64 * step as i64 {
-                to
-            } else {
-                to.with_len(step)
-            };
-            if t.press > 0
-                && let Some(f) = t.face
-            {
-                let lean = self.p.press_mm_s as i64 * t.press as i64 / 255 * dt.0 as i64 / 1000;
-                mv += f.unit(lean as i32);
-            }
-            bodies.pos[i] += mv;
-        }
-        for _ in 0..self.p.iterations {
-            self.relax(bodies);
-        }
-        for (i, t) in targets.iter().enumerate().take(n) {
-            if bodies.posture[i] == Posture::Down {
-                bodies.vel[i] = Vec2::ZERO;
-                continue;
-            }
-            bodies.vel[i] = (bodies.pos[i] - self.old[i]).mul_div(1000, dt.0 as i64);
-            if let Some(f) = t.face {
-                bodies.facing[i] = bodies.facing[i].rotate_toward(f, self.p.turn_per_tick);
-            }
-            let excess = self.pressure[i] - self.p.crush_mm;
-            if excess > 0 {
-                let rate =
-                    (excess as u64 * self.p.crush_rate_q16_per_mm as u64).min(u32::MAX as u64);
-                let p = Prob::from_rate(rate as u32, dt);
-                if rng.chance(
-                    p,
-                    Key::new(Stream::Substrate, i as u32, tick, PURPOSE_CRUSH),
-                ) {
-                    out.push(Event {
-                        tick,
-                        man: cannae_core::ManId(i as u32),
-                        pos: bodies.pos[i],
-                        kind: EventKind::Wound {
-                            to: Wound::Disabled,
-                        },
-                        causes: [Cause::Crush, Cause::None, Cause::None],
-                    });
-                }
-            }
-        }
+        let threads = self.threads.max(1);
+        let pool = match self.pool.take() {
+            Some((t, pool)) if t == threads => pool,
+            _ => rayon::ThreadPoolBuilder::new()
+                .num_threads(threads)
+                .build()
+                .expect("a thread pool"),
+        };
+        pool.install(|| self.advance_in_pool(bodies, targets, dt, rng, tick, out));
+        self.pool = Some((threads, pool));
     }
 }
 

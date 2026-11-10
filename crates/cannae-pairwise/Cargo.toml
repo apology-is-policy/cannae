@@ -7,6 +7,7 @@ description = "The vision of record's substrate: soft bodies in pairwise contact
 
 [dependencies]
 cannae-core = { path = "../cannae-core" }
+rayon = "1"
 
 [dev-dependencies]
 cannae-harness = { path = "../cannae-harness" }
