@@ -19,7 +19,7 @@
 #![allow(clippy::float_arithmetic)]
 
 use cannae_core::schedule::BASE_TICK;
-use cannae_core::{Bodies, Observed, Rng, Side, Substrate, Target, Turn, Vec2, Wall};
+use cannae_core::{Bodies, EventKind, Observed, Rng, Side, Substrate, Target, Turn, Vec2, Wall};
 use cannae_pairwise::{Pairwise, Params};
 use std::time::Instant;
 
@@ -223,7 +223,10 @@ fn main() {
         }
         s.advance(&mut bodies, &targets, BASE_TICK, &rng, tick, &mut out);
         done = tick + 1;
-        crushed += out.len();
+        crushed += out
+            .iter()
+            .filter(|e| matches!(e.kind, EventKind::Wound { .. }))
+            .count();
         out.clear();
         let now = Instant::now();
         if now.duration_since(last_t).as_secs() >= report_every_s {
