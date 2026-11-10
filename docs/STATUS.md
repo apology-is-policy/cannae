@@ -1,6 +1,6 @@
 # Status
 
-**Phase:** Slice 0, the experiment between the two designs. No code yet.
+**Phase:** Slice 0, the experiment between the two designs. The shared core is started.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
 **Last updated:** 2026-11-10.
 
@@ -16,8 +16,8 @@ reviews his work and merges it.
 
 | Chunk | Content | Commit |
 |---|---|---|
-| S0.0 | Land the rival on `main` as a proposal; point the vision docs at the merge; open this arc | (this) |
-| S0.1 | Workspace and shared core: fixed-point types, counter-based random streams, W', observable state, event log, determinism tests | |
+| S0.0 | Land the rival on `main` as a proposal; point the vision docs at the merge; open this arc | c475976 |
+| S0.1 | Workspace and shared core: integer units and angles, Philox random streams with fork branches, W', observable state, state hash | (this) |
 | S0.2 | The seam: `Man` and `Substrate` interfaces, scenario files (the 400-man patch and its variants), the runner. Agreed with Varro before either engine is built | |
 | S0.3 | Metrics and pre-registration: the eight patterns computed from observable state; pass bands and both sides' parameter priors written down before any scored run | |
 | S0.4 | Lethality bounds: literature search on skeletal trauma and experimental archaeology (Varro searches line-fighting ethnography and Collins) | |

@@ -1,0 +1,16 @@
+[workspace]
+resolver = "3"
+members = ["crates/cannae-core"]
+
+[workspace.package]
+edition = "2024"
+publish = false
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+float_arithmetic = "warn"
+
+[profile.release]
+debug = 1
