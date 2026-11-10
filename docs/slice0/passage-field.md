@@ -25,7 +25,7 @@ load.
    pushed, and nothing else here.
 4. **A maniple falling back through a 3 m interval takes 27 s** for nine men in ten, against
    24 s on the pairwise engine. With the enemy following, one or two of its 120 men are not
-   through after five minutes.
+   through after five minutes: front-rank men whom the pursuit caught, not a jam.
 5. **Flow per metre falls as a gap widens, and most of that is the steering.** Every man makes
    for the nearest point of the mouth, so the men from the wings all make for its two edges
    and its middle goes unused. With the men spread across the mouth, the field passes its
@@ -149,11 +149,17 @@ line beside the interval was pushed from his slot.
 
 All 120 passed in every pairwise run.
 
-- **The men not through.** I have not looked at where they stand. What I expect, and have not
-  checked: the enemy reaches its stop line before the last men are in, and no one walks onto
-  ground the enemy holds, so they are cut off. There were 6 to 10 of them when the enemy came
-  on faster than a walk and the passage was slow, and there are one or two now. That fits,
-  and does not prove it.
+- **The men not through were caught by the pursuit; the field made no jam.** I printed where
+  they stand (a probe, not kept). Under `Line` it is one man, and under `All` two: front-rank
+  men of the third file from each flank, who began in contact with the enemy and 2.4 m to the
+  side of the lane they had to reach. The enemy walks as fast as they do and straight ahead,
+  so it passed them while they moved across. Each stands about 2 m in front of the line, at
+  the edge of the interval, with an enemy a guard's distance away between him and the mouth.
+  No one walks onto ground an enemy holds, so there he stays. With a man model he would be
+  fighting or would have turned, which the bench does not have.
+- **The enemy ends past its stop line.** Its rear ranks lean on its front ranks, who are
+  pressed forward: the foremost enemy ends 0.3 to 0.5 m in front of the line, where the bench
+  sets 1.5 m.
 - **The pursuit does not slow the field's maniple** (26.8 s either way). It slows the discs'
   from 24 to 33 s, where the enemy's shove jams the maniple against the line
   ([passage.md](passage.md)). I have not looked at why the field differs.
