@@ -9,6 +9,10 @@
 //! at a time, and a body whose standard-bearer steps out follows its standard. Every other man
 //! has a slot in the frame and walks to it.
 //!
+//! The standard-bearer's own slot can move under him: his file closes over a man ahead of him,
+//! and he is a rank further forward in the frame than he stands. That is not being driven from
+//! his place. The frame stays, he walks to his new slot, and the body stands until he is there.
+//!
 //! A file is a list of men, front to rear, and a man's rank is his index in it. Closing a file
 //! over a gap is removing a man from the list, so gaps travel to the rear, and a file that has
 //! lost men is short at the back.
@@ -170,6 +174,9 @@ struct Frame {
     /// Whether another body is passing through this one's files, in a relief. Its closer then
     /// stands in the line of a file, so that every lane between the files is clear.
     lanes_open: bool,
+    /// The man the frame was last anchored on and where his slot was in it then. With them,
+    /// while he walks to a slot that moved under him, where in the frame he walks from.
+    anchored: Option<(ManId, Vec2, Option<Vec2>)>,
 }
 
 impl Frame {
@@ -253,9 +260,25 @@ pub struct BodyFrames {
     /// Orders to come, soonest last.
     pending: Vec<Timed>,
     reliefs: Vec<Relief>,
+    held: u32,
 }
 
 const PRESENT: u32 = u32::MAX;
+
+/// The point of the segment from `from` to `to` that is nearest to `p`, and whether it is `to`.
+fn nearest(from: Vec2, to: Vec2, p: Vec2) -> (Vec2, bool) {
+    let (d, w) = (to - from, p - from);
+    let dd = d.len_sq();
+    let t = d.x as i64 * w.x as i64 + d.y as i64 * w.y as i64;
+    if t >= dd {
+        (to, true)
+    } else if t <= 0 {
+        (from, false)
+    } else {
+        let along = |c: i32| (c as i64 * t / dd) as i32;
+        (from + Vec2::new(along(d.x), along(d.y)), false)
+    }
+}
 
 fn up(bodies: &Bodies, m: ManId) -> bool {
     !matches!(
@@ -322,7 +345,15 @@ impl BodyFrames {
             adrift: Vec::new(),
             tie: l.tie,
             lanes_open: false,
+            anchored: None,
         });
+    }
+
+    /// How many times the standard-bearer's slot has moved under him and left him a walk to it,
+    /// with the frame standing. Before the rule for it, the frame was re-formed on him each of
+    /// these times.
+    pub fn held(&self) -> u32 {
+        self.held
     }
 
     /// Gives a body an order now.
@@ -675,6 +706,11 @@ impl BodyFrames {
     /// A frame that was led at the last step follows him. A halted frame stays put until he is
     /// out of his place in it. Re-anchoring a halted frame at every step would give a held line
     /// no fixed point: its slots would follow every shove he took.
+    ///
+    /// When his slot has moved under him, his place is the straight path from where his slot
+    /// was to where it is. The frame is re-formed only if he is driven from that path, and it
+    /// does not lead until he has walked it: a frame that went where he goes would carry his
+    /// new slot ahead of him for ever.
     fn anchor(&mut self, fi: usize, bodies: &Bodies) {
         let f = &mut self.frames[fi];
         let on_the_march = f.lead != Vec2::ZERO;
@@ -683,13 +719,42 @@ impl BodyFrames {
             return;
         };
         let Some(offset) = f.offset_of(self.place[c.0 as usize]) else {
+            // Adrift, he has no slot to walk to. When he falls in again the body follows him.
+            f.anchored = None;
             return;
         };
         if !up(bodies, c) {
             return;
         }
-        let on_him = bodies.pos[c.0 as usize] - offset;
         let tol = f.tie.tolerance_mm as i64;
+        let stands = bodies.pos[c.0 as usize] - f.origin;
+        let (was, from) = match f.anchored {
+            Some((man, was, from)) if man == c => (was, from),
+            _ => (offset, None),
+        };
+        let moved = was != offset;
+        let from = if moved {
+            // A second move before he has finished the first: he goes on from where he is.
+            Some(from.map_or(was, |from| nearest(from, was, stands).0))
+        } else {
+            from
+        };
+        f.anchored = Some((c, offset, from));
+        if let Some(from) = from {
+            let (on_path, there) = nearest(from, offset, stands);
+            if there || stands.dist_sq(offset) <= tol * tol {
+                f.anchored = Some((c, offset, None));
+            } else {
+                if moved {
+                    self.held += 1;
+                }
+                if stands.dist_sq(on_path) > tol * tol {
+                    f.origin = bodies.pos[c.0 as usize] - on_path;
+                }
+                return;
+            }
+        }
+        let on_him = bodies.pos[c.0 as usize] - offset;
         if on_the_march || on_him.dist_sq(f.origin) > tol * tol {
             f.origin = on_him;
         }
@@ -1489,6 +1554,191 @@ mod tests {
         assert_eq!(
             f.body(BodyId(0)).unwrap().standard,
             Standard::Carried(ManId(4))
+        );
+    }
+
+    /// The century of [`century`] after the man ahead of its standard-bearer has fallen and the
+    /// file has closed over him: man 4 now has the front slot of his file, two metres ahead of
+    /// where he stands. Returns every slot as it was before.
+    fn closed_ahead_of_the_standard(f: &mut BodyFrames, b: &mut Bodies) -> Vec<Vec2> {
+        step(f, b, 0);
+        let before = (0..9).map(|m| f.slot(ManId(m)).unwrap().target).collect();
+        b.posture[1] = Posture::Down;
+        step(f, b, 5);
+        step(f, b, 45);
+        before
+    }
+
+    #[test]
+    fn a_file_closing_ahead_of_the_standard_leaves_the_frame_where_it_stood() {
+        let (mut b, mut f) = century();
+        let before = closed_ahead_of_the_standard(&mut f, &mut b);
+        let target = |f: &BodyFrames, m: u32| f.slot(ManId(m)).unwrap().target;
+        // His slot is the fallen man's, and the man behind him has his.
+        assert_eq!(target(&f, 4), before[1]);
+        assert_eq!(target(&f, 7), before[4]);
+        assert!(!b.in_place[4]);
+        // No other file has moved, and its men are in their places.
+        for m in [0, 2, 3, 5, 6, 8] {
+            assert_eq!(target(&f, m), before[m as usize], "man {m}");
+            assert!(b.in_place[m as usize], "man {m}");
+        }
+        assert_eq!(f.held(), 1);
+        // He walks up, and the frame stands all the while.
+        b.pos[4] += Vec2::new(1_000, 0);
+        step(&mut f, &mut b, 50);
+        assert_eq!(target(&f, 0), before[0]);
+        assert!(!b.in_place[4]);
+        b.pos[4] = before[1];
+        step(&mut f, &mut b, 55);
+        assert_eq!(target(&f, 0), before[0]);
+        assert!(b.in_place[4]);
+        // In his place again, he anchors the frame as he always did.
+        b.pos[4] += Vec2::new(-1_000, 0);
+        step(&mut f, &mut b, 60);
+        assert_eq!(target(&f, 0), before[0] + Vec2::new(-1_000, 0));
+        assert_eq!(f.held(), 1);
+    }
+
+    #[test]
+    fn a_body_under_orders_stands_while_its_standard_bearer_steps_up() {
+        for (order, lead) in [(Order::Advance, 1_500), (Order::Retire, -1_500)] {
+            let (mut b, mut f) = century();
+            f.order(BodyId(0), order, 0);
+            let before = closed_ahead_of_the_standard(&mut f, &mut b);
+            let target = |f: &BodyFrames, m: u32| f.slot(ManId(m)).unwrap().target;
+            let lead = Vec2::new(lead, 0);
+            // It was led, and now it is not: every slot is where the man stands.
+            assert_eq!(before[0], b.pos[0] + lead, "{order:?}");
+            assert_eq!(target(&f, 0), b.pos[0], "{order:?}");
+            assert_eq!(target(&f, 4), b.pos[1], "{order:?}");
+            // Half-way there, it still stands.
+            b.pos[4] += Vec2::new(1_000, 0);
+            step(&mut f, &mut b, 50);
+            assert_eq!(target(&f, 0), b.pos[0], "{order:?}");
+            // Within his tolerance of the slot he is there, and the body is led again, from
+            // where it stood.
+            b.pos[4] += Vec2::new(400, 0);
+            step(&mut f, &mut b, 55);
+            assert_eq!(target(&f, 0), b.pos[0] + lead, "{order:?}");
+            assert_eq!(f.held(), 1, "{order:?}");
+        }
+    }
+
+    #[test]
+    fn driven_from_his_path_the_standard_bearer_takes_the_frame_by_as_much() {
+        let (mut b, mut f) = century();
+        let before = closed_ahead_of_the_standard(&mut f, &mut b);
+        let target = |f: &BodyFrames| f.slot(ManId(0)).unwrap().target;
+        // A drilled man's tolerance to the side of his path is still on it.
+        b.pos[4] += Vec2::new(0, 600);
+        step(&mut f, &mut b, 50);
+        assert_eq!(target(&f), before[0]);
+        // A metre to the side is not. The frame goes a metre to the side, and not a rank back.
+        b.pos[4] += Vec2::new(0, 400);
+        step(&mut f, &mut b, 55);
+        assert_eq!(target(&f), before[0] + Vec2::new(0, 1_000));
+        // Driven two metres back from where his path began, he takes the frame two metres back.
+        b.pos[4] += Vec2::new(-2_000, 0);
+        step(&mut f, &mut b, 60);
+        assert_eq!(target(&f), before[0] + Vec2::new(-2_000, 1_000));
+        // Part of the way along it and a metre off it, the frame is set by the nearest point of
+        // the path: he keeps the part he has walked.
+        b.pos[4] += Vec2::new(1_200, -1_000);
+        step(&mut f, &mut b, 65);
+        assert_eq!(target(&f), before[0] + Vec2::new(-2_000, 0));
+        assert_eq!(
+            f.slot(ManId(4)).unwrap().target,
+            b.pos[4] + Vec2::new(800, 0)
+        );
+        // Level with his slot he has walked his path, though he stands 700 mm to the side of
+        // it. He is a man out of his place again: the frame is re-formed on him, and under an
+        // order to advance the body is led.
+        f.order(BodyId(0), Order::Advance, 65);
+        b.pos[4] += Vec2::new(800, 700);
+        step(&mut f, &mut b, 70);
+        assert_eq!(target(&f), before[0] + Vec2::new(-2_000 + 1_500, 700));
+        assert!(b.in_place[4]);
+        assert_eq!(f.held(), 1);
+    }
+
+    #[test]
+    fn another_man_with_the_standard_takes_the_frame_to_him_as_before() {
+        let (mut b, mut f) = century();
+        step(&mut f, &mut b, 0);
+        let before = f.slot(ManId(0)).unwrap().target;
+        // The standard passes to the man on its bearer's left, who stands more than a metre
+        // out of his place. That is not a slot moving under a man: the body follows its
+        // standard.
+        f.frames[0].standard = Standard::Carried(ManId(3));
+        b.pos[3] += Vec2::new(-1_000, -500);
+        step(&mut f, &mut b, 5);
+        assert_eq!(
+            f.slot(ManId(0)).unwrap().target,
+            before + Vec2::new(-1_000, -500)
+        );
+        assert!(b.in_place[3]);
+        assert_eq!(f.held(), 0);
+    }
+
+    #[test]
+    fn a_standard_bearer_who_fled_and_falls_in_again_is_followed_as_before() {
+        let (mut b, mut f) = century();
+        step(&mut f, &mut b, 0);
+        // He turns and runs along the line, and his file closes over his slot.
+        b.posture[4] = Posture::Turned;
+        b.pos[4] += Vec2::new(300, 9_000);
+        step(&mut f, &mut b, 5);
+        step(&mut f, &mut b, 45);
+        assert_eq!(f.frames[0].adrift, [ManId(4)]);
+        // He rallies where he is and is given the rear of his file. The body re-forms on him
+        // there, and no frame was held for it.
+        b.posture[4] = Posture::Steady;
+        step(&mut f, &mut b, 50);
+        assert!(b.in_place[4]);
+        assert_eq!(f.slot(ManId(4)).unwrap().target, b.pos[4]);
+        assert_eq!(f.held(), 0);
+    }
+
+    #[test]
+    fn a_second_move_before_he_has_made_the_first_is_walked_from_where_he_is() {
+        let (mut b, mut f) = century();
+        // The standard is carried in the rear rank, two men behind the front of its file.
+        f.frames[0].standard = Standard::Carried(ManId(7));
+        let before = closed_ahead_of_the_standard(&mut f, &mut b);
+        let target = |f: &BodyFrames, m: u32| f.slot(ManId(m)).unwrap().target;
+        assert_eq!(target(&f, 7), before[4]);
+        assert_eq!(f.held(), 1);
+        // He is half-way up when the man now ahead of him falls too, and the file closes again.
+        b.pos[7] += Vec2::new(1_000, 0);
+        b.posture[4] = Posture::Down;
+        step(&mut f, &mut b, 50);
+        step(&mut f, &mut b, 90);
+        assert_eq!(target(&f, 7), before[1]);
+        assert_eq!(target(&f, 0), before[0]);
+        assert_eq!(f.held(), 2);
+        // Pushed a metre back, he is on the first part of his path no longer: it began again
+        // from where he stood, so the frame goes back with him by that metre.
+        b.pos[7] += Vec2::new(-1_000, 0);
+        step(&mut f, &mut b, 95);
+        assert_eq!(target(&f, 0), before[0] + Vec2::new(-1_000, 0));
+    }
+
+    #[test]
+    fn the_nearest_point_of_a_path() {
+        let (a, b) = (Vec2::new(0, 0), Vec2::new(2_000, 0));
+        assert_eq!(
+            nearest(a, b, Vec2::new(500, 700)),
+            (Vec2::new(500, 0), false)
+        );
+        assert_eq!(nearest(a, b, Vec2::new(-300, 700)), (a, false));
+        assert_eq!(nearest(a, b, Vec2::new(2_000, -50)), (b, true));
+        assert_eq!(nearest(a, b, Vec2::new(2_600, 10)), (b, true));
+        assert_eq!(nearest(a, a, Vec2::new(40, 10)), (a, true));
+        let c = Vec2::new(1_000, 1_000);
+        assert_eq!(
+            nearest(a, c, Vec2::new(1_000, 0)),
+            (Vec2::new(500, 500), false)
         );
     }
 }
