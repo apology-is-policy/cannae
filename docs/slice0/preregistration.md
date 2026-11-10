@@ -442,3 +442,70 @@ names the commit it ran.
 pattern 6 with two legs and how the Roman line fared, the 10 % share, the relief reported per
 cell, the stride), and gives the machine time. Signing binds nothing until the first scored
 run.
+
+## Addendum 1 (2026-11-10): cells that `base` rules out run their variants last
+
+Written after the freeze, while the batch ran, and agreed on call 0001 (turns 58-60). It changes
+the order of the runs and nothing else. The frozen code is untouched: the batch's
+`git diff dd9d90a -- crates scenarios Cargo.toml Cargo.lock` stays empty.
+
+**What was known when it was written** (about 19:10 UTC). The Pi had made 957 of the 2,100 `base`
+runs of the first cell (the field engine, rung 0). No other cell had begun. Neither of us had
+scored a record.
+- **Varro** had read no record of the scored batch.
+- **Paullus** had read line counts, and two runs while testing the crosswise check (Addendum 2):
+  - the field engine, rung 0, set 0, seed 1, compared field by field with its batch record. The
+    script printed its simulated length.
+  - the pairwise engine, rung 3, set 10, seed 1, a rerun at the frozen code, not yet made by the
+    batch. Its record's opening, with the break times, was printed.
+
+**The rule** (Paullus's text, with Varro's order):
+
+> When `base` is complete in all eight cells, a cell can no longer pass if the share of its sets
+> that pass all eight bands on `base` is below 10 %. Pattern 6 counts by its band alone here. The
+> comparison is the knife-edge rule's own (`share >= KNIFE_EDGE` passes), so a cell with 20 of
+> 200 can still pass.
+>
+> The dose-response legs can only take passes away, so the rule is exact.
+>
+> **All the variants of the cells that can still pass run first,** in the usual order. Then all
+> the variants of the cells that cannot, in the same order. Every variant of every cell still
+> runs, and nothing is scored differently.
+
+**How it is applied.** `tools/s09-batch.sh` runs `base` everywhere, then asks a `score` binary
+for each cell's gate and logs its line in `progress.txt`. The binary is built from branch
+`spike-perceive` at 91185c4, and it differs from the frozen scorer by:
+- one printed line, the gate;
+- the crosswise switch below;
+- the two hashes in each record.
+
+No band is judged differently. If a cell's `base` is incomplete (a run failed), the gate is not
+applied to it, and its variants keep their place.
+
+## Addendum 2 (2026-11-10): the crosswise check of the two perceptions
+
+Proposed by Varro, agreed on call 0001 (turns 58-60). The engines perceive differently:
+- the pairwise engine through the core's reference grid;
+- the field engine through Varro's `FieldPerception`.
+
+Both are held to the same View on random crowds and through one three-minute fight. But no
+scored battle had been run both ways. If they differ, the two engines' men do not see the same
+thing, and the comparison is confounded.
+
+**The check.** Run each engine through the other's perception (`cell --eyes swapped`, branch
+`spike-perceive`) on a sample: sets 0, 10, 20 and so on to 190, seed 1, `base`, every rung, both
+engines. That is 160 runs each way. Each record carries two hashes:
+- the whole observable state at the end;
+- the whole event log.
+
+Only equal or unequal is read.
+- **Native against swapped:** both hashes.
+- **Native against the batch's records,** once they exist: summary, simulated seconds, audit and
+  relief, field for field.
+
+**If any run differs,** we stop and tell Michal before anything is scored.
+
+| Addenda 1 and 2 | Signed |
+|---|---|
+| Paullus | **signed, 2026-11-10** |
+| Varro | pending |
