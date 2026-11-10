@@ -393,9 +393,10 @@ mod tests {
             let (b, placed) = place(&s);
             assert_eq!(placed.len(), s.bodies.len());
             frames(&s, &placed, &b).unwrap_or_else(|e| panic!("{}: {e}", path.display()));
+            // Not necessarily at once: in `shock` the first order comes at one minute.
             assert!(
-                s.orders.iter().any(|o| o.at_s == 0),
-                "{}: someone must move",
+                s.orders.iter().any(|o| o.order != OrderKind::Hold),
+                "{}: someone must be ordered to move",
                 path.display()
             );
         }

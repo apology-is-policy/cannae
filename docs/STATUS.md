@@ -26,7 +26,7 @@ reviews his work and merges it.
 | S0.6 | The top two rungs of the memory ladder: continuous fear and resolve, then the full excitable psyche | Rung 3 built and plugged into Varro's men through his `Memory` hook ([design](slice0/rungs-3-4.md)). Its dormancy is exact through a fight and a rout; with its gauges switched off it replays rung 1's battle event for event. Rung 4 is built only if rungs 0-3 all fail (Michal) |
 | S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | Pairwise done for the line, surge and pocket ([report](slice0/spike-pairwise.md)); the rout through camp gates is built (with walls indexed on a coarse grid, so a man checks only the walls near him) and waits for an idle machine to be timed; Varro's field spike is his |
 | S0.8 | The passage study, against measured crowd-flow data | Walls (`cannae_core::Wall`, `[[wall]]` in scenarios) and the pairwise calibration done ([report](slice0/passage-calibration.md)). The bench for the two passages is built, and both engines have run on it ([report](slice0/passage.md), [field](slice0/passage-field.md)) |
-| S0.9 | Scored runs and the report; then design review 2 | The batch runner is built (`cannae-score`). Costed ([report](slice0/scored-runs-cost.md)): every run to the end would take about eight days of the Air; a proposed stop 15 minutes after the break brings it to one to three. The sampler is Varro's, for both engines. Three variants are still to write |
+| S0.9 | Scored runs and the report; then design review 2 | The batch runner is built (`cannae-score`), and it runs drawn parameter sets. Costed ([report](slice0/scored-runs-cost.md)): every run to the end would take about eight days of the Air. With Varro we agreed to stop scoring 15 minutes after the break, which brings it to one to three nights, with an audit of whole runs. The sampler's frame is Varro's; my twenty lines are filled, his are next. `shock` is written; `volleys` and `relief` are Varro's. Open: how the two memory variants are scored |
 
 **Speed (pairwise substrate only, no man model yet; sustained readings on the fanless Air,
 [report](slice0/spike-pairwise.md)):** 150,000 bodies on 4 cores for 10 minutes ran at 12.1x
@@ -81,7 +81,8 @@ The sources behind them are in [crowd-physics.md](slice0/crowd-physics.md) and [
 | `cannae-man` with rungs 0-2, his priors file, the behaviour table (rival 07), his lines of priors-shared.md, his half of the lethality search | 9b29064, reviewed and merged |
 | The field substrate (its own perception, and contact either along the line or where men are crowded), a first speed pass, and the `Memory` hook that rung 3 plugs into | e54c427, 09e4326, 756334c, reviewed and merged |
 | Walls on the field, the passage bench on it, three fixes from review, the press rule, the lean fix, the walking curve's capacity as a calibrated prior | 12b227c to 3516da4, reviewed and merged |
-| The sampler for both engines' priors; his sustained speed readings; the `volleys` variant | in progress |
+| The sampler's skeleton (`cannae_score::draw`) | 2aeec18, reviewed and merged |
+| His half of the sampler's mappings; the early breaks, looked for on scenes of his own; `volleys`; the relief drill; his sustained speed readings | in progress |
 
 **Pre-registration: five defects found and fixed so far,** four of them by Varro. All were found
 before any scored run, which is the point of writing it down first.
