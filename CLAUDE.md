@@ -90,6 +90,11 @@ of normalizing it.
   The script queues `/compact` in this tmux pane. `~/.claude/resume-note.py` re-injects the note
   on the far side, and `tools/nudge-watch.sh` wakes the new session. The resumed session continues
   the approved arc. If the arc is finished, it reports and waits instead.
+- **Permission.** On 2026-11-10 Michal explicitly granted permission to run
+  `tools/selfcompact.sh` whenever this contract calls for it. The allow rule lives in
+  `.claude/settings.local.json`, which is gitignored. Run the script as its own command, not
+  chained with other commands, so the rule matches. If the auto-mode classifier still blocks
+  it, say so and don't work around it.
 - **Only on the real signal.** Once queued, I cannot cancel a `/compact`; only Michal can.
   **Belay:** if HEAD has not moved across two self-compactions, stop and hand back.
 - **Past 500k**, start no new chunk. **At 880k**, commit, hand off and stop.
