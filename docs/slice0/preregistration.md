@@ -425,17 +425,17 @@ names the commit it ran.
 
 | | |
 |---|---|
-| Commit | pending |
-| SHA-256 of `scenarios/prereg.toml` | pending |
-| SHA-256 of `docs/slice0/priors-shared.md` | pending |
-| SHA-256 of `docs/slice0/priors-pairwise.md` | pending |
-| SHA-256 of `docs/slice0/priors-field.md` | pending |
-| Freeze seed: the first 8 bytes, big-endian, of the SHA-256 over the four in that order | pending |
-| SHA-256 of the table of record, `table --freeze-seed <seed> --draws 200` | pending |
+| Commit | `dd9d90af15c25851d9c680cb10b189b496ebd071` (dd9d90a) |
+| SHA-256 of `scenarios/prereg.toml` | `47d7d953ae213dece59a896fb175a95b9f2aa8a42507808340064ec8331c800f` |
+| SHA-256 of `docs/slice0/priors-shared.md` | `14213001066b4e66bf77ffb969a42806b8981169379c171590bcac2a81807a52` |
+| SHA-256 of `docs/slice0/priors-pairwise.md` | `d09264e502e01feee1a573ace235a8db26b8d966dbf74ecafca030396d034a14` |
+| SHA-256 of `docs/slice0/priors-field.md` | `c14b694a9d9128cacdfa6379ad30c338827c7a7ffd4238b778d22173ccaba9b1` |
+| Freeze seed: the first 8 bytes, big-endian, of the SHA-256 over the four in that order | SHA-256 over the four: `835a02dd1328c76b7a71517b446ab5cc778af237ca71a9a3961d97dd4cc6213f`; seed `0x835a02dd1328c76b` = **9464880715404986219** |
+| SHA-256 of the table of record, `table --freeze-seed <seed> --draws 200` | `2139655ba18e120ab277019d54d78813517383ed379a75235aad935c3e5f3c4f` ([table-of-record.csv](table-of-record.csv), 200 sets × 101 lines) |
 
 | | Signed | What he checked |
 |---|---|---|
-| Paullus | pending | |
+| Paullus | **signed, 2026-11-10** | Computed every number above at dd9d90a: each file's SHA-256 and the concatenation's with `shasum -a 256`, the seed from its first 16 hex digits, the table from that commit's `table` binary, written twice with the same hash |
 | Varro | pending | |
 
 **Before the batch:** Michal sees the pass rules settled on 2026-11-10 (the eight on `base`,

@@ -20,7 +20,7 @@ reviews his work and merges it.
 | S0.1 | Workspace and shared core: integer units and angles, Philox random streams with fork branches, W', observable state, state hash | 7ae78f3 |
 | S0.2a | The seam, in the core: tick and phases, the View and reference grid perception, dormancy, events and causes, competing hazards, intents and targets, the power table, the traits. Agreed with Varro on the call | d419574 |
 | S0.2b | The harness: TOML scenarios (the patch), the runner, a kinematic test substrate, a toy man, SVG frame dumps, determinism and dormancy conformance tests | c196e28 |
-| S0.3 | Metrics and pre-registration: the eight patterns computed from observable state; pass bands and both sides' parameter priors written down before any scored run | 0fbcc74 metrics and draft; freeze after Varro agrees |
+| S0.3 | Metrics and pre-registration: the eight patterns computed from observable state; pass bands and both sides' parameter priors written down before any scored run | 0fbcc74 metrics and draft. **Frozen text at dd9d90a**, signed by Paullus; Varro checks every number and signs ([sign-off](slice0/preregistration.md#sign-off)) |
 | S0.4 | Lethality bounds: literature search on skeletal trauma and experimental archaeology (Varro searches line-fighting ethnography and Collins) | f8cb2a6 Paullus's half; band proposed |
 | S0.5 | The pairwise substrate, where every body touches its neighbours, at patch scale; a perception conformance check for Varro | 14e919b |
 | S0.6 | The top two rungs of the memory ladder: continuous fear and resolve, then the full excitable psyche | Rung 3 built and plugged into Varro's men through his `Memory` hook ([design](slice0/rungs-3-4.md)). Its dormancy is exact through a fight and a rout; with its gauges switched off it replays rung 1's battle event for event. Rung 4 is built only if rungs 0-3 all fail (Michal) |
@@ -86,6 +86,15 @@ The sources behind them are in [crowd-physics.md](slice0/crowd-physics.md) and [
 | His 81 lines of the sampler, the table of record (`--bin table`) and a nominal set; the flank fix (`NearEnemy::strikes_another`, mirroring the resolver's choice of opponent) | c49201d, 0c78ffb, reviewed and merged. After the fix a century still breaks about a minute in at the centres, as expected; no prior moved |
 | `volleys` (missiles on an area, resolved beside the bouts) and the relief drill (a century relieved by the one behind it in a lull, in the shared frames) | 79957e5, e187489, ca38f3a, reviewed and merged |
 | `backed`, the relief from twenty minutes, his sustained speed readings | in progress |
+
+**The freeze (2026-11-10).** The pre-registration's text is final at commit dd9d90a. The record
+is in its [sign-off](slice0/preregistration.md#sign-off): the SHA-256 of `prereg.toml` and of
+the three priors files, the freeze seed (**9464880715404986219**, from the first 8 bytes of the
+SHA-256 over the four), and the hash of the [table of record](slice0/table-of-record.csv), the
+200 drawn parameter sets. Before signing, Varro had all 101 drawn lines checked against the
+sampler by an independent reader: every range agrees, and five sentences were corrected (two of
+them mine). Paullus has signed; Varro checks the numbers and signs. **The scored runs wait for
+Michal** to see the pass rules settled today and to give the machine time.
 
 **Pre-registration: five defects found and fixed so far,** four of them by Varro. All were found
 before any scored run, which is the point of writing it down first.
