@@ -43,6 +43,19 @@ label { display: inline-flex; align-items: center; gap: 6px; color: var(--muted)
   font-size: 0.95rem; color: var(--muted); }
 #man b { color: var(--ink); }
 #error { color: var(--hit); margin: 8px 0 0; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px;
+  margin: 14px 0 0; }
+h2 { font-size: 1rem; margin: 0 0 6px; }
+#log { list-style: none; margin: 0; padding: 0; max-height: 17em; overflow: auto;
+  border: 1px solid var(--line); border-radius: 8px; font-size: 0.92rem; }
+#log li { padding: 5px 10px; border-bottom: 1px solid var(--line); cursor: pointer; }
+#log li:last-child { border-bottom: 0; }
+#log .t { font-variant-numeric: tabular-nums; color: var(--muted); margin-right: 8px; }
+#log .y { color: var(--muted); }
+#why { font-size: 0.92rem; }
+#why p { margin: 0 0 6px; }
+#why .y { color: var(--muted); }
+.empty { color: var(--muted); padding: 8px 10px; }
 ul.legend { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 0;
   margin: 12px 0 0; font-size: 0.92rem; color: var(--muted); }
 ul.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 50%;
@@ -106,6 +119,16 @@ ul.legend i.bar-i { width: 16px; height: 0; border: 0; border-top: 2px solid var
 <div class="read" id="count"></div>
 <div class="read" id="broke"></div>
 <div id="man">Click a man to see who he is and what he is doing.</div>
+<div class="cols">
+  <section>
+    <h2>What happened, newest first</h2>
+    <ol id="log"><li class="empty">Nothing yet.</li></ol>
+  </section>
+  <section>
+    <h2>Why they gave way</h2>
+    <div id="why"><p class="empty">Nobody has yet. The strongest reason of each man is counted.</p></div>
+  </section>
+</div>
 <ul class="legend">
   <li><i style="background:var(--a)"></i>Romans</li>
   <li><i style="background:var(--b)"></i>Warband</li>
@@ -114,6 +137,7 @@ ul.legend i.bar-i { width: 16px; height: 0; border: 0; border-top: 2px solid var
   <li><i style="background:var(--turned);border-color:var(--a)"></i>Turned to flee</li>
   <li><i style="background:var(--down);width:8px;height:8px"></i>Down</li>
   <li><i class="bar-i"></i>A bout that hurt or drove a man back</li>
+  <li><i style="background:var(--a);box-shadow:inset 0 0 0 3px var(--edge)"></i>Dark centre: centurion or chieftain. Thick ring: he or a standard-bearer</li>
 </ul>
 </main>
 <script>
@@ -121,7 +145,35 @@ const $ = id => document.getElementById(id);
 const cv = $('c'), g = cv.getContext('2d');
 const POSTURE = ['steady', 'going forward', 'giving ground', 'turned to flee', 'down'];
 const WOUND = ['sound', 'hampered', 'disabled', 'dead'];
-const ROLE = ['soldier', 'file leader', 'closer (optio)', 'standard-bearer'];
+const ROLE = ['soldier', 'file leader', 'optio', 'standard-bearer', 'leader'];
+const CAUSE = {
+  NeighboursTurned: 'men near him had turned', NeighboursBack: 'men near him were giving ground',
+  NeighbourFell: 'a man near him fell', EmptySlot: 'a gap beside him',
+  EnemyOnFlank: 'an enemy on his flank', EnemyBehind: 'an enemy behind him',
+  LeaderDown: 'his leader was down', StandardDown: 'the standard was down',
+  FrontPressure: 'enemies coming at him', Crowding: 'he was crowded',
+  Outnumbered: 'he was outnumbered', SteadyNeighbours: 'steady men beside him',
+  RanksBehind: 'ranks behind him', LeaderInView: 'his leader in view',
+  StandardInView: 'the standard in view', CloserBehind: 'the optio behind him',
+  FreshLineBehind: 'a fresh line behind', Ardour: 'his own ardour',
+  LeaderForward: 'his leader went forward', NeighboursForward: 'men near him went forward',
+  EnemyBacks: 'enemy backs to strike', Breath: 'he was out of breath', Wounded: 'he was wounded',
+  OrderCharge: 'the order to charge', OrderRetire: 'the order to retire',
+  OrderHold: 'the order to hold', HasFled: 'he had fled before', Shaken: 'he was already shaken',
+  NoPursuer: 'no one was chasing him', CarrierStanding: 'the standard still stood',
+  Bout: 'a bout', Missile: 'a missile', Crush: 'the crush', Fear: 'his fear',
+  Resolve: 'his resolve',
+};
+// A cause this page has no words for yet is shown by its name in the code, spaced out.
+const why = c => CAUSE[c] || c.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase();
+const KINDS = [['back', 'gave ground'], ['turned', 'turned to flee'], ['down', 'went down']];
+const blank = () => [0, 1].map(() => ({
+  back: { n: 0, by: {} }, turned: { n: 0, by: {} }, down: { n: 0, by: {} },
+}));
+// The log holds the newest first. `unshown` counts those at its head not yet on the page.
+const KEPT = 400;
+let log = [], unshown = 0, wipe = false, tally = blank(), lastMove = new Map(), told = true;
+let unbroken = [false, false];
 const SIDE = ['Roman', 'Warband'];
 let M = null, S = null;          // what does not change in a battle; the latest frame
 let home = null, view = [0, 0, 1, 1], mode = 'line';
@@ -166,12 +218,10 @@ function onFrame() {
     if (p === 4) down[s]++; else if (p === 3) fled[s]++; else up[s]++;
   }
   for (const s of [0, 1]) {
-    const standing = up[s] + fled[s];
-    if (broke[s] === null && standing > 0 && fled[s] / standing >= 0.4) broke[s] = seconds();
-  }
-  const now = performance.now();
-  for (const [att, def, took, gave] of S.bouts) {
-    if (took > 0 || gave > 0) flashes.push({ att, def, until: now + 260 });
+    const standing = up[s] + fled[s], gone = standing > 0 && fled[s] / standing >= 0.4;
+    // A page opened after a side broke cannot say when it did.
+    if (!gone) unbroken[s] = true;
+    else if (broke[s] === null) broke[s] = unbroken[s] ? seconds() : -1;
   }
   $('clock').textContent = seconds().toFixed(1) + ' s';
   $('play').textContent = S.playing ? 'Pause' : S.ended ? 'Ended' : 'Play';
@@ -185,25 +235,82 @@ function onFrame() {
     `Romans: ${up[0]} standing, ${fled[0]} fleeing, ${down[0]} down.   ` +
     `Warband: ${up[1]} standing, ${fled[1]} fleeing, ${down[1]} down.`;
   $('broke').textContent = [0, 1].filter(s => broke[s] !== null).map(s =>
-    `${s ? 'The warband' : 'The Roman line'} broke at about ${broke[s].toFixed(0)} s ` +
-    `(four in ten of those still up had turned).`).join('  ');
+    (s ? 'The warband' : 'The Roman line') + (broke[s] < 0 ? ' had broken before this page opened.' :
+      ` broke at about ${broke[s].toFixed(0)} s (four in ten of those still up had turned).`))
+    .join('  ');
   describe();
   dirty = true;
 }
+function who(i) {
+  const role = M.role[i] === 4 ? (M.side[i] ? 'chieftain' : 'centurion') : ROLE[M.role[i]];
+  return `Man ${i}, ${role || 'soldier'}` + (M.body[i] >= 0 ? `, ${M.bodies[M.body[i]]}` : '');
+}
+function did(from, to, first, hurt) {
+  if (to === 4) return 'went down' + (hurt === 3 ? ', killed' : hurt === 2 ? ', disabled' : '');
+  if (to === 3) return 'turned to flee';
+  if (to === 2) return first === 'Bout' ? 'was driven back' : 'gave ground';
+  return from === 3 ? 'rallied' : 'stood again';
+}
+const because = r => r.length ? r.map(why).join('; ') : '';
 function describe() {
   if (sel < 0 || !S) return;
-  const i = sel, body = M.body[i] >= 0 ? M.bodies[M.body[i]] : 'no body';
+  const i = sel, last = lastMove.get(i);
   $('man').innerHTML = '';
   const b = document.createElement('b');
-  b.textContent = `Man ${i}: ${SIDE[M.side[i]]}, ${body}, ${ROLE[M.role[i]] || 'soldier'}. `;
+  b.textContent = `${who(i)} (${SIDE[M.side[i]]}). `;
   $('man').append(b, `He is ${POSTURE[S.p[i]]}, ${WOUND[S.w[i]]}, ` +
-    `${S.ip[i] ? 'in his place' : 'out of his place'}.`);
+    `${S.ip[i] ? 'in his place' : 'out of his place'}.` +
+    (last ? ` At ${last.t.toFixed(1)} s he ${last.text}` +
+      (last.reasons.length ? `: ${because(last.reasons)}.` : '.') : ''));
+}
+function tell() {
+  told = true;
+  const ol = $('log');
+  if (wipe || ol.querySelector('.empty')) { ol.innerHTML = ''; wipe = false; unshown = log.length; }
+  if (!log.length) {
+    const li = document.createElement('li');
+    li.className = 'empty'; li.textContent = 'Nothing yet.'; ol.append(li);
+  }
+  // Only the new lines are added, the oldest of them first, so the newest ends on top.
+  for (let k = Math.min(unshown, log.length) - 1; k >= 0; k--) {
+    const e = log[k], li = document.createElement('li'), t = document.createElement('span');
+    t.className = 't'; t.textContent = e.t.toFixed(1) + ' s';
+    li.dataset.man = e.man;
+    li.append(t, (e.man >= 0 ? who(e.man) + ' ' : '') + e.text + '.');
+    if (e.reasons.length) {
+      const y = document.createElement('span');
+      y.className = 'y'; y.textContent = ' Why: ' + because(e.reasons) + '.';
+      li.append(y);
+    }
+    ol.prepend(li);
+  }
+  unshown = 0;
+  while (ol.children.length > KEPT) ol.lastElementChild.remove();
+  const box = $('why');
+  box.innerHTML = '';
+  for (const s of [0, 1]) for (const [k, label] of KINDS) {
+    const t = tally[s][k];
+    if (!t.n) continue;
+    const p = document.createElement('p'), y = document.createElement('span');
+    const top = Object.entries(t.by).sort((a, b) => b[1] - a[1]).slice(0, 4);
+    y.className = 'y';
+    y.textContent = ' ' + top.map(([c, n]) => `${why(c)} ${n}`).join('; ') + '.';
+    p.append(`${s ? 'Warband' : 'Romans'}, ${label}: ${t.n}.`, y);
+    box.append(p);
+  }
+  if (!box.children.length) {
+    const p = document.createElement('p');
+    p.className = 'empty';
+    p.textContent = 'Nobody has yet. The strongest reason of each man is counted.';
+    box.append(p);
+  }
 }
 
 function draw() {
   requestAnimationFrame(draw);
   const now = performance.now();
   flashes = flashes.filter(f => f.until > now);
+  if (!told) tell();
   if (!dirty && !flashes.length) return;
   dirty = false;
   const w = cv.width, h = cv.height;
@@ -226,14 +333,19 @@ function draw() {
     const p = S.p[i];
     if ((p === 4) !== (pass === 0)) continue;
     const x = X(i), y = Y(i), c = M.side[i] ? col.b : col.a;
+    const marked = M.role[i] === 3 || M.role[i] === 4;
     if (p === 4) {
       g.fillStyle = col.down; g.beginPath(); g.arc(x, y, r / 2, 0, 7); g.fill();
+      if (marked) {
+        g.beginPath(); g.arc(x, y, r * 0.9, 0, 7);
+        g.lineWidth = lw; g.strokeStyle = col.down; g.stroke();
+      }
       continue;
     }
     g.beginPath(); g.arc(x, y, r, 0, 7);
     g.fillStyle = p === 2 ? col.field : p === 3 ? col.turned : c;
     g.fill();
-    g.lineWidth = M.role[i] === 1 || M.role[i] === 3 ? 2 * lw : lw;
+    g.lineWidth = marked ? 2.4 * lw : lw;
     g.strokeStyle = p === 1 ? col.edge : c;
     g.stroke();
     const t = S.a[i] / 65536 * 2 * Math.PI;
@@ -242,6 +354,9 @@ function draw() {
     g.lineWidth = lw; g.strokeStyle = col.edge; g.stroke();
     if (S.w[i] === 1) {
       g.fillStyle = col.field; g.beginPath(); g.arc(x, y, r * 0.4, 0, 7); g.fill();
+    }
+    if (M.role[i] === 4) {
+      g.fillStyle = col.edge; g.beginPath(); g.arc(x, y, r * 0.38, 0, 7); g.fill();
     }
   }
   g.strokeStyle = col.hit; g.lineWidth = Math.max(90 * s, 2);
@@ -259,6 +374,8 @@ function draw() {
 const es = new EventSource('/events');
 es.addEventListener('meta', e => {
   M = JSON.parse(e.data); S = null; home = null; sel = -1; flashes = []; broke = [null, null];
+  log = []; unshown = 0; wipe = true; tally = blank(); lastMove.clear(); told = false;
+  unbroken = [false, false];
   $('error').textContent = M.error || '';
   $('man').textContent = 'Click a man to see who he is and what he is doing.';
   if (M.error) { $('what').textContent = 'No battle.'; dirty = true; return; }
@@ -274,6 +391,40 @@ es.addEventListener('frame', e => {
   if (!M || M.error || !f.x) return;
   S = f; onFrame();
 });
+es.addEventListener('news', e => {
+  if (!M || M.error) return;
+  const n = JSON.parse(e.data), now = performance.now(), at = t => t * M.tickMs / 1000;
+  // With no frame yet, this is the battle so far being told to a page that has just opened.
+  if (S) for (const [att, def, took, gave] of n.bouts) {
+    if (took > 0 || gave > 0) flashes.push({ att, def, until: now + 260 });
+  }
+  const add = entry => { log.unshift(entry); unshown++; if (log.length > KEPT) log.pop(); };
+  const hurt = new Map(n.wounds.map(([, man, to]) => [man, to]));
+  for (const [tick, man, from, to, ...causes] of n.moves) {
+    const reasons = causes.filter(c => c !== 'None');
+    const entry = { t: at(tick), man, text: did(from, to, reasons[0], hurt.get(man)), reasons };
+    lastMove.set(man, entry);
+    add(entry);
+    const kind = to === 2 ? 'back' : to === 3 ? 'turned' : to === 4 ? 'down' : null;
+    if (kind) {
+      const t = tally[M.side[man]][kind], c = reasons[0] || 'None';
+      t.n++; t.by[c] = (t.by[c] || 0) + 1;
+    }
+  }
+  for (const [tick, man, to] of n.wounds) {
+    if (to === 1) add({ t: at(tick), man, text: 'was hurt, and fights on', reasons: [] });
+  }
+  for (const [tick, body, up] of n.standards) {
+    add({ t: at(tick), man: -1, reasons: [],
+      text: `The standard of ${M.bodies[body] || 'a body'} ${up ? 'is up again' : 'went down'}` });
+  }
+  told = false;
+});
+$('log').onclick = e => {
+  const li = e.target.closest ? e.target.closest('li') : null;
+  if (!li || !S || !(li.dataset.man >= 0)) return;
+  sel = +li.dataset.man; describe(); dirty = true;
+};
 es.onerror = () => { $('rate').textContent = 'connection lost, trying again'; };
 
 const cmd = q => fetch('/cmd?' + q).then(async r => {

@@ -12,8 +12,8 @@
 
 use cannae_core::schedule::BASE_TICK;
 use cannae_core::{
-    Bodies, Bouts, Event, EventKind, Frames, GridPerception, ManModel, Perceive, Resolver, Rng,
-    Substrate, Wall,
+    Bodies, Bouts, Event, EventKind, Frames, GridPerception, ManModel, Perceive, Posture, Resolver,
+    Rng, Substrate, Wall,
 };
 use cannae_field::{Field, FieldPerception};
 use cannae_gauges::Rung3;
@@ -23,6 +23,7 @@ use cannae_man::{Marks, Men};
 use cannae_pairwise::Pairwise;
 use cannae_score::Engine;
 use cannae_score::draw::{Cell, SubstrateParams, nominal};
+use std::collections::VecDeque;
 use std::fmt::Write as _;
 use std::io::{BufRead, BufReader, Write};
 use std::net::{TcpListener, TcpStream};
@@ -41,6 +42,9 @@ const VARIANTS: [&str; 8] = [
 /// The longest a frame may wait while the battle is stepped, and the least time between frames.
 const STEP_BUDGET: Duration = Duration::from_millis(12);
 const FRAME_EVERY: Duration = Duration::from_millis(33);
+
+/// How many frames' worth of news are kept for a reader that joins late or falls behind.
+const NEWS_KEPT: usize = 600;
 
 #[derive(Clone, Debug)]
 struct Config {
@@ -266,8 +270,14 @@ fn meta_json(c: &Config, s: &Scenario, b: &Bodies, walls: &[Wall]) -> String {
     m
 }
 
-/// The observable state now, and the bouts since the last frame.
-fn frame_json(battle: &mut Battle, rate: f64, speed: f64, playing: bool) -> String {
+/// The observable state now; and, apart from it, the news since the last call: bouts, changes
+/// of posture with their causes, wounds and standards. `None` if nothing happened.
+fn frame_json(
+    battle: &mut Battle,
+    rate: f64,
+    speed: f64,
+    playing: bool,
+) -> (String, Option<String>) {
     let b = battle.live.bodies();
     let mut f = String::with_capacity(32 * b.len() + 256);
     let _ = write!(
@@ -292,41 +302,80 @@ fn frame_json(battle: &mut Battle, rate: f64, speed: f64, playing: bool) -> Stri
     ints(&mut f, b.wound.iter().map(|&x| x as i64));
     f.push_str(",\"ip\":");
     ints(&mut f, b.in_place.iter().map(|&x| x as i64));
-    // Each bout: attacker, defender, what the defender took, what the attacker took.
-    f.push_str(",\"bouts\":[");
+    f.push('}');
     let events = battle.live.events();
-    let mut first = true;
+    let (mut bouts, mut moves, mut wounds, mut standards) =
+        (String::new(), String::new(), String::new(), String::new());
+    let item = |list: &mut String| {
+        if !list.is_empty() {
+            list.push(',');
+        }
+    };
     for e in &events[battle.sent.min(events.len())..] {
-        if let EventKind::Bout {
-            attacker,
-            defender,
-            attacker_took,
-        } = e.kind
-        {
-            if !first {
-                f.push(',');
+        match e.kind {
+            // Attacker, defender, what the defender took, what the attacker took.
+            EventKind::Bout {
+                attacker,
+                defender,
+                attacker_took,
+            } => {
+                item(&mut bouts);
+                let _ = write!(
+                    bouts,
+                    "[{},{},{},{}]",
+                    attacker.0, e.man.0, defender as u8, attacker_took as u8
+                );
             }
-            first = false;
-            let _ = write!(
-                f,
-                "[{},{},{},{}]",
-                attacker.0, e.man.0, defender as u8, attacker_took as u8
-            );
+            // A man stepping out to strike and back again is the pulse of the fight, and far
+            // too frequent to tell one by one: only giving way and coming back are news.
+            EventKind::Posture { from, to }
+                if matches!(to, Posture::Back | Posture::Turned | Posture::Down)
+                    || matches!(from, Posture::Back | Posture::Turned) =>
+            {
+                item(&mut moves);
+                let c = e.causes;
+                let _ = write!(
+                    moves,
+                    "[{},{},{},{},\"{:?}\",\"{:?}\",\"{:?}\"]",
+                    e.tick, e.man.0, from as u8, to as u8, c[0], c[1], c[2]
+                );
+            }
+            EventKind::Wound { to } => {
+                item(&mut wounds);
+                let _ = write!(wounds, "[{},{},{}]", e.tick, e.man.0, to as u8);
+            }
+            EventKind::StandardDown { body } => {
+                item(&mut standards);
+                let _ = write!(standards, "[{},{},0]", e.tick, body.0);
+            }
+            EventKind::StandardUp { body } => {
+                item(&mut standards);
+                let _ = write!(standards, "[{},{},1]", e.tick, body.0);
+            }
+            _ => {}
         }
     }
-    f.push_str("]}");
     battle.sent = events.len();
-    f
+    let quiet = bouts.is_empty() && moves.is_empty() && wounds.is_empty() && standards.is_empty();
+    let news = (!quiet).then(|| {
+        format!(
+            "{{\"bouts\":[{bouts}],\"moves\":[{moves}],\"wounds\":[{wounds}],\
+             \"standards\":[{standards}]}}"
+        )
+    });
+    (f, news)
 }
 
 /// What the page is told: the latest description and frame, each with a count of how many
-/// there have been, so that a reader knows what it has not yet sent on.
+/// there have been, so that a reader knows what it has not yet sent on. A frame may be skipped
+/// by a slow reader; the news may not, so it is kept, each item under its frame's number.
 #[derive(Default)]
 struct Shared {
     meta: String,
     metas: u64,
     frame: String,
     frames: u64,
+    news: VecDeque<(u64, String)>,
 }
 
 #[derive(Default)]
@@ -336,14 +385,23 @@ struct Hub {
 }
 
 impl Hub {
-    fn publish(&self, meta: Option<String>, frame: String) {
+    fn publish(&self, meta: Option<String>, (frame, news): (String, Option<String>)) {
         let mut s = self.shared.lock().expect("hub");
         if let Some(m) = meta {
             s.meta = m;
             s.metas += 1;
+            // A new battle: the last one's news is no longer news.
+            s.news.clear();
         }
         s.frame = frame;
         s.frames += 1;
+        if let Some(n) = news {
+            let at = s.frames;
+            s.news.push_back((at, n));
+            if s.news.len() > NEWS_KEPT {
+                s.news.pop_front();
+            }
+        }
         self.changed.notify_all();
     }
 }
@@ -351,15 +409,15 @@ impl Hub {
 fn start(hub: &Hub, config: &Config, speed: f64, playing: bool) -> Option<Battle> {
     match build(config) {
         Ok((mut battle, meta)) => {
-            let frame = frame_json(&mut battle, 0.0, speed, playing);
-            hub.publish(Some(meta), frame);
+            let update = frame_json(&mut battle, 0.0, speed, playing);
+            hub.publish(Some(meta), update);
             Some(battle)
         }
         Err(e) => {
             eprintln!("{e}");
             hub.publish(
                 Some(format!("{{\"error\":\"{}\"}}", esc(&e))),
-                "{}".to_string(),
+                ("{}".to_string(), None),
             );
             None
         }
@@ -518,8 +576,9 @@ fn respond(out: &mut TcpStream, status: &str, kind: &str, body: &[u8]) -> std::i
     out.write_all(body)
 }
 
-/// A stream of server-sent events: the description when it changes, then each frame as it
-/// comes. A reader that falls behind gets the latest frame, not the ones it missed.
+/// A stream of server-sent events: the description when it changes, then the news and each
+/// frame as they come. A reader that falls behind gets the latest frame, not the ones it
+/// missed, but all the news.
 fn events(out: &mut TcpStream, hub: &Hub) -> std::io::Result<()> {
     out.set_nodelay(true)?;
     out.write_all(
@@ -528,7 +587,7 @@ fn events(out: &mut TcpStream, hub: &Hub) -> std::io::Result<()> {
     )?;
     let (mut metas, mut frames) = (0u64, 0u64);
     loop {
-        let (meta, frame) = {
+        let (meta, news, frame) = {
             let mut s = hub.shared.lock().expect("hub");
             while s.metas == metas && s.frames == frames {
                 let (guard, wait) = hub
@@ -541,9 +600,17 @@ fn events(out: &mut TcpStream, hub: &Hub) -> std::io::Result<()> {
                 }
             }
             let meta = (s.metas != metas).then(|| s.meta.clone());
+            // All the news since the last frame this reader was sent. A reader that has just
+            // joined gets what is kept of the battle so far.
+            let news: Vec<String> = s
+                .news
+                .iter()
+                .filter(|(at, _)| *at > frames)
+                .map(|(_, n)| n.clone())
+                .collect();
             let frame = (s.frames != frames).then(|| s.frame.clone());
             (metas, frames) = (s.metas, s.frames);
-            (meta, frame)
+            (meta, news, frame)
         };
         if meta.is_none() && frame.is_none() {
             // Nothing new in ten seconds: a comment keeps the connection from being dropped.
@@ -551,6 +618,9 @@ fn events(out: &mut TcpStream, hub: &Hub) -> std::io::Result<()> {
         }
         if let Some(m) = meta {
             write!(out, "event: meta\ndata: {m}\n\n")?;
+        }
+        for n in news {
+            write!(out, "event: news\ndata: {n}\n\n")?;
         }
         if let Some(f) = frame {
             write!(out, "event: frame\ndata: {f}\n\n")?;
