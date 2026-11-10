@@ -119,7 +119,7 @@ Multipliers apply to the chance that a strike wounds.
 | S17 | `striker_hampered` | The striker has one | U[0.4, 0.8] | 0.6 | |
 | S18 | `answer` | The answering strike of a man who did not step forward | U[0.5, 1] | 0.7 | A parry and riposte against a committed attack |
 | S19 | `skill_step` | Each step by which the striker out-skills his target | U[1.1, 1.4] | 1.25 | |
-| S20 | `disable` | Of wounds, the share that disable | U[0.25, 0.45] | 0.35 | Hampering wounds should be at least as common as disabling ones (healed trauma at Ephesus and Towton) |
+| S20 | `disable` | Of wounds, the share that disable | U[0.25, 0.45] | 0.35 | Hampering wounds should be at least as common as disabling ones (healed trauma at Ephesus and Towton). A wound that neither disables nor kills hampers, so at the centres half of them do. The two shares are drawn independently, so in about one draw in six disabling wounds outnumber hampering ones. |
 | S21 | `kill` | Of wounds, the share that kill outright | U[0.08, 0.25] | 0.15 | 10 to 30 % of disabling outcomes (lethality-skeletal.md) |
 | S22 | `drive_back` | The chance that a strike which does not wound drives its target back a step | U[0.1, 0.5] | 0.3 | |
 
@@ -145,7 +145,7 @@ Reach is fixed at 1.5 m for every troop in the patch: all fight with swords.
   50 ms, to the nearest.
 - **Bouts:** `bout.rate_q16` (bouts per second in Q16: 3,277 to 13,107), `bout.harm_ppm`
   (parts per million: 3,000 to 100,000), and the fourteen multipliers and shares S9 to S22 in
-  per mille, each named `bout.<field>`.
+  per mille, each named `bout.<field>_pm` (`bout.target_forward_pm` to `bout.drive_back_pm`).
 - **Kit:** `kit.warband.guard_pm`.
 
 ## Count
@@ -162,8 +162,8 @@ Reach is fixed at 1.5 m for every troop in the patch: all fight with swords.
 
 | Lines | Written by | Read and signed by |
 |---|---|---|
-| Stamina, power, gait | Paullus | Varro: read 2026-11-10, no objection (call 0001 turn 16); signs at the freeze |
-| Crowd physics | Paullus (ranges copied by Varro for the field) | Varro: read 2026-11-10, no objection. The field's mapping of each line is in priors-field.md §4. Signs at the freeze |
+| Stamina, power, gait | Paullus | Varro: read 2026-11-10, no objection (call 0001 turn 16). Read again at the freeze and **signed, 2026-11-10**. The seven drawn lines agree with the sampler in range, kind and name (checked at 6b73531). |
+| Crowd physics | Paullus (ranges copied by Varro for the field) | Varro: read 2026-11-10, no objection. The field's mapping of each line is in priors-field.md §4. Read again at the freeze and **signed, 2026-11-10**. The four drawn lines agree with the sampler in range, kind and name (checked at 6b73531). |
 | Ties, bouts, kits | Varro | Paullus: read 2026-11-10; signs at the freeze. S23 checked in the Greek (below) |
 
 **Paullus on S23 (the warband's guard), 2026-11-10, checked in the Greek** (Büttner-Wobst's
