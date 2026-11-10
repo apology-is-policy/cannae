@@ -60,8 +60,8 @@ running and shoving ([report](slice0/passage.md)). On my engine:
 
 **Priors (drafts, frozen with the pre-registration):** three files, so that both engines draw everything they share from one prior, and draw *i* is the same in every cell.
 
-- [priors-shared.md](slice0/priors-shared.md): stamina, power and gait (Paullus), plus ties, bouts and the troop table (Varro, to come). Power is now a multiple of each man's critical power, because the placeholders mixed cycling watts with metabolic ones.
-- [priors-pairwise.md](slice0/priors-pairwise.md): the pairwise substrate, with seven drawn parameters, and rungs 3-4 to come. The placeholder crush threshold was below the crowd-safety literature's onset of 5-8 men per m².
+- [priors-shared.md](slice0/priors-shared.md): stamina, power and gait (Paullus); ties, bouts and the troop table (Varro); four crowd-physics numbers. Power is a multiple of each man's critical power, because the placeholders mixed cycling watts with metabolic ones. The Gaulish guard (S23) is now checked in Polybius's Greek: the shield "could not cover the man all round" (2.30.3), and the comparison of shields at 2.30.8 has a gap in the text.
+- [priors-pairwise.md](slice0/priors-pairwise.md): the pairwise substrate (four drawn parameters, plus the shared ones) and rung 3's five (how long fear lasts, how much of it a man carries, how fast it spends his resolve, how fast resolve returns, and what empty resolve costs). Rung 4's are written only if it is built.
 - [priors-field.md](slice0/priors-field.md): Varro's, 29-32 drawn per rung plus troop inputs, with what he expects written down before any run.
 
 The sources behind them are in [crowd-physics.md](slice0/crowd-physics.md) and [physiology.md](slice0/physiology.md). The march speed is checked against Vegetius 1.9 in the Latin: 20 Roman miles in five summer hours, about 1.3 m/s.

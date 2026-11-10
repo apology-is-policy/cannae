@@ -136,12 +136,28 @@ Reach is fixed at 1.5 m for every troop in the patch: all fight with swords.
 |---|---|---|
 | Stamina, power, gait | Paullus | Varro: read 2026-11-10, no objection (call 0001 turn 16); signs at the freeze |
 | Crowd physics | Paullus (ranges copied by Varro for the field) | Varro: pending |
-| Ties, bouts, kits | Varro | Paullus: read 2026-11-10; signs at the freeze. S23 provisionally (below) |
+| Ties, bouts, kits | Varro | Paullus: read 2026-11-10; signs at the freeze. S23 checked in the Greek (below) |
 
-**Paullus on S23 (the warband's guard), 2026-11-10.** Checked in English only: the Loeb text of
-1922 on LacusCurtius. The Greek could not be fetched, so this is provisional until it is read.
-Polybius 2.30.3 says the Gaulish shield "does not cover the whole body", and 2.30.8 that the
-Roman shields "were far more serviceable for defence". The Gaesatae stood naked in front
-(2.28.8), and nothing in 2.28-2.33 mentions Gallic body armour. That supports a guard worse than
-the reference, so U[1, 1.5] stands. 2.33 is about swords that bend and only cut: it bears on how
-the Gauls strike, not on what they take, so it should not be cited for S23.
+**Paullus on S23 (the warband's guard), 2026-11-10, checked in the Greek** (Büttner-Wobst's
+text on Perseus). U[1, 1.5] stands.
+
+- **2.30.3** is about the Gaesatae under the javelins: οὐ γὰρ δυναμένου τοῦ Γαλατικοῦ θυρεοῦ
+  τὸν ἄνδρα περισκέπειν, ὅσῳ γυμνὰ καὶ μείζω τὰ σώματ᾽ ἦν, τοσούτῳ συνέβαινε μᾶλλον τὰ βέλη
+  πίπτειν ἔνδον: "since the Gallic shield could not cover the man all round, the more naked
+  and the bigger their bodies were, the more the missiles fell home". The Loeb's "does not
+  cover the whole body" is fair.
+- **2.30.8** has a gap in the transmitted text: οἱ μὲν οὖν θυρεοὶ πρὸς ἀσφάλειαν, αἱ δὲ
+  μάχαιραι πρὸς πρᾶξιν μεγάλην διαφορὰν [lacuna] ἔχειν: "the shields for safety, and the
+  swords for action, [made] a great difference". The Loeb's "far more serviceable for defence"
+  translates a supplement. The Greek says only that the shields differed greatly in the
+  safety they gave. In context that means the Roman ones gave more.
+- **2.28.8:** the Gaesatae threw off their trousers and cloaks and stood in front γυμνοὶ μετ᾽
+  αὐτῶν τῶν ὅπλων, "naked, with their arms alone".
+- **2.30.2** cuts the other way, for the rest of the warband. Against the same javelins, the
+  Celts behind had πολλὴν εὐχρηστίαν, "much good", from their cloaks and trousers. Clothing
+  helped them against missiles.
+
+So the evidence is for missiles against naked men, and nothing in 2.28-2.33 mentions Gallic
+body armour. A guard worse than the reference fits, and the bottom of the range, 1, covers a
+clothed Gaul with a shield. 2.33 is about swords that bend and only cut: it bears on how the
+Gauls strike, not on what they take, so it should not be cited for S23.

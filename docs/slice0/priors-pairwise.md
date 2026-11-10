@@ -55,22 +55,44 @@ If the pairwise engine matches those only in part of the box above (for `press_m
 that justified it is recorded here. This uses outside data, not the eight patterns, so it is
 calibration, not tuning.
 
+**Done (S0.8, [passage-calibration.md](passage-calibration.md)).** The radius is narrowed to
+280-300 mm: smaller discs walk through Seyfried's corridors far too fast. Nothing else is
+narrowed. The pushing flow through narrow doors is about 40 % low at every radius that walks
+right, and walking flow through wide gaps 30-50 % high at every radius in the prior. Both are
+structural, so no part of the other boxes fixes them.
+
 ## Rung 3: continuous fear and resolve (S0.6)
 
-To be written with the rung, before the freeze. This rung adds two gauges per man on top of
-the visible layer. Fear rises with the alarm sum and decays; resolve is spent by fear and
-renewed by the urge sum. Each gauge's gain and time constant is drawn here.
+`crates/cannae-gauges`, `Params`; the design is [rungs-3-4.md](rungs-3-4.md). Two gauges per
+man, on top of the visible layer's perception weights, which are drawn once and shared by every
+rung. Fear rises with the frightening acts he sees and decays; resolve is spent by fear while
+he is awake to something, and comes back by itself. Their alarm term is fear plus a share of
+his nerve for the resolve he has spent. Nothing here draws at runtime.
+
+| Parameter | Placeholder | Prior | Source or reason |
+|---|---|---|---|
+| τ_F, `fear_tau_ms`: how long fear lasts | 3 min | log-uniform 1-10 min | "Minutes": the same scale as Varro's `shaken_wear` (2-10 min), so that rungs 2 and 3 differ in form, not in time scale |
+| K, `keep_pm`: how much of a fright's weight he keeps carrying | 0.625 | uniform 0.25-1 | At 1, a man who has watched a threat for several τ_F carries it in full after it has gone; at a quarter, a remnant |
+| T_R, `spend_ms`: how long a fear of one alarm unit takes to empty full resolve | 30 min | log-uniform 10-60 min | Formed fights lasted hours, and lines were relieved (the triplex acies; vision 03, R2): resolve is spent over tens of minutes, not seconds |
+| τ_R, `resolve_tau_ms`: how long resolve takes to come back | 30 min | log-uniform 10-60 min | A relieved line rested long enough to go back in (vision 03, R2) |
+| w_R, `empty_q8`: alarm at empty resolve | 2 alarm units | uniform 1-3 | About a man's whole nerve (2, priors-field.md T1): a man with no resolve left has no nerve left |
+
+What each should do is written down beforehand in [rungs-3-4.md](rungs-3-4.md): a hazard of
+breaking that rises over a long fight (a Weibull shape above rung 2's), a fright that lingers
+after a shock is driven off, and volleys that kill few but wear men down.
 
 ## Rung 4: the full excitable psyche (S0.6)
 
-To be written with the rung, before the freeze. This rung adds the approach-avoid state with
-hysteresis, and the W' cycle, which times a man's going forward and falling back. Its
-parameters are drawn here, on top of rung 3's.
+Not drawn unless it is built. The recommendation in [rungs-3-4.md](rungs-3-4.md) is to build
+it only if rungs 0-3 all fail, since what it alone would add (graded intensity inside
+*steady*, and refractoriness beyond breath) is tied to no named pattern. Rung 4 is in the
+approved arc, so that is Michal's decision. If it is built, its parameters are written here
+before the freeze.
 
 ## Count
 
 | Part | Drawn | Fixed |
 |---|---|---|
 | Substrate | 4 (plus 4 shared) | 1 |
-| Rung 3 | (to come) | |
-| Rung 4 | (to come) | |
+| Rung 3 | 5 | 0 |
+| Rung 4 | only if built | |
