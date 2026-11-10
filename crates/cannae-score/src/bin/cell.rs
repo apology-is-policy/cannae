@@ -1,10 +1,13 @@
 //! `cell --substrate pairwise|field --rung 0..3 [--variant base] [--draws D] [--seeds N]
-//! [--freeze-seed F] [--jobs J] [--secs S] [--whole yes]`
+//! [--freeze-seed F] [--jobs J] [--secs S] [--whole yes] [--nominal yes]`
 //!
 //! Runs one cell of the experiment: parameter sets 0 to D-1 (`cannae_score::draw`, from the
 //! freeze seed F), each on seeds 1 to N of a patch variant (`scenarios/patch/<variant>.toml`),
 //! J runs at a time. Prints one line per run and the cost of the batch. A run stops where
 //! scoring stops, 15 minutes after a side breaks, unless `--whole yes`.
+//!
+//! `--nominal yes` runs the one set with everything at its centre or placeholder instead
+//! (`draw::nominal`): for looking at a mechanism, never for scoring.
 //!
 //! The freeze seed is fixed at the freeze. Until then the mappings not yet written give their
 //! centres whatever it is.
@@ -13,7 +16,7 @@
 #![allow(clippy::float_arithmetic)]
 
 use cannae_harness::Scenario;
-use cannae_score::draw::{Cell, drawn};
+use cannae_score::draw::{Cell, drawn, nominal};
 use cannae_score::{Engine, Run, Spec, run};
 use rayon::prelude::*;
 use std::process::ExitCode;
@@ -26,6 +29,7 @@ fn main() -> ExitCode {
     let mut seeds = 1u64;
     let mut draws = 1u32;
     let mut freeze_seed = 0u64;
+    let mut nominal_set = false;
     let mut jobs = 1usize;
     let mut secs = None;
     let mut stop_at_rout_end = true;
@@ -48,6 +52,7 @@ fn main() -> ExitCode {
             "--jobs" => jobs = v.parse().unwrap_or(1),
             "--secs" => secs = v.parse().ok(),
             "--whole" => stop_at_rout_end = v != "yes",
+            "--nominal" => nominal_set = v == "yes",
             _ => return usage(),
         }
     }
@@ -66,10 +71,14 @@ fn main() -> ExitCode {
         }
     };
     let duration_s = secs.unwrap_or(s.duration_s);
-    let sets = match (0..draws)
-        .map(|i| drawn(freeze_seed, Cell { engine, rung }, i))
-        .collect::<Result<Vec<_>, _>>()
-    {
+    let cell = Cell { engine, rung };
+    let sets = match if nominal_set {
+        nominal(cell).map(|d| vec![d])
+    } else {
+        (0..draws)
+            .map(|i| drawn(freeze_seed, cell, i))
+            .collect::<Result<Vec<_>, _>>()
+    } {
         Ok(sets) => sets,
         Err(e) => {
             eprintln!("{e}");
@@ -170,7 +179,7 @@ fn print_run(r: &Run) {
 fn usage() -> ExitCode {
     eprintln!(
         "usage: cell --substrate pairwise|field --rung 0..3 [--variant base] [--seeds N] \
-         [--draws D] [--freeze-seed F] [--jobs J] [--secs S] [--whole yes]"
+         [--draws D] [--freeze-seed F] [--jobs J] [--secs S] [--whole yes] [--nominal yes]"
     );
     ExitCode::FAILURE
 }

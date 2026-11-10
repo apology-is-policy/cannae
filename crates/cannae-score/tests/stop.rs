@@ -3,7 +3,7 @@
 use cannae_core::schedule::BASE_TICK;
 use cannae_harness::Scenario;
 use cannae_harness::metrics::ROUT_WINDOW_S;
-use cannae_score::draw::{Cell, drawn};
+use cannae_score::draw::{Cell, nominal};
 use cannae_score::{Engine, Spec, run};
 
 fn base() -> Scenario {
@@ -20,8 +20,10 @@ fn stopping_at_the_end_of_the_rout_window_changes_no_statistic() {
     let s = base();
     let mut cut_something = false;
     for engine in [Engine::Pairwise, Engine::Field] {
-        let d = drawn(0, Cell { engine, rung: 1 }, 0).unwrap();
-        for seed in [1, 2] {
+        let d = nominal(Cell { engine, rung: 1 }).unwrap();
+        // At the nominal set, seed 5 logs on after the window on both engines.
+        let seed = 5;
+        {
             let spec = |stop| Spec {
                 seed,
                 duration_s: 1_500,
@@ -30,9 +32,8 @@ fn stopping_at_the_end_of_the_rout_window_changes_no_statistic() {
             let whole = run(&s, &d, spec(false)).unwrap();
             let cut = run(&s, &d, spec(true)).unwrap();
             // The test means something only if a side broke early enough for the run to stop
-            // short, and some whole run went on to log more (a rout often logs nothing once it
-            // is under way). Here every line breaks within the first few minutes, and the
-            // field's seed 2 logs on; if that changes, pick other seeds or another draw.
+            // short, and some whole run went on to log more (a rout often logs nothing once
+            // it is under way). If that changes, pick another seed.
             let broke = whole.summary.side_break.iter().flatten().min().copied();
             let broke = broke.unwrap_or_else(|| panic!("{engine:?} {seed}: no side broke"));
             let stop_s = broke * BASE_TICK.0 / 1000 + ROUT_WINDOW_S;

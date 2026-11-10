@@ -6,7 +6,7 @@
 use cannae_core::schedule::BASE_TICK;
 use cannae_core::{BodyId, EventKind};
 use cannae_harness::{Scenario, place};
-use cannae_score::draw::{Cell, drawn};
+use cannae_score::draw::{Cell, nominal};
 use cannae_score::{Engine, Spec, run_logged};
 
 #[test]
@@ -22,7 +22,7 @@ fn the_rear_band_strikes_and_goes_before_the_front_comes_on() {
     let (warband, band) = (body_of("warband"), body_of("rear band"));
     let secs = |t: u32| t * BASE_TICK.0 / 1000;
     for engine in [Engine::Pairwise, Engine::Field] {
-        let d = drawn(0, Cell { engine, rung: 0 }, 0).unwrap();
+        let d = nominal(Cell { engine, rung: 0 }).unwrap();
         let spec = Spec {
             seed: 1,
             duration_s: 360,
@@ -69,7 +69,7 @@ fn contact_is_the_fronts_meeting_not_the_shock() {
     let unmarked = Scenario::from_toml(&text.replace("front = false", "")).unwrap();
     let secs = |t: u32| t * BASE_TICK.0 / 1000;
     for engine in [Engine::Pairwise, Engine::Field] {
-        let d = drawn(0, Cell { engine, rung: 0 }, 0).unwrap();
+        let d = nominal(Cell { engine, rung: 0 }).unwrap();
         let spec = Spec {
             seed: 1,
             duration_s: 600,
