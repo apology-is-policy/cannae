@@ -24,7 +24,7 @@ reviews his work and merges it.
 | S0.4 | Lethality bounds: literature search on skeletal trauma and experimental archaeology (Varro searches line-fighting ethnography and Collins) | f8cb2a6 Paullus's half; band proposed |
 | S0.5 | The pairwise substrate, where every body touches its neighbours, at patch scale; a perception conformance check for Varro | 14e919b |
 | S0.6 | The top two rungs of the memory ladder: continuous fear and resolve, then the full excitable psyche | Design written ([rungs-3-4.md](slice0/rungs-3-4.md)); waits for Varro's `Memory` hook |
-| S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | Pairwise done for the line, surge and pocket ([report](slice0/spike-pairwise.md)); the gates have walls now and are not yet run; Varro's field spike is his |
+| S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | Pairwise done for the line, surge and pocket ([report](slice0/spike-pairwise.md)); the rout through camp gates is built (with walls indexed on a coarse grid, so a man checks only the walls near him) and waits for an idle machine to be timed; Varro's field spike is his |
 | S0.8 | The passage study, against measured crowd-flow data | Walls (`cannae_core::Wall`, `[[wall]]` in scenarios) and the pairwise calibration done ([report](slice0/passage-calibration.md)). The bench for the two passages is built, and the pairwise substrate has run on it ([report](slice0/passage.md)); Varro's field runs on the same bench when it lands |
 | S0.9 | Scored runs and the report; then design review 2 | |
 
