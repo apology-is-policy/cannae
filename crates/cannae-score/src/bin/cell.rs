@@ -77,6 +77,13 @@ fn main() -> ExitCode {
             "--audit" => audit = v != "no",
             "--out" => out_dir = Some(PathBuf::from(v)),
             "--nominal" => nominal_set = v == "yes",
+            "--eyes" => {
+                let swapped = v == "swapped";
+                cannae_score::swap_eyes(swapped);
+                if swapped {
+                    println!("crosswise: each engine sees through the other's perception");
+                }
+            }
             _ => return usage(),
         }
     }
@@ -288,7 +295,7 @@ fn usage() -> ExitCode {
     eprintln!(
         "usage: cell --substrate pairwise|field --rung 0..3 [--variant base] [--seeds N] \
          [--draws D] [--every E] [--sets A,B,..] [--freeze-seed F] [--jobs J] [--secs S] [--whole yes] \
-         [--audit no] [--out DIR] [--nominal yes]"
+         [--audit no] [--out DIR] [--nominal yes] [--eyes swapped]"
     );
     ExitCode::FAILURE
 }
