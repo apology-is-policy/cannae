@@ -93,8 +93,16 @@ the three priors files, the freeze seed (**9464880715404986219**, from the first
 SHA-256 over the four), and the hash of the [table of record](slice0/table-of-record.csv), the
 200 drawn parameter sets. Before signing, Varro had all 101 drawn lines checked against the
 sampler by an independent reader: every range agrees, and five sentences were corrected (two of
-them mine). Paullus has signed; Varro checks the numbers and signs. **The scored runs wait for
-Michal** to see the pass rules settled today and to give the machine time.
+them mine). Both have signed: Varro recomputed every number himself before signing. Michal accepted
+the pass rules.
+
+**The scored batch is running** on Michal's Raspberry Pi 400 (4 × Cortex-A72), so that the
+Mac stays free: started 2026-11-10 at 17:49 UTC by `tools/s09-batch.sh`, at the frozen code.
+Before the batch, the same 32 runs were made on the Pi and the Mac, and every result agreed
+bit for bit. The Pi is about 4-5 times slower per core than a quiet Mac, so the batch should
+take about four to five days if most lines break early, and one to two weeks if many hold.
+`base` runs first in every cell, so the pattern verdicts come in early. The speed readings
+for the kill criteria still need about two quiet hours on the Mac.
 
 **Pre-registration: five defects found and fixed so far,** four of them by Varro. All were found
 before any scored run, which is the point of writing it down first.
