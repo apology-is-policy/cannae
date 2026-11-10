@@ -127,6 +127,11 @@ const TOUCHES: u8 = 4;
 /// His four cells lie in one tile.
 const WHOLE: u8 = 8;
 
+/// A tile's flags. Bits 0 and 1: that side has presence in it.
+const SIDES: u8 = 3;
+/// Some cell of the tile is above the crush onset.
+const DENSE: u8 = 4;
+
 const EDGE: i32 = TILE - 1;
 const UNIT_Q: i64 = 4_096;
 /// Passes of the position solve after the step is fully taken.
@@ -274,6 +279,10 @@ pub struct Field {
     tiles: Tiles,
     /// Presence by cell and side, 256 to a man.
     den: Vec<[u16; 2]>,
+    /// By tile: which sides stand in it, and whether any cell of it is above the crush onset.
+    tile_has: Vec<u8>,
+    /// By tile: the sides that stand in it or in a tile touching it.
+    tile_near: Vec<u8>,
     /// By man: the south-west cell of his block, and his own cell. `NONE` for the fallen.
     base: Vec<u32>,
     cell: Vec<u32>,
@@ -322,6 +331,8 @@ impl Field {
             walls: Walls::new(walls, g.cell, g.body_mm / 2),
             tiles: Tiles::default(),
             den: Vec::new(),
+            tile_has: Vec::new(),
+            tile_near: Vec::new(),
             base: Vec::new(),
             cell: Vec::new(),
             kind: Vec::new(),
@@ -378,7 +389,9 @@ impl Field {
         self.cell.resize(n, NONE);
         self.kind.clear();
         self.kind.resize(n, 0);
+        self.tile_has.clear();
         let walled = !self.walls.is_empty();
+        let crush = self.g.crush;
         for i in 0..n {
             if bodies.posture[i] == Posture::Down {
                 continue;
@@ -397,6 +410,7 @@ impl Field {
             };
             if self.den.len() < self.tiles.cells() {
                 self.den.resize(self.tiles.cells(), [0; 2]);
+                self.tile_has.resize(self.tiles.len(), 0);
             }
             let mut w = weights(fx, fy);
             if walled && self.walls.near(bodies.pos[i]) {
@@ -405,13 +419,30 @@ impl Field {
             }
             let side = bodies.side[i] as usize;
             for k in 0..4 {
-                let c = &mut self.den[blk[k] as usize][side];
-                *c = c.saturating_add(w[k] as u16);
+                let c = &mut self.den[blk[k] as usize];
+                c[side] = c[side].saturating_add(w[k] as u16);
+                let dense = (c[0] as i32 + c[1] as i32 > crush) as u8 * DENSE;
+                self.tile_has[(blk[k] >> CELL_BITS) as usize] |= (1 << side) | dense;
             }
             self.base[i] = blk[0];
             self.cell[i] = blk[(fx >= 128) as usize + 2 * (fy >= 128) as usize];
             let free = if bodies.in_place[i] { 0 } else { FREE };
             self.kind[i] = free | (one_tile as u8 * WHOLE);
+        }
+        // Which sides are anywhere near each tile. A man in a tile with no enemy in it or
+        // beside it has none within a tile's width, and need not look for one.
+        self.tile_near.clear();
+        for t in 0..self.tiles.len() {
+            let (tx, ty) = self.tiles.coords(t);
+            let mut sides = 0;
+            for dy in -1..=1 {
+                for dx in -1..=1 {
+                    if let Some(n) = self.tiles.find_tile(tx + dx, ty + dy) {
+                        sides |= self.tile_has[n as usize] & SIDES;
+                    }
+                }
+            }
+            self.tile_near.push(sides);
         }
     }
 
@@ -423,6 +454,8 @@ impl Field {
             walls,
             tiles,
             den,
+            tile_has,
+            tile_near,
             base,
             kind,
             step,
@@ -434,6 +467,9 @@ impl Field {
             ..
         } = self;
         let walled = !walls.is_empty();
+        // Where a wall may have moved a man's presence off his own cell, he is looked for half
+        // a cell farther out.
+        let pad = if walled { g.cell >> 1 } else { 0 };
         *touching = false;
         let n = bodies.len();
         step.clear();
@@ -455,7 +491,9 @@ impl Field {
             let pos = bodies.pos[i];
             let tg = &targets[i];
             let to = tg.point - pos;
-            if kind[i] & FREE == 0 {
+            let tile = (base[i] >> CELL_BITS) as usize;
+            let in_place = kind[i] & FREE == 0;
+            if in_place {
                 // In his place: the tie alone moves him.
                 let reach = tg.speed as i64 * dt / 1000;
                 let s = if to.len_sq() <= reach * reach {
@@ -465,9 +503,12 @@ impl Field {
                 };
                 step[i] = s;
                 far = far.max(s.len_sq());
-                continue;
+                // He reads the field only to know whether he is being crushed, and only where
+                // some cell near him is thick enough for that.
+                if kind[i] & WHOLE != 0 && tile_has[tile] & DENSE == 0 {
+                    continue;
+                }
             }
-            free += 1;
             let side = bodies.side[i] as usize;
             let (bx, by, fx, fy) = g.split(pos);
             let mut w = weights(fx, fy);
@@ -504,6 +545,13 @@ impl Field {
                 }
             }
             let here = (t[0] * w[0] + t[1] * w[1] + t[2] * w[2] + t[3] * w[3]) / 256;
+            if here > g.crush {
+                crushing.push((i as u32, here - g.crush));
+            }
+            if in_place {
+                continue;
+            }
+            free += 1;
 
             let mut s = Vec2::ZERO;
             let e = t.map(|v| (v - g.ease).max(0));
@@ -528,10 +576,11 @@ impl Field {
                 lean.map_or(Vec2::ZERO, |f| f.unit(UNIT_Q as i32))
             };
             if dir != Vec2::ZERO {
-                // What lies ahead decides how fast he may go: a cell ahead, or where he is
-                // going if that is nearer.
+                // What lies ahead decides how fast he may go: a cell ahead, or as far as he
+                // would go this step if that is farther, or where he is going if that is
+                // nearer.
                 let look = if dist > 0 {
-                    dist.min(g.cell as i64)
+                    dist.min((g.cell as i64).max(tg.speed as i64 * dt / 1000))
                 } else {
                     g.cell as i64
                 };
@@ -586,6 +635,33 @@ impl Field {
                 }
             }
 
+            // Is there an enemy he could come within a guard of during this step? The cells
+            // read so far reach about a cell around him and two ahead, whatever his speed and
+            // the cell's size. So where they show no enemy and one is near, he looks over all
+            // the ground he may cross, widened by a guard and by as far as he goes himself. Of
+            // two men who could meet, the one who goes farther then always sees the other, and
+            // one is enough: the solve lists for him every enemy within the longest step of
+            // anyone.
+            if foe == 0 && tile_near[tile] & (1 << (1 - side)) != 0 {
+                let gone = s.x.abs() + s.y.abs();
+                let (r0, r1) = (p.guard_mm + pad, p.guard_mm + pad + gone);
+                let end = pos + s;
+                let (x0, x1) = ((pos.x - r0).min(end.x - r1), (pos.x + r0).max(end.x + r1));
+                let (y0, y1) = ((pos.y - r0).min(end.y - r1), (pos.y + r0).max(end.y + r1));
+                let mut at = (bx >> TILE_SHIFT, by >> TILE_SHIFT, base[i] >> CELL_BITS);
+                for cy in y0 >> g.shift..=y1 >> g.shift {
+                    for cx in x0 >> g.shift..=x1 >> g.shift {
+                        let (tx, ty) = (cx >> TILE_SHIFT, cy >> TILE_SHIFT);
+                        if (tx, ty) != (at.0, at.1) {
+                            at = (tx, ty, tiles.find_tile(tx, ty).unwrap_or(NONE));
+                        }
+                        if at.2 != NONE {
+                            foe |= den[((at.2 << CELL_BITS) | local(cx, cy)) as usize][1 - side];
+                        }
+                    }
+                }
+            }
+
             let packed_and_moving = match p.contact {
                 Contact::Line => false,
                 Contact::Crowd => here >= g.crowd && (s - pushed).len_sq() >= moving2,
@@ -601,9 +677,6 @@ impl Field {
                 hot.push(i as u32);
             }
             kind[i] = k;
-            if here > g.crush {
-                crushing.push((i as u32, here - g.crush));
-            }
             step[i] = s;
             far = far.max(s.len_sq());
         }
@@ -903,14 +976,28 @@ impl Substrate for Field {
                 self.crush_chance[over as usize]
             };
             if rng.chance(chance, Key::new(Stream::Substrate, i, tick, PURPOSE_CRUSH)) {
+                let (man, pos) = (ManId(i), bodies.pos[i as usize]);
+                let causes = [Cause::Crush, Cause::None, Cause::None];
                 out.push(Event {
                     tick,
-                    man: ManId(i),
-                    pos: bodies.pos[i as usize],
+                    man,
+                    pos,
                     kind: EventKind::Wound {
                         to: Wound::Disabled,
                     },
-                    causes: [Cause::Crush, Cause::None, Cause::None],
+                    causes,
+                });
+                // He goes down, and that is logged as the bout resolver logs a fall: the
+                // change of posture is what other men see.
+                out.push(Event {
+                    tick,
+                    man,
+                    pos,
+                    kind: EventKind::Posture {
+                        from: bodies.posture[i as usize],
+                        to: Posture::Down,
+                    },
+                    causes,
                 });
             }
         }

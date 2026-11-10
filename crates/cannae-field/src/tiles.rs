@@ -70,6 +70,11 @@ impl Tiles {
         self.coords.is_empty()
     }
 
+    /// Where tile `t` lies, in tiles east and north.
+    pub fn coords(&self, t: usize) -> (i32, i32) {
+        self.coords[t]
+    }
+
     /// How long a caller's per-cell array must be.
     pub fn cells(&self) -> usize {
         self.coords.len() * TILE_CELLS

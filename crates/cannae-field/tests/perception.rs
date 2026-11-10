@@ -160,6 +160,52 @@ fn random_crowds_look_the_same_to_both() {
     }
 }
 
+/// What random crowds never land on: men exactly on the lines between cells and between the
+/// quarters of a cell, several men on one spot, enemies tied at the eighth nearest, and enemies
+/// at exactly the reach.
+#[test]
+fn men_on_the_lines_tied_and_on_one_spot_look_the_same_to_both() {
+    let mut b = Bodies::default();
+    let mut put = |x: i32, y: i32, side: Side, k: i32| {
+        b.push(Observed {
+            pos: Vec2::new(x, y),
+            side,
+            facing: Turn((k as u16).wrapping_mul(2_048)),
+            ..Default::default()
+        });
+    };
+    let chess = |x: i32, y: i32| if (x + y) & 1 == 0 { Side::A } else { Side::B };
+    // A metre lattice through the origin with the sides as on a chessboard. Every man stands
+    // on a quarter's corner. His enemies are four at 1 m, eight at 2.236 m, of whom four are
+    // among his eight nearest, and four at exactly 3 m.
+    for y in -12..=12 {
+        for x in -12..=12 {
+            put(x * 1_000, y * 1_000, chess(x, y), 7 * x + 13 * y);
+        }
+    }
+    // The same at 3 m, far off: a man's only enemies within reach stand exactly at it.
+    for y in 0..8 {
+        for x in 0..8 {
+            put(90_000 + x * 3_000, y * 3_000, chess(x, y), x - 5 * y);
+        }
+    }
+    // Men on one spot: a friend and an enemy on top of a man of the lattice, three enemies
+    // together, and a pair at a corner of four tiles.
+    for (x, y, side) in [
+        (0, 0, Side::A),
+        (0, 0, Side::B),
+        (3_000, -2_000, Side::A),
+        (3_000, -2_000, Side::A),
+        (3_000, -2_000, Side::A),
+        (64_000, 64_000, Side::A),
+        (64_000, 64_000, Side::B),
+    ] {
+        put(x, y, side, x / 1_000);
+    }
+    let mut p = FieldPerception::default();
+    assert_eq!(views_match(&mut p, &b, &[], 0, 0, &NoFrames), Ok(()));
+}
+
 #[test]
 fn nobody_at_all_is_no_trouble() {
     let mut p = FieldPerception::default();

@@ -249,11 +249,73 @@ fn men_who_press_pack_tighter_and_stop_at_the_packing_density() {
     assert!(peak > 13 * 128, "peak {}/256 per m2", peak);
     assert!(peak <= 21 * 128, "peak {}/256 per m2", peak);
     assert!(!ev.is_empty());
-    assert!(ev.iter().all(|e| e.causes[0] == Cause::Crush
-        && e.kind
-            == EventKind::Wound {
+    assert!(ev.iter().all(|e| e.causes[0] == Cause::Crush));
+    // Each man crushed is logged twice: his wound, then his fall, which is what others see.
+    assert_eq!(ev.len() % 2, 0);
+    for pair in ev.chunks(2) {
+        assert_eq!(pair[0].man, pair[1].man);
+        assert_eq!(
+            pair[0].kind,
+            EventKind::Wound {
                 to: Wound::Disabled
-            }));
+            }
+        );
+        assert_eq!(
+            pair[1].kind,
+            EventKind::Posture {
+                from: Posture::Steady,
+                to: Posture::Down
+            }
+        );
+    }
+}
+
+#[test]
+fn men_in_their_places_are_crushed_like_anyone_else() {
+    // A block of 36 stands in its place while 900 loose men of its own side press in on it
+    // from all round. Friends make way, so the crowd packs onto the block. Once where four
+    // tiles meet, and once in the middle of a tile, where a man in his place reads the field
+    // only if his tile is flagged as thick.
+    for c in [0, 16_384] {
+        let mut b = Bodies::default();
+        lattice(&mut b, c - 1_250, c - 1_250, 6, 6, 500, 500, Side::A, true);
+        let formed = b.len();
+        lattice(
+            &mut b,
+            c - 14_500,
+            c - 14_500,
+            30,
+            30,
+            1_000,
+            1_000,
+            Side::A,
+            false,
+        );
+        let before = b.pos[..formed].to_vec();
+        let mut t = toward(&b, Vec2::new(c, c), WALK, 255);
+        for (tg, &p) in t.iter_mut().zip(&before) {
+            *tg = Target {
+                point: p,
+                ..Default::default()
+            };
+        }
+        let mut f = Field::new(Params::CENTRE);
+        let ev = run(&mut f, &mut b, &t, 240);
+        let wounded = |from: usize, to: usize| {
+            ev.iter()
+                .filter(|e| {
+                    (from..to).contains(&(e.man.0 as usize))
+                        && matches!(e.kind, EventKind::Wound { .. })
+                })
+                .count()
+        };
+        assert!(
+            wounded(0, formed) > 0,
+            "at {c}: no man in his place was crushed"
+        );
+        assert!(wounded(formed, b.len()) > 0);
+        assert_eq!(&b.pos[..formed], &before[..]);
+    }
 }
 
 #[test]
@@ -823,4 +885,75 @@ fn men_who_touch_are_not_shoved_into_a_wall_by_those_behind() {
         "{close_at_wall} of {at_wall} at the wall, {close_behind} of {behind} behind"
     );
     assert_eq!(close_behind, 0);
+}
+
+/// Two enemies out of their places, `gap` apart along x with the first at `x`, each going for
+/// the other at `speed`. Where they are after one step.
+fn meet(x: i32, gap: i32, speed: i32, cell_shift: u32) -> (Vec2, Vec2) {
+    let mut b = Bodies::default();
+    lattice(&mut b, x, 512, 1, 1, 0, 0, Side::A, false);
+    lattice(&mut b, x + gap, 512, 1, 1, 0, 0, Side::B, false);
+    let t = vec![
+        Target {
+            point: b.pos[1],
+            speed,
+            ..Default::default()
+        },
+        Target {
+            point: b.pos[0],
+            speed,
+            ..Default::default()
+        },
+    ];
+    let mut f = Field::new(Params {
+        cell_shift,
+        ..Params::CENTRE
+    });
+    run(&mut f, &mut b, &t, 1);
+    (b.pos[0], b.pos[1])
+}
+
+#[test]
+fn enemies_who_meet_between_two_looks_do_not_pass_through_each_other() {
+    // Found in review: on a metre grid a man read his own four cells and four a cell ahead, so
+    // two men 2.1 m apart running 1.25 m a step each saw nothing and ran through each other.
+    // Every gap and every place on the grid, standing, at a walk, a run and a sprint, on both
+    // grids; in the middle of a tile and across the line between two.
+    let guard = Params::CENTRE.guard_mm;
+    for cell_shift in [9, 10] {
+        let tile = 32 << cell_shift;
+        for speed in [0, WALK, RUN, 5_000] {
+            for from in [0, tile - 2_048] {
+                for x in (from..from + 2_048).step_by(128) {
+                    for gap in (guard + 50..5_000).step_by(100) {
+                        let (a, b) = meet(x, gap, speed, cell_shift);
+                        assert!(
+                            b.x - a.x >= guard - 5,
+                            "cell {cell_shift}, {speed} mm/s, from {x}, {gap} apart: {a:?} {b:?}"
+                        );
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[test]
+fn at_a_half_metre_cell_enemies_inside_the_guard_are_still_parted() {
+    // Also from the review: a block of half-metre cells reaches about 510 mm, less than the
+    // guard, so two enemies standing 550 mm apart could each miss the other.
+    let guard = Params::CENTRE.guard_mm;
+    for x in (0..1_024).step_by(32) {
+        let mut b = Bodies::default();
+        lattice(&mut b, x, 256, 1, 1, 0, 0, Side::A, false);
+        lattice(&mut b, x + 550, 256, 1, 1, 0, 0, Side::B, false);
+        let t = stay(&b);
+        let mut f = Field::new(Params {
+            cell_shift: 9,
+            ..Params::CENTRE
+        });
+        run(&mut f, &mut b, &t, 2);
+        let apart = b.pos[1].x - b.pos[0].x;
+        assert!(apart >= guard - 5, "from {x}: {apart} mm apart");
+    }
 }

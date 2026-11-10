@@ -20,7 +20,9 @@
 
 use cannae_core::schedule::{BASE_TICK, is_man_step};
 use cannae_core::view::NoFrames;
-use cannae_core::{Bodies, ManId, Observed, Perceive, Rng, Side, Substrate, Target, Turn, Vec2};
+use cannae_core::{
+    Bodies, EventKind, ManId, Observed, Perceive, Rng, Side, Substrate, Target, Turn, Vec2,
+};
 use cannae_field::{Contact, Field, FieldPerception, Params};
 use std::time::Instant;
 
@@ -190,7 +192,11 @@ fn main() {
         }
         s.advance(&mut bodies, &targets, BASE_TICK, &rng, tick, &mut out);
         done = tick + 1;
-        crushed += out.len();
+        // A man crushed is logged twice, as a wound and as a fall.
+        crushed += out
+            .iter()
+            .filter(|e| matches!(e.kind, EventKind::Wound { .. }))
+            .count();
         out.clear();
         if !is_man_step(tick) {
             continue;
