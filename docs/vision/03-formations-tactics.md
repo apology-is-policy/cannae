@@ -12,10 +12,19 @@ under stress. It is never a rigid block.
 |---|---|
 | Frontage per man | Phalanx *synaspismos* (shields locked) about 0.45 m; *pyknosis* (close order) about 0.9 m. Roman close order about 0.9 m. Roman fighting order about 1.8 m per Polybius 18.30 *(debated)*. Barbarian masses are variable and crowd under pressure. |
 | Depth | Phalanx 16 (up to 32 at Magnesia, 50 at Leuctra). Roman maniple about 6–10 ranks *(debated)*. At Cannae the Roman maniples were formed "many times deeper than broad" (Polybius 3.113). Germanic wedges are deep. |
-| Interval between maniples or cohorts | Equal to the unit's frontage (the checkerboard / *quincunx*) or much smaller *(debated)*. A switchable mode. |
+| Interval between maniples or cohorts | Equal to the unit's frontage (the checkerboard / *quincunx*) or much smaller *(debated)*. A parameter. |
 | Distance between lines | About 75–150 m *(estimated)* |
 | File structure | A file leader and a file closer (Roman optio at the rear; Greek *ouragos*). Rear-rank officers matter for stopping men from slipping away. |
 | Facing | Each soldier and each unit frame has one. Turning a formation to face a flank is a drill whose execution time and failure rate depend on training. |
+
+**The unit frame.** A formation's reference frame is fitted, at each update, to where its men
+actually are. It is not imposed on them: a unit that has been pushed back or bent keeps its
+shape relative to its own men. Slots are reassigned as men fall or straggle, nearest first, so a
+gap closes from the rank behind. Passing through intervals, wheeling and facing about are
+transitions between frames, and their speed and failure rate come from drill. Design review 1
+expects this layer to be the largest effort sink in the project, together with the
+centurion-level controllers that decide when to charge, relieve, face a flank or close a gap.
+Slice 1 builds both first ([08](08-roadmap.md)).
 
 ## 2. Formation catalog
 
@@ -59,10 +68,10 @@ under stress. It is never a rigid block.
   with the antesignani).
 - Dismounted cavalry: the Roman equites at Cannae, Iberian horsemen.
 
-## 3. Line relief: one mechanic, several hypotheses
+## 3. Line relief: one mechanism built, a seam for the others
 
-The *triplex acies* is the point of the Roman army. How it actually worked is unknown, so the
-simulator provides switchable mechanisms and lets the corpus discriminate between them:
+The *triplex acies* is the point of the Roman army. How relief actually worked is unknown. The
+main hypotheses:
 
 | Mode | Mechanism | Proponents |
 |---|---|---|
@@ -71,10 +80,24 @@ simulator provides switchable mechanisms and lets the corpus discriminate betwee
 | **R3: rank rotation within the maniple** | Fresh rear ranks replace exhausted front-rankers inside each unit | Various |
 | **R4: gap-filling** | The second line advances *into the intervals* of the first, making a continuous front, and the first line's maniples then retire | Variant readings |
 
-The simulator does not have to *choose* among these. Each is a set of drill transitions plus
-psyche thresholds. The validation suite tells us which mode, or which mix, reproduces the
-historical patterns: duration, casualty asymmetry, how the Romans recover from local setbacks.
-This is research value nobody else offers.
+**We build R2 first, with a seam for the others.** R2 follows from the psyche model: combat
+pulses because men tire and lose heart ([04](04-psyche.md) §5), and the lulls are when a fresher
+line can take over. The seam: relief is expressed as drill transitions (which body moves where,
+through which gaps, on what signal) plus the conditions that trigger them. Another mode can then
+be added behind the same interface, without rewriting the psyche or the command layer.
+
+**What the simulator can and cannot say.** Fitting battle outcomes cannot pick the true
+mechanism. The model's premise is Sabin's pulsing combat, so R1 would lose by construction, and
+the corpus is too small and too coarse to separate the rest. What the simulator *can* test is
+**mechanical feasibility**:
+
+- Does a whole-line passage through the intervals (R1) jam, and at what pressure, interval width
+  and depth?
+- How long does each transition take, and how exposed are the men while it happens?
+- Can rank rotation (R3) happen inside a maniple at the contact line without opening it?
+
+Those answers are legitimate contributions to the debate. A claim about which mode the Romans
+actually used is not.
 
 ## 4. Battle mechanics the simulator must produce
 
@@ -93,9 +116,10 @@ This is research value nobody else offers.
    men in the rear ranks are not fighting. They support, push, wait and fear.
 6. **Lulls.** The lines separate by a few metres to tens of metres. Missiles and insults. Men
    recover breath. Both sides must find the will to close again. This has to *emerge* from
-   stamina and fear thresholds. It must not be scripted.
+   stamina and resolve ([04](04-psyche.md) §5). It must not be scripted.
 7. ***Othismos*** (shoving). In phalanx and dense-mass fighting, rear ranks may physically push
-   *(debated: literal mass shove versus metaphor)*. A switchable mode on a crowd pressure model.
+   *(debated: literal mass shove versus metaphor)*. A parameter of the crowd pressure model: how
+   much of the rear ranks' push reaches the front.
 8. **Collapse.** It begins at the rear and the edges: men slipping away. Front ranks lose support
    and pressure from behind. A gap opens. A local rout spreads along the line (see
    [04](04-psyche.md)).

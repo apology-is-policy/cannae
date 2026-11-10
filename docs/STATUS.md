@@ -18,8 +18,8 @@ one commit.
 | V3 | 07 validation: Cannae as development scenario, sealed battles, script tiers, variance decomposition, contrasts, sensitivity analysis and history matching | landed |
 | V4 | 04 psyche: excitable-system dynamics, contagion on observable acts, parsimony | landed |
 | V5 | 06 architecture: fanless 8 GB Air, revised performance, intent pass, observables lane, keyframes | landed |
-| V6 | 03 formations: line relief, R2 with a seam, feasibility instead of discrimination | next |
-| V7 | 08 roadmap: vertical slices, demand-driven knowledge base, review cadence | queued |
+| V6 | 03 formations: line relief, R2 with a seam, feasibility instead of discrimination | landed |
+| V7 | 08 roadmap: vertical slices, demand-driven knowledge base, review cadence | next |
 | V8 | New 09: intent, plans and command AI | queued |
 | V9 | New 10: the contact zone, combat and wounds | queued |
 

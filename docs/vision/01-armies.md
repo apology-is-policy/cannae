@@ -14,7 +14,7 @@ soldiers:
 - **Social structure**: tent-group, century, clan, retinue.
 
 Numbers below are nominal establishments. Real field strengths were usually lower. Contested
-points are marked *(debated)*. Many of them become switchable modes in the simulator.
+points are marked *(debated)*. Many of them become parameters or scenario variants in the simulator.
 
 ---
 
