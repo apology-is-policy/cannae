@@ -1,0 +1,120 @@
+# Slice 0 patch, variant `relief`: a second Roman line stands behind the first and relieves it
+# in a lull (rival 02 sec. 4; vision 03 sec. 3, R2). It asks whether a line with relief fares
+# better than one without. The base patch, unchanged, and behind each century a second century
+# of the same men.
+#
+# The second line stands 24 m back, so that no man of the first has a man of the second in
+# his window: until the relief the first line stands exactly as in the base patch. It stands
+# half a file to the left, so that the files of the two can pass through each other. At 1.8 m
+# a file, a man walks down the middle of the lane between two files.
+
+name = "patch-relief"
+seed = 1
+duration_s = 7800
+
+[[body]]
+name = "hastati, first century"
+side = "A"
+troop = "hastati"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-9000, 0]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "hastati, second century"
+side = "A"
+troop = "hastati"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-9000, -18000]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "warband"
+side = "B"
+troop = "gallic-warband"
+files = 20
+ranks = 8
+file_mm = 1000
+rank_mm = 1200
+centre_mm = [9000, -9000]
+facing_deg = 180
+leader = "front-centre"
+tie = "loose"
+
+# The warband comes on; the Romans stand to receive it. Its frame halts just out of reach
+# (the tie's standoff); from there, whether anyone steps forward is the men's business.
+[[order]]
+body = "warband"
+at_s = 0
+order = "advance"
+
+# The second line. It comes last in the file, so that every man of the base patch keeps his
+# number, and with it the nerve and the luck the same seed gives him there.
+[[body]]
+name = "second line, first century"
+side = "A"
+troop = "hastati"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-33000, 900]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+[[body]]
+name = "second line, second century"
+side = "A"
+troop = "hastati"
+files = 10
+ranks = 8
+file_mm = 1800
+rank_mm = 1800
+centre_mm = [-33000, -17100]
+facing_deg = 0
+leader = "front-right"
+closer = true
+
+# The relief. Each century is relieved by the one behind it, once, in its own lull. The frames
+# order it (cannae-core, frames.rs):
+# - the fresh century comes up through the tired one's files and halts at the standoff;
+# - only then does the tired one fall back, and it halts where the fresh one stood;
+# - while they pass, each century's closer stands behind a file, out of the lanes.
+#
+# The men of both stay steady and keep their faces to the enemy throughout. An ordered
+# retirement is not flight and not giving ground, and nobody reads it as either.
+#
+# A lull is twenty seconds in which:
+# - the tired century's standard is carried by a man on his feet;
+# - none of its men is forward, giving ground or in flight;
+# - no enemy who has stepped forward stands within its frontage, with a file's width to spare
+#   on each side, and within 20 m of its front rank or of its rear.
+#
+# Not before ten minutes, counted from the start of the scenario and not from contact: a
+# centurion relieves a tired line, not a fresh one. Where a line breaks sooner than that, it
+# is never relieved, and the run shows that.
+#
+# The ten minutes, the twenty seconds, the 20 m and the 24 m between the lines are choices
+# and have no source. How relief worked is not known (vision 03 sec. 3).
+[[relief]]
+of = "hastati, first century"
+by = "second line, first century"
+not_before_s = 600
+lull_s = 20
+
+[[relief]]
+of = "hastati, second century"
+by = "second line, second century"
+not_before_s = 600
+lull_s = 20

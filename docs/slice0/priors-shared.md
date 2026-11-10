@@ -156,6 +156,7 @@ Reach is fixed at 1.5 m for every troop in the patch: all fight with swords.
 | Crowd physics | 4 | 0 |
 | Ties, bouts, kits | 25 (ties 8, bouts 16, kit 1) | 5 (lead, lift reach, skill steps, leader skill, reach) |
 | Volleys | 0 | 3, written in the one scenario that has them: the dose of the `volleys` variant, per thousand men under it (75 hampered, 20 disabled, 5 killed). It is the script's, as the size of the band in `shock` is, and no engine reads it differently. |
+| Relief | 0 | 4. Three are written in the one scenario that has it: the distance between the lines (24 m), the earliest time (10 min) and the length of a lull (20 s). One is in the frames: how far off an enemy who steps forward still breaks a lull (20 m). All four are choices with no source ([rival/02](../rival/02-order-and-contact.md) §4, as built). |
 
 ## Sign-off
 

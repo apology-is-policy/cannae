@@ -273,6 +273,24 @@ reach to answer, and the warband comes on at six by the base patch's order.
   nobody fights before the front comes on, and that what it cost is reported as the Romans'
   losses before contact.
 
+`relief` is written (`scenarios/patch/relief.toml`): the base patch unchanged, and behind each
+century a second century of the same men, 24 m back and half a file to one side.
+
+- **The drill** is in the shared frames ([rival 02](../rival/02-order-and-contact.md) §4, as
+  built). Each century is relieved once, by the one behind it, in its own lull, and not before
+  ten minutes. The fresh century comes up through the tired one's files and takes the front;
+  only then does the tired one fall back, to where the fresh one stood.
+- **A lull** is twenty seconds in which no man of the tired century is forward, giving ground
+  or in flight, and no enemy before it has stepped forward.
+- **The 24 m, the ten minutes and the twenty seconds are Varro's choices and have no source.**
+  How relief worked is not known (vision 03 §3). They are the script's, not priors.
+- **Until a man turns his back, a run of `relief` is the run of `base` with the same seed,
+  event for event** (tested on both engines). The second line stands out of every window, and
+  it comes last in the file, so every man of the base patch keeps his number.
+- **Tests check** the drill with men placed by hand, and the passage on both engines with
+  men who never fight: nobody is hurt, the enemy gains no ground, and every man ends in his
+  place.
+
 **How the two memory variants are scored** (agreed in call 0001, turns 37-38):
 
 - **Only the fronts are scored.** A body marked `front = false` in the scenario, such as

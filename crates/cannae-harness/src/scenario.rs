@@ -26,6 +26,25 @@ pub struct Scenario {
     /// Missiles falling on an area at set times, resolved beside the bouts.
     #[serde(default, rename = "volley")]
     pub volleys: Vec<VolleySpec>,
+    /// Reliefs, each ordered by the frames in a lull.
+    #[serde(default, rename = "relief")]
+    pub reliefs: Vec<ReliefSpec>,
+}
+
+/// A relief (docs/rival/02-order-and-contact.md, sec. 4): in the first lull from
+/// `not_before_s` on, counted from the start of the scenario, body `by` comes up through
+/// body `of` and takes the front, and `of` then falls back to where `by` stood. A lull is
+/// `lull_s` in which no man of `of` is forward, giving ground or in flight, and no enemy near
+/// it has stepped forward (`BodyFrames::relieve`).
+#[derive(Clone, Debug, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ReliefSpec {
+    /// The tired body's `name`.
+    pub of: String,
+    /// The fresh body's `name`.
+    pub by: String,
+    pub not_before_s: u32,
+    pub lull_s: u32,
 }
 
 /// Missiles falling on an area for a stretch of time (docs/rival/02-order-and-contact.md,
@@ -266,6 +285,28 @@ pub fn frames_with(
             bodies,
         );
     }
+    let tick = |s: u32| s * 1000 / BASE_TICK.0;
+    for r in &s.reliefs {
+        let find = |name: &String| {
+            s.bodies
+                .iter()
+                .position(|b| &b.name == name)
+                .ok_or_else(|| format!("relief for unknown body {name:?}"))
+        };
+        let (of, by) = (find(&r.of)?, find(&r.by)?);
+        if of == by || s.bodies[of].side != s.bodies[by].side {
+            return Err(format!(
+                "{:?} cannot relieve {:?}: it takes another body of the same side",
+                r.by, r.of
+            ));
+        }
+        frames.relieve(
+            BodyId(of as u32),
+            BodyId(by as u32),
+            tick(r.not_before_s),
+            tick(r.lull_s),
+        );
+    }
     for o in &s.orders {
         let body = s
             .bodies
@@ -279,7 +320,7 @@ pub fn frames_with(
             OrderKind::Retire => Order::Retire,
             OrderKind::Pursue => Order::Pursue,
         };
-        frames.order_at(BodyId(body as u32), order, o.at_s * 1000 / BASE_TICK.0);
+        frames.order_at(BodyId(body as u32), order, tick(o.at_s));
     }
     Ok(frames)
 }
@@ -544,6 +585,114 @@ mod tests {
         // The base patch's Romans, where the base patch has them; only the warband is moved.
         let base = Scenario::from_toml(include_str!("../../../scenarios/patch/base.toml")).unwrap();
         assert_eq!(s.bodies[..2], base.bodies[..2]);
+    }
+
+    const RELIEF: &str = include_str!("../../../scenarios/patch/relief.toml");
+
+    #[test]
+    fn a_relief_names_two_bodies_of_one_side() {
+        let s = Scenario::from_toml(RELIEF).unwrap();
+        let (b, placed) = place(&s);
+        assert!(frames(&s, &placed, &b).is_ok());
+        let bad = |from: &str, to: &str| {
+            let s = Scenario::from_toml(&RELIEF.replacen(from, to, 1)).unwrap();
+            let (b, placed) = place(&s);
+            frames(&s, &placed, &b).unwrap_err()
+        };
+        let first = "by = \"second line, first century\"";
+        assert!(bad(first, "by = \"principes\"").contains("unknown body"));
+        assert!(bad(first, "by = \"hastati, first century\"").contains("cannot relieve"));
+        assert!(bad(first, "by = \"warband\"").contains("cannot relieve"));
+        let unknown = RELIEF.replacen("lull_s", "lul_s", 1);
+        assert!(Scenario::from_toml(&unknown).is_err());
+    }
+
+    #[test]
+    fn a_relief_reaches_the_frames_with_its_two_times() {
+        use cannae_core::view::Order;
+        use cannae_core::{FrameQuery, Frames};
+        // Not before 7 s, after a lull of 3 s; and nobody advances, so the front is quiet.
+        let text = RELIEF
+            .replace("not_before_s = 600", "not_before_s = 7")
+            .replace("lull_s = 20", "lull_s = 3")
+            .replace("order = \"advance\"", "order = \"hold\"");
+        let s = Scenario::from_toml(&text).unwrap();
+        // The ticks at which the two fresh centuries are ordered up.
+        let ordered = |stirs_until: u32| {
+            let (mut b, placed) = place(&s);
+            let mut f = frames(&s, &placed, &b).unwrap();
+            let mut at = [None; 2];
+            for t in (0..400).step_by(5) {
+                // A man of the first century is forward for a while.
+                b.posture[0] = if t < stirs_until {
+                    Posture::Forward
+                } else {
+                    Posture::Steady
+                };
+                f.update(&mut b, t, &mut Vec::new());
+                for (k, at) in at.iter_mut().enumerate() {
+                    let order = f.body(BodyId(3 + k as u32)).unwrap().order;
+                    if at.is_none() && order == Order::Advance {
+                        *at = Some(t);
+                    }
+                }
+            }
+            at
+        };
+        // Quiet from the start: both at 7 s, tick 140. With the first century quiet only from
+        // tick 120 on, its relief comes 3 s after that, at 180, and the other's is its own.
+        assert_eq!(ordered(0), [Some(140), Some(140)]);
+        assert_eq!(ordered(120), [Some(180), Some(140)]);
+    }
+
+    #[test]
+    fn the_relief_patch_is_the_base_patch_with_a_second_line_out_of_its_sight() {
+        use cannae_core::view::{Group, Rel};
+        use cannae_core::{Frames, GridPerception, Perceive};
+        let base = Scenario::from_toml(include_str!("../../../scenarios/patch/base.toml")).unwrap();
+        let s = Scenario::from_toml(RELIEF).unwrap();
+        // The base patch's bodies and orders, in its order, and then the second line.
+        assert_eq!(s.bodies[..3], base.bodies[..]);
+        assert_eq!(s.orders, base.orders);
+        assert_eq!((s.bodies.len(), s.reliefs.len()), (5, 2));
+        for (k, r) in s.reliefs.iter().enumerate() {
+            let (of, by) = (&s.bodies[k], &s.bodies[3 + k]);
+            assert_eq!((&r.of, &r.by), (&of.name, &by.name));
+            // Not before ten minutes, in a lull of twenty seconds.
+            assert_eq!((r.not_before_s, r.lull_s), (600, 20));
+            // The same men in the same array, 24 m back and half a file to the left.
+            let moved = BodySpec {
+                name: of.name.clone(),
+                centre_mm: [by.centre_mm[0] + 24_000, by.centre_mm[1] - of.file_mm / 2],
+                ..by.clone()
+            };
+            assert_eq!(&moved, of);
+        }
+        // What each man of the first line and of the warband sees at setup is what he sees in
+        // the base patch: nobody of the second line is in anyone's window.
+        let see = |s: &Scenario| {
+            let (mut b, placed) = place(s);
+            let mut f = frames(s, &placed, &b).unwrap();
+            f.update(&mut b, 0, &mut Vec::new());
+            let mut seen = GridPerception::default();
+            seen.rebuild(&b, &[], 0, 0);
+            (0..322)
+                .map(|i| {
+                    let v = seen.view(&b, &f, ManId(i));
+                    let own = |g| {
+                        [
+                            Posture::Steady,
+                            Posture::Forward,
+                            Posture::Back,
+                            Posture::Turned,
+                        ]
+                        .map(|p| v.counts.get(g, Rel::Own, p))
+                    };
+                    (own(Group::Ahead), own(Group::Beside), own(Group::Behind))
+                })
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(see(&s), see(&base));
     }
 
     #[test]

@@ -69,6 +69,36 @@ passing each other are crowded and moving, so their bodies touch (§5). Whether 
 is then a result, as it is in the vision of record, and it can be checked against measured
 flows through bottlenecks ([06](06-experiment.md) §2).
 
+**As built for Slice 0** (2026-11-10; `frames.rs` and `scenarios/patch/relief.toml`). The
+patch has no intervals: its two centuries stand side by side. So the relief there is file
+through file, which six feet to a man allows.
+
+1. The second line stands 24 m behind the first and half a file to one side.
+2. In a lull, the fresh century is ordered up. It comes through the tired one's lanes and
+   halts at the standoff, level with the tired front rank.
+3. Only then is the tired century ordered back. It falls back through the fresh one's lanes
+   and halts where the fresh one stood.
+4. While they pass, each century's closer stands behind a file. His usual post is behind the
+   centre, and with an even number of files that is in a lane.
+
+**A lull** is twenty seconds in which no man of the tired century is forward, giving ground or
+in flight, and no enemy within its frontage and 20 m of it has stepped forward. The relief is
+not ordered before ten minutes, and each century is relieved once. The 24 m, the ten minutes,
+the twenty seconds and the 20 m are choices and have no source.
+
+**Two things were found by running it, and each changed the drill:**
+
+- **Ordered at the same moment, the two centuries lose the ground between them.** The enemy
+  follows the tired one back and meets the fresh one half way, and the two Roman lines end
+  one on top of the other. Hence step 3: the front is never left open.
+- **On the pairwise engine, a closer standing in a lane stops the relief.** The fresh
+  century's standard-bearer walks that lane and meets him head on, and the frame stops where
+  its standard stops. Hence step 4. On the field it passed without this, since a man in his
+  place there is moved by his tie alone.
+
+With men who never fight, the fresh century came up in 18 s and the tired one was back in
+another 19 s, on both engines. Nobody was hurt and the enemy gained no ground.
+
 ### 5. The field
 
 *As proposed. What was built differs in several places, and one claim below proved wrong:

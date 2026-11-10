@@ -167,6 +167,9 @@ struct Frame {
     /// Men who lost their slots and may fall in again.
     adrift: Vec<ManId>,
     tie: Tie,
+    /// Whether another body is passing through this one's files, in a relief. Its closer then
+    /// stands in the line of a file, so that every lane between the files is clear.
+    lanes_open: bool,
 }
 
 impl Frame {
@@ -176,11 +179,19 @@ impl Frame {
         self.basis.at(ahead, left)
     }
 
-    /// The closer's post: one rank behind the deepest file.
+    /// The closer's post: one rank behind the deepest file, at the body's centre. With an even
+    /// number of files that is between two files, in a lane. While another body passes through
+    /// this one he stands behind the file to the right of the centre, the standard's file.
     fn closer_offset(&self) -> Vec2 {
         let deepest = self.files.iter().map(Vec::len).max().unwrap_or(0) as i32;
         let ahead = (self.depth as i32 - 1 - 2 * deepest) * self.rank_mm / 2;
-        self.basis.at(ahead, 0)
+        let files = self.files.len() as i32;
+        let left = if self.lanes_open {
+            (files - 1 - 2 * (files / 2)) * self.file_mm / 2
+        } else {
+            0
+        };
+        self.basis.at(ahead, left)
     }
 
     fn offset_of(&self, place: Place) -> Option<Vec2> {
@@ -199,6 +210,36 @@ struct Timed {
     order: Order,
 }
 
+/// A relief (docs/rival/02 sec. 4): in a lull, a tired body falls back through the fresh body
+/// behind it, which comes up and takes the front. Each relief happens once.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+struct Relief {
+    tired: BodyId,
+    fresh: BodyId,
+    /// The first tick at which it may be ordered.
+    not_before: u32,
+    /// How long the tired body's front must have been quiet, in ticks.
+    lull: u32,
+    state: Relieving,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Relieving {
+    /// Not yet ordered. The tired body's front has been quiet since the tick given, if it is.
+    Waiting(Option<u32>),
+    /// The fresh body is coming up through the tired one, from where its frame stood. The
+    /// tired body stands until the fresh one has the front: were they to move at once, the
+    /// enemy would follow the one into the ground the other had not yet reached.
+    Coming(Vec2),
+    /// The tired body is falling back, until its frame stands where the fresh body's stood.
+    Going(Vec2),
+    Done,
+}
+
+/// How far from a body's front or rear an enemy who has stepped forward still disturbs its
+/// lull: what he covers at a run while two bodies pass through each other.
+pub const LULL_DEPTH_MM: i64 = 20_000;
+
 /// The frames of every body on the field.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct BodyFrames {
@@ -209,6 +250,7 @@ pub struct BodyFrames {
     seen: Vec<Option<SlotView>>,
     /// Orders to come, soonest last.
     pending: Vec<Timed>,
+    reliefs: Vec<Relief>,
 }
 
 const PRESENT: u32 = u32::MAX;
@@ -277,6 +319,7 @@ impl BodyFrames {
             lead: Vec2::ZERO,
             adrift: Vec::new(),
             tie: l.tie,
+            lanes_open: false,
         });
     }
 
@@ -292,6 +335,109 @@ impl BodyFrames {
         // Kept soonest last, so that the next order is a pop.
         let at = self.pending.partition_point(|t| t.tick > tick);
         self.pending.insert(at, Timed { tick, body, order });
+    }
+
+    /// Has `fresh` relieve `tired` in the first lull from `not_before` on. Once the front of
+    /// `tired` has been quiet for `lull` ticks, `fresh` is ordered to advance. When it has come
+    /// up through `tired` and has the front, `tired` is ordered to retire, and halts where
+    /// `fresh` stood. Both bodies must have been added.
+    pub fn relieve(&mut self, tired: BodyId, fresh: BodyId, not_before: u32, lull: u32) {
+        assert!(tired != fresh, "a body cannot relieve itself");
+        self.reliefs.push(Relief {
+            tired,
+            fresh,
+            not_before,
+            lull,
+            state: Relieving::Waiting(None),
+        });
+    }
+
+    /// Whether the body's standard is carried by a man on his feet and facing the enemy.
+    fn formed(f: &Frame, bodies: &Bodies) -> bool {
+        matches!(f.standard, Standard::Carried(c) if up(bodies, c))
+    }
+
+    /// Whether the body's front is quiet: it is formed, none of its men is forward, giving
+    /// ground or in flight, and no enemy within its frontage and [`LULL_DEPTH_MM`] of its front
+    /// or its rear has stepped forward. A scan of every man, as [`Self::gap_ahead`] is.
+    fn quiet(f: &Frame, bodies: &Bodies) -> bool {
+        let stirring = |m: &ManId| {
+            matches!(
+                bodies.posture[m.0 as usize],
+                Posture::Forward | Posture::Back | Posture::Turned
+            )
+        };
+        if !Self::formed(f, bodies) || f.files.iter().flatten().chain(&f.closer).any(stirring) {
+            return false;
+        }
+        let front = ((f.depth as i32 - 1) * f.rank_mm / 2) as i64;
+        let half_width = (f.files.len() as i64 + 1) * f.file_mm as i64 / 2;
+        !(0..bodies.len()).any(|i| {
+            let (along, left) = f.basis.split(bodies.pos[i] - f.origin);
+            bodies.side[i] != f.side
+                && bodies.posture[i] == Posture::Forward
+                && left.abs() <= half_width
+                && along.abs() <= front + LULL_DEPTH_MM
+        })
+    }
+
+    fn open_lanes(&mut self, r: &Relief, open: bool) {
+        for body in [r.tired, r.fresh] {
+            self.frames[body.0 as usize].lanes_open = open;
+        }
+    }
+
+    /// Orders each relief whose lull has come, sends each tired body back once the fresh one
+    /// has the front, and halts it when it has fallen back far enough.
+    fn relieve_in_lulls(&mut self, bodies: &Bodies, tick: u32) {
+        for k in 0..self.reliefs.len() {
+            let r = self.reliefs[k];
+            let (tired, fresh) = (
+                &self.frames[r.tired.0 as usize],
+                &self.frames[r.fresh.0 as usize],
+            );
+            let state = match r.state {
+                Relieving::Waiting(since) => {
+                    let since = Self::quiet(tired, bodies).then(|| since.unwrap_or(tick));
+                    let lull = since.is_some_and(|s| tick - s >= r.lull);
+                    let ready = fresh.order == Order::Hold && Self::formed(fresh, bodies);
+                    if lull && ready && tick >= r.not_before {
+                        let from = fresh.origin;
+                        self.order(r.fresh, Order::Advance, tick);
+                        self.open_lanes(&r, true);
+                        Relieving::Coming(from)
+                    } else {
+                        Relieving::Waiting(since)
+                    }
+                }
+                Relieving::Coming(from) => {
+                    // The fresh body has the front when its front rank has passed the tired
+                    // body's, or when it has halted within a rank of it, by the rule every
+                    // advance has: it did not lead at the last step.
+                    let front = |f: &Frame| (f.depth as i32 - 1) * f.rank_mm / 2;
+                    let its_front = fresh.origin + Basis::scaled(fresh.basis.ahead, front(fresh));
+                    let short = front(tired) as i64 - tired.basis.split(its_front - tired.origin).0;
+                    let halted = fresh.lead == Vec2::ZERO && Self::formed(fresh, bodies);
+                    if short <= 0 || (halted && short <= tired.rank_mm as i64) {
+                        self.order(r.tired, Order::Retire, tick);
+                        Relieving::Going(from)
+                    } else {
+                        r.state
+                    }
+                }
+                Relieving::Going(to) => {
+                    if tired.basis.split(tired.origin - to).0 <= 0 {
+                        self.order(r.tired, Order::Hold, tick);
+                        self.open_lanes(&r, false);
+                        Relieving::Done
+                    } else {
+                        r.state
+                    }
+                }
+                Relieving::Done => r.state,
+            };
+            self.reliefs[k].state = state;
+        }
     }
 
     fn renumber(place: &mut [Place], frame: u32, file: u16, men: &[ManId]) {
@@ -621,6 +767,7 @@ impl Frames for BodyFrames {
             let t = self.pending.pop().expect("checked");
             self.order(t.body, t.order, tick);
         }
+        self.relieve_in_lulls(bodies, tick);
         for fi in 0..self.frames.len() {
             self.standard(fi, bodies, tick, out);
             self.succession(fi, bodies, tick);
@@ -889,6 +1036,296 @@ mod tests {
         let s = f.slot(ManId(0)).unwrap();
         assert_eq!(s.target, b.pos[0] - Vec2::new(1_500, 0));
         assert_eq!(s.facing, Turn(0));
+    }
+
+    /// The century of [`century`] at the front, a second like it 12 m behind and half a file
+    /// to its left (men 10-18, closer 19, standard-bearer 14), and one enemy standing 4 m from
+    /// the front rank, facing it (man 20). The second relieves the first from tick 100 on,
+    /// after a lull of 40 ticks.
+    fn two_lines() -> (Bodies, BodyFrames) {
+        let (mut b, mut f) = century();
+        let behind = Vec2::new(-12_000, 500);
+        body(
+            &mut b,
+            &mut f,
+            Side::A,
+            behind,
+            Turn(0),
+            (3, 3),
+            Tie::DRILLED,
+        );
+        foe(&mut b, 6_000, 0, Posture::Steady);
+        f.relieve(BodyId(0), BodyId(1), 100, 40);
+        (b, f)
+    }
+
+    fn foe(b: &mut Bodies, x: i32, y: i32, posture: Posture) -> usize {
+        let m = b.push(Observed {
+            pos: Vec2::new(x, y),
+            side: Side::B,
+            facing: Turn(Turn::HALF),
+            posture,
+            ..Default::default()
+        });
+        m.0 as usize
+    }
+
+    fn orders(f: &BodyFrames) -> [(Order, u32); 2] {
+        [0, 1].map(|i| {
+            let st = f.body(BodyId(i)).unwrap();
+            (st.order, st.order_tick)
+        })
+    }
+
+    /// Steps the frames at every man step from `from` to `to`, and gives the tick at which
+    /// the relief was ordered, if it was: the fresh body is told to come up.
+    fn relieved_at(f: &mut BodyFrames, b: &mut Bodies, from: u32, to: u32) -> Option<u32> {
+        (from..=to).step_by(5).find(|&t| {
+            step(f, b, t);
+            orders(f)[1].0 == Order::Advance
+        })
+    }
+
+    #[test]
+    fn a_relief_waits_for_its_time_and_then_for_a_lull() {
+        // Quiet from the start: ordered at the first tick it may be, and to both bodies.
+        let (mut b, mut f) = two_lines();
+        assert_eq!(relieved_at(&mut f, &mut b, 0, 400), Some(100));
+        // The fresh body is ordered up. The tired one stands until it has come.
+        assert_eq!(orders(&f), [(Order::Hold, 0), (Order::Advance, 100)]);
+
+        // A man of the tired body who is forward or giving ground is no lull, and the lull is
+        // counted from when he stands again.
+        for posture in [Posture::Forward, Posture::Back] {
+            let (mut b, mut f) = two_lines();
+            b.posture[1] = posture;
+            assert_eq!(relieved_at(&mut f, &mut b, 0, 200), None, "{posture:?}");
+            b.posture[1] = Posture::Steady;
+            assert_eq!(
+                relieved_at(&mut f, &mut b, 205, 400),
+                Some(245),
+                "{posture:?}"
+            );
+        }
+        // A man in flight is no lull either, until his file has closed over him 40 ticks
+        // later: then he is no longer of the body, and its lull begins.
+        let (mut b, mut f) = two_lines();
+        assert_eq!(relieved_at(&mut f, &mut b, 0, 75), None);
+        b.posture[1] = Posture::Turned;
+        assert_eq!(relieved_at(&mut f, &mut b, 80, 160), None);
+        assert_eq!(relieved_at(&mut f, &mut b, 165, 400), Some(165));
+        // A man down is no one's business, and neither is what the fresh body's men do.
+        let (mut b, mut f) = two_lines();
+        b.posture[1] = Posture::Down;
+        b.posture[11] = Posture::Back;
+        assert_eq!(relieved_at(&mut f, &mut b, 0, 400), Some(100));
+    }
+
+    #[test]
+    fn an_enemy_who_has_stepped_forward_before_the_body_breaks_its_lull() {
+        // The front rank stands at x = +2,000 and the rear at -2,000. The outer files stand
+        // at y = +1,000 and -1,000, and the frontage has a file's width to spare on each side.
+        let disturbs = |x: i32, y: i32, posture: Posture| {
+            let (mut b, mut f) = two_lines();
+            foe(&mut b, x, y, posture);
+            relieved_at(&mut f, &mut b, 0, 200).is_none()
+        };
+        assert!(disturbs(5_000, 0, Posture::Forward));
+        assert!(!disturbs(5_000, 0, Posture::Steady));
+        assert!(!disturbs(5_000, 0, Posture::Back));
+        // Out to 20 m from the front rank, and no further.
+        assert!(disturbs(22_000, 0, Posture::Forward));
+        assert!(!disturbs(22_100, 0, Posture::Forward));
+        // Within the frontage, and not beside it.
+        assert!(disturbs(5_000, 2_000, Posture::Forward));
+        assert!(!disturbs(5_000, 2_100, Posture::Forward));
+        assert!(disturbs(5_000, -2_000, Posture::Forward));
+        // Behind the body as well as before it: the fresh body comes up through there.
+        assert!(disturbs(-8_000, 0, Posture::Forward));
+        assert!(!disturbs(-22_100, 0, Posture::Forward));
+
+        // When he stands again the lull begins.
+        let (mut b, mut f) = two_lines();
+        let him = foe(&mut b, 5_000, 0, Posture::Forward);
+        assert_eq!(relieved_at(&mut f, &mut b, 0, 300), None);
+        b.posture[him] = Posture::Steady;
+        assert_eq!(relieved_at(&mut f, &mut b, 305, 500), Some(345));
+    }
+
+    #[test]
+    fn no_relief_while_the_standard_is_down_or_the_fresh_body_is_not_standing_ready() {
+        // The tired body's standard falls at tick 90. No relief until it is lifted, and then
+        // a lull of 40 ticks more, counted from the first step that finds it carried.
+        let (mut b, mut f) = two_lines();
+        assert_eq!(relieved_at(&mut f, &mut b, 0, 85), None);
+        b.posture[4] = Posture::Down;
+        b.wound[4] = Wound::Dead;
+        let mut lifted = None;
+        let mut at = None;
+        for t in (90..600).step_by(5) {
+            let events = step(&mut f, &mut b, t);
+            if events
+                .iter()
+                .any(|e| matches!(e.kind, EventKind::StandardUp { .. }))
+            {
+                lifted = Some(t);
+            }
+            if orders(&f)[1].0 == Order::Advance {
+                at = Some(t);
+                break;
+            }
+        }
+        let lifted = lifted.expect("a drilled body lifts its standard");
+        assert!(lifted > 100, "lifted at {lifted}");
+        assert_eq!(at, Some(lifted + 45));
+
+        // The fresh body has been sent somewhere else: it relieves no one until it is halted.
+        let (mut b, mut f) = two_lines();
+        f.order(BodyId(1), Order::Retire, 0);
+        assert_eq!(relieved_at(&mut f, &mut b, 0, 300), None);
+        f.order(BodyId(1), Order::Hold, 300);
+        assert_eq!(relieved_at(&mut f, &mut b, 305, 400), Some(305));
+        // Its standard-bearer has run: it is no body to relieve with.
+        let (mut b, mut f) = two_lines();
+        b.posture[14] = Posture::Turned;
+        assert_eq!(relieved_at(&mut f, &mut b, 0, 300), None);
+    }
+
+    #[test]
+    fn the_fresh_body_comes_up_and_then_the_tired_one_falls_back_to_where_it_stood() {
+        let (mut b, mut f) = two_lines();
+        assert_eq!(relieved_at(&mut f, &mut b, 0, 400), Some(100));
+        let front = b.pos[0].x;
+        // Walk both bodies in step, each man toward his slot's target, 300 mm a step.
+        let mut tick = 100;
+        let (mut retired, mut halted) = (None, None);
+        while tick < 1_000 {
+            for i in 0..20 {
+                let to = f.slot(ManId(i as u32)).unwrap().target;
+                b.pos[i].x += (to.x - b.pos[i].x).clamp(-300, 300);
+            }
+            tick += 5;
+            step(&mut f, &mut b, tick);
+            let tired = orders(&f)[0].0;
+            if retired.is_none() && tired == Order::Retire {
+                retired = Some(tick);
+                // Not before the fresh body's front rank is up with its own and has halted
+                // there: the front is never left open. The tired body has not moved.
+                let behind = b.pos[0].x - b.pos[10].x;
+                assert!((-300..=300).contains(&behind), "{behind} mm behind");
+                assert_eq!(b.pos[0].x, front);
+                // And both closers have stepped off the centre line. With three files the
+                // centre is a file's line already, so nothing moves here; with four it is a
+                // lane (the next test).
+                assert_eq!(f.slot(ManId(9)).unwrap().target.y, 0);
+            }
+            if retired.is_some() && halted.is_none() && tired == Order::Hold {
+                halted = Some(tick);
+            }
+        }
+        // The fresh body had 12 m to come, at 300 mm a step of five ticks, and is seen to
+        // have halted at the step after it does; the tired one then has 12 m to go.
+        let retired = retired.expect("the tired body was never ordered back");
+        assert!((300..=310).contains(&retired), "ordered back at {retired}");
+        let halted = halted.expect("the tired body never halted");
+        assert_eq!(orders(&f)[0], (Order::Hold, halted));
+        assert!((500..=515).contains(&halted), "halted at {halted}");
+        let back = front - b.pos[0].x;
+        assert!((12_000..12_600).contains(&back), "it went back {back} mm");
+        // It kept its own files: it did not step sideways onto the fresh body's.
+        assert_eq!(b.pos[0].y, 1_000);
+        // The fresh body stands at the standoff from the enemy, where the tired one stood,
+        // and is still under its order to advance: if the enemy gives ground it follows.
+        let gap = b.pos[20].x - b.pos[10].x;
+        assert!((3_700..=4_000).contains(&gap), "{gap} mm from the enemy");
+        assert_eq!(orders(&f)[1], (Order::Advance, 100));
+        // Every man of both is in his place, and the relief is not ordered a second time.
+        for i in 0..20 {
+            assert!(b.in_place[i], "man {i} at {:?}", b.pos[i]);
+        }
+    }
+
+    #[test]
+    fn with_no_enemy_to_halt_it_the_fresh_body_passes_and_the_tired_one_goes_back() {
+        let (mut b, mut f) = two_lines();
+        // The enemy is gone, so nothing halts the fresh body's advance.
+        b.posture[20] = Posture::Down;
+        assert_eq!(relieved_at(&mut f, &mut b, 0, 400), Some(100));
+        let mut tick = 100;
+        let mut retired = None;
+        while tick < 700 {
+            for i in 0..20 {
+                let to = f.slot(ManId(i as u32)).unwrap().target;
+                b.pos[i].x += (to.x - b.pos[i].x).clamp(-300, 300);
+            }
+            tick += 5;
+            step(&mut f, &mut b, tick);
+            if retired.is_none() && orders(&f)[0].0 == Order::Retire {
+                // The tired body goes back once the fresh one's front rank has passed its
+                // own, and not before.
+                retired = Some(tick);
+                let ahead = b.pos[10].x - b.pos[0].x;
+                assert!((0..=600).contains(&ahead), "{ahead} mm ahead");
+            }
+        }
+        assert!(retired.is_some(), "the tired body was never ordered back");
+        assert_eq!(orders(&f)[0].0, Order::Hold);
+        assert!(
+            b.pos[10].x > 20_000,
+            "the fresh body halted at {}",
+            b.pos[10].x
+        );
+    }
+
+    #[test]
+    fn while_bodies_pass_through_each_other_their_closers_clear_the_lanes() {
+        // Two bodies of four files: the centre of each is a lane, and its closer stands in it.
+        let mut b = Bodies::default();
+        let mut f = BodyFrames::default();
+        let behind = Vec2::new(-12_000, 500);
+        body(
+            &mut b,
+            &mut f,
+            Side::A,
+            Vec2::ZERO,
+            Turn(0),
+            (4, 2),
+            Tie::DRILLED,
+        );
+        body(
+            &mut b,
+            &mut f,
+            Side::A,
+            behind,
+            Turn(0),
+            (4, 2),
+            Tie::DRILLED,
+        );
+        foe(&mut b, 6_000, 0, Posture::Steady);
+        f.relieve(BodyId(0), BodyId(1), 100, 40);
+        // Men 0-7 and the closer 8; men 9-16 and the closer 17. Files stand at y = +1500,
+        // +500, -500 and -1500 in the first body, and half a file to the left in the second.
+        let closers = |f: &BodyFrames| [8, 17].map(|m| f.slot(ManId(m)).unwrap().target.y);
+        assert_eq!(relieved_at(&mut f, &mut b, 0, 95), None);
+        assert_eq!(closers(&f), [0, 500]);
+        // At the order each steps behind the file to the right of his body's centre: the
+        // first closer out of the lane the second body's file comes up, and the second out
+        // of the line of the first body's file.
+        assert_eq!(relieved_at(&mut f, &mut b, 100, 100), Some(100));
+        assert_eq!(closers(&f), [-500, 0]);
+        // When the relief is done they go back to the centre.
+        let mut tick = 100;
+        while orders(&f)[0] == (Order::Hold, 0) || orders(&f)[0].0 == Order::Retire {
+            for i in 0..18 {
+                let to = f.slot(ManId(i as u32)).unwrap().target;
+                b.pos[i].x += (to.x - b.pos[i].x).clamp(-300, 300);
+                b.pos[i].y += (to.y - b.pos[i].y).clamp(-300, 300);
+            }
+            tick += 5;
+            step(&mut f, &mut b, tick);
+            assert!(tick < 1_000, "the relief never ended");
+        }
+        assert_eq!(closers(&f), [0, 500]);
     }
 
     #[test]
