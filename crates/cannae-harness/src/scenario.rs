@@ -115,6 +115,15 @@ pub struct BodySpec {
     pub closer: bool,
     #[serde(default)]
     pub tie: TieSpec,
+    /// Whether the body is one of the fronts whose meeting is scored. A body that only
+    /// prepares the fight, such as the band that strikes the rear in `shock`, is not: the
+    /// metrics read front bodies only (docs/slice0/preregistration.md, the memory variants).
+    #[serde(default = "yes")]
+    pub front: bool,
+}
+
+fn yes() -> bool {
+    true
 }
 
 impl Scenario {
@@ -138,6 +147,8 @@ pub struct Placed {
     pub carrier: u32,
     pub files: u32,
     pub ranks: u32,
+    /// The scenario's `front`.
+    pub front: bool,
 }
 
 /// Each man's place at setup: rank 0 is the front; a closer's rank is one past the rear.
@@ -294,6 +305,7 @@ pub fn place(s: &Scenario) -> (Bodies, Vec<Placed>) {
             carrier,
             files: b.files,
             ranks: b.ranks,
+            front: b.front,
         });
     }
     (bodies, placed)

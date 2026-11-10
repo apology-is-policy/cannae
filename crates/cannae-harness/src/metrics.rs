@@ -29,13 +29,15 @@ pub struct Recorder {
     axis: Vec2,
     axis_len: i64,
     n_bodies: usize,
+    /// Whether each man belongs to a front body: only they make the fronts' gap.
+    front: Vec<bool>,
     pub samples: Vec<Sample>,
 }
 
-/// The direction from side A's centroid to side B's at setup, in mm.
-fn axis_of(bodies: &Bodies) -> Vec2 {
+/// The direction from side A's front men's centroid to side B's at setup, in mm.
+fn axis_of(bodies: &Bodies, front: &[bool]) -> Vec2 {
     let mut sum = [(0i64, 0i64, 0i64); 2];
-    for i in 0..bodies.len() {
+    for i in (0..bodies.len()).filter(|&i| front[i]) {
         let s = &mut sum[bodies.side[i] as usize];
         s.0 += bodies.pos[i].x as i64;
         s.1 += bodies.pos[i].y as i64;
@@ -57,12 +59,14 @@ fn quantile(sorted: &[i64], q: f64) -> i64 {
 }
 
 impl Recorder {
-    pub fn new(initial: &Bodies, n_bodies: usize) -> Self {
-        let axis = axis_of(initial);
+    pub fn new(initial: &Bodies, placed: &[Placed]) -> Self {
+        let front = front_men(initial, placed);
+        let axis = axis_of(initial, &front);
         Recorder {
             axis,
             axis_len: axis.length().max(1),
-            n_bodies,
+            n_bodies: placed.len(),
+            front,
             samples: Vec::new(),
         }
     }
@@ -80,7 +84,7 @@ impl Recorder {
                 postures[b.0 as usize][bodies.posture[i] as usize] += 1;
                 in_place[b.0 as usize] += bodies.in_place[i] as u16;
             }
-            if faces_enemy(bodies.posture[i]) {
+            if self.front[i] && faces_enemy(bodies.posture[i]) {
                 fronts[bodies.side[i] as usize].push(self.along(bodies.pos[i]));
             }
         }
@@ -109,6 +113,9 @@ pub struct RunSummary {
     pub side_break: [Option<u32>; 2],
     pub loser: Option<Side>,
     pub contact: Option<u32>,
+    /// Men of each side's front bodies disabled or killed before contact: what a shock or a
+    /// volley did by losses, beside what it did by fright. Reported, not scored.
+    pub losses_before_contact: [u32; 2],
     /// End of the formed phase: the loser's break, or the end of the run.
     pub formed_end: u32,
     // 1. Standoff.
@@ -249,16 +256,36 @@ pub fn is_broken(c: &[u16; 5], share: f64) -> bool {
     standing > 0 && turned as f64 >= share * standing as f64
 }
 
-/// Which sides are broken at one sample, by the test `summarize` uses. `side_of_body` is each
-/// body's side.
-pub fn broken_sides(smp: &Sample, side_of_body: &[Side], share: f64) -> [bool; 2] {
+/// Which sides are broken at one sample, by the test `summarize` uses. `sides` is each body's
+/// side if it is a front body, and `None` if not ([`front_sides`]).
+pub fn broken_sides(smp: &Sample, sides: &[Option<Side>], share: f64) -> [bool; 2] {
     let mut tally = [[0u16; 5]; 2];
     for (b, c) in smp.postures.iter().enumerate() {
-        for p in 0..5 {
-            tally[side_of_body[b] as usize][p] += c[p];
+        if let Some(side) = sides[b] {
+            for p in 0..5 {
+                tally[side as usize][p] += c[p];
+            }
         }
     }
     tally.map(|t| is_broken(&t, share))
+}
+
+/// Whether each man belongs to a front body (a man of no body counts as front). Only the
+/// fronts are scored: a body with `front = false` in the scenario, such as the band that
+/// strikes the rear in `shock`, starts no contact, breaks no side, and its losses count in no
+/// pattern.
+pub fn front_men(initial: &Bodies, placed: &[Placed]) -> Vec<bool> {
+    (0..initial.len())
+        .map(|i| initial.body[i].is_none_or(|b| placed[b.0 as usize].front))
+        .collect()
+}
+
+/// Each body's side if it is a front body, for the break tests.
+pub fn front_sides(initial: &Bodies, placed: &[Placed]) -> Vec<Option<Side>> {
+    placed
+        .iter()
+        .map(|p| p.front.then(|| initial.side[p.first as usize]))
+        .collect()
 }
 
 /// After the first side breaks, the rout is watched for this long and no longer. Patterns 4, 5
@@ -277,20 +304,28 @@ pub fn scoring_end(first_break: Option<u32>, end_tick: u32) -> u32 {
 pub fn summarize(inp: &Inputs) -> RunSummary {
     let n = inp.initial.len();
     let nb = inp.placed.len();
-    let side_of_body: Vec<Side> = inp
-        .placed
-        .iter()
-        .map(|p| inp.initial.side[p.first as usize])
-        .collect();
+    let front = front_men(inp.initial, inp.placed);
+    let sides = front_sides(inp.initial, inp.placed);
     let first_break = inp
         .samples
         .iter()
-        .find(|smp| broken_sides(smp, &side_of_body, inp.break_share).contains(&true))
+        .find(|smp| broken_sides(smp, &sides, inp.break_share).contains(&true))
         .map(|smp| smp.tick);
     let end = scoring_end(first_break, inp.end_tick);
+    // What front men did and suffered, among themselves, up to the end of scoring.
+    let events: Vec<Event> = inp.events[..inp.events.partition_point(|e| e.tick < end)]
+        .iter()
+        .filter(|e| match e.kind {
+            EventKind::Bout { attacker, .. } => {
+                front[e.man.0 as usize] && front[attacker.0 as usize]
+            }
+            _ => front[e.man.0 as usize],
+        })
+        .copied()
+        .collect();
     let inp = &Inputs {
         samples: &inp.samples[..inp.samples.partition_point(|smp| smp.tick < end)],
-        events: &inp.events[..inp.events.partition_point(|e| e.tick < end)],
+        events: &events,
         end_tick: end,
         ..*inp
     };
@@ -302,11 +337,14 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
     for smp in inp.samples {
         let mut side_tally = [[0u16; 5]; 2];
         for (b, c) in smp.postures.iter().enumerate() {
+            let Some(side) = sides[b] else {
+                continue;
+            };
             if s.body_break[b].is_none() && is_broken(c, inp.break_share) {
                 s.body_break[b] = Some(smp.tick);
             }
             for p in 0..5 {
-                side_tally[side_of_body[b] as usize][p] += c[p];
+                side_tally[side as usize][p] += c[p];
             }
         }
         for side in 0..2 {
@@ -341,6 +379,11 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
         (a, b) => a.or(b),
     };
     let start = s.contact.unwrap_or(inp.end_tick);
+    for (i, t) in first_hits(n, inp.events).into_iter().enumerate() {
+        if t.is_some_and(|t| t < start) {
+            s.losses_before_contact[inp.initial.side[i] as usize] += 1;
+        }
+    }
     let formed = start..s.formed_end.max(start);
     s.formed_s = secs(formed.end - formed.start);
 
@@ -380,7 +423,7 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
     // Burstiness of the gaps between bouts, per 9 m sector of front (by the defender's place
     // at setup), median over the sectors with at least three gaps. Flurries in different
     // sectors pooled together would add up toward random.
-    let axis = axis_of(inp.initial);
+    let axis = axis_of(inp.initial, &front);
     let len = axis.length().max(1);
     let lateral = |p: Vec2| axis.cross(p) / len;
     let lo = (0..n)
@@ -464,7 +507,7 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
             let Some(body_bt) = s.body_break[b] else {
                 continue;
             };
-            if side_of_body[b] != loser {
+            if sides[b] != Some(loser) {
                 continue;
             }
             let body_men: Vec<usize> = (p.first..p.first + p.count).map(|m| m as usize).collect();
@@ -494,7 +537,7 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
         let side_tally = |smp: &Sample| {
             let mut t = [0u16; 5];
             for (b, c) in smp.postures.iter().enumerate() {
-                if side_of_body[b] == loser {
+                if sides[b] == Some(loser) {
                     for k in 0..5 {
                         t[k] += c[k];
                     }
@@ -502,7 +545,9 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
             }
             t
         };
-        let men: Vec<usize> = (0..n).filter(|&i| inp.initial.side[i] == loser).collect();
+        let men: Vec<usize> = (0..n)
+            .filter(|&i| front[i] && inp.initial.side[i] == loser)
+            .collect();
         let from = collapse_from(bt, &side_tally, &men);
         s.stragglers = men
             .iter()
@@ -665,7 +710,7 @@ pub fn summarize(inp: &Inputs) -> RunSummary {
 /// A side's first-line bodies: those whose front rank stood within 5 m of the side's front at
 /// setup. A second line or a reserve does not count against the clock.
 fn front_bodies(inp: &Inputs, side: Side) -> Vec<usize> {
-    let axis = axis_of(inp.initial);
+    let axis = axis_of(inp.initial, &front_men(inp.initial, inp.placed));
     let len = axis.length().max(1);
     let along = |i: usize| inp.initial.pos[i].dot(axis) / len;
     let sign = if side == Side::A { 1 } else { -1 };
@@ -673,7 +718,7 @@ fn front_bodies(inp: &Inputs, side: Side) -> Vec<usize> {
         .placed
         .iter()
         .enumerate()
-        .filter(|(_, p)| inp.initial.side[p.first as usize] == side)
+        .filter(|(_, p)| p.front && inp.initial.side[p.first as usize] == side)
         .map(|(b, p)| {
             let f = (p.first..p.first + p.count)
                 .filter(|&m| inp.layout.rank[m as usize] == 0)
@@ -950,7 +995,7 @@ mod tests {
         let (mut bodies, placed) = place(&s);
         let initial = bodies.clone();
         let layout = Layout::of(&placed);
-        let mut rec = Recorder::new(&initial, placed.len());
+        let mut rec = Recorder::new(&initial, &placed);
         let mut events = Vec::new();
         // Contact at tick 100; a bout every so often.
         for t in (100..1000).step_by(40) {

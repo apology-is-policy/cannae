@@ -11,7 +11,9 @@ use cannae_core::schedule::BASE_TICK;
 use cannae_core::{Bouts, Event, GridPerception, Perceive, Posture, Rng, Substrate, Vec2, Wall};
 use cannae_field::{Field, FieldPerception};
 use cannae_gauges::Rung3;
-use cannae_harness::metrics::{Inputs, Recorder, RunSummary, broken_sides, scoring_end, summarize};
+use cannae_harness::metrics::{
+    Inputs, Recorder, RunSummary, broken_sides, front_sides, scoring_end, summarize,
+};
 use cannae_harness::scenario::{Layout, frames_with};
 use cannae_harness::{Runner, Scenario, place};
 use cannae_man::{Marks, Memory, Men, Rung, Troop};
@@ -127,7 +129,7 @@ fn play<P: Perceive, M: Memory, S: Substrate>(
     let f = frames_with(s, &placed, &bodies, |t| d.tie(t))?;
     let initial = bodies.clone();
     let layout = Layout::of(&placed);
-    let mut rec = Recorder::new(&initial, placed.len());
+    let mut rec = Recorder::new(&initial, &placed);
     let n = bodies.len();
     let rng = Rng::new(spec.seed);
     let mut men = Men::with_memory(memory(n), d.man, &bodies, troops, &rng);
@@ -137,10 +139,7 @@ fn play<P: Perceive, M: Memory, S: Substrate>(
     let end = spec.duration_s * 1000 / BASE_TICK.0;
     let minute = 60_000 / BASE_TICK.0;
     let mut clock = Vec::with_capacity((end / minute + 1) as usize);
-    let side_of_body: Vec<_> = placed
-        .iter()
-        .map(|p| initial.side[p.first as usize])
-        .collect();
+    let sides = front_sides(&initial, &placed);
     let mut stop = end;
     while r.tick < stop {
         if r.tick % minute == 0 {
@@ -151,7 +150,7 @@ fn play<P: Perceive, M: Memory, S: Substrate>(
             if spec.stop_at_rout_end
                 && stop == end
                 && let Some(smp) = rec.samples.last()
-                && broken_sides(smp, &side_of_body, BREAK_SHARE).contains(&true)
+                && broken_sides(smp, &sides, BREAK_SHARE).contains(&true)
             {
                 stop = scoring_end(Some(smp.tick), end);
             }

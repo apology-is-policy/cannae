@@ -60,7 +60,7 @@ fn run() -> Result<(), String> {
     let (bodies, placed) = place(&s);
     let initial = bodies.clone();
     let layout = Layout::of(&placed);
-    let mut rec = Recorder::new(&initial, placed.len());
+    let mut rec = Recorder::new(&initial, &placed);
     let n = bodies.len();
     let f = frames(&s, &placed, &bodies)?;
     let rng = Rng::new(s.seed);

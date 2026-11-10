@@ -48,7 +48,7 @@ fn main() -> ExitCode {
     let (bodies, placed) = place(&s);
     let initial = bodies.clone();
     let layout = Layout::of(&placed);
-    let mut rec = Recorder::new(&initial, placed.len());
+    let mut rec = Recorder::new(&initial, &placed);
     let n = bodies.len();
     let mut r = Runner::new(
         bodies,
