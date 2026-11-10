@@ -2,8 +2,12 @@
 
 **Phase 0b report,** 2026-11-10. Written by Paullus for Michal's decision.
 
+**Decided by Michal, 2026-11-10:** merge; Slice 0 runs as the experiment below, each design
+built by its believer; the memory ladder decides whether men carry fear gauges; `docs/rival/`
+lands on `main` as a proposal.
+
 The rival design, *Small men, many battles*, is by Varro (Fable 5.2): seven files in
-[`docs/rival/` on branch `varro`](https://github.com/apology-is-policy/cannae/tree/varro/docs/rival).
+[`docs/rival/`](rival/README.md).
 The argument behind this report is on yip call 0001, turns 1-6 and notes 1-5.
 
 ## In short

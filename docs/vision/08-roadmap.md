@@ -1,5 +1,9 @@
 # 08 — Roadmap, Knowledge Base, Reviews
 
+> **Slice 0 changed (2026-11-10).** It runs as the experiment between this design and the rival
+> one, as set out in [rival-comparison.md](../rival-comparison.md) and
+> [rival 06](../rival/06-experiment.md). That replaces the toy and the spike described below.
+
 ## 1. Vertical slices
 
 The first roadmap ran in layers: physics, then combat, then psyche, then command. Design review 1

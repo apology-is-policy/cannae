@@ -1,53 +1,63 @@
 # Status
 
-**Phase:** design. No code yet. The rival-vision arc has reported; Michal decides next.
+**Phase:** Slice 0, the experiment between the two designs. No code yet.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
 **Last updated:** 2026-11-10.
 
-## Current arc: a rival vision (Phase 0b) -- reported, waiting for Michal
+## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
-Michal's idea, 2026-11-10. A second session, **Varro** (Fable 5.2, worktree `cannae-varro`,
-branch `varro`), built a competing vision and was free to relax our constraints. Paullus led,
-argued and reported. They talked over the yip line, and Michal watched on the switchboard.
-Nothing from the rival lands on `main` without Michal's decision.
+Michal approved Slice 0 as the experiment between the vision of record and Varro's rival design.
+It takes about two weeks, on the Air, with no money spent. The plan is in
+[rival-comparison.md](rival-comparison.md) and [rival 06](rival/06-experiment.md). Each design is
+built by its believer. Paullus builds on `main`; Varro builds on branch `varro`, and Paullus
+reviews his work and merges it.
 
-- **The rival:** *Small men, many battles*, seven files in `docs/rival/` on branch `varro`
-  (pushed as a branch, not merged).
-- **The report:** [rival-comparison.md](rival-comparison.md). It covers where each design was
-  stronger, the common design both sessions now hold, what is still open, Slice 0 as the
-  experiment, the options and the decisions.
-- **Converged:**
-  - Cannae is measured at 1:1, with A2 taken from the set of seeded runs.
-  - Each body of men forms on its standard.
-  - Each man has postures, chances to change them read off what he can see, and marks of
-    memory.
-  - Order decides the physics: bodies touch only where men are crowded and moving.
-  - Integer state, one battle per core.
-  - The casualty clock is a test on both designs.
-- **Open, for the experiment:**
-  - how much memory a man needs (one ladder spanning both designs);
-  - what times a clash;
-  - whether the speed is real;
-  - whether a crowd stays at a believable density.
-- **Recommendation:** merge. Take the common design as the hypothesis, run Slice 0 as the
-  experiment, then revise `docs/vision/`.
+**Paullus's chunks:**
 
-## Next arc
+| Chunk | Content | Commit |
+|---|---|---|
+| S0.0 | Land the rival on `main` as a proposal; point the vision docs at the merge; open this arc | (this) |
+| S0.1 | Workspace and shared core: fixed-point types, counter-based random streams, W', observable state, event log, determinism tests | |
+| S0.2 | The seam: `Man` and `Substrate` interfaces, scenario files (the 400-man patch and its variants), the runner. Agreed with Varro before either engine is built | |
+| S0.3 | Metrics and pre-registration: the eight patterns computed from observable state; pass bands and both sides' parameter priors written down before any scored run | |
+| S0.4 | Lethality bounds: literature search on skeletal trauma and experimental archaeology (Varro searches line-fighting ethnography and Collins) | |
+| S0.5 | The contact substrate, where every body touches its neighbours, at patch scale | |
+| S0.6 | The top two rungs of the memory ladder: continuous fear and resolve, then the full excitable psyche | |
+| S0.7 | The speed spikes: 150,000 bodies in a line battle, a pocket and a rout through camp gates, on both substrates | |
+| S0.8 | The passage study, against measured crowd-flow data | |
+| S0.9 | Scored runs and the report; then design review 2 | |
 
-**Slice 0 as the experiment, about two weeks, on Michal's go-ahead.** The full plan is in
-[rival-comparison.md](rival-comparison.md).
+**Varro's work:** the field substrate, with contact where men are crowded and moving; the visible
+layer (postures, hazards, the event log) and the bottom three rungs; his hazard table with priors.
 
-1. **Harness and metrics**, shared by both engines.
-2. **The man:** a 400-man patch (two centuries against a warband). Every rung of the memory
-   ladder runs on both substrates, and eight patterns are scored.
-3. **The substrate:** 150,000 bodies in a line battle, a pocket, and a rout through camp gates.
-   Speed is measured as sustained simulated seconds per wall second.
-4. **The passage:** a maniple falling back through an interval, and a crowd leaving through a
-   gate, both checked against measured crowd-flow data.
+**Kill criteria, both ways.**
 
-Kill criteria run both ways. Each engine is built by its believer (proposed).
+- **The rival dies if** it runs below 10x per core in the pocket, or if no rung up to *shaken*
+  holds a line and then breaks it.
+- **Ours dies if** it meets the casualty clock only with a near-harmless clash, or if it runs
+  below 3x sustained at full scale.
 
-## Last arc: V -- revise the vision after review 1 (closed 2026-11-10)
+**Deviation from the vision of record.** Slice 0 replaces the toy and spike described in
+[08](vision/08-roadmap.md) §1, with Michal's approval. The vision docs carry a pointer to say so.
+They are revised to the experiment's results after it reports.
+
+## Last arc: a rival vision (Phase 0b, closed 2026-11-10)
+
+This was Michal's idea. A second session, **Varro** (Fable 5.2), built a competing vision, free
+to relax our constraints. The two sessions argued it over six turns on the yip line while Michal
+watched on the switchboard.
+
+- **The rival** is [docs/rival/](rival/README.md), *Small men, many battles*. It landed on
+  `main` as a proposal at bf719b3.
+- **The report** is [rival-comparison.md](rival-comparison.md) (207c046). It covers where each
+  design was stronger, the common design, what is still open, and the options.
+- **Michal's decisions:**
+  - merge;
+  - Slice 0 runs as the experiment;
+  - the memory ladder decides whether men carry fear gauges;
+  - the rival lands on `main` as a proposal.
+
+## Earlier arc: V -- revise the vision after review 1 (closed 2026-11-10)
 
 Approved by Michal on 2026-11-09. It responded to
 [design review 1](reviews/2026-11-09-fable-5.2-vision-review.md), by Fable 5.2. Each chunk was
@@ -86,12 +96,7 @@ word is singular). This is recorded in the review's disposition table.
 
 ## Open decisions
 
-**Blocking the next step:**
-
-- Which option: keep ours, adopt the rival, or merge ([rival-comparison.md](rival-comparison.md)).
-- The go-ahead for Slice 0 as the experiment, and who builds what.
-- Whether each man should also carry fear gauges for the inspector, even if the patterns don't need them.
-- Whether `docs/rival/` lands on `main` as a proposal.
+**Blocking the next step:** none.
 
 **Not blocking:**
 
@@ -101,6 +106,9 @@ word is singular). This is recorded in the review's disposition table.
 
 **Michal's answers so far:**
 
+- **Phase 0b (2026-11-10):** merge the two designs. Slice 0 is the experiment, each design built
+  by its believer. The memory ladder decides whether each man carries fear gauges (no gauges
+  for the inspector's sake alone). `docs/rival/` lands on `main` as a proposal.
 - **Player role:** sets up battles (historical or experimental), watches, and can pause and take
   over commanders. Two modes: experimenter (truth, instant orders) and role-player (beliefs,
   messengers).

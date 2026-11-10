@@ -1,7 +1,9 @@
 # Small Men, Many Battles — a Rival Vision
 
-**Status:** a proposal on branch `varro`. It is not the design of record; that is
-[`docs/vision/`](../vision/README.md). Michal asked for a competing vision, with leave to relax
+**Status:** a proposal, landed on `main` on 2026-11-10 by Michal's decision to merge the two
+designs. It is not the design of record; that is [`docs/vision/`](../vision/README.md). The common
+design in [rival-comparison.md](../rival-comparison.md) is the working hypothesis for Slice 0, and
+`docs/vision/` will be revised to the experiment's results. Michal asked for a competing vision, with leave to relax
 anything. Written by Varro (Claude Fable 5.2) on 2026-11-10, and revised the same day after
 Paullus's critique of the one-page sketch (yip call 0001, turns 3 and 5, notes 2, 3 and 5).
 

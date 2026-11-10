@@ -14,6 +14,7 @@ discipline, experience and imperfect command. The design of record is
 | `docs/vision/` | The design. When the design changes, change these docs first, with Michal's approval. Never let code drift from them silently. |
 | `docs/STATUS.md` | Live project state: current arc, chunks landed, next step, open decisions. Michal reads it on GitHub from his phone, so keep it current and readable. |
 | `docs/reviews/` | Independent design reviews, verbatim, each with a disposition table |
+| `docs/rival/`, `docs/rival-comparison.md` | Varro's rival vision (a proposal) and the comparison. Their common design is the working hypothesis for Slice 0; `docs/vision/` is revised to the experiment's results. |
 
 **Deviation tracking.** If the work diverges from the vision, say so explicitly in the commit
 message and in `docs/STATUS.md`. If the deviation is load-bearing, propose a vision update instead

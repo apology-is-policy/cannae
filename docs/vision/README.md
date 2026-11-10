@@ -5,6 +5,12 @@ death of Augustus (AD 14). Graphics are deliberately minimal: top-down circles. 
 goes into behavior. Every soldier is an agent with a body, equipment, a psyche and a place in a
 chain of command, and the battle's outcome emerges from those agents.
 
+> **Under revision (2026-11-10).** Michal chose to merge this design with a rival one,
+> [`docs/rival/`](../rival/README.md). The common design in
+> [rival-comparison.md](../rival-comparison.md) is the working hypothesis for Slice 0, which
+> runs as an experiment between the two. This document stays the design of record until it is
+> revised to the experiment's results.
+
 ## The thesis
 
 Ancient battles were decided by psychology, cohesion and command much more than by kill rates.
