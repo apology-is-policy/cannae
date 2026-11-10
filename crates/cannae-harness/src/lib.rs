@@ -3,6 +3,7 @@
 pub mod conformance;
 pub mod kinematic;
 pub mod metrics;
+pub mod passage;
 pub mod runner;
 pub mod scenario;
 pub mod svg;

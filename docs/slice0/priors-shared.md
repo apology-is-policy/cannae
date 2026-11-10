@@ -56,8 +56,8 @@ line; the field engine's goes in [priors-field.md](priors-field.md). Sources are
 
 | Parameter | Placeholder now (pairwise) | Prior | Source or reason |
 |---|---|---|---|
-| Crush onset density ρc (sets `crush_mm`) | `crush_mm` 250, which is about 4.4 men per m² at r = 280 | uniform 5-8 men per m² | Helbing and Mukerji 2012: above 4-5 per m² congestion builds and falls become likely [primary]. Helbing et al. 2007 (Hajj, measured): flow collapses above 6 per m² local, with local peaks above 10 [primary]. Fruin 1993: at about 7 per m² the crowd becomes "almost a fluid mass" [primary]. `crush_mm` is derived as six contacts' overlap at ρc in hexagonal packing: 6 (2r − s), with s = √(2 / (√3 ρc)). At r = 280 that is 477-1080 mm. The placeholder crushes too early. |
-| Time to be disabled when crushed (sets `crush_rate_q16_per_mm`) | 0.01 per s per mm | log-uniform 30-600 s, as the mean time to disablement at a density 2 per m² above ρc | No measurement found. Expert estimates in press interviews put loss of consciousness at about 30 s and irreversible harm at 3-6 minutes [secondary, unconfirmed]. The rate per mm is derived from this time and the extra overlap at ρc + 2. The weakest line in the file. |
+| Crush onset density ρc (sets `crush_mm`) | `crush_mm` 831: ρc = 6.5 at r = 280 | uniform 5-8 men per m² | Helbing and Mukerji 2012: above 4-5 per m² congestion builds and falls become likely [primary]. Helbing et al. 2007 (Hajj, measured): flow collapses above 6 per m² local, with local peaks above 10 [primary]. Fruin 1993: at about 7 per m² the crowd becomes "almost a fluid mass" [primary]. `crush_mm` is derived as six contacts' overlap at ρc in hexagonal packing: 6 (2r − s), with s = √(2 / (√3 ρc)). At r = 280 that is 477-1080 mm. Checked in the pairwise substrate: a crowd shoved against a wall for 90 s reaches 5.4-8.0 per m² across the corners of its priors, and its summed overlap is within about 7 % of this formula at the measured density (`--example press_wall`, [passage.md](passage.md)). |
+| Time to be disabled when crushed (sets `crush_rate_q32_per_mm`) | 100,830 in Q32, 2.35 × 10⁻⁵ per s per mm: 134 s at ρc + 2, with ρc = 6.5 at r = 280 | log-uniform 30-600 s, as the mean time to disablement at a density 2 per m² above ρc | No measurement found. Expert estimates in press interviews put loss of consciousness at about 30 s and irreversible harm at 3-6 minutes [secondary, unconfirmed]. The rate per mm is derived from this time and the extra overlap at ρc + 2. That density may lie beyond what a draw's crowd can reach; the rate is then a slope, and the crush slower. The weakest line in the file. |
 | `turn_per_tick`: fastest turn | 1,638 units (180° per s) | uniform 120-200° per s | Mason et al. 2022: turning in place peaks at 190 ± 27° per s and averages 124° per s; a 180° turn while walking peaks at 179-182° per s [primary]. The pace instruction is unconfirmed, so these are typical rates, not maximal ones. |
 | `press_mm_s`: how fast a man at full press edges forward | 300 | uniform 200-700 | No direct measurement. The nearest is Pastor et al. 2015: a crowd approaching a door advanced at 0.41 m/s when told to avoid contact and 0.72 m/s when pushing was allowed [primary]. |
 
@@ -136,12 +136,28 @@ Reach is fixed at 1.5 m for every troop in the patch: all fight with swords.
 |---|---|---|
 | Stamina, power, gait | Paullus | Varro: read 2026-11-10, no objection (call 0001 turn 16); signs at the freeze |
 | Crowd physics | Paullus (ranges copied by Varro for the field) | Varro: pending |
-| Ties, bouts, kits | Varro | Paullus: read 2026-11-10; signs at the freeze. S23 provisionally (below) |
+| Ties, bouts, kits | Varro | Paullus: read 2026-11-10; signs at the freeze. S23 checked in the Greek (below) |
 
-**Paullus on S23 (the warband's guard), 2026-11-10.** Checked in English only: the Loeb text of
-1922 on LacusCurtius. The Greek could not be fetched, so this is provisional until it is read.
-Polybius 2.30.3 says the Gaulish shield "does not cover the whole body", and 2.30.8 that the
-Roman shields "were far more serviceable for defence". The Gaesatae stood naked in front
-(2.28.8), and nothing in 2.28-2.33 mentions Gallic body armour. That supports a guard worse than
-the reference, so U[1, 1.5] stands. 2.33 is about swords that bend and only cut: it bears on how
-the Gauls strike, not on what they take, so it should not be cited for S23.
+**Paullus on S23 (the warband's guard), 2026-11-10, checked in the Greek** (Büttner-Wobst's
+text on Perseus). U[1, 1.5] stands.
+
+- **2.30.3** is about the Gaesatae under the javelins: οὐ γὰρ δυναμένου τοῦ Γαλατικοῦ θυρεοῦ
+  τὸν ἄνδρα περισκέπειν, ὅσῳ γυμνὰ καὶ μείζω τὰ σώματ᾽ ἦν, τοσούτῳ συνέβαινε μᾶλλον τὰ βέλη
+  πίπτειν ἔνδον: "since the Gallic shield could not cover the man all round, the more naked
+  and the bigger their bodies were, the more the missiles fell home". The Loeb's "does not
+  cover the whole body" is fair.
+- **2.30.8** has a gap in the transmitted text: οἱ μὲν οὖν θυρεοὶ πρὸς ἀσφάλειαν, αἱ δὲ
+  μάχαιραι πρὸς πρᾶξιν μεγάλην διαφορὰν [lacuna] ἔχειν: "the shields for safety, and the
+  swords for action, [made] a great difference". The Loeb's "far more serviceable for defence"
+  translates a supplement. The Greek says only that the shields differed greatly in the
+  safety they gave. In context that means the Roman ones gave more.
+- **2.28.8:** the Gaesatae threw off their trousers and cloaks and stood in front γυμνοὶ μετ᾽
+  αὐτῶν τῶν ὅπλων, "naked, with their arms alone".
+- **2.30.2** cuts the other way, for the rest of the warband. Against the same javelins, the
+  Celts behind had πολλὴν εὐχρηστίαν, "much good", from their cloaks and trousers. Clothing
+  helped them against missiles.
+
+So the evidence is for missiles against naked men, and nothing in 2.28-2.33 mentions Gallic
+body armour. A guard worse than the reference fits, and the bottom of the range, 1, covers a
+clothed Gaul with a shield. 2.33 is about swords that bend and only cut: it bears on how the
+Gauls strike, not on what they take, so it should not be cited for S23.
