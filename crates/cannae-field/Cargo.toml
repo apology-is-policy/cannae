@@ -1,0 +1,16 @@
+[package]
+name = "cannae-field"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+description = "The rival's substrate: a density field every man step, exact positions where enemies meet, and contact where a crowd is packed and moving"
+
+[dependencies]
+cannae-core = { path = "../cannae-core" }
+
+[dev-dependencies]
+cannae-harness = { path = "../cannae-harness" }
+cannae-man = { path = "../cannae-man" }
+
+[lints]
+workspace = true

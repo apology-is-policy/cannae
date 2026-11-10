@@ -245,7 +245,8 @@ pub trait Perceive {
     fn view<F: FrameQuery>(&self, bodies: &Bodies, frames: &F, man: ManId) -> View;
 }
 
-fn cell_of(p: Vec2) -> (i32, i32) {
+/// The canonical cell of a point. Public so that every perception bins men the same way.
+pub fn cell_of(p: Vec2) -> (i32, i32) {
     (p.x.div_euclid(CELL_MM), p.y.div_euclid(CELL_MM))
 }
 
@@ -254,7 +255,7 @@ fn cell_key(cx: i32, cy: i32) -> i64 {
 }
 
 /// Which way the window is split: the facing snapped to the nearest axis, as (ahead x, ahead y).
-fn axis(facing: Turn) -> (i32, i32) {
+pub fn axis(facing: Turn) -> (i32, i32) {
     match ((facing.0 as u32 + 8192) >> 14) & 3 {
         0 => (1, 0),
         1 => (0, 1),
