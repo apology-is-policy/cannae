@@ -661,14 +661,30 @@ impl Pairwise {
                             chance,
                             Key::new(Stream::Substrate, i as u32, tick, PURPOSE_CRUSH),
                         ) {
+                            let (man, causes) = (
+                                cannae_core::ManId(i as u32),
+                                [Cause::Crush, Cause::None, Cause::None],
+                            );
                             ev.push(Event {
                                 tick,
-                                man: cannae_core::ManId(i as u32),
+                                man,
                                 pos: pos[i],
                                 kind: EventKind::Wound {
                                     to: Wound::Disabled,
                                 },
-                                causes: [Cause::Crush, Cause::None, Cause::None],
+                                causes,
+                            });
+                            // The fall is logged as a posture change too, as the bout resolver
+                            // logs it: that is what other men see.
+                            ev.push(Event {
+                                tick,
+                                man,
+                                pos: pos[i],
+                                kind: EventKind::Posture {
+                                    from: q,
+                                    to: Posture::Down,
+                                },
+                                causes,
                             });
                         }
                     }
@@ -924,6 +940,24 @@ mod tests {
         let hurt = run(&mut s, &mut dense, &squeeze, 200);
         assert!(!hurt.is_empty());
         assert!(hurt.iter().all(|e| e.causes[0] == Cause::Crush));
+        // Each man crushed is seen to fall: a wound, then a posture change to Down.
+        let wounds = hurt
+            .iter()
+            .filter(|e| matches!(e.kind, EventKind::Wound { .. }))
+            .count();
+        let falls = hurt
+            .iter()
+            .filter(|e| {
+                matches!(
+                    e.kind,
+                    EventKind::Posture {
+                        to: Posture::Down,
+                        ..
+                    }
+                )
+            })
+            .count();
+        assert_eq!(wounds, falls);
 
         let mut loose = Bodies::default();
         for r in 0..10 {

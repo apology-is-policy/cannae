@@ -570,6 +570,7 @@ fn each_posture_has_its_way_of_moving() {
     let at = |enemy| Intent::Close {
         enemy,
         stand_off_mm: 1_000,
+        press: 0,
     };
     assert_eq!(
         m.intent(ME, &close, Posture::Forward),

@@ -5,14 +5,19 @@
 //! awake to something and comes back slowly, so a long fight wears him down. Together they add
 //! one term to his alarm: fear, plus a share of his nerve for the resolve he has spent.
 //!
+//! [`Rung3`] is the rung as a man's [`Memory`] in `cannae-man`: rung 1's *has fled*, with fear
+//! and resolve in place of rung 2's *shaken*.
+//!
 //! Dormancy is exact. Both gauges are stored with the tick they were last written and read
-//! forward in closed form. A step on which the man is not awake (by the visible layer's own
-//! wake test) changes nothing, so stepping every man and skipping the dormant ones give the
-//! same bits. Nothing here draws a random number.
+//! forward in closed form, and `absorb` is called only at steps the man is awake, by the
+//! visible layer's own wake test (the hook's rule 4), so stepping every man and skipping the
+//! dormant ones give the same bits. Nothing here draws a random number.
 
-use cannae_core::Cause;
 use cannae_core::fixed::exp_neg_q32;
+use cannae_core::hash::StateHasher;
 use cannae_core::schedule::{BASE_TICK, MAN_STEP};
+use cannae_core::{Cause, Event, ManId, View};
+use cannae_man::{Marks, Memory, Parts, Rung, Sums};
 
 /// Fear is held in alarm units with 24 fractional bits: a step's increment is far below one
 /// unit, and would vanish at the visible layer's 8 bits.
@@ -56,14 +61,6 @@ struct Man {
     /// Resolve spent, in parts per million of full: zero is full.
     spent: i64,
     spent_tick: u32,
-}
-
-/// What a step's absorb is given: the visible layer's sum of frightening acts, before nerve,
-/// in alarm units with 8 fractional bits, and whether he is awake by its wake test.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct Seen {
-    pub acts_q8: i32,
-    pub awake: bool,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -134,18 +131,16 @@ impl Gauges {
         ]
     }
 
-    /// One man step's worth of what he saw. Not awake: nothing changes.
-    pub fn absorb(&mut self, man: usize, tick: u32, seen: Seen) {
-        if !seen.awake {
-            return;
-        }
+    /// One man step, at which he was awake, of what he saw: the visible layer's sum of
+    /// frightening acts before his nerve, in alarm units with 8 fractional bits.
+    pub fn absorb(&mut self, man: usize, tick: u32, acts_q8: i32) {
         let p = self.params;
         let fear = self.fear_at(&self.men[man], tick);
         let spent = self.spent_at(&self.men[man], tick);
         let step = MAN_STEP.0 as i64;
         // Fear rises at keep / tau times the acts, so that held acts settle at keep times
         // their weight.
-        let rise = ((seen.acts_q8.max(0) as i64) << (FEAR_FRAC - 8)) * p.keep_pm as i64 * step
+        let rise = ((acts_q8.max(0) as i64) << (FEAR_FRAC - 8)) * p.keep_pm as i64 * step
             / (1000 * p.fear_tau_ms.max(1) as i64);
         // A fear of one unit spends full resolve in `spend_ms`.
         let spend = (fear as i128 * FULL as i128 * step as i128
@@ -169,6 +164,52 @@ impl Gauges {
     }
 }
 
+/// Rung 3 as a man's memory: rung 1's *has fled*, and fear and resolve in place of rung 2's
+/// *shaken*.
+#[derive(Clone, Debug)]
+pub struct Rung3 {
+    pub marks: Marks,
+    pub gauges: Gauges,
+}
+
+impl Rung3 {
+    pub fn new(man: &cannae_man::Params, gauges: Params, men: usize) -> Rung3 {
+        Rung3 {
+            marks: Marks::new(Rung::HasFled, man, men),
+            gauges: Gauges::new(gauges, men),
+        }
+    }
+}
+
+impl Memory for Rung3 {
+    const READS_SUMS: bool = true;
+
+    fn alarm_term(&self, man: ManId, tick: u32) -> Parts {
+        // The marks fill the first two parts, and at rung 1 the second is always empty.
+        let mut parts = self.marks.alarm_term(man, tick);
+        let [fear, worn] = self.gauges.alarm_term(man.0 as usize, tick);
+        parts[2] = fear;
+        parts[3] = worn;
+        parts
+    }
+
+    fn absorb(&mut self, man: ManId, v: &View, sums: &Sums) {
+        self.marks.absorb(man, v, sums);
+        self.gauges.absorb(man.0 as usize, v.tick, sums.acts);
+    }
+
+    fn on_event(&mut self, e: &Event) {
+        self.marks.on_event(e);
+    }
+
+    fn hash(&self, h: &mut StateHasher) {
+        self.marks.hash(h);
+        for x in self.gauges.hash_parts() {
+            h.write_u64(x);
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -181,14 +222,7 @@ mod tests {
     fn watch(g: &mut Gauges, tick: &mut u32, steps: u32, acts_q8: i32) {
         for _ in 0..steps {
             *tick += MAN_EVERY;
-            g.absorb(
-                0,
-                *tick,
-                Seen {
-                    acts_q8,
-                    awake: true,
-                },
-            );
+            g.absorb(0, *tick, acts_q8);
         }
     }
 
@@ -208,8 +242,8 @@ mod tests {
             (settled - want).abs() <= want / 50,
             "{settled} against {want}"
         );
-        // Then nothing frightening, and he is not even awake: one time constant later about
-        // 37 % is left.
+        // Then nothing frightening, and he is not awake to anything: one time constant later
+        // about 37 % is left.
         let later = t + P.fear_tau_ms / BASE_TICK.0;
         let left = g.fear_q8(0, later) as i64 * 1000 / settled as i64;
         assert!((360..=376).contains(&left), "{left} per mille");
@@ -231,40 +265,6 @@ mod tests {
         // Two hours out of it, he is nearly whole again.
         let rested = g.resolve_pm(0, t + 7_200_000 / BASE_TICK.0);
         assert!(rested > 900, "{rested} per mille after rest");
-    }
-
-    #[test]
-    fn steps_he_is_not_awake_for_change_nothing() {
-        // Two men see the same fright. Then one is stepped every man step while not awake, as
-        // the evaluate-all mode does, and the other is not stepped at all, as skip does.
-        let mut g = Gauges::new(P, 2);
-        let mut t = 0;
-        for _ in 0..200 {
-            t += MAN_EVERY;
-            for man in 0..2 {
-                g.absorb(
-                    man,
-                    t,
-                    Seen {
-                        acts_q8: 3 * UNIT,
-                        awake: true,
-                    },
-                );
-            }
-        }
-        for _ in 0..2_000 {
-            t += MAN_EVERY;
-            g.absorb(
-                0,
-                t,
-                Seen {
-                    acts_q8: 0,
-                    awake: false,
-                },
-            );
-        }
-        assert_eq!(g.alarm_term(0, t), g.alarm_term(1, t));
-        assert_eq!(g.men[0], g.men[1]);
     }
 
     #[test]

@@ -52,12 +52,24 @@ eight patterns. A model that passes only on a knife-edge has failed, whichever e
 **Common draws.** Draw *i* uses the same shared values in every cell, from a seed fixed at
 the freeze, so cells do not differ by the noise of the shared priors. The ladder is nested in
 the same way. What a man sees, and how much each thing he sees weighs (the alarm and urge sums
-of the visible layer), is one set of weights for all five rungs. On one substrate, draw *i* of
-a rung is draw *i* of the rung below plus that rung's new parameters. So rungs 3 and 4 (the
-continuous gauges, then the full excitable psyche) add memory on top of the same perception
-weights as rungs 0-2, and nothing else changes.
+of the visible layer), is one set of weights for every rung. On one substrate, draw *i* of
+a rung is draw *i* of the rung below plus that rung's new parameters. So rung 3 (the
+continuous gauges) adds memory on top of the same perception weights as rungs 0-2, and nothing
+else changes. Rung 3 keeps rung 1's *has fled* and replaces rung 2's *shaken*, so with its
+gauges switched off it is rung 1, event for event (tested).
 
-**The memory ladder.** Within each substrate, the lowest rung that passes is kept.
+**The memory ladder.** Within each substrate, the lowest rung that passes is kept. The ladder
+scored is rungs 0-3. **Rung 4** (the full excitable psyche) **is built only if rungs 0-3 all
+fail** (Michal, 2026-11-10). It would then be pre-registered on its own, with its own freeze.
+
+**The press** (Michal, 2026-11-10). Only men out of their places press: a man closing on an
+enemy (`Intent::Close`), at a gate, in the churn at a pocket's edge. A man in his place does not
+press in Slice 0 (`HoldSlot` press is zero), on either substrate. **The shared prior on press is
+a prior about men out of their places only. Slice 0 does not answer whether a formed line
+shoves: that is put off to Slice 1, not settled**, and the report says so. One difference
+remains, and it is the substrate question itself, not a gap: in the pairwise engine a loose
+man who presses shoves a formed man, while in the field a man in his place is moved by his tie
+alone. The interval passage shows it, and it is reported as it comes.
 
 **If no rung passes** (written before any run, at Varro's proposal):
 - the rungs are still ranked, first by the share of parameter sets passing all eight patterns,

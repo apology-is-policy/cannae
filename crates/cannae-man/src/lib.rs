@@ -527,6 +527,7 @@ impl<M: Memory> ManModel for Men<M> {
                     Intent::Close {
                         enemy: e.id,
                         stand_off_mm: p.stand_off_mm,
+                        press: 0,
                     },
                     if charging(v.order) || e.posture == Posture::Turned {
                         run

@@ -83,11 +83,10 @@ after a shock is driven off, and volleys that kill few but wear men down.
 
 ## Rung 4: the full excitable psyche (S0.6)
 
-Not drawn unless it is built. The recommendation in [rungs-3-4.md](rungs-3-4.md) is to build
-it only if rungs 0-3 all fail, since what it alone would add (graded intensity inside
-*steady*, and refractoriness beyond breath) is tied to no named pattern. Rung 4 is in the
-approved arc, so that is Michal's decision. If it is built, its parameters are written here
-before the freeze.
+Not drawn unless it is built. Michal decided (2026-11-10) that it is built only if rungs 0-3
+all fail, since what it alone would add (graded intensity inside *steady*, and refractoriness
+beyond breath) is tied to no named pattern ([rungs-3-4.md](rungs-3-4.md)). If it is built, its
+parameters are written here under a pre-registration of its own.
 
 ## Count
 
