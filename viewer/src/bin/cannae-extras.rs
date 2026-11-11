@@ -857,6 +857,21 @@ fn two(a: &Asked) -> Result<(), String> {
             println!("{}: one of the two has no file of base\n", name(cell));
             continue;
         };
+        // The first batch was written before the count existed, so none of its records has
+        // one. A count there means that --first is not the first batch, and a batch beside
+        // itself would give every pair as equal.
+        let counted = |s: &Seed| {
+            [&s.stopped, &s.whole]
+                .into_iter()
+                .flatten()
+                .any(|r| r.held != 0)
+        };
+        if old.sets.values().flat_map(BTreeMap::values).any(counted) {
+            return Err(format!(
+                "{}: a record in {first} has a count of held frames, and the first batch has none",
+                name(cell)
+            ));
+        }
         // 1. The pairs: a stopped run with a stopped run, a whole run with a whole one.
         let (mut pairs, mut only_first, mut only_new) = (0, 0, 0);
         let (mut zero, mut zero_equal, mut held, mut held_differ) = (0, 0, 0, 0);
