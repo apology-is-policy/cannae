@@ -297,7 +297,8 @@ arises, and the scored record holds it:
   its order.
 - **The script:** `tools/s09-open-flank.py`. It reads the scored records alone and is run
   after the scoring. A run that ends inside the minute with both still standing is counted
-  apart, as neither.
+  apart, as neither; the share is given over all the runs, and the three counts with it.
+  Varro read it (call 0001, turn 122).
 
 ## 7. Checks on the code and the runs
 

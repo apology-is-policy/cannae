@@ -42,15 +42,18 @@ def opening(body_break, sim_s):
         then = at + LATER
         if any(t is not None and t <= then for t in (other, warband)):
             continue
-        if then > end:
+        # The record holds samples below the end tick only, so a minute that ends at the end
+        # was not seen out either.
+        if then >= end:
             cut = True
             continue
         return "yes"
     return "cut" if cut else "no"
 
 
-def cell(path, freeze):
-    """The scored stopped runs of one file, as (opening, problem) counts."""
+def cell(path, freeze, engine, rung):
+    """The scored stopped runs of one file, as (opening, problem) counts. A record of another
+    cell than the file's name says is a problem."""
     counts = {"yes": 0, "no": 0, "cut": 0}
     problems = 0
     seen = set()
@@ -64,7 +67,8 @@ def cell(path, freeze):
                     continue
                 key = (r["draw"], r["seed"])
                 breaks = r["summary"]["body_break"]
-                if key in seen or len(breaks) != 3:
+                mine = r["engine"].lower() == engine and r["rung"] == rung
+                if key in seen or len(breaks) != 3 or not mine:
                     problems += 1
                     continue
                 seen.add(key)
@@ -101,6 +105,9 @@ def self_test():
         (([900, None, 100], 3_000), "no"),
         # The run ended inside the minute, both still standing.
         (([100, None, None], (100 + m - 1) // TICKS_PER_S), "cut"),
+        # The minute ends at the run's end tick: that state was not sampled.
+        (([100, None, None], (100 + m) // TICKS_PER_S), "cut"),
+        (([100, None, None], (100 + m) // TICKS_PER_S + 1), "yes"),
     ]
     bad = [(c, want, opening(*c)) for c, want in cases if opening(*c) != want]
     for c, want, got in bad:
@@ -134,7 +141,7 @@ def main():
             if not os.path.exists(path):
                 print(f"{engine} rung {rung}: no file")
                 continue
-            counts, problems = cell(path, freeze)
+            counts, problems = cell(path, freeze, engine, rung)
             n = sum(counts.values())
             if format_only:
                 print(f"{engine} rung {rung}: {n} runs read, {problems} lines with a problem")
