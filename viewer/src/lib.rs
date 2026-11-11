@@ -190,11 +190,7 @@ pub fn build_from(
     let troops = match troops {
         Some(t) if t.len() == s.bodies.len() => t.to_vec(),
         Some(t) => {
-            return Err(format!(
-                "{} troops for {} bodies",
-                t.len(),
-                s.bodies.len()
-            ));
+            return Err(format!("{} troops for {} bodies", t.len(), s.bodies.len()));
         }
         None => s
             .bodies

@@ -2,7 +2,7 @@
 //! passage is shown in the relief", and section 6, "A century and its centurion: the count").
 //! Nothing here is scored, and no record is changed.
 //!
-//!   cannae-replay drill --engine field|pairwise
+//!   cannae-replay drill --engine field|pairwise [--fight]
 //!   cannae-replay reliefs --records DIR --engine E --rung R --freeze-seed F --out FILE
 //!                         [--max 100] [--jobs 4]
 //!   cannae-replay leaders --records DIR --engine E --rung R --freeze-seed F --out FILE
@@ -13,7 +13,9 @@
 //! nothing moves, the nominal set at rung 2, seed 3. For each relief it prints how long the
 //! fresh century took to come up and the tired one to fall back, how far each went, when the
 //! men were back in their places, how near a man of one came to a man of the other, and
-//! whether it jammed.
+//! whether it jammed. With `--fight` the men are the troops the patch names, made unable to
+//! flee as in that test's fight, so the relief comes in the first lull of a real fight; it
+//! then says whether each relief was pressed too. That one is for checking the marks.
 //!
 //! `reliefs` runs the relieved runs of a cell's `relief` records again, lowest set first and
 //! then lowest seed, until `--max` reliefs have been ordered in them. For each relief it
@@ -21,8 +23,9 @@
 //! between the order and the tired century's halt, or the run's end if it never halted.
 //! - Pressed: a bout began with a man of either century.
 //! - Jammed: at some man step a man of the two centuries had eight or more others on their
-//!   feet within a metre of him. With himself that is nine on 3.14 m², the passage bench's
-//!   own measure of density at its lowest jam (`cannae-harness`, `passage.rs`).
+//!   feet within a metre of him, one of them at least of the other century of the two. With
+//!   himself that is nine on 3.14 m², the passage bench's own measure of density at its
+//!   lowest jam (`cannae-harness`, `passage.rs`).
 //! - Unfinished, by reason: one of the two centuries broke, or the run ended.
 //!
 //! It also writes how the run fared beside its `backed` twin.
@@ -70,7 +73,9 @@ const STOLID: Troop = Troop {
 };
 
 /// A jam, as the passage bench measures density: this many others on their feet within this
-/// distance of a man. Eight others and himself on a disc of one metre are 2.9 per m².
+/// distance of a man. Eight others and himself on a disc of one metre are 2.9 per m². One of
+/// them must be of the other century of the two: a front in close fight is as dense, and
+/// nobody passes through anybody there.
 const JAM_OTHERS: usize = 8;
 const JAM_WITHIN_MM: i64 = 1_000;
 
@@ -169,14 +174,19 @@ impl Drill {
             .collect();
         if !self.jammed {
             self.jammed = pair.iter().any(|&i| {
-                (0..bodies.len())
-                    .filter(|&j| {
+                let other = if of[i] == Some(BodyId(tired)) {
+                    fresh
+                } else {
+                    tired
+                };
+                let near = || {
+                    (0..bodies.len()).filter(move |&j| {
                         j != i
                             && bodies.posture[j] != Posture::Down
                             && bodies.pos[j].dist_sq(bodies.pos[i]) <= JAM_WITHIN_MM * JAM_WITHIN_MM
                     })
-                    .count()
-                    >= JAM_OTHERS
+                };
+                near().count() >= JAM_OTHERS && near().any(|j| of[j] == Some(BodyId(other)))
             });
         }
         for i in standing(b, of, tired) {
@@ -190,6 +200,21 @@ impl Drill {
     }
 }
 
+/// Whether a bout began with a man of either body between two ticks.
+fn pressed(
+    events: &[Event],
+    of: &[Option<BodyId>],
+    (tired, fresh): (u32, u32),
+    (from, until): (u32, u32),
+) -> bool {
+    let in_pair = |m: ManId| matches!(of.get(m.0 as usize), Some(Some(BodyId(x))) if *x == tired || *x == fresh);
+    events.iter().any(|e| {
+        (from..=until).contains(&e.tick)
+            && matches!(e.kind, EventKind::Bout { attacker, .. }
+                if in_pair(attacker) || in_pair(e.man))
+    })
+}
+
 /// Where a body's standing men are along the line of advance: the rearmost and the foremost.
 fn span(b: &Battle, of: &[Option<BodyId>], body: u32) -> Option<(i32, i32)> {
     let bodies = b.live.bodies();
@@ -198,10 +223,11 @@ fn span(b: &Battle, of: &[Option<BodyId>], body: u32) -> Option<(i32, i32)> {
 }
 
 fn drill(mut args: impl Iterator<Item = String>) -> Result<(), String> {
-    let mut engine = None;
+    let (mut engine, mut fight) = (None, false);
     while let Some(a) = args.next() {
         match a.as_str() {
             "--engine" => engine = args.next().as_deref().and_then(engine_of),
+            "--fight" => fight = true,
             other => return Err(format!("unknown argument {other:?}")),
         }
     }
@@ -219,7 +245,23 @@ fn drill(mut args: impl Iterator<Item = String>) -> Result<(), String> {
         variant: "relief".to_string(),
         seed: 3,
     };
-    let troops = vec![STOLID; s.bodies.len()];
+    let troops = s
+        .bodies
+        .iter()
+        .map(|body| {
+            if !fight {
+                return Ok(STOLID);
+            }
+            // The troops the patch names, with a nerve no alarm reaches: nobody flees.
+            let named = d
+                .troop(&body.troop)
+                .ok_or_else(|| format!("unknown troop {:?}", body.troop))?;
+            Ok(Troop {
+                nerve: Spread { mean: 8_192, sd: 0 },
+                ..named
+            })
+        })
+        .collect::<Result<Vec<Troop>, String>>()?;
     let mut b = build_from(&c, &s, &d, Some(&troops))?.battle;
     let of = b.live.bodies().body.clone();
     let pairs = pairs(&s)?;
@@ -227,7 +269,9 @@ fn drill(mut args: impl Iterator<Item = String>) -> Result<(), String> {
     // The fresh body's front and the tired body's rear, at the order, when the fresh body was
     // up, and at the halt.
     let mut at = vec![[None::<(i32, i32)>; 3]; pairs.len()];
-    let end = 240 * 1000 / BASE_TICK.0;
+    // Who was out of his place at the halt: his role and the body he began in.
+    let mut astray = vec![String::new(); pairs.len()];
+    let end = if fight { 600 } else { 240 } * 1000 / BASE_TICK.0;
     while b.live.tick() < end {
         let man_step = b.live.step();
         for (k, &(tired, fresh)) in pairs.iter().enumerate() {
@@ -243,25 +287,37 @@ fn drill(mut args: impl Iterator<Item = String>) -> Result<(), String> {
             }
             if before.halted != now.halted {
                 at[k][2] = both();
+                let bodies = b.live.bodies();
+                astray[k] = standing(&b, &of, tired)
+                    .chain(standing(&b, &of, fresh))
+                    .filter(|&i| !bodies.in_place[i])
+                    .map(|i| format!("{:?} of body {}", bodies.role[i], of[i].map_or(0, |x| x.0)))
+                    .collect::<Vec<_>>()
+                    .join(", ");
             }
         }
         if drills.iter().all(|d| d.back.is_some()) {
             break;
         }
     }
-    if !b.live.events().is_empty() {
+    if !fight && !b.live.events().is_empty() {
         return Err(format!(
             "{} events in a drill of men whom nothing moves",
             b.live.events().len()
         ));
     }
     println!(
-        "the relief alone, {engine:?}, nominal set, rung 2, seed 3; a man walks {} mm/s",
+        "the relief {}, {engine:?}, nominal set, rung 2, seed 3; a man walks {} mm/s",
+        if fight {
+            "in a fight of men who cannot flee"
+        } else {
+            "alone"
+        },
         d.speeds.walk
     );
     for (k, dr) in drills.iter().enumerate() {
         let (Some(o), Some(u), Some(h)) = (dr.ordered, dr.up, dr.halted) else {
-            println!("  relief {k}: not finished in 240 s: {dr:?}");
+            println!("  relief {k}: not finished: {dr:?}");
             continue;
         };
         let ([Some(a), Some(m), Some(z)], Some(near)) = (at[k], dr.nearest) else {
@@ -281,13 +337,22 @@ fn drill(mut args: impl Iterator<Item = String>) -> Result<(), String> {
             f64::from(went) / walk,
         );
         println!(
-            "    {} men of the two out of their places at the halt; nine in ten of the tired \
-             century in their places {} after it; nearest two men of the two {near:.0} mm; \
-             jammed: {}",
+            "    {} men of the two out of their places at the halt ({}); nine in ten of the \
+             tired century in their places {} after it; nearest two men of the two {near:.0} \
+             mm; jammed: {}{}",
             dr.astray.unwrap_or(0),
+            astray[k],
             dr.back
                 .map_or("never".to_string(), |t| format!("{:.2} s", seconds(t - h))),
-            dr.jammed
+            dr.jammed,
+            if fight {
+                format!(
+                    "; pressed: {}",
+                    pressed(b.live.events(), &of, pairs[k], (o, h))
+                )
+            } else {
+                String::new()
+            }
         );
     }
     Ok(())
@@ -401,6 +466,9 @@ fn stepped(
     Ok((built.battle, built.bodies))
 }
 
+/// What one replayed run gave: its lines, or why it is not counted.
+type Said = Result<Vec<String>, String>;
+
 /// Runs `one` over the chosen records on `jobs` threads, writes its lines to the file in the
 /// records' order, and prints the counts.
 fn over(
@@ -408,10 +476,10 @@ fn over(
     what: &str,
     on_record: usize,
     chosen: &[&Record],
-    one: impl Fn(&Record) -> Result<Vec<String>, String> + Sync,
+    one: impl Fn(&Record) -> Said + Sync,
 ) -> Result<(), String> {
     let next = AtomicUsize::new(0);
-    let done: Mutex<Vec<(usize, Result<Vec<String>, String>)>> = Mutex::new(Vec::new());
+    let done: Mutex<Vec<(usize, Said)>> = Mutex::new(Vec::new());
     std::thread::scope(|scope| {
         for _ in 0..a.jobs.max(1) {
             scope.spawn(|| {
@@ -501,9 +569,6 @@ fn relief_lines(
             }
         }
     };
-    let in_pair = |m: ManId, tired: u32, fresh: u32| {
-        matches!(of.get(m.0 as usize), Some(Some(BodyId(x))) if *x == tired || *x == fresh)
-    };
     let broke = |body: u32| {
         r.summary
             .body_break
@@ -518,11 +583,7 @@ fn relief_lines(
     for (k, (dr, &(tired, fresh))) in drills.iter().zip(pairs).enumerate() {
         let Some(o) = dr.ordered else { continue };
         let until = dr.halted.unwrap_or(end);
-        let pressed = events.iter().any(|e| {
-            (o..=until).contains(&e.tick)
-                && matches!(e.kind, EventKind::Bout { attacker, .. }
-                    if in_pair(attacker, tired, fresh) || in_pair(e.man, tired, fresh))
-        });
+        let pressed = pressed(&events, &of, (tired, fresh), (o, until));
         let unfinished = match dr.halted {
             Some(_) => "null",
             None if broke(tired) || broke(fresh) => "\"broke\"",
@@ -569,9 +630,7 @@ fn reliefs(args: impl Iterator<Item = String>) -> Result<(), String> {
     let s = scenario("relief", &scenario_text("relief")?)?;
     let pairs = pairs(&s)?;
     over(&a, "relieved runs", relieved.len(), &chosen, |r| {
-        let twin = backed
-            .iter()
-            .find(|t| t.draw == r.draw && t.seed == r.seed);
+        let twin = backed.iter().find(|t| t.draw == r.draw && t.seed == r.seed);
         relief_lines(&s, &pairs, &a, r, twin)
     })
 }
@@ -629,7 +688,10 @@ fn leader_lines(s: &Scenario, a: &Asked, r: &Record) -> Result<Vec<String>, Stri
                 r.seed,
                 bodies.side[m] as u8,
                 seconds(e.tick),
-                breaks[k].map_or("null".to_string(), |t| format!("{:.2}", seconds(t - e.tick))),
+                breaks[k].map_or("null".to_string(), |t| format!(
+                    "{:.2}",
+                    seconds(t - e.tick)
+                )),
                 if men > 0 {
                     f64::from(turned) / f64::from(men)
                 } else {
@@ -668,7 +730,7 @@ fn main() {
         Some("drill") => drill(args),
         Some("reliefs") => reliefs(args),
         Some("leaders") => leaders(args),
-        _ => Err("usage: cannae-replay drill --engine E\n       \
+        _ => Err("usage: cannae-replay drill --engine E [--fight]\n       \
                   cannae-replay reliefs --records DIR --engine E --rung R --freeze-seed F \
                   --out FILE [--max 100] [--jobs 4]\n       \
                   cannae-replay leaders --records DIR --engine E --rung R --freeze-seed F \
