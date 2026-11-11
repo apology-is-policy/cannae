@@ -3,6 +3,10 @@
 //! perception and substrate. Its parameters are the nominal set, the centre of every prior,
 //! which is never scored. The drawn sets of the scored batch are not offered: to watch one
 //! before it is scored would be to read its outcome.
+//!
+//! [`build_from`] takes any parameter set. It is for the replays the report owes
+//! (`cannae-replay`), which run a scored set again after the scoring, and only a run that has
+//! a record. The viewer and the QC pass do not call it.
 
 pub mod detect;
 
@@ -16,10 +20,10 @@ use cannae_field::{Field, FieldPerception};
 use cannae_gauges::Rung3;
 use cannae_harness::scenario::frames_with;
 use cannae_harness::{Dormancy, Runner, Scenario, place};
-use cannae_man::{Marks, Men};
+use cannae_man::{Marks, Men, Troop};
 use cannae_pairwise::Pairwise;
 use cannae_score::Engine;
-use cannae_score::draw::{Cell, SubstrateParams, nominal};
+use cannae_score::draw::{Cell, Drawn, SubstrateParams, nominal};
 use std::fmt::Write as _;
 
 /// The scenario files of `scenarios/patch`. A variant named in a request is checked against
@@ -151,37 +155,59 @@ pub struct Built {
     pub bodies: Vec<BodyInfo>,
 }
 
-/// Builds the battle as `cannae_score` builds a scored run.
-pub fn build(c: &Config) -> Result<Built, String> {
-    if !VARIANTS.contains(&c.variant.as_str()) {
-        return Err(format!("unknown variant {:?}", c.variant));
+/// The text of a variant's scenario file.
+pub fn scenario_text(variant: &str) -> Result<String, String> {
+    if !VARIANTS.contains(&variant) {
+        return Err(format!("unknown variant {variant:?}"));
     }
     let path = format!(
-        "{}/../scenarios/patch/{}.toml",
-        env!("CARGO_MANIFEST_DIR"),
-        c.variant
+        "{}/../scenarios/patch/{variant}.toml",
+        env!("CARGO_MANIFEST_DIR")
     );
-    let text = std::fs::read_to_string(&path).map_err(|e| format!("{path}: {e}"))?;
-    let s = Scenario::from_toml(&text).map_err(|e| format!("{path}: {e}"))?;
+    std::fs::read_to_string(&path).map_err(|e| format!("{path}: {e}"))
+}
+
+/// Builds the battle as `cannae_score` builds a scored run, at the nominal set.
+pub fn build(c: &Config) -> Result<Built, String> {
+    let text = scenario_text(&c.variant)?;
+    let s = Scenario::from_toml(&text).map_err(|e| format!("{}: {e}", c.variant))?;
     let d = nominal(Cell {
         engine: c.engine,
         rung: c.rung,
     })?;
-    let troops = s
-        .bodies
-        .iter()
-        .map(|b| {
-            d.troop(&b.troop)
-                .ok_or_else(|| format!("unknown troop {:?}", b.troop))
-        })
-        .collect::<Result<Vec<_>, _>>()?;
-    let (bodies, placed) = place(&s);
-    let frames = frames_with(&s, &placed, &bodies, |t| d.tie(t))?;
+    build_from(c, &s, &d, None)
+}
+
+/// The same for any scenario and parameter set. `c` names the battle and gives its seed.
+/// `troops`, if given, fill the bodies in place of the troops the scenario names: one for
+/// each body, in the file's order.
+pub fn build_from(
+    c: &Config,
+    s: &Scenario,
+    d: &Drawn,
+    troops: Option<&[Troop]>,
+) -> Result<Built, String> {
+    let troops = match troops {
+        Some(t) if t.len() == s.bodies.len() => t.to_vec(),
+        Some(t) => {
+            return Err(format!("{} troops for {} bodies", t.len(), s.bodies.len()));
+        }
+        None => s
+            .bodies
+            .iter()
+            .map(|b| {
+                d.troop(&b.troop)
+                    .ok_or_else(|| format!("unknown troop {:?}", b.troop))
+            })
+            .collect::<Result<Vec<_>, _>>()?,
+    };
+    let (bodies, placed) = place(s);
+    let frames = frames_with(s, &placed, &bodies, |t| d.tie(t))?;
     let n = bodies.len();
     let rng = Rng::new(c.seed);
     let walls = s.walls();
     let volleys = s.volleys()?;
-    let meta = meta_json(c, &s, &bodies, &walls);
+    let meta = meta_json(c, s, &bodies, &walls);
     let infos = s
         .bodies
         .iter()
