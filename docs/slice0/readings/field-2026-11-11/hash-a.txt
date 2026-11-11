@@ -1,0 +1,4 @@
+pocket: 150000 bodies, 1 thread, contact Line, perception on, 300 simulated s
+  wall    60 s  sim  197.6 s  rate   3.29x  free 150000  hot 24660  passes 4  tiles 36  densest 9.5 (peak 9.8) per m2  crushed 41297  views 32911941
+    perception, ms: rebuild 1432, coarse 1838, views 43827
+done: 300 simulated s in 100 s, 3.01x real time overall, peak 9.8 per m2, crushed 70123, views 53961116 (check 676453141), final hash 7f53bf4b9599fa9e

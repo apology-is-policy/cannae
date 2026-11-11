@@ -1,0 +1,40 @@
+pocket: 150000 bodies, 8 thread(s), perception field, 100000 simulated s
+  wall    30 s  sim   95.8 s  rate  3.19x  touching 116341  crushed 0  views 11296792
+    perception, ms: rebuild 716, coarse 975, views 12105
+  wall    60 s  sim  180.7 s  rate  2.83x  touching 125226  crushed 9  views 23138151
+    perception, ms: rebuild 615, coarse 890, views 13772
+  wall    90 s  sim  258.6 s  rate  2.59x  touching 129937  crushed 17  views 35121160
+    perception, ms: rebuild 566, coarse 829, views 14888
+  wall   120 s  sim  331.8 s  rate  2.44x  touching 132806  crushed 18  views 47127630
+    perception, ms: rebuild 533, coarse 787, views 15514
+  wall   150 s  sim  400.3 s  rate  2.28x  touching 135010  crushed 20  views 59024258
+    perception, ms: rebuild 486, coarse 725, views 15398
+  wall   180 s  sim  467.5 s  rate  2.24x  touching 136803  crushed 21  views 71326387
+    perception, ms: rebuild 468, coarse 701, views 16074
+  wall   210 s  sim  531.5 s  rate  2.13x  touching 138298  crushed 21  views 83728912
+    perception, ms: rebuild 450, coarse 674, views 16627
+  wall   240 s  sim  593.5 s  rate  2.06x  touching 139455  crushed 21  views 96182580
+    perception, ms: rebuild 432, coarse 652, views 17008
+  wall   270 s  sim  653.0 s  rate  1.98x  touching 140389  crushed 22  views 108644229
+    perception, ms: rebuild 417, coarse 629, views 17285
+  wall   300 s  sim  710.3 s  rate  1.91x  touching 141362  crushed 24  views 121040097
+    perception, ms: rebuild 401, coarse 606, views 17615
+  wall   330 s  sim  765.8 s  rate  1.85x  touching 142121  crushed 24  views 133646767
+    perception, ms: rebuild 388, coarse 588, views 18061
+  wall   360 s  sim  819.3 s  rate  1.78x  touching 142818  crushed 28  views 146445642
+    perception, ms: rebuild 374, coarse 568, views 18447
+  wall   390 s  sim  871.0 s  rate  1.72x  touching 143351  crushed 30  views 159352776
+    perception, ms: rebuild 362, coarse 550, views 18761
+  wall   420 s  sim  921.4 s  rate  1.68x  touching 144055  crushed 35  views 172415446
+    perception, ms: rebuild 348, coarse 529, views 19080
+  wall   450 s  sim  970.0 s  rate  1.62x  touching 144718  crushed 52  views 185590052
+    perception, ms: rebuild 340, coarse 514, views 19407
+  wall   481 s  sim 1016.5 s  rate  1.55x  touching 145207  crushed 69  views 198552906
+    perception, ms: rebuild 332, coarse 504, views 19727
+  wall   511 s  sim 1059.8 s  rate  1.44x  touching 145861  crushed 79  views 211048294
+    perception, ms: rebuild 327, coarse 500, views 20260
+  wall   541 s  sim 1101.8 s  rate  1.40x  touching 146393  crushed 94  views 223488388
+    perception, ms: rebuild 317, coarse 485, views 20365
+  wall   571 s  sim 1141.9 s  rate  1.34x  touching 146954  crushed 115  views 235789879
+    perception, ms: rebuild 305, coarse 467, views 20012
+done: 1180 simulated s in 600 s, 1.97x real time overall, views 247714518 (check 3692411169), final hash e5ff89f58eda0d06

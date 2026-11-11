@@ -1,0 +1,14 @@
+2026-11-11T08:38:04Z readings at 91185c4, Apple M2
+2026-11-11T08:39:25Z pocket-field-8: pocket, 8 threads, perception field, 600 s of wall time; load before 1.89
+  second half 1.59x (simulated 710.3 to 1141.9 s, wall 300 to 571 s)
+  whole run 2.00x; slowest report 1.34x, at simulated 1141.9 s
+  last report:  wall   571 s  sim 1141.9 s  rate  1.34x  touching 146954  crushed 115  views 235789879
+  load after 5.65
+  done: 1180 simulated s in 600 s, 1.97x real time overall, views 247714518 (check 3692411169), final hash e5ff89f58eda0d06
+2026-11-11T08:52:06Z line-field-8: line, 8 threads, perception field, 600 s of wall time; load before 1.97
+  second half 8.42x (simulated 2610.3 to 4884.1 s, wall 300 to 570 s)
+  whole run 8.57x; slowest report 6.24x, at simulated 4884.1 s
+  last report:  wall   570 s  sim 4884.1 s  rate  6.24x  touching 10000  crushed 0  views 234417000
+  load after 7.37
+  done: 5065 simulated s in 600 s, 8.44x real time overall, views 243093000 (check 364600000), final hash 3ab06d787dd54e81
+2026-11-11T09:05:26Z rout-field-8: rout, 8 threads, perception field, 600 s of wall time; load before 1.98

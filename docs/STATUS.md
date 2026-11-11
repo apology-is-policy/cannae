@@ -87,7 +87,7 @@ The sources behind them are in [crowd-physics.md](slice0/crowd-physics.md) and [
 | `volleys` (missiles on an area, resolved beside the bouts) and the relief drill (a century relieved by the one behind it in a lull, in the shared frames) | 79957e5, e187489, ca38f3a, reviewed and merged |
 | `backed`, and the relief from twenty minutes | b00dcf1, reviewed and merged |
 | The rule for reading sustained figures, fixed before any is taken | b373249, merged (c9379c0) |
-| His sustained speed readings | running since 2026-11-11 07:33 UTC |
+| His sustained speed readings | done 2026-11-11; his write-up follows |
 | His review of the runner's fix (449dcd6) and of the QC list; five detectors of his own | 3151e50, merged |
 
 **The freeze (2026-11-10).** The pre-registration's text is final at commit dd9d90a. The record
@@ -172,6 +172,95 @@ overnight.
   not on the Pi's network. The old batch runs on there. The pre-flight and the new batch wait
   until the Mac is back on that network.
 
+**Since then (2026-11-11, 08:40 UTC):**
+
+- **The Pi is reachable again and GitHub works;** everything is pushed.
+- **The old batch was stopped at 08:25 UTC.** Its folder is untouched and stays as the first
+  batch: 9,401 records, 8,400 of them the field engine's `base`.
+- **The QC tool is tested and committed.** Its 38 tests on hand-made scenes pass, and six more
+  hold the battles it builds to the scorer's own, event for event. It was compiled and tested
+  on the Pi, so the Mac stayed free.
+- **The control passed:** on the frozen code the tool finds the step back Michal saw, at
+  29.25 s: 70 of 77 slots moved back by exactly one rank.
+- **The pass itself is running on the Pi,** on the fixed code: 320 battles.
+- **Varro's speed readings are done, and he reports that his engine fails its line.** The
+  pocket with perception ran at 1.43x sustained on one core, against 10x. His table goes into
+  [spike-field.md](slice0/spike-field.md). By the rule both signed, a reading under the line
+  is final, since the man only adds cost. My own readings start when he hands the Mac over.
+
+**Since then (2026-11-11, 12:40 UTC):**
+
+- **My engine is under its own speed line too: 2.67x against 3x over a whole battle.** The
+  pocket ran at 1.59x sustained on eight threads and the line at 8.42x, both valid by the rule,
+  and the man is not in it yet ([spike-pairwise.md](slice0/spike-pairwise.md)). So both
+  engines miss their speed lines on the Air. What follows from that is Michal's to decide
+  with the Slice 0 report.
+- **The Mac went down at about 09:13 UTC,** during my third run, and was back at 12:14. The two runs that set the
+  figure were complete; three side runs are missing. Something unknown had held the Mac's load
+  near 1.8 during my runs; it is logged, and the rule's own test for a disturbed run did not
+  trigger. A second reading on the restarted Mac would stand beside the first, not replace it.
+  Varro and I put that to Michal as one joint question; none is taken before they answer.
+- **One shared component is the larger part of both speed failures.** Both spikes run Varro's
+  perception on one thread. It took 67 % of my pocket's last five minutes and 85 % of his.
+  Without it my runs would read about 7.4x over a whole battle. The figures stand as read;
+  what to do about the component is for Michal to see before deciding about either engine.
+- **The QC pass ran:** 320 battles on the fixed code, 151,258 flags, 170 picked by the rule
+  and drawn. Six detectors found nothing on either engine, and both dormancy checks pass
+  everywhere.
+- **The pairwise half is looked at** ([qc-results.md](slice0/qc-results.md)): 75 flags, **no
+  defect,** 37 fine, 38 gaps. The fix for the step back works. Thirteen things look wrong
+  although the code does what it says. The ones Michal has not seen yet: a century still
+  steps back as one, by 0.65 m, when its standard-bearer himself gives ground; the
+  standard-bearer moves up into the front rank and fights; the fronts pack into a dense band
+  after two minutes; runners keep their file lines; pursuit never ends; men attacked from
+  behind rarely face about.
+- **Still to come:** Varro's list for the field engine, each reading the other's, the page
+  with pictures for Michal, then Addendum 4, the re-freeze and the new batch. **Nothing runs
+  on the Pi meanwhile.**
+
+**Since then (2026-11-11, 15:45 UTC):**
+
+- **The page with pictures is there: [slice0/qc/README.md](slice0/qc/README.md).** One
+  picture and a few lines for each of the thirteen things that look wrong on the pairwise
+  engine, made to be read on a phone. The one to look at first is A: a century still steps
+  back as one, by 0.65 m, when its standard-bearer gives ground.
+- **Every pairwise flag looked at, with its four-panel picture, bin and reason:**
+  [slice0/qc/pairwise.md](slice0/qc/pairwise.md). 75 flags, 63 distinct pictures.
+- **The page's links open the live viewer on the Mac.** It runs there now, built from the
+  fixed code, on 127.0.0.1 only. It is stopped before anyone reads a speed again.
+- **The draft of Addendum 4 has the four changes Varro asked for** (call 0001, note 59): which
+  batch pairs with which, the runner fix named as chosen after the verdict was known, both
+  speed verdicts known before the re-freeze, and a place for his own check of the runner fix.
+  It is still unsigned.
+- **Varro's list for the field engine is in**
+  ([qc-results-field.md](slice0/qc-results-field.md)): 95 flags, 41 fine, 50 gaps, and
+  **one candidate defect, in his own field code** (4 flags; 123 of its kind in 27 of 160
+  battles, none in `base`). Two enemies on their feet can come nearer than the guard's
+  distance when both count as in their places; the nearest pair stood 11 mm apart. I read
+  the text and the code and agree that it is a defect. Both of us recommend that it is
+  recorded and left out of the re-freeze.
+- **Each of us has read the other's list.** Varro agrees with all 75 pairwise bins. The step
+  back that remains (A on the page) is larger on his engine: a century of 72 walks back
+  15.6 m in twelve seconds behind a standard-bearer who gives ground.
+- **Four more things that look wrong, from his list:** pursuers of one side stand on one
+  another (the field engine only); a man at the edge of his alarm flickers between steady
+  and giving ground; a body ordered to retire walks off for good (both engines); the second
+  line runs within seconds of the first, untouched.
+
+**Michal's three decisions (2026-11-11, about 15:40 UTC),** each on the recommendation of both
+of us:
+
+1. **The field engine's defect is recorded and left in.** The re-frozen code is the frozen
+   code with the two fixes and nothing more. The report names the defect with its counts.
+2. **The step back that remains stays in the new batch** and goes first on the list for the
+   second round (11 below). The code does it on purpose: a formation follows its standard.
+3. **Speed: the shared perception is put on all threads and the speed is read again as a new
+   line,** conditions written first. The first readings stay in the report as the verdict on
+   the engines as built. It does not hold up the batch.
+
+**Still to come:** both signatures on Addendum 4 and Michal's approval of it, then the
+re-freeze, the pre-flight and the new batch. **Nothing runs on the Pi meanwhile.**
+
 **The crosswise check of the two perceptions passed** (finished 00:04 UTC): all 160 runs gave
 the same end state and the same event log through either perception, and the 80 that the batch
 had also made agree with its records, field for field.
@@ -241,6 +330,34 @@ do this. Candidates for a second round, none decided (5 to 10 came from Michal's
    and the rear officer.
 10. **The first to turn are front-rank men.** The sources and our own pre-registered pattern
    say a collapse starts at the rear. The batch scores how often it does.
+
+**11 to 24 came from the QC pass (2026-11-11).** The letters are those of
+[qc-results.md](slice0/qc-results.md) and [qc-results-field.md](slice0/qc-results-field.md);
+the pictures are on [the page](slice0/qc/README.md). C is 5 above, D is 8, and L is 3.
+
+11. **A: a formation follows its standard-bearer wherever his own posture takes him.** A
+    century steps back as one when he gives ground: 0.65 m at a time on my engine, 15.6 m in
+    twelve seconds on Varro's. **Michal: it stays in the batch and is first here.**
+12. **B: the standard-bearer moves up into the front rank and fights.** A starts there.
+13. **E: a runner does not read where the enemy is,** and a pursuer ignores a runner behind
+    him.
+14. **F: runners keep their file lines,** nose to tail.
+15. **G: pursuit never ends.** Nobody is caught and nobody gives up.
+16. **H: the two fronts pack into one dense band,** and the Romans' fighting room is gone.
+17. **I: a strike passes through a comrade.**
+18. **J: men attacked from behind rarely face about.**
+19. **K: a lost file is never closed from the side.**
+20. **M: a body halts at its standoff before a single man.**
+21. **N: pursuers of one side stand on one another** (the field engine only).
+22. **O: a man at the edge of his alarm flickers** between steady and giving ground, six times
+    in five seconds. When he carries the standard, the century steps with him each time.
+23. **P: a body ordered to retire walks off for good,** and its men never regain their slots
+    (both engines).
+24. **R: the second line runs within seconds of the first, untouched.** A man's alarm counts
+    his side's runners, not his body's.
+
+**A defect left in by decision: D1, in the field engine.** Two enemies on their feet can stand
+nearer than the guard's distance (Michal's first decision above).
 
 **A defect found by watching (Michal, 2026-11-10).** When the man in front of a century's
 standard-bearer falls, the whole century steps back one rank, 1.8 m, two seconds later. A

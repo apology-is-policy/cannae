@@ -1,0 +1,23 @@
+commit 4beeb83, binary 4ab05d5c998e76c4
+== pocket-line-perceive: pocket --perceive --seconds 1000000 --wall-s 600 --report-every-s 60 | load before { 1.87 2.98 6.31 } at 08:33:04
+   exit 0 | load after { 2.86 2.76 4.47 } at 08:43:04
+done: 1152 simulated s in 600 s, 1.92x real time overall, peak 9.8 per m2, crushed 309622, views 298570290 (check 3629899088), final hash e6bc522276fa11d7
+== pocket-line: pocket --seconds 1000000 --wall-s 600 --report-every-s 60 | load before { 1.95 2.54 4.31 } at 08:43:45
+   exit 0 | load after { 2.66 2.56 3.41 } at 08:53:45
+done: 4061 simulated s in 600 s, 6.77x real time overall, peak 10.0 per m2, crushed 1007423, views 0 (check 0), final hash 2164d0e0b392e1dc
+== pocket-crowd: pocket --contact crowd --seconds 1000000 --wall-s 600 --report-every-s 60 | load before { 1.99 2.39 3.31 } at 08:54:25
+   exit 0 | load after { 2.53 2.62 2.95 } at 09:04:25
+done: 1194 simulated s in 600 s, 1.99x real time overall, peak 15.4 per m2, crushed 438593, views 0 (check 0), final hash 1de32828009327ef
+== line: line --seconds 1000000 --wall-s 600 --report-every-s 60 | load before { 1.93 2.46 2.88 } at 09:04:55
+   exit 0 | load after { 2.79 2.80 2.85 } at 09:14:55
+done: 19100 simulated s in 600 s, 31.83x real time overall, peak 2.2 per m2, crushed 0, views 0 (check 0), final hash 7f387658b54b1d21
+== surge: surge --seconds 1000000 --wall-s 600 --report-every-s 60 | load before { 1.94 2.57 2.76 } at 09:15:45
+   exit 0 | load after { 2.83 3.07 2.95 } at 09:25:45
+done: 7980 simulated s in 600 s, 13.30x real time overall, peak 7.4 per m2, crushed 0, views 0 (check 0), final hash 608c4ce4f3905feb
+== hash-a: pocket --perceive --seconds 300 --report-every-s 60 | load before { 1.94 2.87 2.92 } at 09:29:26
+   exit 0 | load after { 2.88 2.93 2.93 } at 09:31:06
+done: 300 simulated s in 100 s, 3.01x real time overall, peak 9.8 per m2, crushed 70123, views 53961116 (check 676453141), final hash 7f53bf4b9599fa9e
+== hash-b: pocket --perceive --seconds 300 --report-every-s 60 | load before { 1.92 2.54 2.77 } at 09:33:36
+   exit 0 | load after { 3.95 3.10 2.96 } at 09:35:13
+done: 300 simulated s in 97 s, 3.10x real time overall, peak 9.8 per m2, crushed 70123, views 53961116 (check 676453141), final hash 7f53bf4b9599fa9e
+all done at 09:35:13

@@ -595,9 +595,8 @@ until the batch ends.
 
 ## Addendum 4 (draft, 2026-11-11): the batch is restarted once, on a re-frozen code
 
-**A draft, not signed.** It is final when the QC pass has run
-([qc-pass.md](qc-pass.md)), since that pass can still add to the list below. It replaces the
-rule of Addendum 3: the batch does not run to its end on the frozen code, and `base` is not
+**Not signed yet.** The QC pass has run ([qc-pass.md](qc-pass.md)), and Michal has decided
+what it adds to the list below: nothing. It replaces the rule of Addendum 3: the batch does not run to its end on the frozen code, and `base` is not
 repeated after it. Addendum 3's account of the defect and its conditions on the fix stand.
 
 **The decision.** Michal decided on one restart of the batch. Paullus asked on 2026-11-10 at
@@ -621,12 +620,38 @@ repeated after it. Addendum 3's account of the defect and its conditions on the 
 |---|---|---|
 | The frozen code | dd9d90a | |
 | The standard-bearer fix | ed6d363, exactly as Varro committed it on 2026-11-10 at 23:15 UTC | Addendum 3: its tests, its 20 mutations, and the 3 runs with a count of zero that are unchanged |
-| The runner fix | 449dcd6 (Paullus): battles run on plain threads | It changes no record: 90 field records made with it equal the first batch's own from the Pi, and 80 pairwise records equal the frozen runner's with one job; all fields but the wall time |
-| Defects from the QC pass | *to be listed, or "none"* | Each judged against the code's own text and never against a band; accepted by both; approved by Michal; fixed by the code's owner, reviewed by the other, checked by mutation |
+| The runner fix | 449dcd6 (Paullus): battles run on plain threads | It changes no record: 90 field records made with it equal the first batch's own from the Pi, and 80 pairwise records equal the frozen runner's with one job; all fields but the wall time. Varro's own check of the same: *to be entered here with its date when it has run* |
+| Defects from the QC pass | None goes in. The pairwise list (Paullus, [qc-results.md](qc-results.md)) has none. The field list (Varro, [qc-results-field.md](qc-results-field.md)) has one, D1, and it is left in (below) | Each judged against the code's own text and never against a band |
+
+So the re-frozen code is dd9d90a with ed6d363 and 449dcd6, and nothing more.
+
+**The defect that stays in: D1, in the field engine.** Two enemies on their feet can stand
+nearer than the guard's distance when both count as in their places; the nearest pair stood
+11 mm apart, and 119 of the 123 flags last one man step.
+
+- **Found** by Varro in his own code, in the QC pass. Paullus read the text and the code and
+  agrees that it is a defect: priors-field F6 and `field.rs` state the guard without
+  exception, and the pass over exact positions skips a pair of whom both are in their places.
+- **How often,** in the 160 unscored field battles of the pass: 123 flags under 300 mm, in 27
+  battles. `shock` 108 in 20 battles, `veterans` 12 in 5, `flank` 3 in 2, none in the other
+  five variants. Pairs between 300 and 600 mm apart are not counted.
+- **Michal decided on 2026-11-11 at about 15:40 UTC that it is recorded and left in,** on both
+  our recommendations. A fix would change the field engine's contact rule for every pair at
+  the line, and its owner would write it knowing that engine's result on `base`.
+- **The report names it** as a known defect of the field engine in the scored runs, with these
+  counts. The scored runs do not count it.
+
+**What the QC pass found that is not a defect stays in too,** by the pass's own rule: 38 gaps
+on the pairwise list and 50 on the field's, things that look wrong although the code does what
+its text says. Michal was asked about one of them by itself, because it is the nearest to the
+defect of Addendum 3: a formation still follows its standard-bearer when he himself gives
+ground, by 0.65 m at a time on the pairwise engine and by as much as 15.6 m in twelve seconds
+on the field engine. They decided at the same time that it stays and goes first on the list
+for a second round.
 
 Nothing else changes: the same freeze seed, the same 200 parameter sets, the same ten seeds for
-each, the same priors, bands, scorer, stop rule and audit. So every run of the new batch has
-its pair in the first one.
+each, the same priors, bands, scorer, stop rule and audit. So every run of the first batch has
+its pair in the new one.
 
 **The rule from here on.** No restart once the batch script's gate has run.
 
@@ -651,10 +676,17 @@ the field engine's four cells are ruled out on `base` (the table below, 06:39 an
 - **The engines are compared on the re-frozen code only.** The field engine has two results
   and the pairwise engine one, because its half could not run on the frozen code. The report
   says so wherever it compares them.
-- **Nothing in the re-freeze was chosen with the verdict in hand,** except what the QC pass
-  adds. That is why the fix is pinned to the commit made before the gate ran, why the runner's
-  fix is shown to change no record, and why a QC defect is judged against the code's own text.
-  Each QC defect is listed above as found after the verdict was known.
+- **Two things were chosen with the verdict in hand:** the runner fix 449dcd6, written after
+  the gate had run, and the decision to leave D1 in. The first is shown to change no record.
+  The second changes no code, and it was recommended by Varro, who knows his engine's result,
+  agreed by Paullus and decided by Michal. The standard-bearer fix was not chosen so: it is
+  pinned to the commit made before the gate ran.
+- **Both speed verdicts are known before the re-freeze** (read on 2026-11-11). The field
+  engine's pocket ran at 1.43x against its 10x line ([spike-field.md](spike-field.md)), and
+  the pairwise engine at 2.67x against its 3x line over a whole battle
+  ([spike-pairwise.md](spike-pairwise.md)). They change nothing in the batch. Michal decided
+  on 2026-11-11, on one question from both of us, that the shared perception is put on all
+  threads and the speed read again as a new line; the first readings stay in the report.
 
 **Before the new batch starts.**
 

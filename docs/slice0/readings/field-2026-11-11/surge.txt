@@ -1,0 +1,11 @@
+surge: 150000 bodies, 1 thread, contact Line, perception off, 1000000 simulated s
+  wall    60 s  sim  803.3 s  rate  13.38x  free 150000  hot 44916  passes 4  tiles 122  densest 7.2 (peak 7.3) per m2  crushed 0  views 0
+  wall   120 s  sim 1599.0 s  rate  13.26x  free 150000  hot 44736  passes 4  tiles 147  densest 7.2 (peak 7.3) per m2  crushed 0  views 0
+  wall   180 s  sim 2396.1 s  rate  13.28x  free 150000  hot 44641  passes 4  tiles 150  densest 7.2 (peak 7.3) per m2  crushed 0  views 0
+  wall   240 s  sim 3196.1 s  rate  13.33x  free 150000  hot 44713  passes 4  tiles 155  densest 7.2 (peak 7.3) per m2  crushed 0  views 0
+  wall   300 s  sim 3996.1 s  rate  13.33x  free 150000  hot 44521  passes 4  tiles 172  densest 7.2 (peak 7.4) per m2  crushed 0  views 0
+  wall   360 s  sim 4794.6 s  rate  13.30x  free 150000  hot 44438  passes 4  tiles 177  densest 7.2 (peak 7.4) per m2  crushed 0  views 0
+  wall   420 s  sim 5599.8 s  rate  13.42x  free 150000  hot 44371  passes 4  tiles 176  densest 7.2 (peak 7.4) per m2  crushed 0  views 0
+  wall   480 s  sim 6412.8 s  rate  13.55x  free 150000  hot 44404  passes 4  tiles 182  densest 7.2 (peak 7.4) per m2  crushed 0  views 0
+  wall   540 s  sim 7201.8 s  rate  13.15x  free 150000  hot 44231  passes 4  tiles 191  densest 7.2 (peak 7.4) per m2  crushed 0  views 0
+done: 7980 simulated s in 600 s, 13.30x real time overall, peak 7.4 per m2, crushed 0, views 0 (check 0), final hash 608c4ce4f3905feb

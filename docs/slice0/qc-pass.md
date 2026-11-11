@@ -192,3 +192,62 @@ on any battle:
   reads another body's lead, and ed6d363 adds a way for a body not to lead.
 - **Detector 1 cannot see a warband step back one rank:** its ranks are 1,200 mm apart, and the
   detector asks for more than 1,200. Detector 25 covers that. No threshold is changed.
+
+**2026-11-11, Paullus, after the scan** (call 0001, turn 89). Written with the table of counts
+by detector, engine and variant seen, and nothing else: no flag's line and no picture.
+
+- **`flank` is watched for 1,200 s.** Its band is ordered in at 600 s (`flank.toml`), the
+  second the pass stopped watching. So the first scan saw the band stand, and every count of
+  `flank` equalled `base`, which is how it was found. The 40 battles were run again for
+  1,200 s and their flags replace the first run's. "600 simulated seconds each" was my
+  oversight.
+- **The picker also takes the first flag in the variant that has the most of a kind,** for
+  every detector and engine. It is the mechanical reading of "more are looked at ... when a
+  count is far larger in one variant". Without it nearly every pick is `base`, rung 0, seed 1.
+- **Pictures made on the Pi** are turned into PNGs by a headless Chromium, from the same SVGs.
+
+**2026-11-11, Varro** (call 0001, turn 90): yes to both changes. Neither touches a threshold,
+and both were made on the counts alone.
+
+**2026-11-11, Paullus, while looking.** I also looked at flags the rule does not pick, to see
+what the large classes of detectors 1 and 25 are: I sorted their flags by order, distance and
+body size, and traced a standard-bearer step by step in three battles. `tools/qc-render.py
+draw --also FILE` draws such a flag. What that showed is in
+[qc-results.md](qc-results.md).
+
+**2026-11-11, Paullus, the page.**
+
+- **The page the rule promises Michal is two pages.** [qc/pairwise.md](qc/pairwise.md) has
+  every pairwise flag looked at with its four-panel picture, what the detector measured, the
+  bin and the reason; `tools/qc-page.py` writes it from the table in
+  [qc-results.md](qc-results.md). [qc/README.md](qc/README.md) shows one picture for each
+  gap, cut down to one panel so that it reads on a phone (`tools/qc-crop.py`).
+- **The pictures in the repository were drawn again after the looking.** The tool's legend
+  ran under its scale bar; it is now on a row of its own. All 75 have the same panels as the
+  ones I looked at, compared line for line.
+- **The page's own comparison of the drawings** finds the same twelve repeats that my list
+  marks with "=".
+
+**2026-11-11, Paullus, on D1** (call 0001, turn 95). Varro's list has one candidate defect, in
+the field engine: two enemies on their feet nearer than the guard when both count as in their
+places ([qc-results-field.md](qc-results-field.md)). I read `field.rs`, `lib.rs`, F6 and the
+step's code, and I agree that it is a defect.
+
+- **The text states the guard without exception:** F6, "the nearest two enemies on their feet
+  can stand", and `field.rs`, "no two enemies on their feet may stand closer".
+- **The code skips the pair:** a man in his place leaves the step before the pass over
+  positions, so a pair of whom both are in their places is never looked at.
+- **The other reading does not hold.** "Any free man ... is handled by positions" says who is
+  processed. It rests on two men in their places never being within a guard of each other,
+  and the code lets that fail.
+- **The first step of a flight is a defect under either reading.** The man is not moving by
+  his tie to his slot; he counts as in his place only because the flag is a step old.
+
+**2026-11-11, Michal's decisions, at about 15:40 UTC,** asked by Paullus with both
+recommendations:
+
+- **D1 is recorded and left out of the re-freeze.** Both recommended that.
+- **Gap A stays in the new batch** and goes first on the second round's list. It was put to
+  Michal by itself because it is the nearest to the defect they saw. Both recommended that.
+- The speed question was put with these two; its answer is in
+  [spike-pairwise.md](spike-pairwise.md).

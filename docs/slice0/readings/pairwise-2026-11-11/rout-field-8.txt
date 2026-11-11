@@ -1,0 +1,33 @@
+rout: 150000 bodies, 8 thread(s), perception field, 100000 simulated s
+  wall    30 s  sim  124.5 s  rate  4.15x  touching 126216  crushed 7310  inside 36847  views 0
+    perception, ms: rebuild 1067, coarse 1315, views 0
+  wall    60 s  sim  233.1 s  rate  3.62x  touching 122487  crushed 40015  inside 89987  views 0
+    perception, ms: rebuild 1049, coarse 1125, views 0
+  wall    90 s  sim  340.4 s  rate  3.58x  touching 133779  crushed 81116  inside 133402  views 0
+    perception, ms: rebuild 1130, coarse 1097, views 0
+  wall   120 s  sim  441.6 s  rate  3.37x  touching 145386  crushed 154900  inside 149742  views 0
+    perception, ms: rebuild 1068, coarse 1045, views 0
+  wall   150 s  sim  533.3 s  rate  3.06x  touching 149993  crushed 274121  inside 150000  views 0
+    perception, ms: rebuild 813, coarse 925, views 0
+  wall   180 s  sim  619.5 s  rate  2.87x  touching 149996  crushed 408091  inside 150000  views 0
+    perception, ms: rebuild 804, coarse 945, views 0
+  wall   210 s  sim  704.5 s  rate  2.83x  touching 149996  crushed 506931  inside 150000  views 0
+    perception, ms: rebuild 913, coarse 1038, views 0
+  wall   240 s  sim  785.2 s  rate  2.69x  touching 149998  crushed 564799  inside 150000  views 0
+    perception, ms: rebuild 961, coarse 1082, views 0
+  wall   270 s  sim  858.8 s  rate  2.45x  touching 149998  crushed 597907  inside 150000  views 0
+    perception, ms: rebuild 999, coarse 1108, views 0
+  wall   300 s  sim  924.1 s  rate  2.18x  touching 149999  crushed 617978  inside 150000  views 0
+    perception, ms: rebuild 956, coarse 1056, views 0
+  wall   330 s  sim  993.6 s  rate  2.31x  touching 149998  crushed 632333  inside 150000  views 0
+    perception, ms: rebuild 1006, coarse 1095, views 0
+  wall   360 s  sim 1062.7 s  rate  2.30x  touching 150000  crushed 641611  inside 150000  views 0
+    perception, ms: rebuild 999, coarse 1073, views 0
+  wall   390 s  sim 1142.3 s  rate  2.66x  touching 149997  crushed 648225  inside 150000  views 0
+    perception, ms: rebuild 1086, coarse 1153, views 0
+  wall   420 s  sim 1243.8 s  rate  3.38x  touching 149998  crushed 653384  inside 150000  views 0
+    perception, ms: rebuild 1299, coarse 1370, views 0
+  wall   450 s  sim 1363.1 s  rate  3.98x  touching 149998  crushed 656221  inside 150000  views 0
+    perception, ms: rebuild 1493, coarse 1562, views 0
+  wall   480 s  sim 1488.2 s  rate  4.17x  touching 149999  crushed 657730  inside 150000  views 0
+    perception, ms: rebuild 1540, coarse 1582, views 0
