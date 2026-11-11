@@ -122,6 +122,15 @@ look for faults in code of mine: the frames, the fix ed6d363, and the field.
 | 26 | `stalled` | A body whose order is to advance, charge or pursue, with at least half of its men standing and no up enemy within 10 m of any of them, whose slots move less than 500 mm in 10 s | A led frame walks until the fronts are 4 m apart. With ed6d363 it stands while the standard-bearer steps up to a slot that moved under him, which should take about two seconds |
 | 27 | `over-packed` | 40 or more up men in one 2 m cell (10 per m²) | The field says a press gains no ground past the packing density, 9 per m² in the nominal set ([priors-field](priors-field.md), F2). The margin of 1 allows for counting centres in a box |
 
+**2026-11-11, Paullus** (call 0001, turn 85), before the tool has been run on any battle, and
+with the same knowledge. Varro asked which detector would have found Michal's third fault, the
+man who ran half a second after he was steady. None of 1 to 27 would: detector 14 counts six
+changes of posture, and he made two. So it gets one of its own.
+
+| # | Name | It flags | Why it would be wrong |
+|---|---|---|---|
+| 28 | `sudden-flight` | A man turns to flight less than 1 s after he was steady. A count, with the first three looked at | The code has no rule against it: giving ground and running are two transitions with nothing between them ([STATUS](../STATUS.md), candidate 8). So every flag is a gap and none a defect; the count says how common the thing Michal saw is |
+
 ## How the tool reads the list (Paullus, 2026-11-11)
 
 Written with the tool (`viewer/src/detect.rs`, `cannae-qc`), before it was run on any battle. The
@@ -166,6 +175,11 @@ with the list.
 | 19 | The closer is the man posted behind the rear rank at the start. Living: not down | `closer-standing`, `closer-in-flight` |
 | 20 | The field's centre is the mean of all the men's positions at the start | `standing`, `coordinate` |
 | 21 | The run with the check on must also give the normal run's state after every man step | |
+| 23 | The same slot: the two men's targets are equal to the millimetre | |
+| 25 | As 1: a slot's position is its target. The vector is the one half the body's slots share, the larger if two halves each share one. Under an order to retire nothing is flagged | `by-the-lead`: as in 1, which here is the lead going off when a body that was advancing halts. `other`: anything else |
+| 26 | The order was to advance, charge or pursue at every sample of the 10 s. The slots' movement is the median, over the men slotted at both ends, of how far each man's target moved. Half of its men: of the men it was set up with. The enemy within 10 m is of any of its standing men, at the end of the 10 s | |
+| 27 | The same cells as 6 | |
+| 28 | In flight at this sample and not at the last, and steady at one of the three samples before | |
 
 **The tool's own tests** are on hand-made scenes: for each detector a case that must be flagged
 and a case just under its threshold.
