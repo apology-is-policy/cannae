@@ -100,3 +100,24 @@ possible, as the standard-bearer fix does.
 
 A detector finds only what someone thought to define. Michal's own watching found all three
 faults so far, and it stays the part that finds new kinds. A new kind becomes a detector.
+
+## Changes after review
+
+**2026-11-11, Varro** (call 0001, turn 84), before the tool has been run on any battle. I know
+the outcome named above, so these lines are written with that knowledge. Detectors 25 to 27
+look for faults in code of mine: the frames, the fix ed6d363, and the field.
+
+- **The code under the pass** is the re-freeze candidate: the frozen code with ed6d363 and the
+  runner's fix. Detector 1 is also run once on the frozen code (pairwise, rung 0, `base`,
+  seed 1), where it must flag the step back at about 29 s. A detector that misses the known
+  fault is not one.
+- **Every flag looked at is listed with its bin and the reason,** those judged fine too. Each
+  of us reads the other's list before the pass closes.
+
+| # | Name | It flags | Why it would be wrong |
+|---|---|---|---|
+| 23 | `slot-twice` | Two up men of one body hold the same slot at one man step | A slot is one man's place |
+| 24 | `down-rises` | A man who was down is not down at a later man step | The fallen stay down |
+| 25 | `slot-back` | At one man step, the slots of at least half of a body's slotted men move by the same vector to within 100 mm, and either the body's order is to hold and they move more than 300 mm, or its order is to advance, charge or pursue and they move more than 300 mm against its facing. A count, with the first three looked at | A frame gives ground, or shifts while halted, only when its standard-bearer is driven from his place (`frames.rs`, `anchor`). This counts how often, and catches a step back smaller than detector 1's |
+| 26 | `stalled` | A body whose order is to advance, charge or pursue, with at least half of its men standing and no up enemy within 10 m of any of them, whose slots move less than 500 mm in 10 s | A led frame walks until the fronts are 4 m apart. With ed6d363 it stands while the standard-bearer steps up to a slot that moved under him, which should take about two seconds |
+| 27 | `over-packed` | 40 or more up men in one 2 m cell (10 per m²) | The field says a press gains no ground past the packing density, 9 per m² in the nominal set ([priors-field](priors-field.md), F2). The margin of 1 allows for counting centres in a box |
