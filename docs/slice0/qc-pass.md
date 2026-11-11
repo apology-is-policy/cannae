@@ -251,3 +251,18 @@ recommendations:
   Michal by itself because it is the nearest to the defect they saw. Both recommended that.
 - The speed question was put with these two; its answer is in
   [spike-pairwise.md](spike-pairwise.md).
+
+**2026-11-11, Paullus, the candidate before the re-freeze** (`refreeze-candidate` at d35684c:
+main merged in; its code is that of 9d96089, which the pass ran on).
+
+- **Tests,** on the Pi: `cargo test --workspace` passes, 217 of 217. The QC tool's own 38
+  detector tests and 6 same-battle tests pass.
+- **A body on the march, traced step by step** (Varro asked for it; `cannae-qc clip`, the
+  slots of every man of the body at each man step, on both engines, rung 0, seed 1):
+  - **The warband's advance in `base`,** 0 to 2.75 s: all 160 slots move 325 mm at every
+    step, the same for each, and every man counts as in his place throughout. At the halt
+    they move 1,175 mm back once (the lead less a step), and the men stand on them.
+  - **The flank band's charge in `flank`,** from 600 s: all 36 slots move 1,000 mm at every
+    step, the same for each. 25 or 26 of the 36 men count as in their places while they
+    run; the slowest runs 4 m behind his slot and keeps that distance.
+  - **No step moves a slot by a rank,** and no slot moves apart from the others.
