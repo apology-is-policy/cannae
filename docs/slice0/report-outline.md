@@ -8,12 +8,12 @@ on 2026-11-11 at 18:48 UTC, while the new batch ran its first step, and agreed w
 changes by 19:06 UTC. Section 6 has the counts for what Michal saw at the mid-range set,
 agreed in the same turns.
 
-**Four parts are proposed and not yet agreed** (Paullus, 2026-11-11, 21:23 UTC, with the new
-batch still in its first step): how a pattern's failures are counted (section 1), the
-field engine's two results side by side (section 2), how stragglers and tempo are given
-(section 3), and how one rung is counted against another (section 4). Each fixes how a
-promised figure is counted, before a record is read. Each says so at its head until Varro
-has read it.
+**Four more parts were fixed the same evening** (proposed by Paullus at 21:23 UTC, read and
+corrected by Varro at 21:29 UTC, call 0001, turn 126; the new batch was still in its first
+step): how a pattern's failures are counted (section 1), the field engine's two results
+side by side (section 2), how stragglers and tempo are given (section 3), and how one rung
+is counted against another (section 4). Each fixes how a promised figure is counted, before
+a record is read.
 
 This is a list, with no result in it. Everything below was promised before the runs: in the
 [pre-registration](preregistration.md) and its addenda, in [STATUS](../STATUS.md), or to
@@ -34,7 +34,12 @@ Each of these is done, and the report says so with its counts:
 3. **The crosswise check of the two perceptions,** again on the re-frozen code, on the same
    sample of 160 runs each way (Addenda 2 and 4). If any run differs, we stop and tell Michal
    before anything is scored.
-4. **Michal has decided the top-up of the relief** (section 5), on the machine time alone,
+4. **The pairs the standard-bearer fix did not act in** (section 2, agreed in call 0001,
+   turn 126): each of the field engine's runs of `base` whose count of held frames is zero,
+   beside the first batch's run of the same set and seed, as equal or unequal and nothing
+   else. If one pair is unequal, we stop and tell Michal before anything is scored. What is
+   then looked at to find the fault is agreed with them first.
+5. **Michal has decided the top-up of the relief** (section 5), on the machine time alone,
    before any relief statistic is read.
 
 Only then are the gate's lines and the records read.
@@ -54,9 +59,10 @@ For each of the eight cells (two engines, rungs 0 to 3), on the re-frozen code:
 
 ### How a pattern fails: the count
 
-**Proposed by Paullus on 2026-11-11 at 21:23 UTC,** while the new batch ran its first step
-(`base` on the field's rung 0). Varro has not read it yet. Neither of us has read a record
-of the new batch.
+**By Paullus and Varro, 2026-11-11** (call 0001, turn 126): proposed by Paullus at 21:23
+UTC, while the new batch ran its first step (`base` on the field's rung 0), and agreed by
+Varro at 21:29 UTC with three additions, which are in. Neither of us had read a record of
+the new batch.
 
 The scorer prints, for each pattern, how many sets pass, how many fail and how many cannot
 be scored. The table above also promises how they fail. A pattern is a band on one or two
@@ -71,13 +77,20 @@ on `base`, the report gives the failing sets by the part that failed:
 | 4 Lateral spread | the correlation under its minimum; the time of the spread under its band, or over it |
 | 5 Casualty asymmetry | the loser's share of hits after the break under its minimum |
 | 6 Holds, then breaks | too many seeds break early; too many never break. The two dose-response legs are in the scorer's own table |
-| 7 Casualty clock | hits per file-hour under the band, or over it; harm per bout under its band, or over it |
+| 7 Casualty clock | hits per file-hour under the band, or over it; harm per bout under its band, or over it; no seed gives a harm per bout (Varro: the scorer fails such a set) |
 | 8 Centurion gradient | the leaders' share of hits in the formed fight not above their share in the rout |
 
 - **A set that fails on two parts is counted under each.**
-- **A set that cannot be scored on a pattern** is counted apart, as the scorer counts it.
-- **Beside the counts:** the quartiles over sets of each pooled value, with its band, so
-  that a reader sees how far off the sets lie.
+- **A set that cannot be scored on a pattern** is counted apart, as the scorer counts it,
+  and by the value it lacks (Varro). Patterns 1, 2 and 4 cannot be scored when either of
+  their two values is missing, even if the other lies outside its band. Pattern 8 needs a
+  hit in the formed fight and a hit in the rout. "No seed broke" and "too few bouts to have
+  a gap" are different failures, and the pre-registration counts both as failing.
+- **Beside the counts:** the quartiles of each pooled value with its band, over the sets
+  that have the value, so that a reader sees how far off the sets lie. For pattern 6 the
+  pooled values are the two shares of a set's seeds, those that break early and those that
+  never break. For pattern 8 they are the leaders' two shares of the hits, each pooled over
+  the set's seeds (Varro).
 - **The tool must agree with the scorer.** It computes each verdict again from the parts and
   compares it with the scorer's, set by set. If one differs, it prints nothing.
 
@@ -112,9 +125,10 @@ From Addendum 4, and from the conditions of Addendum 3 that still stand:
 
 ### The two results side by side: the counts
 
-**Proposed by Paullus on 2026-11-11 at 21:23 UTC,** while the new batch ran its first step.
-Varro has not read it yet. It is his engine and the conditions are his, so his reading may
-change it. Neither of us has read a record of the new batch.
+**By Paullus and Varro, 2026-11-11** (call 0001, turn 126): proposed by Paullus at 21:23
+UTC, while the new batch ran its first step. Varro read it at 21:29 UTC, changed how
+item 3 is read, and added to items 2 and 4. All of it is in. Neither of us had read a
+record of the new batch.
 
 **What the first batch can give.** It ran `base` alone on the frozen code. The two
 dose-response legs of pattern 6 need `veterans`, `recruits` and `flank`, and those never ran
@@ -134,7 +148,8 @@ For each of the field engine's four cells, on `base`:
      not is a fault in the fix, and the report says so before anything else about the cell;
    - of the pairs whose count is one or more: how many differ in their summary.
 2. **Where the defect could act:** the runs of `base` whose count is one or more, and the
-   sets with such a run among their ten seeds.
+   sets with such a run among their ten seeds; and the quartiles of the count over the runs,
+   with its largest value (Varro).
 3. **The verdicts of the two batches, set by set.** For each pattern, the sixth by its band:
    the sets that pass in both batches, in the first alone, in the new one alone, and in
    neither. The same for all eight taken that way.
@@ -144,23 +159,40 @@ For each of the field engine's four cells, on `base`:
    - **Within the pairs whose count is one or more:** for each value, the pairs in which
      the first batch's run has the larger value, the smaller, the same, and those where one
      run has none. Here each run is its own control: the same set and seed, and the same
-     battle until the first held frame.
-   - **Against the rest of the cell,** in the new batch: for each value, the median of the
-     runs whose count is one or more and of the others, and the probability that a run of
-     the first group has the larger value.
+     battle until the first held frame. The hits per file-hour are taken for each side
+     apart, since a pair has one run on each hand.
+     - **Pattern 8 has no value for one run** (Varro). So the report gives the leaders' two
+       shares of the hits, pooled over those pairs, for each batch.
+     - **The ten runs of a set share their parameters, so 2,000 pairs are not 2,000 looks**
+       (Varro). Beside the count over pairs, for each value: the sets whose pooled value is
+       larger in the first batch, smaller, and the same. Its line is the two-sided sign
+       line of section 4 over the sets not tied. That is 44 looks over the four cells, so
+       about two pass it by chance.
+   - **Against the rest of the cell,** in the new batch: the sizes of the two groups first.
+     Then, for each value, the median of the runs whose count is one or more and of the
+     others, and the probability that a run of the first group has the larger value. With
+     fewer than ten runs in a group the medians stand alone, as in the cell check (Varro).
 
 **How it is read, said now:**
 
-- **Item 3 is what bears on the verdict:** whether the defect changed the verdict of any
-  set, and of the cell.
+- **Item 3 is read on its two middle counts** (Varro): the sets that pass in the first
+  batch alone against those that pass in the new one alone, by the two-sided sign line of
+  section 4 for their sum. An even split says the fix moved no verdict one way. The cell's
+  verdict is what each batch gives.
+  - **Why not "did any set's verdict change":** in the unscored test of Addendum 3 the frame
+    was held in 141 of 144 runs. So nearly every pair parts at its first held frame, and
+    from there the two runs are different battles of one set. Verdicts then flip both ways
+    by chance, as they do between seeds: in the cell check, seeds alone changed a median of
+    3 verdicts in 32 at thirty seeds a group, and a set has ten.
 - **The pairs show what the defect did.** The comparison against the rest cannot: a set
   whose standard-bearer is driven back differs from the others in more than that. It can
   show that such runs are different battles, and no more.
 
-**One count before the scoring, proposed:** the equal and unequal pairs among those whose
-count is zero (item 1), as counts and nothing else, taken with the recheck and the crosswise
-check. An unequal pair would mean the fix does more than its text says, and that should be
-known before the verdicts are. It also tells how many runs have a count of one or more,
+**One count is taken before the scoring** (agreed): the equal and unequal pairs among those
+whose count is zero (item 1), as counts and nothing else, with the recheck and the
+crosswise check. An unequal pair would mean the fix does more than its text says, and that
+should be known before the verdicts are. If there is one, we stop and tell Michal before
+anything is scored (Varro). The count also tells how many runs have a count of one or more,
 which is no outcome of a pattern.
 
 ## 3. Reported, not banded
@@ -175,14 +207,15 @@ which is no outcome of a pattern.
 | The loophole, by name: veterans who hold no longer than recruits but beat the warband sooner pass on skill at arms alone | Once | The dose-response |
 | Each side's front losses before contact | `shock`, `volleys` | The variants |
 
-**How two of these are given** (proposed by Paullus on 2026-11-11 at 21:23 UTC, not yet read
-by Varro; no record of the new batch had been read):
+**How two of these are given** (proposed by Paullus on 2026-11-11 at 21:23 UTC, agreed by
+Varro at 21:29 UTC with two words more, call 0001, turn 126; no record of the new batch had
+been read):
 
-- **Stragglers** are counted for each run, and a cell has 2,000 runs. The report gives, over
-  the runs of `base` in which a side broke: the share with one or more stragglers, the
-  quartiles of the count, and the largest.
+- **Stragglers** are counted for each run, and a cell has 2,000 runs. They are the loser's
+  men. The report gives, over the runs of `base` in which a side broke: the share with one
+  or more stragglers, the quartiles of the count, and the largest.
 - **Tempo** is pooled as the banded values are: each set's median over its seeds, then the
-  quartiles over sets, for each of the two shares. Beside them, the number of sets inside
+  quartiles over the sets that have the value, for each of the two shares. Beside them, the number of sets inside
   the only figures there are (5 to 25 % of the time, 10 to 25 % of the men). Those figures
   are no band and no set fails on them.
 
@@ -201,9 +234,10 @@ by Varro; no record of the new batch had been read):
 
 ### One rung against another: the count
 
-**Proposed by Paullus on 2026-11-11 at 21:23 UTC,** while the new batch ran its first step.
-Varro has not read it yet, and the expectations above are mostly his. Neither of us has
-read a record of the new batch.
+**By Paullus and Varro, 2026-11-11** (call 0001, turn 126): proposed by Paullus at 21:23
+UTC, while the new batch ran its first step, and agreed by Varro at 21:29 UTC with six
+additions, which are in. The expectations above are mostly his. Neither of us had read a
+record of the new batch.
 
 The expectations say that one rung "shows more" than another, and nothing yet says how that
 is counted. Set *i* has the same shared values and the same weights at every rung, by
@@ -213,23 +247,45 @@ set *i* at another. For each engine, and for `shock` and `volleys` apart:
 - **Each rung against rung 0, and each against the rung below it:** over the sets scored at
   both, the median of the difference in the statistic, and the number of sets in which the
   higher rung's statistic is larger, smaller, and the same.
-- **"Shows more", fixed now:** the higher rung's statistic is the larger in more sets than
-  a fair coin gives 95 times in 100, ties left out. With 200 sets and no tie that is 115
-  sets or more.
+- **"Shows more", fixed now: the two-sided sign line.** Of the sets not tied, the higher
+  rung's statistic is the larger in so many that a fair coin gives as many or more only
+  once in forty times. With 200 sets and no tie that is 115 sets or more.
+  - **The line follows the number of sets not tied** (Varro). With fewer than six such sets
+    no count can reach it, and the report says "cannot be told". Past the line the other
+    way is reported as "shows less".
   - **Why a count over sets:** one set's statistic rests on ten seeds a side, so its
     difference between two rungs is mostly chance. Over 200 sets the chance cancels.
-  - **There are twenty such comparisons** (five pairs of rungs, two variants, two engines),
-    so one of them is expected past the line by chance alone. The report gives all twenty.
+- **Sets that are one run at both rungs are counted apart from the other ties** (Varro): the
+  sets whose twenty runs, ten of `base` and ten of the variant, fared the same at the two
+  rungs, run for run. Ties will be many for rung 1 against rung 0, and they mean something.
+  Rung 1's one term is read only for a man who has turned before, and the seeds and the
+  shared values are the same at both rungs. So until a man who has turned is judged again,
+  the two runs are one run.
+  - **For rung 1 against rung 0** that count is the nearest the record has to "where no man
+    fled and rallied", the group its expectation names. The record does not hold flights
+    before contact, so the comparison is given whole, and the sign count leaves those sets
+    out by itself.
 - **Rung 2 against rung 1 is also given in two groups,** by the wear of *shaken* drawn for
-  the set: more than four minutes for one level to wear off, or not. The expectation is
-  that the difference shows in the first group only.
-- **Rung 1 against rung 0 cannot be given in the groups its expectation names.** The record
-  does not hold whether men fled from the shock and rallied. It is given whole, and the
-  report says so.
+  the set: more than four minutes (4,800 base ticks) for one level to wear off, or not.
+  Each group has the line for its own sets. "Only in the first" means past the line there
+  and not in the second (Varro). 57 % of the prior lies above the cut.
+  - **A weakness of the expectation, said by Varro before any record:** *shaken* has up to
+    three levels, and one level takes the drawn time to wear off. A man with two levels
+    still carries one after four minutes, even where one level wears off sooner. If the
+    second group shows the difference too, that is the likely reason. The split stays as
+    the pre-registration has it.
+- **The number of looks** (Varro): five pairs of rungs, two variants and two engines are
+  twenty. The line lets a fair coin past at 2 % each way, so by chance 0.4 of the twenty
+  pass it upward and 0.8 either way. With the eight counts in groups and the two for the
+  relief it is thirty looks. The report gives them all.
 
-The relief's expectation of section 5, rung 3 against rung 2, is counted the same way on
-the drill's statistic, over the sets that ran `relief`: with 50 sets and no tie the line is
-33 sets or more.
+**The relief's expectation of section 5,** rung 3 against rung 2, is counted the same way on
+the drill's statistic, over the first 50 sets that ran `relief`. The top-up is reported
+apart. With 50 sets and no tie the line is 33 sets or more.
+
+- **Where no relief was ordered, `relief` is `backed` run for run** (Varro), and the
+  statistic is 0.5 at both rungs. So the count rests on the sets with a relief ordered, and
+  the line follows their number. At the mid-range set none was ordered on either engine.
 
 ## 5. The relief
 
