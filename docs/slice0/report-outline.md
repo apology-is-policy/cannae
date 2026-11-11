@@ -295,6 +295,9 @@ arises, and the scored record holds it:
 - **What the count is not** (Varro): it counts the opening, and not what the warband's men
   did at it. Men near the gap still go after runners one by one; the body as a body follows
   its order.
+- **The script:** `tools/s09-open-flank.py`. It reads the scored records alone and is run
+  after the scoring. A run that ends inside the minute with both still standing is counted
+  apart, as neither.
 
 ## 7. Checks on the code and the runs
 
