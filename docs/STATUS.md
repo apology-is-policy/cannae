@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-11, 19:31 UTC.
+**Last updated:** 2026-11-11, 21:14 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -388,6 +388,20 @@ Varro's check, on the mid-range set, which is never scored
   fails six of the eight patterns there and the Roman line breaks first in nearly every
   run. It is entered in the table of outcomes seen. The 200 drawn sets are what is scored.
 
+**Since then (2026-11-11, 21:14 UTC): the speed reading is put off until the Mac can be
+quiet.**
+
+- **The lock came to Varro at 21:12 UTC and he gave it back within a minute.** The photo
+  analysis was running again, and so was a build in a third project's session. A lock on the
+  other project's line does not still either.
+- **We stop trying by turns.** A run started in a gap between two builds and then slowed
+  would count by the rule, and that would be a wrong figure. The reading waits for a window
+  Michal gives ("Open decisions" below).
+- **The three counts the report owes now have their tools,** each read and agreed by Varro
+  and each run only after the scoring: the reliefs and the leaders' falls by replay
+  (`cannae-replay`), and the open flank from the records (`tools/s09-open-flank.py`).
+- **The batch:** its first step is still running and no step has failed.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -643,6 +657,18 @@ word is singular). This is recorded in the review's disposition table.
 ## Open decisions
 
 **Blocking the next step:** none.
+
+**Waiting on Michal, and holding up one thing (2026-11-11, 21:14 UTC): a quiet Mac for the
+second speed reading.** The reading needs about forty minutes in which the Mac runs nothing
+heavy. Twice today it had none. Three things have to rest at once, and only Michal can
+arrange any of them:
+
+- the photo library's analysis (`mediaanalysisd`), which came back at 21:12 UTC;
+- a build in another project's session on the Mac (not ours, and not the Thylacine line's);
+- the Thylacine sessions, which the lock stills.
+
+Until then the reading is put off. Nothing was read, and the batch and the report's other
+work do not wait on it.
 
 **Not blocking:**
 

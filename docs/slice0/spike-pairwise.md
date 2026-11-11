@@ -147,6 +147,13 @@ to be taken.
   lock, into a new folder. It builds the same two commits and repeats the ten short runs.
   This is not a second reading, since the first read nothing. The attempt's folder is kept.
 
+**Put off at 21:14 UTC the same day, with nothing started.** The lock came to Varro at
+21:12 UTC. He found the photo analysis running again and a build in a third project's
+session, neither of which the lock stills, and gave the lock back within a minute. I did not
+start the script. We do not go on trying by turns: the reading waits until Michal can give
+the Mac about forty minutes with all three at rest. The conditions, the script and the two
+commits stay as they are.
+
 ## Verdict so far
 
 | Setup | 1 core | 4 cores, 10 min sustained | 8 cores, 3 min, machine hot |
