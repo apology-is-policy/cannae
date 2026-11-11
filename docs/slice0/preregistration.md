@@ -713,6 +713,21 @@ it):
 | What the freeze hashed | `scenarios/prereg.toml` and the three priors files have the SHA-256 of the sign-off above, and so does the hash over the four: the freeze seed is the same, 9464880715404986219. `table-of-record.csv` has its recorded hash, and the sampler (`draw.rs`) and the metrics (`metrics.rs`) are unchanged |
 | The check from here on | `git diff 40b8dcd -- crates scenarios Cargo.toml Cargo.lock` is empty; `tools/s09-batch.sh` and `tools/s09-recheck.py` name 40b8dcd |
 
+**Checked by Varro, 2026-11-11 at about 16:50 UTC,** every line of the record but Michal's
+approval, which Paullus received:
+
+- **Against the candidate:** empty over the four paths, as recorded.
+- **Against the first freeze:** the five files named, and blob for blob they are ed6d363's
+  four and 449dcd6's one. Each fix's parent held the frozen file, so the standard-bearer fix
+  is in exactly as it was committed on 2026-11-10.
+- **What the freeze hashed:** the four files and the hash over them, twice: from the commit's
+  own blobs with `shasum -a 256`, and from the working tree with Python's `hashlib`. The seed
+  from the first 8 bytes of that hash.
+- **The table:** from a `table` binary I built from the re-frozen code, byte for byte the
+  committed file, with the recorded hash. `draw.rs` and `metrics.rs` are not among the five
+  files.
+- **The scripts:** both name 40b8dcd.
+
 | Addendum 4 | Signed |
 |---|---|
 | Paullus | **signed, 2026-11-11**, after Varro's check was entered. I wrote the runner fix after the gate had run, and I sign knowing the field engine's result on `base` on the frozen code, as the text says. The candidate that holds the three parts (`refreeze-candidate`, d35684c) differs from dd9d90a in five files under `crates` and in nothing else that the runs read; its 217 tests pass on the Pi |
