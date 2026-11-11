@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-11, 21:14 UTC.
+**Last updated:** 2026-11-11, 21:38 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -402,21 +402,57 @@ quiet.**
   (`cannae-replay`), and the open flank from the records (`tools/s09-open-flank.py`).
 - **The batch:** its first step is still running and no step has failed.
 
+**Since then (2026-11-11, 21:38 UTC): the batch's first step is done, and four more counts
+are fixed.**
+
+- **The first of the batch's 64 steps finished at 21:32 UTC** with no failure: 2,100 runs in
+  2 hours 53 minutes. That is the pace of the first batch, so the estimate given then
+  stands:
+  - the eight patterns' verdicts for all eight cells in about 1.6 days, on about the
+    morning of 13 November (UTC);
+  - the whole batch in about 11 days (it could be 9 to 15), on about 22 November.
+  - The estimate takes the pairwise engine at twice the field's cost. Its first step
+    starts at about 06:15 UTC on 12 November and shows whether that holds.
+- **That step's records are rechecked.** The Mac made two of its sets again and all 20
+  records are equal to the Pi's. The crosswise check holds too: all 160 runs agree through
+  either perception, and the 21 of them the batch has made so far agree with its records.
+- **Four more of the report's figures now have a fixed way of being counted,** written
+  before any record was read and agreed with Varro
+  ([report-outline.md](slice0/report-outline.md), sections 1 to 4):
+  - on which part of its band a set fails a pattern;
+  - the field engine's first batch beside the new one, run by run and set by set;
+  - how stragglers and tempo are given;
+  - when one rung of memory "shows more" than another: by a count over the sets, against
+    the line a fair coin passes once in forty times.
+- **Varro changed one reading rule in them, and it matters.** I had the two batches of the
+  field engine compared by whether any set's verdict changed. In the unscored test the
+  standard-bearer fix acted in 141 of 144 runs. So the two runs of nearly every pair are
+  different battles from that point on, and verdicts flip both ways by chance. The report
+  now reads whether they flip one way more than the other.
+- **One more check comes before the scoring:** every run the fix did not act in must equal
+  its run in the first batch. If one does not, we stop and tell Michal before anything is
+  scored.
+- **The tool for these counts is written** (`cannae-extras`, outside the scored code) and
+  is being checked on sets that are not scored. Varro reads it before it is used.
+- **My watcher on the batch had a fault** and would never have reported the step's end. I
+  found it at 21:17 UTC and replaced it; nothing was missed.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
 One decision in it will be Michal's before any relief statistic is read: whether the relief
 gets its extra runs (the "top-up"), on the machine time alone.
 
-**The crosswise check of the two perceptions passed** (finished 00:04 UTC): all 160 runs gave
-the same end state and the same event log through either perception, and the 80 that the batch
-had also made agree with its records, field for field.
+**The crosswise check of the two perceptions passed** on the frozen code (finished 00:04 UTC):
+all 160 runs gave the same end state and the same event log through either perception, and
+the 80 that the first batch had also made agree with its records, field for field. It was
+run again on the re-frozen code and passed again (the blocks of 18:40 and 21:38 UTC above).
 
 **Rechecked on the Mac.** For every cell and variant, two parameter sets are run again on the
 Mac and compared with the Pi's records, field for field (`tools/s09-recheck.py`). The freeze
-seed fixes which sets, so nobody picks them. It runs as the batch goes. So far: the first
-cell's 20 records are all equal. The tool was tested on a copy with one altered record, and it
-caught it.
+seed fixes which sets, so nobody picks them. It runs as the batch goes. So far, on the new
+batch: the 20 records of its first step are all equal (2026-11-11, 21:36 UTC). The tool was
+tested on a copy with one altered record, and it caught it.
 
 **Two addenda to the pre-registration** (agreed with Varro, written before any record was
 scored, [addenda](slice0/preregistration.md#addendum-1-2026-11-10-cells-that-base-rules-out-run-their-variants-last)):
