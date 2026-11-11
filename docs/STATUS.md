@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-11, 21:38 UTC.
+**Last updated:** 2026-11-11, 21:44 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -432,8 +432,11 @@ are fixed.**
 - **One more check comes before the scoring:** every run the fix did not act in must equal
   its run in the first batch. If one does not, we stop and tell Michal before anything is
   scored.
-- **The tool for these counts is written** (`cannae-extras`, outside the scored code) and
-  is being checked on sets that are not scored. Varro reads it before it is used.
+- **The tool for these counts is written and on main** (`cannae-extras`, outside the scored
+  code). Checked on sets that are not scored, in all eight cells: it rebuilds every verdict
+  from its parts and gets the scorer's each time, and its counts between rungs equal counts
+  made apart from the records, 30 of 30. Varro reads it before it is pointed at a scored
+  run.
 - **My watcher on the batch had a fault** and would never have reported the step's end. I
   found it at 21:17 UTC and replaced it; nothing was missed.
 
