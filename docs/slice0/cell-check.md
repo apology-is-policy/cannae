@@ -1,7 +1,8 @@
 # The field's cell at half its size: the check
 
-**Status:** run on 2026-11-11; the results are at the end. By the line fixed beforehand the
-cell does not matter at the centre, and the results say how little that carries. The
+**Status:** run on 2026-11-11; the results are at the end. By the line fixed beforehand, the
+half cell moved the measures and changed the verdicts no more than seeds alone do, and the
+results say how little that carries. The
 conditions were written by Varro on 2026-11-11, before the check was built or
 run, and changed twice on the same day after Paullus read them (call 0001, turns 107 and
 109): a control, a calibrated line, and a comparison on unrelated seeds. The changes are
@@ -205,7 +206,7 @@ Before anything was built or run:
 the same day. The whole report is in
 [readings/cell-check-2026-11-11/summary.txt](readings/cell-check-2026-11-11/summary.txt).
 
-### By the line, the cell does not matter at the centre
+### By the line: the half cell moved no more than seeds alone do
 
 | | The half cell, against seeds 31 to 60 | The same seeds | The control | Seeds alone: the median, and the most in 95 splits of 100 |
 |---|---|---|---|---|
@@ -239,6 +240,13 @@ Each statistic over the four rungs, as the mean of A less 0.5:
   10 s. Seeds alone change the same verdict in the control, on rungs 0 and 2.
 - **The formed phase and the time to break are one statistic here.** In every run the formed
   phase ended at the break, so the two rows are the same numbers and the eleven are ten.
+- **The half cell's column is nearly the control's with its sign turned** (Paullus, with the
+  result in hand; it changes no line). The formed phase is -0.093 and +0.096, burstiness
+  +0.106 and -0.098, the depth of the first to turn -0.122 and +0.098. Both columns compare
+  with seeds 31 to 60 at 1.024 m, whose battles ran longer than those of seeds 1 to 30 at
+  either size (42 s against 36 s on rung 0). On the same seeds the largest move is 0.072. So
+  most of the first column is the difference between two groups of seeds, which is what the
+  splits measure.
 - **What I expected:** that most would not move, and that anything that did would be in
   patterns 4 and 5. Nothing moved beyond seeds. The largest was pattern 3, not 4 or 5.
 
