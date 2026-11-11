@@ -2,7 +2,7 @@
 
 **Phase:** Slice 0, the experiment between the two designs. The shared core and harness run end to end with a toy man; the engines are next.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-10, late evening.
+**Last updated:** 2026-11-11, morning.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -109,9 +109,33 @@ cell and variant of the field engine. The pairwise engine costs about twice as m
 batch with the Mac or renting a machine. `base` runs first on both engines, so the eight
 patterns' verdicts for all eight cells come in **about 1.6 days**.
 
-**Progress (2026-11-10, 21:10 UTC).** The first cell's `base` is complete (the field engine,
-rung 0: 2,100 runs in 3 hours). The second cell is running, more slowly so far, so the total
-may be nearer 14 days.
+**Progress (2026-11-11, 06:40 UTC): the batch will be restarted.** Two things happened
+overnight.
+
+- **Michal decided on one restart** with Varro's fix for the standard-bearer defect, after his
+  test showed the defect in two runs of three while the body was still formed. The decision was
+  asked at 23:25 UTC and answered at about 06:38.
+- **The pairwise half of the batch cannot run as built.** The field engine's `base` finished in
+  all four of its cells (8,400 runs, 11.7 hours). Every pairwise step then failed within a
+  second: a stack overflow in the batch runner. The runner hands battles to a pool of worker
+  threads, and each pairwise battle hands its physics to a small pool of its own. A worker
+  waiting on the inner pool picks up another battle meanwhile, and that one another, until the
+  stack is full: about 2,100 battles deep for a whole cell. It changes no result. It never
+  showed before because no test ran a whole pairwise cell; the runs made by every fourth set
+  nest 550 deep and fit. The fix is in the runner only and goes into the same re-freeze.
+- **A verdict line now exists, and I know it by inference.** With the pairwise steps failed,
+  the script reached its gate early and judged the four field cells. I have not read the lines,
+  but the order of the steps shows all four were put last: on the frozen code, with the defect
+  in it, **fewer than 10 % of the parameter sets pass all eight patterns on the field engine at
+  any rung**. I learned this after the restart was decided, and after Varro's fix was
+  committed. It is in the pre-registration's record. The counts stay unread.
+- **The re-freeze is therefore pinned:** the frozen code, Varro's fix exactly as committed
+  before the gate ran, and the runner's fix, which must be shown to change no record. Nothing
+  else.
+
+**The crosswise check of the two perceptions passed** (finished 00:04 UTC): all 160 runs gave
+the same end state and the same event log through either perception, and the 80 that the batch
+had also made agree with its records, field for field.
 
 **Rechecked on the Mac.** For every cell and variant, two parameter sets are run again on the
 Mac and compared with the Pi's records, field for field (`tools/s09-recheck.py`). The freeze
@@ -129,8 +153,8 @@ scored, [addenda](slice0/preregistration.md#addendum-1-2026-11-10-cells-that-bas
 2. **A crosswise check of the two perceptions.** The two engines see through different code,
    held to the same view by tests but never compared on a scored battle. A sample of 160 runs
    is redone with the perceptions swapped, and every run must end in the same state with the
-   same event log. If any run differs, the scoring stops and Michal is told. It is running on
-   the Pi now, beside the batch.
+   same event log. If any run differs, the scoring stops and Michal is told. It has run, and
+   every run agreed (below).
 
 **A live viewer (asked for by Michal, 2026-11-10).** `cd viewer && cargo run --release`, then
 open http://127.0.0.1:8377/. It runs one battle of the patch on either engine, at any memory
