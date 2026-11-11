@@ -621,12 +621,12 @@ repeated after it. Addendum 3's account of the defect and its conditions on the 
 |---|---|---|
 | The frozen code | dd9d90a | |
 | The standard-bearer fix | ed6d363, exactly as Varro committed it on 2026-11-10 at 23:15 UTC | Addendum 3: its tests, its 20 mutations, and the 3 runs with a count of zero that are unchanged |
-| The runner fix | 449dcd6 (Paullus): battles run on plain threads | It changes no record: 90 field records made with it equal the first batch's own from the Pi, and 80 pairwise records equal the frozen runner's with one job; all fields but the wall time |
-| Defects from the QC pass | *to be listed, or "none"* | Each judged against the code's own text and never against a band; accepted by both; approved by Michal; fixed by the code's owner, reviewed by the other, checked by mutation |
+| The runner fix | 449dcd6 (Paullus): battles run on plain threads | It changes no record: 90 field records made with it equal the first batch's own from the Pi, and 80 pairwise records equal the frozen runner's with one job; all fields but the wall time. Varro's own check of the same: *to be entered here with its date when it has run* |
+| Defects from the QC pass | The pairwise list (Paullus, [qc-results.md](qc-results.md)): none. The field list (Varro): *to come* | Each judged against the code's own text and never against a band; accepted by both; approved by Michal; fixed by the code's owner, reviewed by the other, checked by mutation |
 
 Nothing else changes: the same freeze seed, the same 200 parameter sets, the same ten seeds for
-each, the same priors, bands, scorer, stop rule and audit. So every run of the new batch has
-its pair in the first one.
+each, the same priors, bands, scorer, stop rule and audit. So every run of the first batch has
+its pair in the new one.
 
 **The rule from here on.** No restart once the batch script's gate has run.
 
@@ -651,10 +651,16 @@ the field engine's four cells are ruled out on `base` (the table below, 06:39 an
 - **The engines are compared on the re-frozen code only.** The field engine has two results
   and the pairwise engine one, because its half could not run on the frozen code. The report
   says so wherever it compares them.
-- **Nothing in the re-freeze was chosen with the verdict in hand,** except what the QC pass
-  adds. That is why the fix is pinned to the commit made before the gate ran, why the runner's
-  fix is shown to change no record, and why a QC defect is judged against the code's own text.
-  Each QC defect is listed above as found after the verdict was known.
+- **Two things in the re-freeze were chosen with the verdict in hand:** the runner fix
+  449dcd6, written after the gate had run, and whatever the QC pass adds. The first is shown
+  to change no record. The second is judged against the code's own text, and each QC defect
+  is listed above as found after the verdict was known. The standard-bearer fix was not: it
+  is pinned to the commit made before the gate ran.
+- **Both speed verdicts are known before the re-freeze** (read on 2026-11-11). The field
+  engine's pocket ran at 1.43x against its 10x line ([spike-field.md](spike-field.md)), and
+  the pairwise engine at 2.67x against its 3x line over a whole battle
+  ([spike-pairwise.md](spike-pairwise.md)). They change nothing in the batch unless Michal
+  decides otherwise; Varro and Paullus put that to them as one question.
 
 **Before the new batch starts.**
 
