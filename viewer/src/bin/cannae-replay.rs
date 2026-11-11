@@ -13,7 +13,8 @@
 //! nothing moves, the nominal set at rung 2, seed 3. For each relief it prints how long the
 //! fresh century took to come up and the tired one to fall back, how far each went, when the
 //! men were back in their places, how near a man of one came to a man of the other, and
-//! whether it jammed. With `--fight` the men are the troops the patch names, made unable to
+//! whether it jammed. "Back in their places" is asked of the men who were in their places
+//! when the relief was ordered, and of no others. With `--fight` the men are the troops the patch names, made unable to
 //! flee as in that test's fight, so the relief comes in the first lull of a real fight; it
 //! then says whether each relief was pressed too. That one is for checking the marks.
 //!
@@ -114,7 +115,7 @@ fn standing<'a>(
 }
 
 /// One relief as it went, in ticks.
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq)]
 struct Drill {
     /// The fresh body was ordered up.
     ordered: Option<u32>,
@@ -122,9 +123,17 @@ struct Drill {
     up: Option<u32>,
     /// The tired body halted behind it.
     halted: Option<u32>,
-    /// Standing men of the two bodies out of their places at that halt.
+    /// The men in their places when the relief was ordered: the tired body's and the fresh
+    /// one's. They are the measure of what follows. The frames never take a man out of his
+    /// body, so a man who fled long ago is still of it, and he is out of his place as long as
+    /// he is adrift: for a man still in flight, the rest of the run. A count over every man
+    /// on his feet would call a thinned century never back.
+    placed: (Vec<usize>, Vec<usize>),
+    /// How many of those, of both bodies and still on their feet, were out of their places at
+    /// the halt.
     astray: Option<usize>,
-    /// After the halt, nine in ten of the tired body's standing men were in their places.
+    /// After the halt, nine in ten of those of the tired body, still on their feet, were in
+    /// their places again.
     back: Option<u32>,
     jammed: bool,
     /// The least distance between a standing man of one body and one of the other, mm.
@@ -132,6 +141,18 @@ struct Drill {
 }
 
 impl Drill {
+    /// The men who were in their places at the order, are on their feet, and are out of
+    /// their places now.
+    fn astray_now<'a>(&'a self, b: &'a Battle) -> impl Iterator<Item = usize> + 'a {
+        let bodies = b.live.bodies();
+        self.placed
+            .0
+            .iter()
+            .chain(&self.placed.1)
+            .copied()
+            .filter(move |&i| bodies.posture[i] != Posture::Down && !bodies.in_place[i])
+    }
+
     /// Reads the two bodies after a step. The second line of the patch has no order but its
     /// relief, and the first none but to stand, so an advance of the fresh body is the
     /// relief's order and a retirement of the tired one is its second half. The frames' own
@@ -143,24 +164,27 @@ impl Drill {
         let bodies = b.live.bodies();
         if self.ordered.is_none() && f.order == Order::Advance {
             self.ordered = Some(f.order_tick);
+            let placed = |body: u32| {
+                standing(b, of, body)
+                    .filter(|&i| bodies.in_place[i])
+                    .collect::<Vec<usize>>()
+            };
+            self.placed = (placed(tired), placed(fresh));
         }
         if self.ordered.is_some() && self.up.is_none() && t.order == Order::Retire {
             self.up = Some(t.order_tick);
         }
         if self.up.is_some() && self.halted.is_none() && t.order == Order::Hold {
             self.halted = Some(t.order_tick);
-            self.astray = Some(
-                standing(b, of, tired)
-                    .chain(standing(b, of, fresh))
-                    .filter(|&i| !bodies.in_place[i])
-                    .count(),
-            );
+            self.astray = Some(self.astray_now(b).count());
         }
         if self.halted.is_some() && self.back.is_none() {
             let (mut men, mut placed) = (0, 0);
-            for i in standing(b, of, tired) {
-                men += 1;
-                placed += usize::from(bodies.in_place[i]);
+            for &i in &self.placed.0 {
+                if bodies.posture[i] != Posture::Down {
+                    men += 1;
+                    placed += usize::from(bodies.in_place[i]);
+                }
             }
             if men > 0 && placed * 10 >= men * 9 {
                 self.back = Some(b.live.tick());
@@ -275,22 +299,21 @@ fn drill(mut args: impl Iterator<Item = String>) -> Result<(), String> {
     while b.live.tick() < end {
         let man_step = b.live.step();
         for (k, &(tired, fresh)) in pairs.iter().enumerate() {
-            let before = drills[k];
+            let before = (drills[k].ordered, drills[k].up, drills[k].halted);
             drills[k].watch(&b, &of, tired, fresh, man_step);
-            let now = drills[k];
+            let now = &drills[k];
             let both = || Some((span(&b, &of, fresh)?.1, span(&b, &of, tired)?.0));
-            if before.ordered != now.ordered {
+            if before.0 != now.ordered {
                 at[k][0] = both();
             }
-            if before.up != now.up {
+            if before.1 != now.up {
                 at[k][1] = both();
             }
-            if before.halted != now.halted {
+            if before.2 != now.halted {
                 at[k][2] = both();
                 let bodies = b.live.bodies();
-                astray[k] = standing(&b, &of, tired)
-                    .chain(standing(&b, &of, fresh))
-                    .filter(|&i| !bodies.in_place[i])
+                astray[k] = now
+                    .astray_now(&b)
                     .map(|i| format!("{:?} of body {}", bodies.role[i], of[i].map_or(0, |x| x.0)))
                     .collect::<Vec<_>>()
                     .join(", ");
@@ -337,9 +360,11 @@ fn drill(mut args: impl Iterator<Item = String>) -> Result<(), String> {
             f64::from(went) / walk,
         );
         println!(
-            "    {} men of the two out of their places at the halt ({}); nine in ten of the \
-             tired century in their places {} after it; nearest two men of the two {near:.0} \
-             mm; jammed: {}{}",
+            "    of the {} and {} men in their places at the order, {} out of them at the halt \
+             ({}); nine in ten of the tired century's in their places again {} after it; nearest \
+             two men of the two {near:.0} mm; jammed: {}{}",
+            dr.placed.0.len(),
+            dr.placed.1.len(),
             dr.astray.unwrap_or(0),
             astray[k],
             dr.back
@@ -592,13 +617,16 @@ fn relief_lines(
         let mut l = String::new();
         let _ = write!(
             l,
-            "{{\"draw\":{},\"seed\":{},\"relief\":{k},\"ordered_s\":{:.2},\"up_after_s\":{},\
+            "{{\"draw\":{},\"seed\":{},\"relief\":{k},\"ordered_s\":{:.2},\"placed_at_order\":\
+             [{},{}],\"up_after_s\":{},\
              \"halted_after_s\":{},\"astray_at_halt\":{},\"back_after_s\":{},\
              \"pressed\":{pressed},\"jammed\":{},\"unfinished\":{unfinished},\
              \"twin\":\"{fared}\"}}",
             r.draw,
             r.seed,
             seconds(o),
+            dr.placed.0.len(),
+            dr.placed.1.len(),
             after(dr.up, dr.ordered),
             after(dr.halted, dr.up),
             dr.astray.map_or("null".to_string(), |n| n.to_string()),
