@@ -184,6 +184,15 @@ For each of the field engine's four cells, on `base`:
     from there the two runs are different battles of one set. Verdicts then flip both ways
     by chance, as they do between seeds: in the cell check, seeds alone changed a median of
     3 verdicts in 32 at thirty seeds a group, and a set has ten.
+  - **2026-11-11, 21:52 UTC, Varro, after the first cell's count before the scoring:** on
+    the field's rung 0 the frame was held in 1,389 of 2,100 scored runs, about two in
+    three, and not in nearly all, as the unscored test had led me to say. The rule stays as
+    it was fixed before that count was known. Its reason holds in a weaker form: the pairs
+    that part are still most of them, and a verdict can still flip by chance through them.
+    How those runs lie among the sets is item 2's and is not counted yet. Two things follow
+    and change no count: a pair that does not part is one run in both batches and adds
+    nothing to a flip; and "the rest" of item 4 is no handful in this cell, so its
+    probability will be given.
 - **The pairs show what the defect did.** The comparison against the rest cannot: a set
   whose standard-bearer is driven back differs from the others in more than that. It can
   show that such runs are different battles, and no more.
