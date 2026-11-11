@@ -100,3 +100,51 @@ possible, as the standard-bearer fix does.
 
 A detector finds only what someone thought to define. Michal's own watching found all three
 faults so far, and it stays the part that finds new kinds. A new kind becomes a detector.
+
+## How the tool reads the list (Paullus, 2026-11-11)
+
+Written with the tool (`viewer/src/detect.rs`, `cannae-qc`), before it was run on any battle. The
+table above is not changed. These are the readings a table leaves open, and Varro reviews them
+with the list.
+
+**For every detector:**
+
+- **A sample** is the state after a man step; samples are 250 ms apart. "Over 2 s" compares a
+  sample with the one eight before it. A state that must last "D s or more" must hold at
+  consecutive samples spanning D, and "more than D s" at samples spanning more than D. A
+  movement that must last a second must be made in four consecutive steps.
+- **A flag is an episode:** a condition holding for one subject (a man, a pair of men, a body, a
+  2 m cell) at consecutive samples. It is written once, with its first and last time. A
+  condition that breaks for one sample and returns is two flags.
+- **A kind** is a mechanical sub-class of a flag, named below. It is never a judgement. The
+  flags looked at are the first three of each kind for each detector and engine, which
+  includes the first three of each detector and engine.
+- **Positions are made when a flag is looked at,** by running its battle again
+  (`cannae-qc clip`), and are not kept for every flag: a battle is the same battle every time.
+- **The variants are taken in the batch's order:** `base`, `veterans`, `recruits`, `flank`,
+  `shock`, `volleys`, `backed`, `relief`.
+
+**For single detectors:**
+
+| # | Reading | Kinds |
+|---|---|---|
+| 1 | A slot's position is the target the frames give the man, which includes the distance the frame leads its men while the body moves. The slotted men are those with a slot at that step, a fallen man whose file has not closed yet among them. The common vector is the median of the moved slots' vectors | `by-the-lead`: the slots moved straight ahead or back by the tie's lead, to within 100 mm, which is the lead coming on or going off. `other`: anything else |
+| 2 | The order was to hold at every sample of the 2 s. "One direction" is any arc of 60 degrees | |
+| 3 | In flight at every sample of the 2 s; the distance is between where he was and where he is | |
+| 5 | | `both-standing`, `one-in-flight` |
+| 6 | The cells are the squares of a 2 m grid through the origin | |
+| 8 | Where he fell is where he lay at the first sample at which he was down | |
+| 10 | The direction is to the nearest standing enemy within 10 m as both stood before the step | |
+| 12 | The postures are those the bout phase read, before its own outcomes were applied. A wrapper around the resolver notes them; it passes everything through, and a test holds the battle to the scorer's own | `same-side`, `defender-down`, `attacker-in-flight`, `attacker-down` |
+| 13 | The third man was up when the bout phase read him. The nearest such man is named | `past-a-comrade`, `past-an-enemy`, by the side of the attacker |
+| 14 | Every change of posture counts, whatever caused it | `steady-and-forward`: every change in the 5 s was between steady and forward, the pulse of the fight. `gives-way`: any other |
+| 15 | Formed: the standard is carried by a man who is standing | `front-rank`, `the-closer` |
+| 16 | In his place as the frames say: within the tie's tolerance of his slot | |
+| 17 | The 20 s count from his last bout, as attacker or defender, if he had one while forward | |
+| 18 | A front-rank man is a man in a file with no slot ahead of him. The leader's slot during a succession: the empty slot is that of the body's leader, who is down and still kept in his file | `left`, `right` |
+| 19 | The closer is the man posted behind the rear rank at the start. Living: not down | `closer-standing`, `closer-in-flight` |
+| 20 | The field's centre is the mean of all the men's positions at the start | `standing`, `coordinate` |
+| 21 | The run with the check on must also give the normal run's state after every man step | |
+
+**The tool's own tests** are on hand-made scenes: for each detector a case that must be flagged
+and a case just under its threshold.
