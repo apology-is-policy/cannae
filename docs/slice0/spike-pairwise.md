@@ -1,9 +1,46 @@
 # Slice 0: The speed spike for the pairwise engine (S0.7)
 
-**Status:** Paullus, 2026-11-10. These readings cover the substrate alone, with no man model.
-The man's cost is added once rungs 3 and 4 exist. The kill line for this engine is 3x real time
-sustained at full scale, with the man included
+**Status:** Paullus, 2026-11-11. **The engine is under its speed line as read: 2.67x against
+3x over a whole battle,** sustained on eight threads, before the man is added (the next
+section). The readings below that cover the substrate alone, with no man model. The kill line
+for this engine is 3x real time sustained at full scale, with the man included
 ([rival-comparison.md](../rival-comparison.md)).
+
+## The sustained readings of record (2026-11-11)
+
+Taken by the rule in [spike-field.md](spike-field.md) ("How a sustained reading is read"), with
+`tools/s07-readings-pairwise.sh` on the spike at 91185c4: 150,000 men, eight threads, Varro's
+perception, ten minutes each. The raw reports are in
+[readings/pairwise-2026-11-11](readings/pairwise-2026-11-11/).
+
+| Run | Second half, the figure of record | Whole run | Slowest report | Load before, after |
+|---|---|---|---|---|
+| **Pocket,** 08:39:25 to 08:49:25 UTC | **1.59x** | 2.00x | 1.34x, the last | 1.89, 5.65 |
+| **Line,** 08:52:06 to 09:02:06 UTC | **8.42x** | 8.57x | 6.24x, the last | 1.97, 7.37 |
+
+- **Whole battle, 2 / (1/line + 1/pocket): 2.67x.** The line is 3x.
+- **Neither run is void:** the load after each is under 10.
+- **The man is not in it,** and he only adds cost. So this engine does not reach its line on
+  the Air as measured. The pocket alone is also under the vision's "toward 2x".
+- **The pocket slows as it fills:** 3.19x in the first half minute, 1.34x in the last, with
+  the men touching rising from 116,000 to 147,000.
+
+**What could have touched the two runs.** Logged, not pleaded:
+
+- **Something held the Mac's load near 1.7 to 1.9 with nothing of ours running:** 2.20 at
+  08:37:50 UTC, 1.89 at 08:39:25, and 1.97 at 08:52:06 after 161 s without a run. At 08:34 I
+  had seen the system's `dasd` near a full core. I did not record what it was during the runs.
+- **The line's last minute read 7.30x and 6.24x** after 510 s at 8.7x to 9.0x. I do not know
+  why. Without that minute the line is about 8.9x and the whole battle 2.70x.
+- **Mine during the runs:** ssh and scp to the Pi, and file edits. No build and no test.
+
+**What did not run.** The Mac was restarted at about 09:13 UTC, in the third run. The rout was
+cut off after eight minutes, and the four-thread pocket and the pocket with the reference
+perception never started. None of them enters the figure.
+
+**A second reading would be a second line.** The rule says nothing is read again as the same
+line. If pocket and line are read once more on the restarted Mac (macOS 27.2.1 since the
+restart), that reading stands beside this one, and Michal decides how the two are read.
 
 ## Verdict so far
 
