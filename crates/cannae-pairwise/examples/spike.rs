@@ -33,34 +33,44 @@ use cannae_core::{
 };
 use cannae_field::FieldPerception;
 use cannae_pairwise::{Pairwise, Params};
+use rayon::prelude::*;
 use std::time::Instant;
 
 /// What a perception's work costs at one man step, as the field spike times it: the rebuild,
 /// the dormancy test for every man, and a View for each man with an enemy near. Adds the
 /// nanoseconds of each to `pp` and returns (views, total crowding seen).
-fn perceive_step<P: Perceive>(
+///
+/// The test and the Views run on the pool's threads: each man's are his own and read the
+/// same rebuilt state, so the count and the sum do not depend on the order. The rebuild
+/// stays on one thread.
+fn perceive_step<P: Perceive + Sync>(
     p: &mut P,
     bodies: &Bodies,
     tick: u32,
+    pool: &rayon::ThreadPool,
     awake: &mut Vec<ManId>,
     pp: &mut [u64; 3],
 ) -> (u64, u64) {
     let t0 = Instant::now();
     p.rebuild(bodies, &[], tick, tick.saturating_sub(5));
+    let p = &*p;
     let t1 = Instant::now();
     awake.clear();
-    for i in 0..bodies.len() {
-        let man = ManId(i as u32);
-        if p.coarse(bodies, &NoFrames, man).enemy_near {
-            awake.push(man);
-        }
-    }
+    pool.install(|| {
+        awake.par_extend(
+            (0..bodies.len() as u32)
+                .into_par_iter()
+                .map(ManId)
+                .filter(|&man| p.coarse(bodies, &NoFrames, man).enemy_near),
+        )
+    });
     let t2 = Instant::now();
-    let mut seen = 0u64;
-    for &man in awake.iter() {
-        let v = std::hint::black_box(p.view(bodies, &NoFrames, man));
-        seen += v.crowding as u64;
-    }
+    let seen: u64 = pool.install(|| {
+        awake
+            .par_iter()
+            .map(|&man| std::hint::black_box(p.view(bodies, &NoFrames, man)).crowding as u64)
+            .sum()
+    });
     pp[0] += (t1 - t0).as_nanos() as u64;
     pp[1] += (t2 - t1).as_nanos() as u64;
     pp[2] += t2.elapsed().as_nanos() as u64;
@@ -268,6 +278,11 @@ fn main() {
     );
     let (mut grid, mut field) = (GridPerception::default(), FieldPerception::default());
     let mut awake: Vec<ManId> = Vec::new();
+    // The perception's own pool, as wide as the substrate's. The two never work at once.
+    let pool = rayon::ThreadPoolBuilder::new()
+        .num_threads(threads)
+        .build()
+        .expect("a thread pool");
     let mut pp = [0u64; 3];
     let (mut viewed, mut seen) = (0u64, 0u64);
     let start = Instant::now();
@@ -278,9 +293,9 @@ fn main() {
             && is_man_step(tick)
         {
             let (v, c) = if which == "field" {
-                perceive_step(&mut field, &bodies, tick, &mut awake, &mut pp)
+                perceive_step(&mut field, &bodies, tick, &pool, &mut awake, &mut pp)
             } else {
-                perceive_step(&mut grid, &bodies, tick, &mut awake, &mut pp)
+                perceive_step(&mut grid, &bodies, tick, &pool, &mut awake, &mut pp)
             };
             viewed += v;
             seen += c;
