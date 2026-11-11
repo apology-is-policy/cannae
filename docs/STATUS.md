@@ -87,7 +87,8 @@ The sources behind them are in [crowd-physics.md](slice0/crowd-physics.md) and [
 | `volleys` (missiles on an area, resolved beside the bouts) and the relief drill (a century relieved by the one behind it in a lull, in the shared frames) | 79957e5, e187489, ca38f3a, reviewed and merged |
 | `backed`, and the relief from twenty minutes | b00dcf1, reviewed and merged |
 | The rule for reading sustained figures, fixed before any is taken | b373249, merged (c9379c0) |
-| His sustained speed readings | waiting for a quiet window on the Mac |
+| His sustained speed readings | running since 2026-11-11 07:33 UTC |
+| His review of the runner's fix (449dcd6) and of the QC list; five detectors of his own | 3151e50, merged |
 
 **The freeze (2026-11-10).** The pre-registration's text is final at commit dd9d90a. The record
 is in its [sign-off](slice0/preregistration.md#sign-off): the SHA-256 of `prereg.toml` and of
@@ -148,6 +149,28 @@ overnight.
   background work to settle.
 - **Nothing can be pushed at the moment:** the GitHub login on the Mac has been invalid since
   the restart, and Michal has to renew it. Commits wait locally.
+
+**Since then (2026-11-11, 07:50 UTC):**
+
+- **Varro reviewed the runner's fix and the QC list, and found nothing against either.** He
+  added five detectors, three of them aimed at his own code, and two conditions: the pass runs
+  on the fixed code, and every flag looked at is listed with its verdict, the harmless ones
+  too. I added one more for the third thing Michal saw, a man who ran half a second after he
+  was steady: it counts how often that happens.
+- **The QC tool is written and not yet run:** 26 detectors and the two dormancy checks, a
+  renderer that draws the men around each flag at four moments, and a link from each picture
+  into the live viewer at that battle and second. Its own tests are on hand-made scenes. It
+  runs on no battle before those tests pass.
+- **The fixed code exists as a branch** (`refreeze-candidate`): the frozen code with Varro's
+  fix and the runner's fix, checked file by file to hold nothing else.
+- **[Addendum 4](slice0/preregistration.md#addendum-4-draft-2026-11-11-the-batch-is-restarted-once-on-a-re-frozen-code)
+  is drafted, unsigned:** the restart, what goes into the fixed code, and the record of who
+  knew what and when. Michal told Varro they had seen none of the Pi's output before deciding.
+- **Varro's speed readings are running** (since 07:33 UTC, about an hour). Mine follow at
+  once, about another hour. Nothing is compiled on the Mac meanwhile.
+- **The Pi cannot be reached at the moment:** since its restart the Mac is on a phone hotspot,
+  not on the Pi's network. The old batch runs on there. The pre-flight and the new batch wait
+  until the Mac is back on that network.
 
 **The crosswise check of the two perceptions passed** (finished 00:04 UTC): all 160 runs gave
 the same end state and the same event log through either perception, and the 80 that the batch
