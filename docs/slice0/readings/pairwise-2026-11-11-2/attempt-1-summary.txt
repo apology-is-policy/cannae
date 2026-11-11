@@ -1,0 +1,11 @@
+2026-11-11T18:33:32Z second line: as built 91185c4, pooled 200ef7b, Apple M2
+  ten seconds, line, 91185c4, 1 threads: views 453000 (check 640000), final hash 3ab06d787dd54e81  same
+  ten seconds, line, 91185c4, 8 threads: views 453000 (check 640000), final hash 3ab06d787dd54e81  same
+  ten seconds, line, 200ef7b, 1 threads: views 453000 (check 640000), final hash 3ab06d787dd54e81  same
+  ten seconds, line, 200ef7b, 4 threads: views 453000 (check 640000), final hash 3ab06d787dd54e81  same
+  ten seconds, line, 200ef7b, 8 threads: views 453000 (check 640000), final hash 3ab06d787dd54e81  same
+  ten seconds, pocket, 91185c4, 1 threads: views 809613 (check 7715255), final hash 69cd46eef151b1f5  same
+  ten seconds, pocket, 91185c4, 8 threads: views 809613 (check 7715255), final hash 69cd46eef151b1f5  same
+  ten seconds, pocket, 200ef7b, 1 threads: views 809613 (check 7715255), final hash 69cd46eef151b1f5  same
+  ten seconds, pocket, 200ef7b, 4 threads: views 809613 (check 7715255), final hash 69cd46eef151b1f5  same
+  ten seconds, pocket, 200ef7b, 8 threads: views 809613 (check 7715255), final hash 69cd46eef151b1f5  same

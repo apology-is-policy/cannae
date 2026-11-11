@@ -4,7 +4,9 @@
 Varro read it on the same day, also before any record, and added four things from the
 documents outside the pre-registration. Each is marked "added by Varro". One of them left a
 definition to me: how the discs' passage is shown in the relief. It is in section 5, proposed
-on 2026-11-11 at 18:48 UTC, while the new batch ran its first step.
+on 2026-11-11 at 18:48 UTC, while the new batch ran its first step, and changed to Varro's
+reading at 18:58 UTC. Section 6 has the counts for what Michal saw at the mid-range set,
+from the same two turns.
 
 This is a list, with no result in it. Everything below was promised before the runs: in the
 [pre-registration](preregistration.md) and its addenda, in [STATUS](../STATUS.md), or to
@@ -123,9 +125,10 @@ Reported for each cell, never scored for a set:
 
 ### How the discs' passage is shown in the relief
 
-**Proposed by Paullus on 2026-11-11 at 18:48 UTC, for Varro to read.** The new batch was in
-its first step then (`base` on the field's rung 0). Neither batch has made a record of
-`relief`, and I have read no record of the new batch.
+**Proposed by Paullus on 2026-11-11 at 18:48 UTC and changed to Varro's reading of it at
+18:58 UTC** (call 0001, turns 103 and 104). The new batch was in its first step then (`base`
+on the field's rung 0). Neither batch has made a record of `relief`, and neither of us has
+read a record of the new batch.
 
 **The promise was written before the drill.** [passage.md](passage.md) made it on 2026-11-10
 at 13:37 UTC, with a maniple falling back through an interval in mind. The relief was
@@ -137,9 +140,24 @@ scripted three hours later, and it has no interval:
 - **The two centuries together are 160 men on 18 m by 14.4 m:** 0.62 men per m². The bench
   measured the discs' excess where a crowd jams at a mouth, and its jams stood at 2.9 to
   4.8 men per m² there.
-- **So the discs' fault can enter in two ways only.** In the walk through the lanes, because
-  a disc keeps his full speed until he touches and a man does not. And in a jam, if the drill
-  goes wrong: men off their lanes, or an enemy who comes on while the centuries pass.
+- **In the lanes the two engines do not differ in kind** (Varro). On the field a man in his
+  place is moved by his tie alone and reads no density; its walking curve is read in `relief`
+  only by men out of their places. On the pairwise engine a man walks to his slot at his
+  pace until he touches someone.
+- **So the discs' fault can act only in a jam:** men out of their places and crowded, because
+  an enemy came on while the centuries passed, or because men in flight ran through the
+  lanes.
+
+**Three marks, fixed now.** Each is taken between the relief's order and the tired century's
+halt, or the run's end if it never halts:
+
+- **Pressed:** a bout began with a man of either century. It is what the enemy did.
+- **Jammed:** at some man step, some man of the two centuries had eight or more others on
+  their feet within a metre of him. With himself that is nine men on 3.14 m², 2.9 per m²:
+  the bench's own measure of density, and the lowest at which it jammed. It is counted on
+  positions, the same way on both engines (Varro).
+- **Unfinished, by reason** (Varro): one of the two centuries broke before the halt; or
+  neither did and the run ended, which is a drill that stuck.
 
 **What the report gives.** None of it changes a statistic of section 5, and no correction is
 applied to anything.
@@ -148,40 +166,38 @@ applied to anything.
    (`crates/cannae-score/tests/relief.rs`: the relief patch with its relief allowed from
    half a minute, men whom nothing moves, nobody fights), at the nominal set. For each
    engine:
-   - the seconds from the order until the fresh century is up, and from then until the tired
-     one halts behind it;
-   - the same two times for a free walk over the same ground at the frames' pace;
-   - the nearest that a man of one century comes to a man of the other, against the distance
-     at which two bodies touch.
-
-   The field slows a man as the crowd thickens and the discs do not. The two engines' times
-   side by side show what that costs in this drill, in seconds, together with anything else
-   that differs between them.
+   - the seconds from the order until the fresh century has the front, and from then until
+     the tired one halts where the fresh one stood. Both are events of the frames;
+   - the same two times for a free walk over the same ground at a man's pace;
+   - **when the men are back** (Varro): how many men of the two centuries are out of their
+     places when the tired century halts, and the seconds from the halt until nine in ten of
+     the tired century's standing men are in their places. A frame halts wherever its men
+     are, so the frames' times alone could not show a jam;
+   - the nearest that a man of one century comes to a man of the other, and whether the
+     drill was jammed by the mark above.
 2. **The reliefs of the scored runs, replayed.** A replay changes no record: it runs the
    same set and seed again and must end in the record's own summary. One that does not is
-   not counted, and the report says how many did not.
-   For each cell, the relieved runs of `relief` are replayed, lowest set first and then
-   lowest seed, until 100 reliefs have been seen or the runs are used up. For each relief:
-   - the same two times as in the fixture;
-   - whether it was **pressed**: a bout began with a man of either century between the order
-     and the tired century's halt;
-   - whether it was never finished before the run ended.
+   not counted, and the report says how many did not. For each cell, the relieved runs of
+   `relief` are replayed, lowest set first and then lowest seed, until 100 reliefs have been
+   seen or the runs are used up. For each relief: the times and the count of item 1, and the
+   three marks.
 
-   The report gives, for each cell, the count of reliefs seen, the median and the longest of
-   each time, and how many were pressed and how many unfinished.
-3. **The pressed reliefs beside their twins.** For the runs with a pressed relief: how many
-   fared better than their `backed` twin, how many worse and how many the same, beside the
-   same three counts for the runs whose reliefs were not pressed.
+   The report gives, for each cell: the reliefs seen; the median and the longest of each
+   time; pressed against jammed as a two-by-two count; and the unfinished by reason.
+3. **The runs beside their twins.** For the runs with a jammed relief, for those with a
+   pressed relief and none jammed, and for the rest: how many fared better than their
+   `backed` twin, how many worse and how many the same.
 
 **How it is read, said now:**
 
-- **A relief that was not pressed** is the drill of item 1 inside a battle. If its times are
-  those of the fixture, the capacity of a gap never bound in it.
-- **A pressed relief is where a jam can form,** and there the bench's figures apply: the
-  discs pass a jam 10 to 20 % too freely when men use the whole mouth, and 30 to 50 % on the
-  bench's first steering. The report says how many reliefs that is, on each engine, and
-  what became of them.
-- **If no relief of a cell was pressed,** the report says that the effect the promise named
+- **The jammed count is how often the fault could act.** The bench's figures apply to a
+  jammed relief: there the discs pass 10 to 20 % too freely when men use the whole mouth,
+  and 30 to 50 % on the bench's first steering. The report says how many reliefs that is on
+  each engine, and what became of them.
+- **A pressed relief is where a jam is likely.** The two-by-two count says how often it
+  came, and how often one came with no enemy in it.
+- **A relief neither pressed nor jammed** is the drill of item 1 inside a battle.
+- **If no relief of a cell was jammed,** the report says that the effect the promise named
   had nothing to act on in that cell, as far as the replayed reliefs show.
 
 **What it cannot show:**
@@ -194,7 +210,8 @@ applied to anything.
   the report does not argue that it is.
 
 **What it needs:** a small replay tool outside the scored code, written and checked on
-unscored sets before it is pointed at a scored run. It is run after the scoring, on the Pi.
+unscored sets before it is pointed at a scored run. Varro reads it before it is used. It is
+run after the scoring, on the Pi.
 
 ## 6. What is known to be wrong in the scored code
 
@@ -208,9 +225,55 @@ unscored sets before it is pointed at a scored run. It is run after the scoring,
 - **The list for a second round,** 1 to 24 in [STATUS](../STATUS.md), none decided.
 - **What Michal saw at the mid-range set** (a century that broke three seconds after its
   centurion fell; a warband standing beside an open flank). STATUS says the batch shows how
-  often the drawn sets do this. *Not settled, and added by this list:* what the scored
-  records can say about it beyond pattern 6's share of early breaks. Varro and I settle that
-  before a record is read.
+  often the drawn sets do this. The two counts are defined below.
+
+### A century and its centurion: the count
+
+**Proposed by Paullus and corrected by Varro on 2026-11-11** (call 0001, turns 103 and 104),
+before either of us has read a record of the new batch.
+
+**The scored record cannot count it.** It holds each body's break and the pooled hits on
+leaders, and not when a leader fell. A replay with the event log does. A replay changes no
+record, and counts only if it ends in the record's own summary.
+
+- **The sample:** `base`, sets 0, 10, .. 190, all ten seeds, in every cell: 200 runs a cell.
+- **A leader's fall:** the first time the leader of a front body goes down, if his body has
+  not broken by then.
+- **A file leader's fall,** for comparison: every fall of a man who is a file leader at the
+  tick he goes down, in a front body not yet broken. Files close up and renumber, so it is
+  his role at that tick and not his rank at the start (Varro).
+- **For each fall:** the seconds from it to his body's break, or "never"; and the share of
+  the body's standing men who are in flight at that tick.
+
+**The report gives,** for each cell and each side, for the leaders and for the file leaders:
+
+- the number of falls;
+- how many were followed by the body's break within 5 s, and within 30 s, and the median
+  time of the rest;
+- the median share of the body in flight at the fall (Varro). A centurion may fall at a
+  different point of the fight than a file leader, and this shows whether he does;
+- **for the Roman bodies:** how many broke before the successor had the place, by each
+  set's own delay (Varro). The delay is drawn for each set, 2 to 15 s. The warband has no
+  succession: its men see their leader down for the rest of the battle.
+
+**The windows are fixed now:** 5 s and 30 s. What Michal saw was three seconds.
+
+**How it is read, said now:** if a centurion's fall is followed by the break within 5 s much
+more often than a file leader's, with the body in a like state, then the rule does what
+Michal saw, and the report says in what share of cases. The count pools twenty sets, and the
+fear a fallen leader adds is drawn for each. So it says how often the drawn sets do this,
+and not how strong the rule is in any one (Varro).
+
+### The warband beside an open flank: the count
+
+**Proposed by Paullus on 2026-11-11 at 18:58 UTC; Varro has not read it yet.**
+
+No rule lets a body turn on a flank: a body follows its one scripted order, in every set. So
+there is nothing to count about the rule. What can be counted is how often the situation
+arises, and the scored record holds it:
+
+- **For each cell, on `base`:** the share of runs in which one Roman century broke and the
+  other stood for a minute or more after it, or never broke.
 
 ## 7. Checks on the code and the runs
 

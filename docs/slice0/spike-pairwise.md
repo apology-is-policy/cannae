@@ -125,6 +125,28 @@ Ten runs of ten simulated seconds on the Pi, where nothing is timed:
 - **Varro read the change before anything was read** (above): it calls his perception from
   several threads.
 
+**The first attempt read nothing (2026-11-11, 18:33 to 18:57 UTC).** The one reading is still
+to be taken.
+
+- **The ten short runs on the Mac gave the figures above,** all ten
+  ([the attempt's summary](readings/pairwise-2026-11-11-2/attempt-1-summary.txt)). So the
+  spike with the pool computes the same thing on the Mac as on the Pi.
+- **Then the script waited for a load under 2 and never got one.** In those 24 minutes the
+  lowest load I saw was 2.9 and the highest 17. It was Apple's own work after that day's
+  system update: first the system log, the search index and, as Varro saw, a malware
+  scan; then the analysis of the photo library (`mediaanalysisd`) on two to three cores.
+  None of it was ours or the other project's, and neither of us stops a system service
+  without Michal.
+- **I stopped the script at 18:57:06 UTC, on Varro's advice, before any timed run had
+  started.** No spike process was running, and the summary held its header and the ten lines
+  and nothing else. Varro checked both for himself and then released the lock.
+- **Why stop and not wait:** left alone, the script could have started a run in one quiet
+  minute and had it slowed by the other project's work, under the void line of ten. By
+  Varro's addition a figure once read stands, so that reading would have counted.
+- **What follows:** the same script is started again when the Mac is quiet, under a new
+  lock, into a new folder. It builds the same two commits and repeats the ten short runs.
+  This is not a second reading, since the first read nothing. The attempt's folder is kept.
+
 ## Verdict so far
 
 | Setup | 1 core | 4 cores, 10 min sustained | 8 cores, 3 min, machine hot |

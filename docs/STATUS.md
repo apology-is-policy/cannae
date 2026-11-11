@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-11, 18:40 UTC.
+**Last updated:** 2026-11-11, 19:00 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -308,6 +308,33 @@ of us:
 - **Varro recomputed the record of the re-freeze himself,** and it holds.
 - **The second speed reading is being taken on the Mac** (since 18:33 UTC). Varro holds the
   other project's lock so that the Mac is quiet. The live viewer is stopped meanwhile.
+
+**Since then (2026-11-11, 19:00 UTC): the speed reading is put off, and two definitions are
+written.**
+
+- **The second speed reading was not taken.** The Mac was busy with Apple's own work after
+  the day's system update, mostly the analysis of the photo library, and its load never came
+  under the 2 the rule asks for. I stopped the script at 18:57 UTC before any timed run had
+  started, so nothing was read. It is started again when the Mac is quiet
+  ([spike-pairwise.md](slice0/spike-pairwise.md)). Its check that the changed speed test
+  computes the same thing passed on the Mac: all ten short runs gave the recorded figures.
+- **The batch:** 216 runs of its first step were done at 18:59 UTC, twenty minutes in, and no
+  step has failed. At that rate the first of its 64 steps takes about three hours. The steps
+  differ in length, so I give the whole batch's time when the first cell is done.
+- **How the discs' too-easy passage is shown in the relief is now defined,** before any
+  record of the relief exists ([report-outline.md](slice0/report-outline.md), section 5).
+  The relief as scripted has no gap to squeeze through: files pass through files, at a fifth
+  of the density at which the bench's crowds jammed. So the report counts how often a relief
+  was jammed or pressed by the enemy, and says that it cannot give what a correct passage
+  would have changed.
+- **The two things Michal saw at the mid-range set now have their counts** (section 6): how
+  often a body breaks within seconds of its leader's fall, against the fall of any file
+  leader; and how often one Roman century stands on after the other has broken.
+- **Varro corrected two facts about his engine in these texts and added three things.** All
+  are in.
+- **A small replay tool for these counts is written and not yet built** (branch
+  `replay-tool`). It lives outside the scored code and is pointed at scored runs only after
+  the scoring.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
