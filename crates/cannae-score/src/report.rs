@@ -477,6 +477,25 @@ impl fmt::Display for Report {
             "6 with dose-response (scored)",
             n - with_dose
         )?;
+        let bands_only = self
+            .sets
+            .iter()
+            .filter(|s| s.verdicts.iter().all(|p| *p == Some(true)))
+            .count();
+        let share_bands = bands_only as f64 / n.max(1) as f64;
+        writeln!(
+            f,
+            "  Base gate (preregistration, addendum 1): {bands_only} of {n} sets pass all eight \
+             bands on base, 6 by its band only, {:.1} %: {}",
+            100.0 * share_bands,
+            if self.incomplete_sets > 0 || n == 0 {
+                "base incomplete, gate not applied"
+            } else if share_bands >= KNIFE_EDGE {
+                "can still pass"
+            } else {
+                "cannot pass"
+            }
+        )?;
         let (k, share) = self.passing();
         let (lo, hi) = wilson(k, n);
         writeln!(
@@ -663,6 +682,8 @@ mod tests {
             audit: None,
             relieved_s: relieved,
             held: 0,
+            end_hash: None,
+            log_hash: None,
         }
     }
 

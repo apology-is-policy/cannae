@@ -23,7 +23,44 @@ use cannae_harness::{Runner, Scenario, place};
 use cannae_man::{Marks, Memory, Men, Rung, Troop};
 use cannae_pairwise::Pairwise;
 use serde::{Deserialize, Serialize};
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, Instant};
+
+/// The crosswise check (call 0001, turns 58-59; branch `spike-perceive` only): when set, each
+/// engine sees through the other's perception -- the pairwise engine through
+/// `FieldPerception`, the field through the reference grid. Both are held to the same View, so
+/// every run should end in the same state either way.
+static SWAP_EYES: AtomicBool = AtomicBool::new(false);
+
+pub fn swap_eyes(on: bool) {
+    SWAP_EYES.store(on, Ordering::Relaxed);
+}
+
+/// Feeds `Hash` into the core's stable hasher, to hash the event log: any difference in what
+/// happened, at any time, and not only in the state at the end (Varro, turn 60).
+struct LogHasher(cannae_core::hash::StateHasher);
+
+impl std::hash::Hasher for LogHasher {
+    fn write(&mut self, bytes: &[u8]) {
+        self.0.write_u64(bytes.len() as u64);
+        for c in bytes.chunks(8) {
+            let mut b = [0u8; 8];
+            b[..c.len()].copy_from_slice(c);
+            self.0.write_u64(u64::from_le_bytes(b));
+        }
+    }
+
+    fn finish(&self) -> u64 {
+        self.0.finish()
+    }
+}
+
+fn log_hash(events: &[Event]) -> u64 {
+    use std::hash::{Hash, Hasher};
+    let mut h = LogHasher(cannae_core::hash::StateHasher::new());
+    events.hash(&mut h);
+    h.finish()
+}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Engine {
@@ -70,6 +107,9 @@ pub struct Run {
     /// How many times a standard-bearer's slot moved under him and the frame stood while he
     /// walked to it (`BodyFrames::held`): the times the frozen frames re-formed on him.
     pub held: u32,
+    /// The hash of the whole observable state at the run's end, and of the whole event log.
+    pub end_hash: u64,
+    pub log_hash: u64,
 }
 
 /// What a run did after its rout window closed, among front men as scored: what stopping
@@ -115,6 +155,11 @@ pub struct Record {
     /// As [`Run::held`]. Absent from records written before the count existed.
     #[serde(default)]
     pub held: u32,
+    /// As [`Run::end_hash`]; `None` in the scored batch's records, which predate it.
+    #[serde(default)]
+    pub end_hash: Option<u64>,
+    #[serde(default)]
+    pub log_hash: Option<u64>,
 }
 
 impl Record {
@@ -133,6 +178,8 @@ impl Record {
             audit: r.audit,
             relieved_s: r.relieved_s.clone(),
             held: r.held,
+            end_hash: Some(r.end_hash),
+            log_hash: Some(r.log_hash),
         }
     }
 }
@@ -197,7 +244,32 @@ pub fn run_logged(s: &Scenario, d: &Drawn, spec: Spec) -> Result<(Run, Vec<Event
     let walls = s.walls();
     let grid = GridPerception::default;
     let fields = FieldPerception::default;
+    let swap = SWAP_EYES.load(Ordering::Relaxed);
     match (d.substrate, d.rung()) {
+        (SubstrateParams::Pairwise(p), Some(_)) if swap => {
+            play(s, d, spec, &troops, fields(), marks, pairwise(p, walls))
+        }
+        (SubstrateParams::Pairwise(p), None) if swap => {
+            play(s, d, spec, &troops, fields(), rung3, pairwise(p, walls))
+        }
+        (SubstrateParams::Field(p), Some(_)) if swap => play(
+            s,
+            d,
+            spec,
+            &troops,
+            grid(),
+            marks,
+            Field::with_walls(p, &walls),
+        ),
+        (SubstrateParams::Field(p), None) if swap => play(
+            s,
+            d,
+            spec,
+            &troops,
+            grid(),
+            rung3,
+            Field::with_walls(p, &walls),
+        ),
         (SubstrateParams::Pairwise(p), Some(_)) => {
             play(s, d, spec, &troops, grid(), marks, pairwise(p, walls))
         }
@@ -329,6 +401,8 @@ fn play<P: Perceive, M: Memory, S: Substrate>(
             .map(|at| at.map(|t| t * BASE_TICK.0 / 1000))
             .collect(),
         held: r.frames.held(),
+        end_hash: r.bodies.state_hash(),
+        log_hash: log_hash(r.log.all()),
         summary,
     };
     Ok((run, r.log.all().to_vec()))
