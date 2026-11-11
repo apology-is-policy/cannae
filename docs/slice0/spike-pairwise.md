@@ -57,6 +57,34 @@ more as built; neither of us recommended the second. What I expect, unmeasured: 
 whole battle, if the perception runs four times faster on the Air's eight cores. The 7.4x above
 is with its time taken out entirely.
 
+## The second line: the perception on all threads (conditions, before anything is read)
+
+**Proposed by Paullus on 2026-11-11, after Michal's decision and before any code for it is
+written. It holds when Varro has agreed to it;** his agreement is entered here with its date.
+Nothing is read before that.
+
+- **The change is in the spike alone** (`crates/cannae-pairwise/examples/spike.rs`, on the
+  branch `spike-perceive`): the test of who has an enemy near, and the Views, run on the
+  pool's threads. The rebuild stays on one thread. The perception's own code and the
+  substrate are not touched, and nothing else is.
+- **It must compute the same thing.** Before any reading, on short runs of the pocket and of
+  the line at one, four and eight threads: the count of Views, its check and the final hash
+  equal those of the spike as built (91185c4).
+- **The reading is taken by the same rule** ([spike-field.md](spike-field.md), "How a
+  sustained reading is read"): the pocket and the line, 150,000 men, eight threads, ten
+  minutes each, the load under 2 before each run, and the mean of the last five minutes.
+- **The figure that decides is the same one,** `2 / (1/line + 1/pocket)`, against the same 3x.
+  Over it means "not failed yet", since the man is still to be added. Under it is final for
+  this line as well.
+- **One reading.** Nothing is tuned and read again. A run that the rule voids (the load after
+  it at ten or more) is taken once more, and both are reported.
+- **The Mac runs nothing else of ours:** no viewer, no build, no check. Varro says so for his
+  side before it starts.
+- **It is reported beside the first reading,** 2.67x, which stays the verdict on the engine as
+  built.
+- **The field engine:** its line is for one core, so this change does not apply to it as its
+  line is written. Whether it is read again is Varro's to say.
+
 ## Verdict so far
 
 | Setup | 1 core | 4 cores, 10 min sustained | 8 cores, 3 min, machine hot |
