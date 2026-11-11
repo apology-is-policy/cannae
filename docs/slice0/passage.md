@@ -151,7 +151,9 @@ with his speed. That rule costs one parameter and a look-ahead beyond touching: 
 pocket already at 2.3x where the kill line is 3x.
 
 It is not built now. Passage capacity enters the scored runs only through the relief variant,
-where an optimistic capacity makes relief easier, and that effect will be reported. The field
+where an optimistic capacity makes relief easier, and that effect will be reported (how:
+[report-outline.md](report-outline.md), "How the discs' passage is shown in the relief",
+written on 2026-11-11 before any relief statistic was read). The field
 has a speed-density relation by construction. If it matches the measured flows on this bench
 and the discs do not, that is a point to the field, and this experiment exists to find exactly
 that.

@@ -2,7 +2,9 @@
 
 **Status:** draft by Paullus, 2026-11-11, written before the new batch has made a record.
 Varro read it on the same day, also before any record, and added four things from the
-documents outside the pre-registration. Each is marked "added by Varro".
+documents outside the pre-registration. Each is marked "added by Varro". One of them left a
+definition to me: how the discs' passage is shown in the relief. It is in section 5, proposed
+on 2026-11-11 at 18:48 UTC, while the new batch ran its first step.
 
 This is a list, with no result in it. Everything below was promised before the runs: in the
 [pre-registration](preregistration.md) and its addenda, in [STATUS](../STATUS.md), or to
@@ -117,7 +119,82 @@ Reported for each cell, never scored for a set:
   [passage.md](passage.md), "A candidate remedy, not built"): passage capacity enters the
   scored runs only through `relief`. The discs pass men through a gap 10 to 20 % too freely,
   which makes a relief easier on the pairwise engine. That document promises that the effect
-  is reported; how it is shown is Paullus's to say before a relief statistic is read.
+  is reported. How it is shown is defined below, before a relief statistic is read.
+
+### How the discs' passage is shown in the relief
+
+**Proposed by Paullus on 2026-11-11 at 18:48 UTC, for Varro to read.** The new batch was in
+its first step then (`base` on the field's rung 0). Neither batch has made a record of
+`relief`, and I have read no record of the new batch.
+
+**The promise was written before the drill.** [passage.md](passage.md) made it on 2026-11-10
+at 13:37 UTC, with a maniple falling back through an interval in mind. The relief was
+scripted three hours later, and it has no interval:
+
+- **Files pass through files.** The fresh century walks up the lanes between the tired
+  century's files, and the tired one then falls back down the lanes of the fresh one. A lane
+  is 1.8 m from file to file and carries one file, a man every 1.8 m.
+- **The two centuries together are 160 men on 18 m by 14.4 m:** 0.62 men per m². The bench
+  measured the discs' excess where a crowd jams at a mouth, and its jams stood at 2.9 to
+  4.8 men per m² there.
+- **So the discs' fault can enter in two ways only.** In the walk through the lanes, because
+  a disc keeps his full speed until he touches and a man does not. And in a jam, if the drill
+  goes wrong: men off their lanes, or an enemy who comes on while the centuries pass.
+
+**What the report gives.** None of it changes a statistic of section 5, and no correction is
+applied to anything.
+
+1. **The drill alone, on both engines.** The fixture of the relief's own test
+   (`crates/cannae-score/tests/relief.rs`: the relief patch with its relief allowed from
+   half a minute, men whom nothing moves, nobody fights), at the nominal set. For each
+   engine:
+   - the seconds from the order until the fresh century is up, and from then until the tired
+     one halts behind it;
+   - the same two times for a free walk over the same ground at the frames' pace;
+   - the nearest that a man of one century comes to a man of the other, against the distance
+     at which two bodies touch.
+
+   The field slows a man as the crowd thickens and the discs do not. The two engines' times
+   side by side show what that costs in this drill, in seconds, together with anything else
+   that differs between them.
+2. **The reliefs of the scored runs, replayed.** A replay changes no record: it runs the
+   same set and seed again and must end in the record's own summary. One that does not is
+   not counted, and the report says how many did not.
+   For each cell, the relieved runs of `relief` are replayed, lowest set first and then
+   lowest seed, until 100 reliefs have been seen or the runs are used up. For each relief:
+   - the same two times as in the fixture;
+   - whether it was **pressed**: a bout began with a man of either century between the order
+     and the tired century's halt;
+   - whether it was never finished before the run ended.
+
+   The report gives, for each cell, the count of reliefs seen, the median and the longest of
+   each time, and how many were pressed and how many unfinished.
+3. **The pressed reliefs beside their twins.** For the runs with a pressed relief: how many
+   fared better than their `backed` twin, how many worse and how many the same, beside the
+   same three counts for the runs whose reliefs were not pressed.
+
+**How it is read, said now:**
+
+- **A relief that was not pressed** is the drill of item 1 inside a battle. If its times are
+  those of the fixture, the capacity of a gap never bound in it.
+- **A pressed relief is where a jam can form,** and there the bench's figures apply: the
+  discs pass a jam 10 to 20 % too freely when men use the whole mouth, and 30 to 50 % on the
+  bench's first steering. The report says how many reliefs that is, on each engine, and
+  what became of them.
+- **If no relief of a cell was pressed,** the report says that the effect the promise named
+  had nothing to act on in that cell, as far as the replayed reliefs show.
+
+**What it cannot show:**
+
+- **How the relief would have fared with the capacity right.** The remedy was not built, so
+  that battle cannot be run. The report gives how often the fault could act and not what it
+  did.
+- **Nothing is read from the difference between the engines.** They differ in everything
+  else too, so a larger effect of the drill on one of them is not the passage's doing, and
+  the report does not argue that it is.
+
+**What it needs:** a small replay tool outside the scored code, written and checked on
+unscored sets before it is pointed at a scored run. It is run after the scoring, on the Pi.
 
 ## 6. What is known to be wrong in the scored code
 
