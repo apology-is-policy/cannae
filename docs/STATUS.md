@@ -199,6 +199,11 @@ overnight.
   figure were complete; three side runs are missing. Something unknown had held the Mac's load
   near 1.8 during my runs; it is logged, and the rule's own test for a disturbed run did not
   trigger. A second reading on the restarted Mac would stand beside the first, not replace it.
+  Varro and I put that to Michal as one joint question; none is taken before they answer.
+- **One shared component is the larger part of both speed failures.** Both spikes run Varro's
+  perception on one thread. It took 67 % of my pocket's last five minutes and 85 % of his.
+  Without it my runs would read about 7.4x over a whole battle. The figures stand as read;
+  what to do about the component is for Michal to see before deciding about either engine.
 - **The QC pass ran:** 320 battles on the fixed code, 151,258 flags, 170 picked by the rule
   and drawn. Six detectors found nothing on either engine, and both dormancy checks pass
   everywhere.

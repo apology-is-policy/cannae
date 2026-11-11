@@ -24,6 +24,14 @@ perception, ten minutes each. The raw reports are in
   the Air as measured. The pocket alone is also under the vision's "toward 2x".
 - **The pocket slows as it fills:** 3.19x in the first half minute, 1.34x in the last, with
   the men touching rising from 116,000 to 147,000.
+- **Two thirds of the pocket's time is the perception.** The spike runs Varro's perception on
+  one thread, as his own spike does, and times it. In the pocket's last five minutes it took
+  67 % of the wall time, the views alone 64 %; in the line's, 46 %. Without it the same runs
+  would read about 4.8x and 15.7x, and a whole battle about 7.4x. In Varro's pocket the
+  perception took 85 %. So one shared component, run on one thread in both spikes, is the
+  larger part of what puts each engine under its line. The rule reads the figure with the
+  perception in it, and so the figure stands; what to do about the component is a separate
+  question, and Michal should see this before deciding anything about either engine.
 
 **What could have touched the two runs.** Logged, not pleaded:
 
@@ -39,8 +47,9 @@ cut off after eight minutes, and the four-thread pocket and the pocket with the 
 perception never started. None of them enters the figure.
 
 **A second reading would be a second line.** The rule says nothing is read again as the same
-line. If pocket and line are read once more on the restarted Mac (macOS 27.2.1 since the
-restart), that reading stands beside this one, and Michal decides how the two are read.
+line. Varro and I put one joint question to Michal, with both verdicts side by side, and no
+second reading of either engine is taken before they answer. If one is allowed, its conditions
+and which figure decides are written before it is taken, and both figures are reported.
 
 ## Verdict so far
 
