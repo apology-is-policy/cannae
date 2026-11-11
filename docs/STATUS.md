@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-11, 16:25 UTC.
+**Last updated:** 2026-11-11, 16:35 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -275,16 +275,24 @@ of us:
   written ([spike-pairwise.md](slice0/spike-pairwise.md)). The change is small and in the
   speed test alone.
 
-**Still to come:** both signatures on Addendum 4 and Michal's approval of it, then the
-re-freeze and the new batch. **The batch's pre-flight runs on the Pi since 16:12 UTC,** on
-the code the batch will use, and ends at about 18:25: it starts every one of the 64 steps for
-two minutes and throws the runs away. The batch itself does not start before the approval.
+**Since then (2026-11-11, 16:35 UTC): the code is frozen again.**
 
-**Addendum 4 is signed by both of us (16:30 UTC)** and waits for Michal's approval
-([the text](slice0/preregistration.md#addendum-4-2026-11-11-the-batch-is-restarted-once-on-a-re-frozen-code)).
-Varro's own check of the runner fix is done and in it: 640 records made by the fixed
-runner equal the frozen runner's, on both engines, every cell and every variant, and no
-record differs.
+- **Addendum 4 is signed by both of us and approved by Michal** (at about 16:31 UTC;
+  [the text](slice0/preregistration.md#addendum-4-2026-11-11-the-batch-is-restarted-once-on-a-re-frozen-code)).
+- **The re-frozen code is commit 40b8dcd:** the frozen code with the two fixes and nothing
+  more, five files under `crates`. The files the freeze hashed are unchanged, so the freeze
+  seed and the 200 parameter sets are the same.
+- **Varro's own check of the runner fix found no record that differs:** 640 records made by
+  the fixed runner against the frozen runner's, on both engines, every cell and every variant.
+- **The batch's pre-flight runs on the Pi since 16:12 UTC** and ends at about 18:25. It
+  starts every one of the 64 steps for two minutes and throws the runs away. At 16:33, 9
+  steps had run and none had died.
+- **One thing is still to build before the batch starts: the gate's scorer.** The batch asks
+  a scorer which cells `base` has ruled out, so that their variants run last (Addendum 1).
+  That scorer prints one line more than the frozen one and lives on a branch. Addendum 4
+  says it is built from the re-frozen code, so it is made again while the pre-flight runs.
+- **Still to come:** the new batch on the Pi, into a new folder, when the pre-flight has
+  ended with no failed step.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects

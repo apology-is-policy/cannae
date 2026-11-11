@@ -15,14 +15,15 @@
 # engine within each variant, being cheaper. With SCORE set to a `score` that prints the base
 # gate (preregistration, Addendum 1), the cells that `base` rules out run all their variants
 # after those of the cells that can still pass; each gate line is logged. Must be run from a checkout whose
-# `git diff dd9d90a -- crates scenarios Cargo.toml Cargo.lock` is empty (checked below).
+# `git diff 40b8dcd -- crates scenarios Cargo.toml Cargo.lock` is empty (checked below): the
+# re-frozen code of Addendum 4, which is dd9d90a with ed6d363 and 449dcd6.
 set -u
 OUT=${1:?usage: s09-batch.sh OUT [field|pairwise|all]}
 WHICH=${2:-all}
 FREEZE=9464880715404986219
 cd "$(dirname "$0")/.."
-if ! git diff --quiet dd9d90a -- crates scenarios Cargo.toml Cargo.lock; then
-    echo "this checkout's code differs from the frozen commit dd9d90a" >&2
+if ! git diff --quiet 40b8dcd -- crates scenarios Cargo.toml Cargo.lock; then
+    echo "this checkout's code differs from the re-frozen commit 40b8dcd" >&2
     exit 1
 fi
 cargo build --release -p cannae-score -q || exit 1

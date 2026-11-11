@@ -595,7 +595,8 @@ until the batch ends.
 
 ## Addendum 4 (2026-11-11): the batch is restarted once, on a re-frozen code
 
-**Signed by both of us on 2026-11-11; it takes effect when Michal has approved it.** The QC pass has run ([qc-pass.md](qc-pass.md)), and Michal has decided
+**Signed by both of us on 2026-11-11, and approved by Michal the same day at about 16:31
+UTC. The re-frozen code is commit 40b8dcd** (the record is at the end of this addendum). The QC pass has run ([qc-pass.md](qc-pass.md)), and Michal has decided
 what it adds to the list below: nothing. It replaces the rule of Addendum 3: the batch does not run to its end on the frozen code, and `base` is not
 repeated after it. Addendum 3's account of the defect and its conditions on the fix stand.
 
@@ -699,6 +700,18 @@ the field engine's four cells are ruled out on `base` (the table below, 06:39 an
 - A comparison with the first batch's records leaves out the wall time and the new count of
   held frames.
 - The first batch is stopped and its folder kept unchanged.
+
+**The record of the re-freeze** (2026-11-11, 16:32 UTC, computed by Paullus; Varro checks
+it):
+
+| | |
+|---|---|
+| Approved | Michal, 2026-11-11 at about 16:31 UTC, asked by Paullus after both signatures |
+| Commit | `40b8dcd62496a30f0df77b18d0bb5dc0304989d3` (40b8dcd): the merge of `refreeze-candidate` into main |
+| Against the candidate | `git diff d35684c 40b8dcd -- crates scenarios Cargo.toml Cargo.lock` is empty |
+| Against the first freeze | `git diff dd9d90a 40b8dcd` over the same paths: five files, `crates/cannae-core/src/frames.rs` and, under `crates/cannae-score`, `src/bin/cell.rs`, `src/lib.rs`, `src/report.rs` and `tests/relief.rs` |
+| What the freeze hashed | `scenarios/prereg.toml` and the three priors files have the SHA-256 of the sign-off above, and so does the hash over the four: the freeze seed is the same, 9464880715404986219. `table-of-record.csv` has its recorded hash, and the sampler (`draw.rs`) and the metrics (`metrics.rs`) are unchanged |
+| The check from here on | `git diff 40b8dcd -- crates scenarios Cargo.toml Cargo.lock` is empty; `tools/s09-batch.sh` and `tools/s09-recheck.py` name 40b8dcd |
 
 | Addendum 4 | Signed |
 |---|---|

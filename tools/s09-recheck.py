@@ -27,7 +27,8 @@ import subprocess
 import sys
 
 FREEZE = 9464880715404986219
-FROZEN = "dd9d90a"
+# The re-frozen code of Addendum 4: dd9d90a with ed6d363 and 449dcd6.
+FROZEN = "40b8dcd"
 VARIANTS = ["base", "veterans", "recruits", "flank", "shock", "volleys", "backed", "relief"]
 SEEDS = 10
 AUDIT_EVERY = 20
