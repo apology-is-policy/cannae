@@ -4,9 +4,9 @@
 Varro read it on the same day, also before any record, and added four things from the
 documents outside the pre-registration. Each is marked "added by Varro". One of them left a
 definition to me: how the discs' passage is shown in the relief. It is in section 5, proposed
-on 2026-11-11 at 18:48 UTC, while the new batch ran its first step, and changed to Varro's
-reading at 18:58 UTC. Section 6 has the counts for what Michal saw at the mid-range set,
-from the same two turns.
+on 2026-11-11 at 18:48 UTC, while the new batch ran its first step, and agreed with Varro's
+changes by 19:06 UTC. Section 6 has the counts for what Michal saw at the mid-range set,
+agreed in the same turns.
 
 This is a list, with no result in it. Everything below was promised before the runs: in the
 [pre-registration](preregistration.md) and its addenda, in [STATUS](../STATUS.md), or to
@@ -125,8 +125,9 @@ Reported for each cell, never scored for a set:
 
 ### How the discs' passage is shown in the relief
 
-**Proposed by Paullus on 2026-11-11 at 18:48 UTC and changed to Varro's reading of it at
-18:58 UTC** (call 0001, turns 103 and 104). The new batch was in its first step then (`base`
+**By Paullus and Varro, 2026-11-11** (call 0001, turns 103 to 106): proposed by Paullus at
+18:48 UTC, changed to Varro's reading of it at 18:58 UTC, and agreed by Varro at 19:04 UTC
+with one change more, which is in. The new batch was in its first step then (`base`
 on the field's rung 0). Neither batch has made a record of `relief`, and neither of us has
 read a record of the new batch.
 
@@ -140,9 +141,9 @@ scripted three hours later, and it has no interval:
 - **The two centuries together are 160 men on 18 m by 14.4 m:** 0.62 men per m². The bench
   measured the discs' excess where a crowd jams at a mouth, and its jams stood at 2.9 to
   4.8 men per m² there.
-- **In the lanes the two engines do not differ in kind** (Varro). On the field a man in his
-  place is moved by his tie alone and reads no density; its walking curve is read in `relief`
-  only by men out of their places. On the pairwise engine a man walks to his slot at his
+- **In the lanes the two engines do not differ in kind.** On the field a man in his place is
+  moved by his tie alone and reads no density; its walking curve is read in `relief` only by
+  men out of their places (Varro). On the pairwise engine a man walks to his slot at his
   pace until he touches someone.
 - **So the discs' fault can act only in a jam:** men out of their places and crowded, because
   an enemy came on while the centuries passed, or because men in flight ran through the
@@ -153,9 +154,13 @@ halt, or the run's end if it never halts:
 
 - **Pressed:** a bout began with a man of either century. It is what the enemy did.
 - **Jammed:** at some man step, some man of the two centuries had eight or more others on
-  their feet within a metre of him. With himself that is nine men on 3.14 m², 2.9 per m²:
-  the bench's own measure of density, and the lowest at which it jammed. It is counted on
-  positions, the same way on both engines (Varro).
+  their feet within a metre of him, at least one of them a man of the other century of the
+  two. With himself that is nine men on 3.14 m², 2.9 per m²: the bench's own measure of
+  density, and the lowest at which it jammed. It is counted on positions, the same way on
+  both engines (Varro).
+  - **Why a man of the other century must be among them** (Varro): a front in close fight
+    is that dense too, one century and the enemy at about half a metre a man, and nobody
+    passes through anybody there. The promise is about men passing through men.
 - **Unfinished, by reason** (Varro): one of the two centuries broke before the halt; or
   neither did and the run ended, which is a drill that stuck.
 
@@ -229,8 +234,9 @@ run after the scoring, on the Pi.
 
 ### A century and its centurion: the count
 
-**Proposed by Paullus and corrected by Varro on 2026-11-11** (call 0001, turns 103 and 104),
-before either of us has read a record of the new batch.
+**By Paullus and Varro, 2026-11-11** (call 0001, turns 103 to 106): proposed by Paullus,
+corrected by Varro, and agreed by him at 19:04 UTC. Neither of us had read a record of the
+new batch.
 
 **The scored record cannot count it.** It holds each body's break and the pooled hits on
 leaders, and not when a leader fell. A replay with the event log does. A replay changes no
@@ -252,9 +258,11 @@ record, and counts only if it ends in the record's own summary.
   time of the rest;
 - the median share of the body in flight at the fall (Varro). A centurion may fall at a
   different point of the fight than a file leader, and this shows whether he does;
-- **for the Roman bodies:** how many broke before the successor had the place, by each
-  set's own delay (Varro). The delay is drawn for each set, 2 to 15 s. The warband has no
-  succession: its men see their leader down for the rest of the battle.
+- **for the Roman bodies,** in both groups: how many falls were followed by the break
+  before a successor could have the leader's place, by each set's own delay (Varro). The
+  delay is drawn for each set, 2 to 15 s. A file leader's fall gets the same window, so that
+  the leaders' figure has one beside it. The warband has no succession: its men see their
+  leader down for the rest of the battle.
 
 **The windows are fixed now:** 5 s and 30 s. What Michal saw was three seconds.
 
@@ -266,14 +274,21 @@ and not how strong the rule is in any one (Varro).
 
 ### The warband beside an open flank: the count
 
-**Proposed by Paullus on 2026-11-11 at 18:58 UTC; Varro has not read it yet.**
+**Proposed by Paullus on 2026-11-11 at 18:58 UTC, with Varro's additions of 19:04 UTC** (call
+0001, turns 105 and 106).
 
 No rule lets a body turn on a flank: a body follows its one scripted order, in every set. So
 there is nothing to count about the rule. What can be counted is how often the situation
 arises, and the scored record holds it:
 
-- **For each cell, on `base`:** the share of runs in which one Roman century broke and the
-  other stood for a minute or more after it, or never broke.
+- **For each cell, on `base`:** the share of runs in which one Roman century broke and, a
+  minute later, the other century and the warband were both unbroken. A warband that had
+  broken by then stands beside nothing (Varro).
+- **The minute is a choice of ours:** long enough for a commander to act, and short against
+  the fifteen minutes the run goes on.
+- **What the count is not** (Varro): it counts the opening, and not what the warband's men
+  did at it. Men near the gap still go after runners one by one; the body as a body follows
+  its order.
 
 ## 7. Checks on the code and the runs
 
