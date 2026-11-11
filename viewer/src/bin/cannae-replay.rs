@@ -1,38 +1,56 @@
-//! Replays for the Slice 0 report (docs/slice0/report-outline.md, section 5, "How the discs'
-//! passage is shown in the relief"). Nothing here is scored, and no record is changed.
+//! Replays for the Slice 0 report (docs/slice0/report-outline.md: section 5, "How the discs'
+//! passage is shown in the relief", and section 6, "A century and its centurion: the count").
+//! Nothing here is scored, and no record is changed.
 //!
 //!   cannae-replay drill --engine field|pairwise
 //!   cannae-replay reliefs --records DIR --engine E --rung R --freeze-seed F --out FILE
 //!                         [--max 100] [--jobs 4]
+//!   cannae-replay leaders --records DIR --engine E --rung R --freeze-seed F --out FILE
+//!                         [--jobs 4]
 //!
 //! `drill` runs the relief alone, as the relief's own test does (`cannae-score`,
 //! `tests/relief.rs`): the relief patch with its reliefs allowed from half a minute, men whom
 //! nothing moves, the nominal set at rung 2, seed 3. For each relief it prints how long the
-//! fresh century took to come up and the tired one to fall back, how far each went, and how
-//! near a man of one came to a man of the other.
+//! fresh century took to come up and the tired one to fall back, how far each went, when the
+//! men were back in their places, how near a man of one came to a man of the other, and
+//! whether it jammed.
 //!
 //! `reliefs` runs the relieved runs of a cell's `relief` records again, lowest set first and
-//! then lowest seed, until `--max` reliefs have been ordered in them. A run is counted only if
-//! it is the battle of its record: the scorer's own run of that set and seed gives the record
-//! again, all but the wall time, and the battle stepped here has the same events. For each
-//! relief it writes one line of JSON to FILE: the times of the drill, whether it was pressed
-//! (a bout began with a man of either century between the order and the tired century's
-//! halt), whether it was unfinished at the run's end, and how the run fared beside its
-//! `backed` twin. It prints the number of runs and of those not counted, and no outcome.
+//! then lowest seed, until `--max` reliefs have been ordered in them. For each relief it
+//! writes one line of JSON to FILE: the times of the drill and three marks, each taken
+//! between the order and the tired century's halt, or the run's end if it never halted.
+//! - Pressed: a bout began with a man of either century.
+//! - Jammed: at some man step a man of the two centuries had eight or more others on their
+//!   feet within a metre of him. With himself that is nine on 3.14 m², the passage bench's
+//!   own measure of density at its lowest jam (`cannae-harness`, `passage.rs`).
+//! - Unfinished, by reason: one of the two centuries broke, or the run ended.
 //!
-//! It is for after the scoring. It asks for the records because it replays only a run that
-//! has one.
+//! It also writes how the run fared beside its `backed` twin.
+//!
+//! `leaders` runs a cell's `base` records of sets 0, 10, .. 190 again and writes one line for
+//! each fall of a body's leader (the first in each body) and of a file leader (every one, by
+//! his role at the tick he went down), in a front body not yet broken: when, how long until
+//! his body broke, the share of the body's standing men in flight at that tick, and the
+//! succession delay of the body's tie in that set.
+//!
+//! A run is counted only if it is the battle of its record: the scorer's own run of that set
+//! and seed gives the record again, all but the wall time, and the battle stepped here has
+//! the same events. Both commands print the number of runs and of those not counted, and no
+//! outcome.
+//!
+//! They are for after the scoring. They ask for the records because they replay only a run
+//! that has one.
 
 use cannae_core::schedule::BASE_TICK;
 use cannae_core::view::Order;
-use cannae_core::{BodyId, EventKind, ManId, Posture};
+use cannae_core::{BodyId, Event, EventKind, ManId, Posture, Role};
 use cannae_harness::Scenario;
 use cannae_harness::metrics::fortune;
 use cannae_man::{Spread, Troop};
-use cannae_score::draw::{Cell, drawn, nominal};
+use cannae_score::draw::{Cell, Drawn, drawn, nominal};
 use cannae_score::report::ROMANS;
-use cannae_score::{Engine, Record, Spec, record_file, run_logged};
-use cannae_view::{Battle, Config, build_from, engine_of, scenario_text};
+use cannae_score::{Record, Run, Spec, record_file, run_logged};
+use cannae_view::{Battle, BodyInfo, Config, build_from, engine_of, scenario_text};
 use std::fmt::Write as _;
 use std::path::Path;
 use std::sync::Mutex;
@@ -51,8 +69,17 @@ const STOLID: Troop = Troop {
     ..Troop::HASTATI
 };
 
+/// A jam, as the passage bench measures density: this many others on their feet within this
+/// distance of a man. Eight others and himself on a disc of one metre are 2.9 per m².
+const JAM_OTHERS: usize = 8;
+const JAM_WITHIN_MM: i64 = 1_000;
+
 fn seconds(tick: u32) -> f64 {
     f64::from(tick) * f64::from(BASE_TICK.0) / 1000.0
+}
+
+fn scenario(variant: &str, text: &str) -> Result<Scenario, String> {
+    Scenario::from_toml(text).map_err(|e| format!("{variant}: {e}"))
 }
 
 /// The reliefs of a scenario as pairs of body numbers: the tired body and the fresh one.
@@ -70,8 +97,19 @@ fn pairs(s: &Scenario) -> Result<Vec<(u32, u32)>, String> {
         .collect()
 }
 
-/// One relief as the frames ran it, in ticks.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+/// The standing men of one body, by the body each man began in.
+fn standing<'a>(
+    b: &'a Battle,
+    of: &'a [Option<BodyId>],
+    body: u32,
+) -> impl Iterator<Item = usize> + 'a {
+    let bodies = b.live.bodies();
+    (0..bodies.len())
+        .filter(move |&i| of[i] == Some(BodyId(body)) && bodies.posture[i] != Posture::Down)
+}
+
+/// One relief as it went, in ticks.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
 struct Drill {
     /// The fresh body was ordered up.
     ordered: Option<u32>,
@@ -79,16 +117,25 @@ struct Drill {
     up: Option<u32>,
     /// The tired body halted behind it.
     halted: Option<u32>,
+    /// Standing men of the two bodies out of their places at that halt.
+    astray: Option<usize>,
+    /// After the halt, nine in ten of the tired body's standing men were in their places.
+    back: Option<u32>,
+    jammed: bool,
+    /// The least distance between a standing man of one body and one of the other, mm.
+    nearest: Option<f64>,
 }
 
 impl Drill {
-    /// Reads the two bodies' orders after a step. The second line of the patch has no order
-    /// but its relief, and the first none but to stand, so an advance of the fresh body is the
-    /// relief's order and a retirement of the tired one is its second half.
-    fn watch(&mut self, b: &Battle, tired: u32, fresh: u32) {
+    /// Reads the two bodies after a step. The second line of the patch has no order but its
+    /// relief, and the first none but to stand, so an advance of the fresh body is the
+    /// relief's order and a retirement of the tired one is its second half. The frames' own
+    /// tests read the drill by these orders too.
+    fn watch(&mut self, b: &Battle, of: &[Option<BodyId>], tired: u32, fresh: u32, man_step: bool) {
         let (Some(t), Some(f)) = (b.live.body(BodyId(tired)), b.live.body(BodyId(fresh))) else {
             return;
         };
+        let bodies = b.live.bodies();
         if self.ordered.is_none() && f.order == Order::Advance {
             self.ordered = Some(f.order_tick);
         }
@@ -97,6 +144,48 @@ impl Drill {
         }
         if self.up.is_some() && self.halted.is_none() && t.order == Order::Hold {
             self.halted = Some(t.order_tick);
+            self.astray = Some(
+                standing(b, of, tired)
+                    .chain(standing(b, of, fresh))
+                    .filter(|&i| !bodies.in_place[i])
+                    .count(),
+            );
+        }
+        if self.halted.is_some() && self.back.is_none() {
+            let (mut men, mut placed) = (0, 0);
+            for i in standing(b, of, tired) {
+                men += 1;
+                placed += usize::from(bodies.in_place[i]);
+            }
+            if men > 0 && placed * 10 >= men * 9 {
+                self.back = Some(b.live.tick());
+            }
+        }
+        if !man_step || self.ordered.is_none() || self.halted.is_some() {
+            return;
+        }
+        let pair: Vec<usize> = standing(b, of, tired)
+            .chain(standing(b, of, fresh))
+            .collect();
+        if !self.jammed {
+            self.jammed = pair.iter().any(|&i| {
+                (0..bodies.len())
+                    .filter(|&j| {
+                        j != i
+                            && bodies.posture[j] != Posture::Down
+                            && bodies.pos[j].dist_sq(bodies.pos[i]) <= JAM_WITHIN_MM * JAM_WITHIN_MM
+                    })
+                    .count()
+                    >= JAM_OTHERS
+            });
+        }
+        for i in standing(b, of, tired) {
+            for j in standing(b, of, fresh) {
+                let d = (bodies.pos[i].dist_sq(bodies.pos[j]) as f64).sqrt();
+                if self.nearest.is_none_or(|n| d < n) {
+                    self.nearest = Some(d);
+                }
+            }
         }
     }
 }
@@ -104,29 +193,8 @@ impl Drill {
 /// Where a body's standing men are along the line of advance: the rearmost and the foremost.
 fn span(b: &Battle, of: &[Option<BodyId>], body: u32) -> Option<(i32, i32)> {
     let bodies = b.live.bodies();
-    let xs = (0..bodies.len())
-        .filter(|&i| of[i] == Some(BodyId(body)) && bodies.posture[i] != Posture::Down)
-        .map(|i| bodies.pos[i].x);
-    Some((xs.clone().min()?, xs.max()?))
-}
-
-/// The least distance between a standing man of one body and a standing man of the other, mm.
-fn nearest(b: &Battle, of: &[Option<BodyId>], one: u32, other: u32) -> Option<f64> {
-    let bodies = b.live.bodies();
-    let men = |body: u32| {
-        (0..bodies.len())
-            .filter(move |&i| of[i] == Some(BodyId(body)) && bodies.posture[i] != Posture::Down)
-    };
-    let mut least: Option<i64> = None;
-    for i in men(one) {
-        for j in men(other) {
-            let d = bodies.pos[i].dist_sq(bodies.pos[j]);
-            if least.is_none_or(|l| d < l) {
-                least = Some(d);
-            }
-        }
-    }
-    least.map(|d| (d as f64).sqrt())
+    let xs: Vec<i32> = standing(b, of, body).map(|i| bodies.pos[i].x).collect();
+    Some((*xs.iter().min()?, *xs.iter().max()?))
 }
 
 fn drill(mut args: impl Iterator<Item = String>) -> Result<(), String> {
@@ -143,7 +211,7 @@ fn drill(mut args: impl Iterator<Item = String>) -> Result<(), String> {
     if soon == text {
         return Err("the relief patch no longer says not_before_s = 1200".to_string());
     }
-    let s = Scenario::from_toml(&soon)?;
+    let s = scenario("relief", &soon)?;
     let d = nominal(Cell { engine, rung: 2 })?;
     let c = Config {
         engine,
@@ -156,16 +224,15 @@ fn drill(mut args: impl Iterator<Item = String>) -> Result<(), String> {
     let of = b.live.bodies().body.clone();
     let pairs = pairs(&s)?;
     let mut drills = vec![Drill::default(); pairs.len()];
-    // Where the fresh body's front and the tired body's rear stood at the order, at the
-    // half-way mark and at the halt, and the nearest two men of the two bodies came.
+    // The fresh body's front and the tired body's rear, at the order, when the fresh body was
+    // up, and at the halt.
     let mut at = vec![[None::<(i32, i32)>; 3]; pairs.len()];
-    let mut least = vec![None::<f64>; pairs.len()];
-    let end = 180 * 1000 / BASE_TICK.0;
+    let end = 240 * 1000 / BASE_TICK.0;
     while b.live.tick() < end {
         let man_step = b.live.step();
         for (k, &(tired, fresh)) in pairs.iter().enumerate() {
             let before = drills[k];
-            drills[k].watch(&b, tired, fresh);
+            drills[k].watch(&b, &of, tired, fresh, man_step);
             let now = drills[k];
             let both = || Some((span(&b, &of, fresh)?.1, span(&b, &of, tired)?.0));
             if before.ordered != now.ordered {
@@ -177,16 +244,8 @@ fn drill(mut args: impl Iterator<Item = String>) -> Result<(), String> {
             if before.halted != now.halted {
                 at[k][2] = both();
             }
-            if man_step && now.ordered.is_some() && now.halted.is_none() {
-                let d = nearest(&b, &of, tired, fresh);
-                if let Some(d) = d
-                    && least[k].is_none_or(|l| d < l)
-                {
-                    least[k] = Some(d);
-                }
-            }
         }
-        if drills.iter().all(|d| d.halted.is_some()) {
+        if drills.iter().all(|d| d.back.is_some()) {
             break;
         }
     }
@@ -202,10 +261,10 @@ fn drill(mut args: impl Iterator<Item = String>) -> Result<(), String> {
     );
     for (k, dr) in drills.iter().enumerate() {
         let (Some(o), Some(u), Some(h)) = (dr.ordered, dr.up, dr.halted) else {
-            println!("  relief {k}: not finished in 180 s: {dr:?}");
+            println!("  relief {k}: not finished in 240 s: {dr:?}");
             continue;
         };
-        let ([Some(a), Some(m), Some(z)], Some(near)) = (at[k], least[k]) else {
+        let ([Some(a), Some(m), Some(z)], Some(near)) = (at[k], dr.nearest) else {
             println!("  relief {k}: a body has no man standing");
             continue;
         };
@@ -214,70 +273,208 @@ fn drill(mut args: impl Iterator<Item = String>) -> Result<(), String> {
         println!(
             "  relief {k}: ordered at {:.2} s; the fresh century up after {:.2} s, its front \
              {came} mm forward (a free walk: {:.2} s); the tired one halted {:.2} s later, its \
-             rear {went} mm back (a free walk: {:.2} s); nearest two men of the two {:.0} mm",
+             rear {went} mm back (a free walk: {:.2} s)",
             seconds(o),
             seconds(u - o),
             f64::from(came) / walk,
             seconds(h - u),
             f64::from(went) / walk,
-            near
+        );
+        println!(
+            "    {} men of the two out of their places at the halt; nine in ten of the tired \
+             century in their places {} after it; nearest two men of the two {near:.0} mm; \
+             jammed: {}",
+            dr.astray.unwrap_or(0),
+            dr.back
+                .map_or("never".to_string(), |t| format!("{:.2} s", seconds(t - h))),
+            dr.jammed
         );
     }
     Ok(())
 }
 
-/// The records of one file, or none if the file is not there.
-fn records(path: &Path) -> Result<Vec<Record>, String> {
-    let text = match std::fs::read_to_string(path) {
+/// What the two commands over a cell's records are given.
+struct Asked {
+    dir: String,
+    cell: Cell,
+    freeze: u64,
+    out: String,
+    max: usize,
+    jobs: usize,
+}
+
+fn asked(mut args: impl Iterator<Item = String>) -> Result<Asked, String> {
+    let (mut dir, mut engine, mut rung, mut freeze, mut out) = (None, None, None, None, None);
+    let (mut max, mut jobs) = (100usize, 4usize);
+    while let Some(a) = args.next() {
+        let mut value = || args.next().ok_or_else(|| format!("{a} needs a value"));
+        match a.as_str() {
+            "--records" => dir = Some(value()?),
+            "--engine" => engine = engine_of(&value()?),
+            "--rung" => rung = value()?.parse::<u8>().ok(),
+            "--freeze-seed" => freeze = value()?.parse::<u64>().ok(),
+            "--out" => out = Some(value()?),
+            "--max" => max = value()?.parse().map_err(|e| format!("--max: {e}"))?,
+            "--jobs" => jobs = value()?.parse().map_err(|e| format!("--jobs: {e}"))?,
+            other => return Err(format!("unknown argument {other:?}")),
+        }
+    }
+    let (Some(dir), Some(engine), Some(rung), Some(freeze), Some(out)) =
+        (dir, engine, rung, freeze, out)
+    else {
+        return Err("needs --records, --engine, --rung, --freeze-seed and --out".to_string());
+    };
+    if Path::new(&out).exists() {
+        return Err(format!("{out} is there already"));
+    }
+    Ok(Asked {
+        dir,
+        cell: Cell { engine, rung },
+        freeze,
+        out,
+        max,
+        jobs,
+    })
+}
+
+/// The scored records of one variant: stopped runs of the freeze seed. None if the file is
+/// not there.
+fn records(a: &Asked, variant: &str) -> Result<Vec<Record>, String> {
+    let path = Path::new(&a.dir).join(record_file(a.cell, variant));
+    let text = match std::fs::read_to_string(&path) {
         Ok(t) => t,
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(Vec::new()),
         Err(e) => return Err(format!("{}: {e}", path.display())),
     };
-    text.lines()
-        .filter(|l| !l.trim().is_empty())
-        .enumerate()
-        .map(|(n, l)| {
-            serde_json::from_str(l).map_err(|e| format!("{}, line {}: {e}", path.display(), n + 1))
-        })
-        .collect()
+    let mut all = Vec::new();
+    for (n, l) in text.lines().enumerate() {
+        if l.trim().is_empty() {
+            continue;
+        }
+        let r: Record = serde_json::from_str(l)
+            .map_err(|e| format!("{}, line {}: {e}", path.display(), n + 1))?;
+        if !r.whole && r.freeze_seed == Some(a.freeze) {
+            all.push(r);
+        }
+    }
+    all.sort_by_key(|r| (r.draw, r.seed));
+    Ok(all)
 }
 
-/// What one replayed run says of its reliefs: a line of JSON for each, or why it is not
-/// counted.
-fn replay(
+/// The scorer's own run of a record's set and seed, if it gives the record again.
+fn again(
     s: &Scenario,
-    pairs: &[(u32, u32)],
-    cell: Cell,
-    freeze: u64,
+    variant: &str,
+    a: &Asked,
     r: &Record,
-    twin: Option<&Record>,
-) -> Result<Vec<String>, String> {
-    let d = drawn(freeze, cell, r.draw)?;
+) -> Result<(Drawn, Run, Vec<Event>), String> {
+    let d = drawn(a.freeze, a.cell, r.draw)?;
     let spec = Spec {
         seed: r.seed,
         duration_s: s.duration_s,
         stop_at_rout_end: true,
     };
     let (run, events) = run_logged(s, &d, spec)?;
-    let mut again = Record::new(cell, "relief", Some(freeze), false, &run);
-    again.wall_ms = r.wall_ms;
-    if again != *r {
+    let mut made = Record::new(a.cell, variant, Some(a.freeze), false, &run);
+    made.wall_ms = r.wall_ms;
+    if made != *r {
         return Err("the scorer's run does not give the record again".to_string());
     }
+    Ok((d, run, events))
+}
+
+/// The same battle, to be stepped here.
+fn stepped(
+    s: &Scenario,
+    variant: &str,
+    a: &Asked,
+    d: &Drawn,
+    seed: u64,
+) -> Result<(Battle, Vec<BodyInfo>), String> {
     let c = Config {
-        engine: cell.engine,
-        rung: cell.rung,
-        variant: "relief".to_string(),
-        seed: r.seed,
+        engine: a.cell.engine,
+        rung: a.cell.rung,
+        variant: variant.to_string(),
+        seed,
     };
-    let mut b = build_from(&c, s, &d, None)?.battle;
+    let built = build_from(&c, s, d, None)?;
+    Ok((built.battle, built.bodies))
+}
+
+/// Runs `one` over the chosen records on `jobs` threads, writes its lines to the file in the
+/// records' order, and prints the counts.
+fn over(
+    a: &Asked,
+    what: &str,
+    on_record: usize,
+    chosen: &[&Record],
+    one: impl Fn(&Record) -> Result<Vec<String>, String> + Sync,
+) -> Result<(), String> {
+    let next = AtomicUsize::new(0);
+    let done: Mutex<Vec<(usize, Result<Vec<String>, String>)>> = Mutex::new(Vec::new());
+    std::thread::scope(|scope| {
+        for _ in 0..a.jobs.max(1) {
+            scope.spawn(|| {
+                loop {
+                    let i = next.fetch_add(1, Ordering::Relaxed);
+                    let Some(r) = chosen.get(i) else { break };
+                    let said = one(r);
+                    done.lock().unwrap().push((i, said));
+                }
+            });
+        }
+    });
+    let mut done = done.into_inner().unwrap();
+    done.sort_by_key(|(i, _)| *i);
+    let (mut text, mut not_counted) = (String::new(), 0);
+    for (i, said) in &done {
+        match said {
+            Ok(lines) => {
+                for l in lines {
+                    text.push_str(l);
+                    text.push('\n');
+                }
+            }
+            Err(why) => {
+                not_counted += 1;
+                let _ = writeln!(
+                    text,
+                    "{{\"draw\":{},\"seed\":{},\"not_counted\":\"{}\"}}",
+                    chosen[*i].draw,
+                    chosen[*i].seed,
+                    why.replace('"', "'")
+                );
+            }
+        }
+    }
+    std::fs::write(&a.out, text).map_err(|e| format!("{}: {e}", a.out))?;
+    println!(
+        "{:?} rung {}: {on_record} {what} on record, {} replayed, {not_counted} not counted; {}",
+        a.cell.engine,
+        a.cell.rung,
+        done.len(),
+        a.out
+    );
+    Ok(())
+}
+
+/// What one replayed run says of its reliefs: a line of JSON for each.
+fn relief_lines(
+    s: &Scenario,
+    pairs: &[(u32, u32)],
+    a: &Asked,
+    r: &Record,
+    twin: Option<&Record>,
+) -> Result<Vec<String>, String> {
+    let (d, run, events) = again(s, "relief", a, r)?;
+    let (mut b, _) = stepped(s, "relief", a, &d, r.seed)?;
     let of = b.live.bodies().body.clone();
     let mut drills = vec![Drill::default(); pairs.len()];
     let end = run.sim_s * 1000 / BASE_TICK.0;
     while b.live.tick() < end {
-        b.live.step();
+        let man_step = b.live.step();
         for (k, &(tired, fresh)) in pairs.iter().enumerate() {
-            drills[k].watch(&b, tired, fresh);
+            drills[k].watch(&b, &of, tired, fresh, man_step);
         }
     }
     if b.live.events() != events.as_slice() {
@@ -307,6 +504,16 @@ fn replay(
     let in_pair = |m: ManId, tired: u32, fresh: u32| {
         matches!(of.get(m.0 as usize), Some(Some(BodyId(x))) if *x == tired || *x == fresh)
     };
+    let broke = |body: u32| {
+        r.summary
+            .body_break
+            .get(body as usize)
+            .is_some_and(Option::is_some)
+    };
+    let after = |t: Option<u32>, from: Option<u32>| match (t, from) {
+        (Some(t), Some(f)) => format!("{:.2}", seconds(t - f)),
+        _ => "null".to_string(),
+    };
     let mut lines = Vec::new();
     for (k, (dr, &(tired, fresh))) in drills.iter().zip(pairs).enumerate() {
         let Some(o) = dr.ordered else { continue };
@@ -316,123 +523,143 @@ fn replay(
                 && matches!(e.kind, EventKind::Bout { attacker, .. }
                     if in_pair(attacker, tired, fresh) || in_pair(e.man, tired, fresh))
         });
-        let time = |t: Option<u32>, from: Option<u32>| match (t, from) {
-            (Some(t), Some(f)) => format!("{:.2}", seconds(t - f)),
-            _ => "null".to_string(),
+        let unfinished = match dr.halted {
+            Some(_) => "null",
+            None if broke(tired) || broke(fresh) => "\"broke\"",
+            None => "\"ended\"",
         };
         let mut l = String::new();
         let _ = write!(
             l,
             "{{\"draw\":{},\"seed\":{},\"relief\":{k},\"ordered_s\":{:.2},\"up_after_s\":{},\
-             \"halted_after_s\":{},\"pressed\":{pressed},\"unfinished\":{},\"twin\":\"{fared}\"}}",
+             \"halted_after_s\":{},\"astray_at_halt\":{},\"back_after_s\":{},\
+             \"pressed\":{pressed},\"jammed\":{},\"unfinished\":{unfinished},\
+             \"twin\":\"{fared}\"}}",
             r.draw,
             r.seed,
             seconds(o),
-            time(dr.up, dr.ordered),
-            time(dr.halted, dr.up),
-            dr.halted.is_none()
+            after(dr.up, dr.ordered),
+            after(dr.halted, dr.up),
+            dr.astray.map_or("null".to_string(), |n| n.to_string()),
+            after(dr.back, dr.halted),
+            dr.jammed,
         );
         lines.push(l);
     }
     Ok(lines)
 }
 
-fn reliefs(mut args: impl Iterator<Item = String>) -> Result<(), String> {
-    let (mut dir, mut engine, mut rung, mut freeze, mut out) = (None, None, None, None, None);
-    let (mut max, mut jobs) = (100usize, 4usize);
-    while let Some(a) = args.next() {
-        let mut value = || args.next().ok_or_else(|| format!("{a} needs a value"));
-        match a.as_str() {
-            "--records" => dir = Some(value()?),
-            "--engine" => engine = engine_of(&value()?),
-            "--rung" => rung = value()?.parse::<u8>().ok(),
-            "--freeze-seed" => freeze = value()?.parse::<u64>().ok(),
-            "--out" => out = Some(value()?),
-            "--max" => max = value()?.parse().map_err(|e| format!("--max: {e}"))?,
-            "--jobs" => jobs = value()?.parse().map_err(|e| format!("--jobs: {e}"))?,
-            other => return Err(format!("unknown argument {other:?}")),
-        }
-    }
-    let (Some(dir), Some(engine), Some(rung), Some(freeze), Some(out)) =
-        (dir, engine, rung, freeze, out)
-    else {
-        return Err("reliefs needs --records, --engine, --rung, --freeze-seed and --out".into());
-    };
-    if Path::new(&out).exists() {
-        return Err(format!("{out} is there already"));
-    }
-    let cell = Cell { engine, rung };
-    let dir = Path::new(&dir);
-    let scored = |r: &Record| !r.whole && r.freeze_seed == Some(freeze);
-    let mut relieved: Vec<Record> = records(&dir.join(record_file(cell, "relief")))?
+fn reliefs(args: impl Iterator<Item = String>) -> Result<(), String> {
+    let a = asked(args)?;
+    let relieved: Vec<Record> = records(&a, "relief")?
         .into_iter()
-        .filter(|r| scored(r) && r.relieved_s.iter().any(Option::is_some))
+        .filter(|r| r.relieved_s.iter().any(Option::is_some))
         .collect();
-    relieved.sort_by_key(|r| (r.draw, r.seed));
-    let backed: Vec<Record> = records(&dir.join(record_file(cell, "backed")))?
-        .into_iter()
-        .filter(scored)
-        .collect();
+    let backed = records(&a, "backed")?;
     // The runs to replay: in order, until `max` reliefs have been ordered in them.
     let mut ordered = 0;
     let chosen: Vec<&Record> = relieved
         .iter()
         .take_while(|r| {
-            let more = ordered < max;
+            let more = ordered < a.max;
             ordered += r.relieved_s.iter().filter(|t| t.is_some()).count();
             more
         })
         .collect();
-    let s = Scenario::from_toml(&scenario_text("relief")?)?;
+    let s = scenario("relief", &scenario_text("relief")?)?;
     let pairs = pairs(&s)?;
-    let next = AtomicUsize::new(0);
-    let done: Mutex<Vec<(usize, Result<Vec<String>, String>)>> = Mutex::new(Vec::new());
-    std::thread::scope(|scope| {
-        for _ in 0..jobs.max(1) {
-            scope.spawn(|| {
-                loop {
-                    let i = next.fetch_add(1, Ordering::Relaxed);
-                    let Some(r) = chosen.get(i) else { break };
-                    let twin = backed
-                        .iter()
-                        .find(|t| t.draw == r.draw && t.seed == r.seed);
-                    let said = replay(&s, &pairs, cell, freeze, r, twin);
-                    done.lock().unwrap().push((i, said));
-                }
-            });
-        }
-    });
-    let mut done = done.into_inner().unwrap();
-    done.sort_by_key(|(i, _)| *i);
-    let (mut text, mut not_counted) = (String::new(), 0);
-    for (i, said) in &done {
-        match said {
-            Ok(lines) => {
-                for l in lines {
-                    text.push_str(l);
-                    text.push('\n');
-                }
+    over(&a, "relieved runs", relieved.len(), &chosen, |r| {
+        let twin = backed
+            .iter()
+            .find(|t| t.draw == r.draw && t.seed == r.seed);
+        relief_lines(&s, &pairs, &a, r, twin)
+    })
+}
+
+/// What one replayed run of `base` says of its leaders' and file leaders' falls.
+fn leader_lines(s: &Scenario, a: &Asked, r: &Record) -> Result<Vec<String>, String> {
+    let (d, run, events) = again(s, "base", a, r)?;
+    let (mut b, infos) = stepped(s, "base", a, &d, r.seed)?;
+    let of = b.live.bodies().body.clone();
+    let end = run.sim_s * 1000 / BASE_TICK.0;
+    let breaks = &r.summary.body_break;
+    let mut led_down = vec![false; s.bodies.len()];
+    let mut seen = 0;
+    let mut lines = Vec::new();
+    while b.live.tick() < end {
+        // A man's role is read as it stood before the step in which he went down.
+        let roles = b.live.bodies().role.clone();
+        b.live.step();
+        let bodies = b.live.bodies();
+        let new = &b.live.events()[seen..];
+        seen += new.len();
+        for e in new {
+            let EventKind::Posture {
+                to: Posture::Down, ..
+            } = e.kind
+            else {
+                continue;
+            };
+            let m = e.man.0 as usize;
+            let Some(BodyId(body)) = of[m] else { continue };
+            let k = body as usize;
+            if !s.bodies[k].front || breaks[k].is_some_and(|t| t <= e.tick) {
+                continue;
             }
-            Err(why) => {
-                not_counted += 1;
-                let _ = writeln!(
-                    text,
-                    "{{\"draw\":{},\"seed\":{},\"not_counted\":\"{}\"}}",
-                    chosen[*i].draw,
-                    chosen[*i].seed,
-                    why.replace('"', "'")
-                );
+            let group = match roles[m] {
+                Role::Leader if !led_down[k] => {
+                    led_down[k] = true;
+                    "leader"
+                }
+                Role::FileLeader => "file",
+                _ => continue,
+            };
+            let (mut men, mut turned) = (0u32, 0u32);
+            for i in standing(&b, &of, body) {
+                men += 1;
+                turned += u32::from(bodies.posture[i] == Posture::Turned);
             }
+            let mut l = String::new();
+            let _ = write!(
+                l,
+                "{{\"draw\":{},\"seed\":{},\"body\":{body},\"side\":{},\"group\":\"{group}\",\
+                 \"fall_s\":{:.2},\"break_after_s\":{},\"in_flight\":{:.4},\
+                 \"succeed_after_s\":{}}}",
+                r.draw,
+                r.seed,
+                bodies.side[m] as u8,
+                seconds(e.tick),
+                breaks[k].map_or("null".to_string(), |t| format!("{:.2}", seconds(t - e.tick))),
+                if men > 0 {
+                    f64::from(turned) / f64::from(men)
+                } else {
+                    0.0
+                },
+                infos[k]
+                    .tie
+                    .succeed_after
+                    .map_or("null".to_string(), |t| format!("{:.2}", seconds(t))),
+            );
+            lines.push(l);
         }
     }
-    std::fs::write(&out, text).map_err(|e| format!("{out}: {e}"))?;
-    println!(
-        "{engine:?} rung {rung}: {} relieved runs on record, {} replayed, {not_counted} not \
-         counted; {out}",
-        relieved.len(),
-        done.len()
-    );
-    Ok(())
+    if b.live.events() != events.as_slice() {
+        return Err("the battle stepped here is not the scorer's".to_string());
+    }
+    Ok(lines)
+}
+
+fn leaders(args: impl Iterator<Item = String>) -> Result<(), String> {
+    let a = asked(args)?;
+    let base = records(&a, "base")?;
+    let chosen: Vec<&Record> = base
+        .iter()
+        .filter(|r| r.draw < 200 && r.draw % 10 == 0)
+        .collect();
+    let s = scenario("base", &scenario_text("base")?)?;
+    over(&a, "runs of base", base.len(), &chosen, |r| {
+        leader_lines(&s, &a, r)
+    })
 }
 
 fn main() {
@@ -440,9 +667,12 @@ fn main() {
     let done = match args.next().as_deref() {
         Some("drill") => drill(args),
         Some("reliefs") => reliefs(args),
+        Some("leaders") => leaders(args),
         _ => Err("usage: cannae-replay drill --engine E\n       \
                   cannae-replay reliefs --records DIR --engine E --rung R --freeze-seed F \
-                  --out FILE [--max 100] [--jobs 4]"
+                  --out FILE [--max 100] [--jobs 4]\n       \
+                  cannae-replay leaders --records DIR --engine E --rung R --freeze-seed F \
+                  --out FILE [--jobs 4]"
             .to_string()),
     };
     if let Err(e) = done {
