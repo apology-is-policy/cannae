@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-11, 19:00 UTC.
+**Last updated:** 2026-11-11, 19:20 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -332,9 +332,28 @@ written.**
   leader; and how often one Roman century stands on after the other has broken.
 - **Varro corrected two facts about his engine in these texts and added three things.** All
   are in.
-- **A small replay tool for these counts is written and not yet built** (branch
-  `replay-tool`). It lives outside the scored code and is pointed at scored runs only after
-  the scoring.
+- **A small replay tool for these counts is written** (branch `replay-tool`). It lives
+  outside the scored code and is pointed at scored runs only after the scoring.
+
+**Since then (2026-11-11, 19:20 UTC):**
+
+- **Both definitions and both counts are agreed** and stand in the outline over both our
+  names, with four more small changes from Varro.
+- **The replay tool builds and passed its check on sets that are not scored** (drawn with
+  another seed). Run again by the tool, every one of 16 battles was the battle of its
+  record, on both engines. Varro reads it before it goes onto main.
+- **The relief alone, with no fighting, is a free walk on both engines:** the fresh century
+  is up in 18.75 s and the tired one back 18.75 s later, and no two men of the two centuries
+  come nearer than 0.9 m. The two men out of their places at the end are the two closers,
+  who stand aside while the centuries pass.
+- **Outcomes of four unscored relieved battles were read in that check** and are entered in
+  the pre-registration's table of outcomes seen.
+- **Varro checks the field engine's cell size now, on the Mac:** the mid-range set at the
+  scored cell and at half of it, 360 runs, with rules for reading it that were written and
+  read before any run ([cell-check.md](slice0/cell-check.md)). It changes nothing in the
+  scored code.
+- **The speed reading waits for the Mac.** The other project holds it for two to three
+  hours, so the reading comes at about 21:30 UTC or later.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
