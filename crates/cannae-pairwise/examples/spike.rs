@@ -15,8 +15,8 @@
 //! against the rampart for most of the run: the worst case for contact with walls.
 //!
 //! `--perceive` adds the perception's work at each man step, as the field spike does: the
-//! rebuild, the dormancy test for every man, and a full View for every man with an enemy in
-//! his window, on one thread. `grid` (the default) is the core's reference perception, which
+//! rebuild on one thread, then the dormancy test for every man and a full View for every man
+//! with an enemy in his window on a pool of `--threads` threads. `grid` (the default) is the core's reference perception, which
 //! this engine uses in the scored runs; `field` is Varro's, which depends only on the core and
 //! is held to the same View by `cannae-field/tests/perception.rs`, so either can serve either
 //! substrate.
