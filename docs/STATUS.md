@@ -274,7 +274,9 @@ of us:
   speed test alone.
 
 **Still to come:** both signatures on Addendum 4 and Michal's approval of it, then the
-re-freeze, the pre-flight and the new batch. **Nothing runs on the Pi meanwhile.**
+re-freeze and the new batch. **The batch's pre-flight runs on the Pi since 16:12 UTC,** on
+the code the batch will use, and ends at about 18:25: it starts every one of the 64 steps for
+two minutes and throws the runs away. The batch itself does not start before the approval.
 
 **The crosswise check of the two perceptions passed** (finished 00:04 UTC): all 160 runs gave
 the same end state and the same event log through either perception, and the 80 that the batch
