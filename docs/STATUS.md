@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-11, 16:35 UTC.
+**Last updated:** 2026-11-11, 18:40 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -293,6 +293,21 @@ of us:
   says it is built from the re-frozen code, so it is made again while the pre-flight runs.
 - **Still to come:** the new batch on the Pi, into a new folder, when the pre-flight has
   ended with no failed step.
+
+**Since then (2026-11-11, 18:40 UTC): the new batch runs.**
+
+- **The new batch started on the Pi at 18:39 UTC,** on the re-frozen code, into a folder of
+  its own. `base` runs first in all eight cells. How long it takes I say when the first cell
+  is done.
+- **Its pre-flight passed:** all 64 steps started, 460 runs, none failed.
+- **The gate's scorer was made again on the re-frozen code** and checked: its records and
+  its output equal the re-frozen build's, but for the one gate line and two added hashes.
+- **The two engines' men still see the same thing on the re-frozen code:** all 160 runs of
+  the crosswise check end in the same state with the same event log through either
+  perception.
+- **Varro recomputed the record of the re-freeze himself,** and it holds.
+- **The second speed reading is being taken on the Mac** (since 18:33 UTC). Varro holds the
+  other project's lock so that the Mac is quiet. The live viewer is stopped meanwhile.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects

@@ -701,6 +701,30 @@ the field engine's four cells are ruled out on `base` (the table below, 06:39 an
   held frames.
 - The first batch is stopped and its folder kept unchanged.
 
+**The start: 2026-11-11, 18:39:32 UTC, and how each of these was met** (Paullus):
+
+- **The frozen commit named.** The batch runs on the Pi from a checkout at e7636bf, whose
+  check against 40b8dcd is empty. Its `cell` is the binary the pre-flight built there at
+  16:13 UTC; the start did not rebuild it.
+- **The gate's scorer** is built on the Pi from the branch `refreeze-cross` at 07db79a:
+  40b8dcd with the change of 91185c4 carried over (the gate line, the crosswise switch, the
+  two hashes). Varro read it (call 0001, turn 100). The batch's records are written by the
+  re-frozen `cell`; only the gate line comes from 07db79a. Tested against the re-frozen build
+  on unscored sets (freeze seed 12345, two draws, ten seeds, the audit on):
+  - on the Mac, the field at rung 0 and the pairwise engine at rung 3: 30 of 30 records equal
+    in each, all fields but the two hashes and the wall time, and the scorer's output equal
+    but for the gate line;
+  - on the Pi, the field at rung 0: the scorer's output equal but for the gate line.
+- **The pre-flight:** on the Pi, 16:11:51 to 18:22:48 UTC, in the batch's checkout at d35684c,
+  whose code is 40b8dcd's. All 64 steps started, 460 runs, none failed.
+- **The crosswise check on the re-frozen code** ran before the start, on the Mac, 16:52 to
+  17:00 UTC, from 07db79a, on the first check's sample and by its script: 160 of 160 runs give
+  the same end state and the same event log through either perception. The comparison with
+  the batch's own records follows as they come.
+- **The table of record** from the batch's own build on the Pi has the recorded hash.
+- **The first batch** was stopped on 2026-11-11 at 08:25 UTC. Its folder's newest file is
+  from then, and the new batch writes to a folder of its own.
+
 **The record of the re-freeze** (2026-11-11, 16:32 UTC, computed by Paullus; Varro checks
 it):
 
