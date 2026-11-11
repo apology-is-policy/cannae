@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-11, 21:43 UTC.
+**Last updated:** 2026-11-11, 21:51 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -439,6 +439,21 @@ are fixed.**
   run.
 - **My watcher on the batch had a fault** and would never have reported the step's end. I
   found it at 21:17 UTC and replaced it; nothing was missed.
+
+**Since then (2026-11-11, 21:51 UTC): the first check of the standard-bearer fix on scored
+runs passed.**
+
+- **Varro read the new tool whole and found no fault.** He added a test that tries every
+  edge of every band, and a guard against naming the wrong folder as the first batch. Both
+  are merged.
+- **Where the fix did not act, it changed nothing.** On the field engine's rung 0, each of
+  the new batch's 2,100 runs of `base` was put beside the first batch's run of the same set
+  and seed. In 711 of them the fix never acted, and all 711 are equal to the first batch's,
+  field for field. None is unequal.
+- **In the other 1,389 it acted,** about two runs in three. That is fewer than in the
+  unscored test (141 of 144), and it is no outcome of a pattern.
+- **This check is taken for each field cell as its `base` finishes,** and before anything
+  is scored. It is entered in the pre-registration's table.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
