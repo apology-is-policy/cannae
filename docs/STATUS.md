@@ -1,8 +1,10 @@
 # Status
 
-**Phase:** Slice 0, the experiment between the two designs. The shared core and harness run end to end with a toy man; the engines are next.
+**Phase:** Slice 0, the experiment between the two designs. Both engines are built and
+frozen. The scored batch is being restarted once, on a code with two fixes; the newest
+blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-11, morning.
+**Last updated:** 2026-11-11, 16:50 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -277,6 +279,12 @@ of us:
 re-freeze and the new batch. **The batch's pre-flight runs on the Pi since 16:12 UTC,** on
 the code the batch will use, and ends at about 18:25: it starts every one of the 64 steps for
 two minutes and throws the runs away. The batch itself does not start before the approval.
+
+**What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
+draft with no result in it, written before the new batch has made a record. It collects
+everything the pre-registration, its addenda and this page promised the report would give.
+One decision in it will be Michal's before any relief statistic is read: whether the relief
+gets its extra runs (the "top-up"), on the machine time alone.
 
 **The crosswise check of the two perceptions passed** (finished 00:04 UTC): all 160 runs gave
 the same end state and the same event log through either perception, and the 80 that the batch
