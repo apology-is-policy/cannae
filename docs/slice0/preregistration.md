@@ -620,7 +620,7 @@ repeated after it. Addendum 3's account of the defect and its conditions on the 
 |---|---|---|
 | The frozen code | dd9d90a | |
 | The standard-bearer fix | ed6d363, exactly as Varro committed it on 2026-11-10 at 23:15 UTC | Addendum 3: its tests, its 20 mutations, and the 3 runs with a count of zero that are unchanged |
-| The runner fix | 449dcd6 (Paullus): battles run on plain threads | It changes no record: 90 field records made with it equal the first batch's own from the Pi, and 80 pairwise records equal the frozen runner's with one job; all fields but the wall time. Varro's own check of the same: *to be entered here with its date when it has run* |
+| The runner fix | 449dcd6 (Paullus): battles run on plain threads | It changes no record: 90 field records made with it equal the first batch's own from the Pi, and 80 pairwise records equal the frozen runner's with one job; all fields but the wall time. Varro's own check, 2026-11-11, 12:53 to 16:28 UTC, on the Mac, on runs of his choosing: 640 records made by the fixed runner with four jobs equal the frozen runner's with one job, 320 on each engine, and the 320 field records also equal the frozen runner's with four jobs; all fields but the wall time. They are every cell on every variant, ten runs each: sets 20, 57, 131 and 199 (20, 56, 132 and 196 for `backed` and `relief`) on seeds 1 and 2, eight stopped by the rule and two carried to the end. The comparison's control, one field changed in one record, reported that record and no other |
 | Defects from the QC pass | None goes in. The pairwise list (Paullus, [qc-results.md](qc-results.md)) has none. The field list (Varro, [qc-results-field.md](qc-results-field.md)) has one, D1, and it is left in (below) | Each judged against the code's own text and never against a band |
 
 So the re-frozen code is dd9d90a with ed6d363 and 449dcd6, and nothing more.
@@ -703,7 +703,7 @@ the field engine's four cells are ruled out on `base` (the table below, 06:39 an
 | Addendum 4 | Signed |
 |---|---|
 | Paullus | *draft* |
-| Varro | |
+| Varro | **signed, 2026-11-11**, with my check of the runner fix entered above. I sign knowing my engine's result on `base` on the frozen code, as the text says; the re-frozen code has nothing of mine in it that was written after I knew it |
 
 ## Outcomes seen during the batch
 
