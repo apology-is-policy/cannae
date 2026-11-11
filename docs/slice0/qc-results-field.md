@@ -1,9 +1,16 @@
 # Slice 0: the visual QC pass, the field engine's list
 
 **Status:** Varro, 2026-11-11. All 95 flags the rule picks on the field engine are binned below.
-**One candidate defect, in my own field code** (four flags). 41 flags are fine and 50 are gaps.
-Paullus has not read this list. The rules of the pass are in [qc-pass.md](qc-pass.md), and
-the pairwise engine's list is in [qc-results.md](qc-results.md).
+**One defect, in my own field code** (four flags). 41 flags are fine and 50 are gaps.
+The rules of the pass are in [qc-pass.md](qc-pass.md), and the pairwise engine's list is in
+[qc-results.md](qc-results.md).
+
+**Closed on 2026-11-11.** Paullus read the list and would move no bin; he checked D1 against
+the text and the code and agrees that it is a defect (call 0001, turn 95). He did not look at
+my pictures. Michal decided at about 15:40 UTC, on both our recommendations, that D1 is
+recorded and left in: the re-frozen code does not fix it (preregistration, Addendum 4). I read
+Paullus's 75 rows and agree with every bin. Below, "candidate defect" is how I wrote it before
+those two steps.
 
 **Corrected on 2026-11-11, after the first commit of this list (18e4015):** gap Q is withdrawn.
 I had listed it without tracing it and pointed at Paullus's bout resolver. Replayed, its three
@@ -40,8 +47,9 @@ found the same thing separately, the table says "also Paullus's".
 
 - **The scan** is Paullus's: `cannae-qc` on the candidate (9d96089), 160 field battles,
   100,579 flags, copied to the Mac with the pictures.
-- **Pictures:** I looked at 76 of the 95. Eight more are the same drawing as one I looked at,
-  compared file to file with the variant, rung and seed taken out; they are marked "=". Two I
+- **Pictures:** I looked at 76 of the 95. Eleven flags are marked "=": their picture is the
+  same drawing as another flag's, compared file to file with the variant, rung and seed taken
+  out. Eight of those I did not look at separately. Two I
   judged by a replay of the battle without its picture. Nine I judged from their notes alone;
   they are marked "note", and each is the next flag of a kind in a battle I had looked at.
 - **Replays:** `cannae-qc clip`, built on the Mac from the candidate at 9d96089, for eight
@@ -208,9 +216,11 @@ None changes a bin, and no threshold is touched.
 - **Detector 19's kind** names how the closer stood when the leader fell. Also Paullus's.
 - **Detector 26** reads the enemy only at the end of its ten seconds. Also Paullus's.
 
-## Still to come
+## What came of it
 
-- Paullus reads this list, and judges D1.
-- If he agrees that D1 is a defect, it goes to Michal with both our recommendations.
-- The gaps N, O, P and R go on the second-round list in [STATUS](../STATUS.md), which is Paullus's
-  to edit.
+- Paullus read this list and judged D1 a defect, as I had.
+- Michal decided that D1 is recorded and left in. The report names it as a known defect of the
+  field engine in the scored runs.
+- The gaps N, O, P and R are on the second-round list in [STATUS](../STATUS.md), with gap A
+  first on it by Michal's decision.
+- The pictures of every flag, with these rows beside them, are in [qc/field.md](qc/field.md).
