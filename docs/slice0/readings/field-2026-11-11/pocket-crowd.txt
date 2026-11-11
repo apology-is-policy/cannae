@@ -1,0 +1,11 @@
+pocket: 150000 bodies, 1 thread, contact Crowd, perception off, 1000000 simulated s
+  wall    60 s  sim  121.3 s  rate   2.02x  free 150000  hot 73098  passes 4  tiles 40  densest 11.9 (peak 12.8) per m2  crushed 25809  views 0
+  wall   120 s  sim  232.8 s  rate   1.86x  free 150000  hot 64469  passes 4  tiles 36  densest 11.9 (peak 14.1) per m2  crushed 67919  views 0
+  wall   180 s  sim  355.1 s  rate   2.04x  free 150000  hot 64357  passes 4  tiles 36  densest 11.4 (peak 15.0) per m2  crushed 115605  views 0
+  wall   240 s  sim  479.8 s  rate   2.08x  free 150000  hot 66104  passes 4  tiles 36  densest 11.6 (peak 15.0) per m2  crushed 164671  views 0
+  wall   300 s  sim  604.5 s  rate   2.08x  free 150000  hot 69558  passes 4  tiles 37  densest 11.3 (peak 15.0) per m2  crushed 214194  views 0
+  wall   360 s  sim  727.8 s  rate   2.05x  free 150000  hot 73138  passes 4  tiles 37  densest 11.5 (peak 15.0) per m2  crushed 262359  views 0
+  wall   420 s  sim  848.0 s  rate   2.00x  free 150000  hot 76258  passes 4  tiles 35  densest 12.1 (peak 15.0) per m2  crushed 308268  views 0
+  wall   481 s  sim  965.5 s  rate   1.95x  free 150000  hot 78929  passes 4  tiles 36  densest 12.0 (peak 15.4) per m2  crushed 353112  views 0
+  wall   541 s  sim 1081.8 s  rate   1.94x  free 150000  hot 82608  passes 4  tiles 36  densest 11.9 (peak 15.4) per m2  crushed 396912  views 0
+done: 1194 simulated s in 600 s, 1.99x real time overall, peak 15.4 per m2, crushed 438593, views 0 (check 0), final hash 1de32828009327ef

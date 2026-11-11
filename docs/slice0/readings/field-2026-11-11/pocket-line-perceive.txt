@@ -1,0 +1,20 @@
+pocket: 150000 bodies, 1 thread, contact Line, perception on, 1000000 simulated s
+  wall    60 s  sim  201.1 s  rate   3.35x  free 150000  hot 24738  passes 4  tiles 36  densest 9.3 (peak 9.8) per m2  crushed 42295  views 33603346
+    perception, ms: rebuild 1433, coarse 1847, views 43661
+  wall   120 s  sim  358.8 s  rate   2.63x  free 150000  hot 30214  passes 4  tiles 36  densest 9.4 (peak 9.8) per m2  crushed 86961  views 66866951
+    perception, ms: rebuild 1093, coarse 1491, views 46551
+  wall   180 s  sim  494.8 s  rate   2.26x  free 150000  hot 34110  passes 4  tiles 36  densest 9.4 (peak 9.8) per m2  crushed 126158  views 98684817
+    perception, ms: rebuild 967, coarse 1352, views 47479
+  wall   240 s  sim  611.8 s  rate   1.95x  free 150000  hot 38559  passes 4  tiles 36  densest 9.6 (peak 9.8) per m2  crushed 160004  views 128406481
+    perception, ms: rebuild 867, coarse 1231, views 48362
+  wall   300 s  sim  723.5 s  rate   1.86x  free 150000  hot 42414  passes 4  tiles 36  densest 9.5 (peak 9.8) per m2  crushed 191771  views 159021857
+    perception, ms: rebuild 824, coarse 1144, views 48785
+  wall   360 s  sim  821.0 s  rate   1.62x  free 150000  hot 45581  passes 4  tiles 36  densest 9.5 (peak 9.8) per m2  crushed 219292  views 187621823
+    perception, ms: rebuild 751, coarse 1061, views 48966
+  wall   420 s  sim  913.5 s  rate   1.54x  free 150000  hot 49408  passes 4  tiles 36  densest 9.5 (peak 9.8) per m2  crushed 245133  views 216383966
+    perception, ms: rebuild 704, coarse 1001, views 49128
+  wall   481 s  sim  998.0 s  rate   1.41x  free 150000  hot 53144  passes 4  tiles 36  densest 9.5 (peak 9.8) per m2  crushed 268347  views 244067147
+    perception, ms: rebuild 652, coarse 946, views 49474
+  wall   541 s  sim 1077.3 s  rate   1.32x  free 150000  hot 56869  passes 4  tiles 35  densest 9.5 (peak 9.8) per m2  crushed 289670  views 271416266
+    perception, ms: rebuild 614, coarse 893, views 49783
+done: 1152 simulated s in 600 s, 1.92x real time overall, peak 9.8 per m2, crushed 309622, views 298570290 (check 3629899088), final hash e6bc522276fa11d7

@@ -1,0 +1,11 @@
+line: 150000 bodies, 1 thread, contact Line, perception off, 1000000 simulated s
+  wall    60 s  sim 1969.0 s  rate  32.82x  free 150000  hot 9506  passes 4  tiles 276  densest 2.2 (peak 2.2) per m2  crushed 0  views 0
+  wall   120 s  sim 3920.8 s  rate  32.53x  free 150000  hot 8092  passes 4  tiles 276  densest 2.2 (peak 2.2) per m2  crushed 0  views 0
+  wall   180 s  sim 5805.1 s  rate  31.40x  free 150000  hot 9506  passes 4  tiles 276  densest 2.2 (peak 2.2) per m2  crushed 0  views 0
+  wall   240 s  sim 7686.6 s  rate  31.36x  free 150000  hot 9506  passes 4  tiles 276  densest 2.2 (peak 2.2) per m2  crushed 0  views 0
+  wall   300 s  sim 9568.0 s  rate  31.36x  free 150000  hot 9506  passes 4  tiles 276  densest 2.2 (peak 2.2) per m2  crushed 0  views 0
+  wall   360 s  sim 11449.8 s  rate  31.36x  free 150000  hot 8092  passes 4  tiles 276  densest 2.2 (peak 2.2) per m2  crushed 0  views 0
+  wall   420 s  sim 13332.0 s  rate  31.37x  free 150000  hot 9506  passes 4  tiles 276  densest 2.2 (peak 2.2) per m2  crushed 0  views 0
+  wall   480 s  sim 15214.8 s  rate  31.38x  free 150000  hot 8092  passes 4  tiles 276  densest 2.2 (peak 2.2) per m2  crushed 0  views 0
+  wall   540 s  sim 17177.3 s  rate  32.71x  free 150000  hot 8092  passes 4  tiles 276  densest 2.2 (peak 2.2) per m2  crushed 0  views 0
+done: 19100 simulated s in 600 s, 31.83x real time overall, peak 2.2 per m2, crushed 0, views 0 (check 0), final hash 7f387658b54b1d21
