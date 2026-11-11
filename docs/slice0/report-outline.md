@@ -1,7 +1,8 @@
 # Slice 0: what the report owes
 
 **Status:** draft by Paullus, 2026-11-11, written before the new batch has made a record.
-Varro reads it and adds what is missing.
+Varro read it on the same day, also before any record, and added four things from the
+documents outside the pre-registration. Each is marked "added by Varro".
 
 This is a list, with no result in it. Everything below was promised before the runs: in the
 [pre-registration](preregistration.md) and its addenda, in [STATUS](../STATUS.md), or to
@@ -112,6 +113,11 @@ Reported for each cell, never scored for a set:
   still being fought twenty minutes in. It runs only if Michal gives the machine time. That
   is decided on the machine time alone, before any relief statistic of the first 50 sets is
   read, and the report says which way. Its twins are reported apart from the first 50 sets'.
+- **What the discs' passage does to the relief** (added by Varro, from
+  [passage.md](passage.md), "A candidate remedy, not built"): passage capacity enters the
+  scored runs only through `relief`. The discs pass men through a gap 10 to 20 % too freely,
+  which makes a relief easier on the pairwise engine. That document promises that the effect
+  is reported; how it is shown is Paullus's to say before a relief statistic is read.
 
 ## 6. What is known to be wrong in the scored code
 
@@ -138,6 +144,11 @@ Reported for each cell, never scored for a set:
 - **The pre-flight:** every one of the 64 steps started on the machine that ran the batch.
 - **The same results on the Mac and the Pi,** bit for bit.
 - **The QC pass:** how many battles, flags and pictures, and that both dormancy checks pass.
+- **The field's cell size** (added by Varro, from [priors-field.md](priors-field.md), "Fixed,
+  and not drawn"): the cell is 1.024 m by structure and not drawn. The priors promise a check
+  at 0.512 m with the results: the base patch at the centre run again, and how far each of
+  the eight measures moves. Varro owes that run. It is made on a build of its own and never
+  on the scored code, and its conditions are written before it is run.
 - **Every outcome either of us saw before the scoring,** from the pre-registration's table.
 
 ## 8. Speed
@@ -147,7 +158,10 @@ Reported for each cell, never scored for a set:
 - **The share of the shared perception** in each reading.
 - **The second line** Michal chose, with the perception on all threads, beside the first and
   never in its place. Its conditions were written before it was read.
-- **What the figures leave out:** the man is not in the pairwise figure.
+- **What the figures leave out:** the man is not in the pairwise figure, nor in the field's
+  (added by Varro: [spike-field.md](spike-field.md), "the man only adds cost").
+- **The field engine is not read a second time** (added by Varro, 2026-11-11): its line is
+  for one core, and its pocket was under 10x with the perception's time taken out.
 
 What follows from the speed is Michal's to decide with this report.
 
@@ -156,6 +170,9 @@ What follows from the speed is Michal's to decide with this report.
 - **Both engines on the same bench** ([passage.md](passage.md),
   [passage-field.md](passage-field.md)), and how each was calibrated on measured flows
   ([passage-calibration.md](passage-calibration.md)).
+- **The field's flow before its calibration beside the calibrated one** (added by Varro, from
+  [passage.md](passage.md)): before it the field was 40 % low, and that document promises
+  both numbers.
 - **The one difference in the press, as it comes:** on the pairwise engine a loose man who
   presses shoves a formed man; on the field a man in his place is moved by his tie alone. The
   interval passage shows it.
