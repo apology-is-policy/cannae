@@ -133,6 +133,22 @@ overnight.
   before the gate ran, and the runner's fix, which must be shown to change no record. Nothing
   else.
 
+**Since then (2026-11-11, 07:30 UTC):**
+
+- **The runner is fixed** on branch `runner-threads` (449dcd6): battles run on plain threads.
+  It changes no record: 90 field records made with it on the Mac equal the batch's own from
+  the Pi, and 80 pairwise records equal the frozen runner's. Varro reviews it. A pre-flight
+  script will start every one of the batch's 64 steps once before the re-freeze, so that the
+  batch runs nothing for the first time.
+- **A visual QC pass comes before the re-freeze** (Michal's request): twenty detectors for
+  things that look wrong, over 320 battles at the mid-range settings, with the thresholds fixed
+  before any flag is looked at ([qc-pass.md](slice0/qc-pass.md)). It costs about a day, and no
+  restart comes after it.
+- **The Mac was restarted at 06:53 UTC** for the speed readings, which still wait for its
+  background work to settle.
+- **Nothing can be pushed at the moment:** the GitHub login on the Mac has been invalid since
+  the restart, and Michal has to renew it. Commits wait locally.
+
 **The crosswise check of the two perceptions passed** (finished 00:04 UTC): all 160 runs gave
 the same end state and the same event log through either perception, and the 80 that the batch
 had also made agree with its records, field for field.
