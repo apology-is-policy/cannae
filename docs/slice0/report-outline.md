@@ -233,7 +233,7 @@ run after the scoring, on the Pi.
   that look wrong although the code does what its text says
   ([the page](qc/README.md)). First among them: a formation follows its standard-bearer when
   he himself gives ground.
-- **The list for a second round,** 1 to 24 in [STATUS](../STATUS.md), none decided.
+- **The list for a second round,** 1 to 25 in [STATUS](../STATUS.md), none decided.
 - **What Michal saw at the mid-range set** (a century that broke three seconds after its
   centurion fell; a warband standing beside an open flank). STATUS says the batch shows how
   often the drawn sets do this. The two counts are defined below.
@@ -310,6 +310,9 @@ arises, and the scored record holds it:
   at 0.512 m with the results: the base patch at the centre run again, and how far each of
   the eight measures moves. Varro owes that run. It is made on a build of its own and never
   on the scored code, and its conditions are written before it is run.
+  - **Run on 2026-11-11** ([cell-check.md](cell-check.md)). The report gives all three
+    things that document sets side by side: what the line fixed beforehand says, what kind
+    of battle it was read on, and how the field's own tests fare on the half-cell build.
 - **Every outcome either of us saw before the scoring,** from the pre-registration's table.
 
 ## 8. Speed

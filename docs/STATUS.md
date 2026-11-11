@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-11, 19:25 UTC.
+**Last updated:** 2026-11-11, 19:31 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -367,6 +367,27 @@ written.**
   The two men I named above, the closers, have no slot of their own and are outside the
   count.
 
+**Since then (2026-11-11, 19:31 UTC): the field engine's cell check is run.**
+
+Varro's check, on the mid-range set, which is never scored
+([cell-check.md](slice0/cell-check.md)). The scored code is untouched by it.
+
+- **By the rule written before the run: no.** With the cell at half its size, the eight
+  measures moved and the verdicts changed no more than they do between two groups of seeds
+  at the same cell.
+- **That is weak evidence, and Varro says so.** At the mid-range set the battle is over in
+  about half a minute on the field engine, at every rung, and such a short fight gives a
+  crowd little to do.
+- **Eight of the field engine's own 44 tests fail at the half cell.** The one that counts: a
+  man walking through a crowd covers a sixth of the distance the calibrated curve gives. So
+  the cell is not a neutral choice of structure, as the priors called it. The crowd rules
+  were calibrated at this cell and hold at this cell.
+- **Varro recommends that the cell go on the list for a second round.** It is there as
+  candidate 25, undecided like the rest.
+- **Both of us have now read this outcome of the field engine at the mid-range set:** it
+  fails six of the eight patterns there and the Roman line breaks first in nearly every
+  run. It is entered in the table of outcomes seen. The 200 drawn sets are what is scored.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -467,6 +488,11 @@ the pictures are on [the page](slice0/qc/README.md). C is 5 above, D is 8, and L
     (both engines).
 24. **R: the second line runs within seconds of the first, untouched.** A man's alarm counts
     his side's runners, not his body's.
+25. **The field engine's cell is a parameter of its crowd rules** (Varro, 2026-11-11, from his
+    cell check; recommended with the result in hand, and not decided). At half the cell,
+    eight of the field's own 44 tests fail, and a walker in a crowd covers a sixth of the
+    calibrated distance. Either the density is spread over a fixed width in metres whatever
+    the cell, or the cell is named as a calibrated constant with the walking curve.
 
 **A defect left in by decision: D1, in the field engine.** Two enemies on their feet can stand
 nearer than the guard's distance (Michal's first decision above).
