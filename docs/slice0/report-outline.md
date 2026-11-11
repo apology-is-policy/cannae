@@ -174,10 +174,16 @@ applied to anything.
    - the seconds from the order until the fresh century has the front, and from then until
      the tired one halts where the fresh one stood. Both are events of the frames;
    - the same two times for a free walk over the same ground at a man's pace;
-   - **when the men are back** (Varro): how many men of the two centuries are out of their
-     places when the tired century halts, and the seconds from the halt until nine in ten of
-     the tired century's standing men are in their places. A frame halts wherever its men
-     are, so the frames' times alone could not show a jam;
+   - **when the men are back** (Varro): of the men of the two centuries who were in their
+     places when the relief was ordered, how many are out of them when the tired century
+     halts; and the seconds from the halt until nine in ten of the tired century's men who
+     were in their places at the order are in them again. Men who have fallen since are left
+     out. A frame halts wherever its men are, so the frames' times alone could not show a
+     jam;
+     - **Why the men at the order** (Varro, turn 114, on reading the tool): a man who fled
+       earlier is still of his body and out of his place as long as he is adrift. Counted
+       over every man on his feet, a thinned century would never be "back", with no jam
+       anywhere.
    - the nearest that a man of one century comes to a man of the other, and whether the
      drill was jammed by the mark above.
 2. **The reliefs of the scored runs, replayed.** A replay changes no record: it runs the
