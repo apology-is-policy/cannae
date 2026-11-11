@@ -12,7 +12,9 @@ control, in which nothing differs but the seeds.
 For each rung this prints every statistic the scorer pools for a set (`metrics::verdicts` in
 cannae-harness) for both groups of runs, with the band's verdict on each, and A: the chance
 that a run of the second group gives a larger value than a run of the first, ties counted
-half. It does so twice: for the half cell against the scored cell, and for the control.
+half. It does so three times: for the half cell against the control's seeds at the scored
+cell, on which the line is read; for the half cell against the same seeds at the scored cell;
+and for the control.
 
 Then it splits the sixty runs at 1.024 m into thirty and thirty at random, 1,000 times, the
 four rungs of a seed kept together, and counts how often seeds alone move a statistic as far
@@ -326,12 +328,17 @@ def main():
     print(f"The field's cell check: the nominal set on base, {n} runs a group.")
     print(f"Moved: A at or below {0.5 - MOVED:.2f}, or at or above {0.5 + MOVED:.2f}, with "
           f"at least {FEWEST} values in each group.")
-    half = table(f"THE HALF CELL: 0.512 m (second) against 1.024 m (first), seeds 1 to {n}",
+    half = table(f"THE HALF CELL: 0.512 m, seeds 1 to {n} (second) against 1.024 m, seeds "
+                 f"{n + 1} to {2 * n} (first). The line is read on this one.",
+                 ("1.024 m", "0.512 m"), (groups["1024b"], groups["512"]), bands)
+    same = table(f"THE SAME SEEDS: 0.512 m (second) against 1.024 m (first), seeds 1 to {n}. "
+                 "Beside the line, not the line.",
                  ("1.024 m", "0.512 m"), (groups["1024"], groups["512"]), bands)
     control = table(f"THE CONTROL: 1.024 m, seeds {n + 1} to {2 * n} (second) against "
                     f"seeds 1 to {n} (first)",
                     (f"seeds 1 to {n}", f"seeds {n + 1} to {2 * n}"),
                     (groups["1024"], groups["1024b"]), bands)
+    shown = (("half cell", half), ("same seeds", same), ("control", control))
 
     print(f"\n{'=' * 100}\nSEEDS ALONE: {SPLITS} random splits of the {2 * n} runs at "
           f"1.024 m into {n} and {n}, the four rungs of a seed kept together")
@@ -347,31 +354,35 @@ def main():
             a = {r: [pool[r][s]["summary"] for s in seeds[:n]] for r in RUNGS}
             b = {r: [pool[r][s]["summary"] for s in seeds[n:]] for r in RUNGS}
             got.append(counts(a, b, bands))
-        print("\n  Each statistic over the four rungs: the mean of A less 0.5, and the splits "
-              "in which seeds alone\n  move it as far or farther, either way.")
-        print(f"  {'statistic':<32} {'half cell':>10} {'control':>10} {'splits':>14}")
+        print("\n  Each statistic over the four rungs: the mean of A less 0.5; and the splits "
+              "in which seeds alone\n  move it as far as the half cell did or farther, either "
+              "way.")
+        print(f"  {'statistic':<32} {'half cell':>10} {'same seeds':>11} {'control':>9} "
+              f"{'splits':>14}")
         for i, (pattern, name, _, _, _) in enumerate(PER_RUN):
             reach = sum(1 for g in got if abs(g[2][i]) >= abs(half[3][i]) - 1e-12)
-            print(f"  {f'{pattern} {name}':<32} {half[3][i]:>+10.3f} {control[3][i]:>+10.3f} "
-                  f"{reach:>6} of {SPLITS}")
-        largest = max(abs(m) for m in half[3])
-        v = sorted(max(abs(m) for m in g[2]) for g in got)
-        reach_move = sum(1 for x in v if x >= largest - 1e-12)
-        print(f"\n  The largest of the eleven: half cell {largest:.3f}, control "
-              f"{max(abs(m) for m in control[3]):.3f}; seeds alone: median "
-              f"{v[SPLITS // 2]:.3f}, 95 in 100 splits at most {v[SPLITS * 95 // 100 - 1]:.3f}; "
-              f"splits that reach the half cell's: {reach_move} of {SPLITS}")
-        v = sorted(g[0] for g in got)
-        reach_verdicts = sum(1 for x in v if x >= half[0])
-        print(f"  Verdicts changed: half cell {half[0]}, control {control[0]}; seeds alone: "
-              f"median {v[SPLITS // 2]}, 95 in 100 splits at most {v[SPLITS * 95 // 100 - 1]}, "
-              f"none in {sum(1 for x in v if x == 0)}; splits that reach the half cell's: "
-              f"{reach_verdicts} of {SPLITS}")
-        v = sorted(g[1] for g in got)
-        print(f"  Comparisons marked MOVED: half cell {half[1]}, control {control[1]}; seeds "
-              f"alone: median {v[SPLITS // 2]}, 95 in 100 splits at most "
-              f"{v[SPLITS * 95 // 100 - 1]}; splits that reach the half cell's: "
-              f"{sum(1 for x in v if x >= half[1])} of {SPLITS}")
+            print(f"  {f'{pattern} {name}':<32} {half[3][i]:>+10.3f} {same[3][i]:>+11.3f} "
+                  f"{control[3][i]:>+9.3f} {reach:>6} of {SPLITS}")
+
+        def reached(values, mine):
+            return sum(1 for x in values if x >= mine - 1e-12)
+
+        def line(what, values, pick, form):
+            v = sorted(values)
+            mine = [pick(c) for _, c in shown]
+            print(f"\n  {what}: seeds alone give a median of {form(v[SPLITS // 2])}, and at "
+                  f"most {form(v[SPLITS * 95 // 100 - 1])} in 95 splits of 100")
+            for (label, _), x in zip(shown, mine):
+                print(f"    {label:<11} {form(x):>6}; splits that reach it: "
+                      f"{reached(v, x)} of {SPLITS}")
+            return reached(v, mine[0])
+
+        reach_move = line("The largest of the eleven moves",
+                          [max(abs(m) for m in g[2]) for g in got],
+                          lambda c: max(abs(m) for m in c[3]), lambda x: f"{x:.3f}")
+        reach_verdicts = line("Verdicts changed", [g[0] for g in got],
+                              lambda c: c[0], str)
+        line("Comparisons marked MOVED (no line)", [g[1] for g in got], lambda c: c[1], str)
         rare = reach_move < RARE or reach_verdicts < RARE
         print(f"\n  The line: fewer than {RARE} of the {SPLITS} splits reach the half cell's "
               "largest move, or its count of changed verdicts.\n  THE CELL MATTERS AT THE "
@@ -379,9 +390,9 @@ def main():
 
     if args.score_dir:
         disagree, checked = [], 0
-        for name, (_, _, ours, _) in (("1024", half), ("512", half), ("1024b", control)):
+        for name, ours, k in (("1024", control, 0), ("512", half, 1), ("1024b", control, 1)):
             for rung in RUNGS:
-                mine = ours[rung][1 if name != "1024" else 0]
+                mine = ours[2][rung][k]
                 path = Path(args.score_dir) / f"score-{name}-r{rung}.txt"
                 theirs = scorer_verdicts(path) if path.exists() else ["missing"] * 8
                 for k in range(8):

@@ -1,9 +1,10 @@
 # The field's cell at half its size: the check
 
 **Status:** conditions only. Written by Varro on 2026-11-11, before the check was built or
-run, and changed on the same day after Paullus read them (call 0001, turn 107): a control and
-a calibrated line. The changes are listed under "How the conditions changed". The results are
-entered at the end, under their own date.
+run, and changed twice on the same day after Paullus read them (call 0001, turns 107 and
+109): a control, a calibrated line, and a comparison on unrelated seeds. The changes are
+listed under "How the conditions changed". The results are entered at the end, under their
+own date.
 
 ## What was promised
 
@@ -61,9 +62,13 @@ the bands.
 - **The variant:** `base`.
 - **The cells of the experiment:** the field engine at rungs 0 to 3. A rung is a choice and
   has no centre, so all four are run.
-- **The half cell:** seeds 1 to 30 at 0.512 m, against seeds 1 to 30 at 1.024 m.
-- **The control** (Paullus): seeds 31 to 60 at 1.024 m. Nothing differs between it and seeds
-  1 to 30 at 1.024 m but the seeds.
+- **The half cell:** seeds 1 to 30 at 0.512 m.
+- **The scored cell:** seeds 1 to 60 at 1.024 m, in two groups of thirty.
+- **The control** (Paullus): seeds 31 to 60 against seeds 1 to 30, both at 1.024 m. Nothing
+  differs between them but the seeds.
+- **The comparison the line is read on:** the half cell against seeds 31 to 60 at 1.024 m,
+  so that the two groups share no seed. The half cell against its own seeds at 1.024 m is
+  given beside it. The reason is under "How it is read".
 - **In all 360 runs,** each stopped by the rule, 15 minutes after a side breaks. The nominal
   set is not audited (`cell.rs`), so no run is carried to the end. The report gives the
   number of records of each kind in each file.
@@ -75,8 +80,8 @@ the bands.
 
 ## What is reported
 
-By `tools/cell-check.py`, twice in the same form: for the half cell against the scored cell,
-and for the control against the same thirty runs.
+By `tools/cell-check.py`, three times in the same form: for the half cell against unrelated
+seeds at the scored cell, for the half cell against its own seeds there, and for the control.
 
 1. **The statistics of the eight patterns,** for each rung and each group, pooled over the
    thirty runs as the scorer pools a set's ten (`metrics::verdicts`), each with its band:
@@ -135,6 +140,14 @@ wrong: nothing is read from it until it agrees, and the correction is said.
 - **Otherwise** the report says that at the centre the half cell moved the measures and
   changed the verdicts no more than seeds alone do, with the counts.
 - **Either way the tables are given whole,** the control's beside the half cell's.
+- **Why the line is read on unrelated seeds** (after Paullus, turn 109). A split compares two
+  thirties that share no seed. Seeds 1 to 30 at the two sizes share their seeds, with the
+  same men drawn. If a seed's battle at 0.512 m resembles its battle at 1.024 m at all, those
+  two groups differ less than two unrelated thirties would, and the line would be crossed
+  less often than one time in forty by seeds alone. That would lean toward finding nothing,
+  which is the result that suits my engine. Against seeds 31 to 60 the reference is exact.
+  The comparison on the same seeds is still given, with its own counts against the splits,
+  and it is not the line.
 
 **What I expect.** Most of the eight should not move. A man in his place is moved by his tie
 alone and reads no density, so the cell acts only on men out of their places: those who step
@@ -181,6 +194,7 @@ Before anything was built or run:
 | 2026-11-11, 19:12 | **The control added, and both lines replaced.** Paullus (turn 107): the two lines had nothing beside them. A pooled median near its band's edge flips by seeds alone, and the four rungs share their seeds, so the 44 comparisons are not 44. He asked for seeds 31 to 60 at 1.024 m as a control. I added the 1,000 splits, which say how often seeds alone do as much, and made the lines out of them |
 | | **Why the count of moved comparisons is no longer a line.** On made-up records (random numbers in the record's format), a difference built into one statistic, large enough to give A = 0.95 on all four rungs, moved five of the 44; and seeds alone moved five or more in 61 of 1,000 splits. The count could not tell the difference from seeds. The largest mean move could: no split reached it. Seeds alone also changed at least one verdict in 998 of those 1,000 splits, because the made-up medians lay near their bands' edges |
 | | Also from Paullus: the reporting may be repaired and run again on the same records; the records stay out of the repository with their hashes here; the kinds of record are counted |
+| 2026-11-11, about 19:25 | **The line is read on unrelated seeds.** Paullus accepted the lines (turn 109) and remarked that the half cell shared its seeds with the group it was compared to, which a split does not, and that this could only make the check more cautious. He asked for no change. I made one: the line is now read on the half cell against seeds 31 to 60 at 1.024 m. It costs no run |
 
 ## Results
 
