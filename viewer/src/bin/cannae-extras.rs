@@ -1186,4 +1186,73 @@ mod tests {
             assert_eq!(mine, verdicts(&runs, &b));
         }
     }
+
+    /// Made-up sets of none to four runs, each value below, on and above every end of its band
+    /// or missing: the parts give the scorer's verdict for every one, and every pattern passes,
+    /// fails and cannot be scored on the way.
+    #[test]
+    fn the_parts_give_the_scorers_verdict_at_every_edge() {
+        fn some(roll: &mut impl FnMut(usize) -> usize, from: &[f64]) -> Option<f64> {
+            (roll(4) > 0).then(|| from[roll(from.len())])
+        }
+        let b = bands().unwrap();
+        let rows = rows(&b);
+        // A generator of its own (xorshift), so that the test needs no crate.
+        let mut state = 0x9E37_79B9_7F4A_7C15u64;
+        let mut roll = move |n: usize| {
+            state ^= state << 13;
+            state ^= state >> 7;
+            state ^= state << 17;
+            (state % n as u64) as usize
+        };
+        // Every end of a band is positive, so half of it is below and half as much again above.
+        let least = |m: f64| vec![m * 0.5, m, m * 1.5];
+        let within = |[lo, hi]: [f64; 2]| vec![lo * 0.5, lo, (lo + hi) / 2.0, hi, hi * 1.5];
+        let harm = b.clock_lethality_per_bout.map_or(vec![0.01], within);
+        let mut seen = [[false; 3]; 8];
+        for _ in 0..20_000 {
+            let runs: Vec<RunSummary> = (0..roll(5))
+                .map(|_| {
+                    let hits_formed = roll(3) as u32;
+                    let hits_rout = roll(3) as u32;
+                    RunSummary {
+                        formed_s: least(b.standoff_min_formed_s)[roll(3)],
+                        median_gap_m: some(&mut roll, &least(b.standoff_min_median_gap_m)),
+                        burstiness: some(&mut roll, &least(b.pulses_min_burstiness)),
+                        lull_share: some(&mut roll, &within(b.pulses_lull_share)),
+                        first_turn_depth: some(&mut roll, &least(b.rear_first_min_depth)),
+                        spread_rho: some(&mut roll, &least(b.spread_min_rho)),
+                        spread_s: some(&mut roll, &within(b.spread_s)),
+                        loser_after_break: some(&mut roll, &least(b.asymmetry_min_after_break)),
+                        time_to_break_s: some(
+                            &mut roll,
+                            &within([b.holds_early_s, b.holds_never_s]),
+                        ),
+                        hits_per_file_hour: [
+                            some(&mut roll, &within(b.clock_hits_per_file_hour)),
+                            some(&mut roll, &within(b.clock_hits_per_file_hour)),
+                        ],
+                        lethality_per_bout: some(&mut roll, &harm),
+                        hits_formed,
+                        leader_hits_formed: roll(hits_formed as usize + 1) as u32,
+                        hits_rout,
+                        leader_hits_rout: roll(hits_rout as usize + 1) as u32,
+                        ..RunSummary::default()
+                    }
+                })
+                .collect();
+            let mine: Vec<Option<bool>> = judge(&runs, &b, &rows).iter().map(passes).collect();
+            let theirs = verdicts(&runs, &b);
+            assert_eq!(mine, theirs, "{runs:?}");
+            for (p, v) in theirs.iter().enumerate() {
+                let k = match v {
+                    Some(true) => 0,
+                    Some(false) => 1,
+                    None => 2,
+                };
+                seen[p][k] = true;
+            }
+        }
+        assert!(seen.iter().all(|s| s.iter().all(|x| *x)), "{seen:?}");
+    }
 }
