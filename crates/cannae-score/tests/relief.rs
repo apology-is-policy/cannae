@@ -543,3 +543,35 @@ fn a_runs_record_says_when_its_reliefs_were_ordered() {
     let old: Record = serde_json::from_value(old).unwrap();
     assert!(old.relieved_s.is_empty());
 }
+
+#[test]
+fn a_runs_record_says_how_often_a_frame_stood_for_its_standard_bearer() {
+    let cell = Cell {
+        engine: Engine::Pairwise,
+        rung: 0,
+    };
+    let d = nominal(cell).unwrap();
+    let spec = Spec {
+        seed: 1,
+        duration_s: 60,
+        stop_at_rout_end: false,
+    };
+    let of = |text: &str| run(&Scenario::from_toml(text).unwrap(), &d, spec).unwrap();
+    // With the warband told to stand where it is, nobody fights, nobody falls and no file
+    // closes.
+    let quiet = BASE.replace("order = \"advance\"", "order = \"hold\"");
+    assert_ne!(quiet, BASE);
+    assert_eq!(of(&quiet).held, 0);
+    // In this fight the man ahead of a century's standard-bearer is down by the half-minute
+    // (seen in the viewer by Michal: the frames once re-formed on the standard-bearer there).
+    let r = of(BASE);
+    assert!(r.held >= 1, "{}", r.held);
+    let rec = Record::new(cell, "base", None, true, &r);
+    assert_eq!(rec.held, r.held);
+    // To disk and back. A line written before records said this reads as none.
+    let line = serde_json::to_string(&rec).unwrap();
+    assert_eq!(serde_json::from_str::<Record>(&line).unwrap(), rec);
+    let mut old: serde_json::Value = serde_json::from_str(&line).unwrap();
+    old.as_object_mut().unwrap().remove("held").unwrap();
+    assert_eq!(serde_json::from_value::<Record>(old).unwrap().held, 0);
+}

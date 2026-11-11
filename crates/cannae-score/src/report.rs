@@ -662,6 +662,7 @@ mod tests {
             },
             audit: None,
             relieved_s: relieved,
+            held: 0,
         }
     }
 

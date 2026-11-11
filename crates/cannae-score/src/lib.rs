@@ -67,6 +67,9 @@ pub struct Run {
     /// if its time or its lull never came. Where none was ordered, a run of `relief` is the
     /// run of `backed`.
     pub relieved_s: Vec<Option<u32>>,
+    /// How many times a standard-bearer's slot moved under him and the frame stood while he
+    /// walked to it (`BodyFrames::held`): the times the frozen frames re-formed on him.
+    pub held: u32,
 }
 
 /// What a run did after its rout window closed, among front men as scored: what stopping
@@ -109,6 +112,9 @@ pub struct Record {
     /// As [`Run::relieved_s`]. Empty for a scenario with no relief.
     #[serde(default)]
     pub relieved_s: Vec<Option<u32>>,
+    /// As [`Run::held`]. Absent from records written before the count existed.
+    #[serde(default)]
+    pub held: u32,
 }
 
 impl Record {
@@ -126,6 +132,7 @@ impl Record {
             summary: r.summary.clone(),
             audit: r.audit,
             relieved_s: r.relieved_s.clone(),
+            held: r.held,
         }
     }
 }
@@ -321,6 +328,7 @@ fn play<P: Perceive, M: Memory, S: Substrate>(
             .iter()
             .map(|at| at.map(|t| t * BASE_TICK.0 / 1000))
             .collect(),
+        held: r.frames.held(),
         summary,
     };
     Ok((run, r.log.all().to_vec()))
