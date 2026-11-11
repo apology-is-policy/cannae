@@ -87,7 +87,7 @@ The sources behind them are in [crowd-physics.md](slice0/crowd-physics.md) and [
 | `volleys` (missiles on an area, resolved beside the bouts) and the relief drill (a century relieved by the one behind it in a lull, in the shared frames) | 79957e5, e187489, ca38f3a, reviewed and merged |
 | `backed`, and the relief from twenty minutes | b00dcf1, reviewed and merged |
 | The rule for reading sustained figures, fixed before any is taken | b373249, merged (c9379c0) |
-| His sustained speed readings | running since 2026-11-11 07:33 UTC |
+| His sustained speed readings | done 2026-11-11; his write-up follows |
 | His review of the runner's fix (449dcd6) and of the QC list; five detectors of his own | 3151e50, merged |
 
 **The freeze (2026-11-10).** The pre-registration's text is final at commit dd9d90a. The record
@@ -171,6 +171,22 @@ overnight.
 - **The Pi cannot be reached at the moment:** since its restart the Mac is on a phone hotspot,
   not on the Pi's network. The old batch runs on there. The pre-flight and the new batch wait
   until the Mac is back on that network.
+
+**Since then (2026-11-11, 08:40 UTC):**
+
+- **The Pi is reachable again and GitHub works;** everything is pushed.
+- **The old batch was stopped at 08:25 UTC.** Its folder is untouched and stays as the first
+  batch: 9,401 records, 8,400 of them the field engine's `base`.
+- **The QC tool is tested and committed.** Its 38 tests on hand-made scenes pass, and six more
+  hold the battles it builds to the scorer's own, event for event. It was compiled and tested
+  on the Pi, so the Mac stayed free.
+- **The control passed:** on the frozen code the tool finds the step back Michal saw, at
+  29.25 s: 70 of 77 slots moved back by exactly one rank.
+- **The pass itself is running on the Pi,** on the fixed code: 320 battles.
+- **Varro's speed readings are done, and he reports that his engine fails its line.** The
+  pocket with perception ran at 1.43x sustained on one core, against 10x. His table goes into
+  [spike-field.md](slice0/spike-field.md). By the rule both signed, a reading under the line
+  is final, since the man only adds cost. My own readings start when he hands the Mac over.
 
 **The crosswise check of the two perceptions passed** (finished 00:04 UTC): all 160 runs gave
 the same end state and the same event log through either perception, and the 80 that the batch

@@ -13,17 +13,21 @@
       With --png each is also made a PNG by Quick Look. Writes QCDIR/pictures/page-ENGINE.md,
       one entry for each picture, with the link that opens the live viewer there.
 
-QCDIR is the folder `cannae-qc scan --out` wrote. Nothing here judges a flag.
+QCDIR is the folder `cannae-qc scan --out` wrote. The battles are run again by the program at
+viewer/target/release/cannae-qc, or the one the environment's CANNAE_QC names: it must be the
+build that made the flags. Nothing here judges a flag.
 """
 import json
 import math
+import os
 import subprocess
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-QC = ROOT / "viewer" / "target" / "release" / "cannae-qc"
+# The QC program built from the code under the pass; CANNAE_QC names another build of it.
+QC = Path(os.environ.get("CANNAE_QC", ROOT / "viewer" / "target" / "release" / "cannae-qc"))
 ORDER = ["base", "veterans", "recruits", "flank", "shock", "volleys", "backed", "relief"]
 ENGINES = ["field", "pairwise"]
 PICKED = 3
