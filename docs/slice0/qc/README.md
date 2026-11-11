@@ -259,7 +259,8 @@ words, shortened.
 
 *Field engine, `veterans`, seed 5, at 549 s. Part of a panel, 12 m across.*
 
-- **Look at the two ringed men in the middle,** 83 and 187. A Roman and a Gaul stand 200 mm
+- **Look at the two ringed men just left of the middle** (their numbers, 83 and 187, are
+  printed up and to the right of them, over other men). A Roman and a Gaul stand 200 mm
   apart, centre to centre: the orange dot lies on the blue one. The code promises 600 mm
   between two enemies on their feet. Around them the Gauls' ranks stand inside the Romans'
   files.

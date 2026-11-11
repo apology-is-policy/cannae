@@ -60,8 +60,8 @@ is with its time taken out entirely.
 ## The second line: the perception on all threads (conditions, before anything is read)
 
 **Proposed by Paullus on 2026-11-11, after Michal's decision and before any code for it is
-written. It holds when Varro has agreed to it;** his agreement is entered here with its date.
-Nothing is read before that.
+written. Varro agreed to it on 2026-11-11 at 16:32 UTC, with one addition** (below the list).
+Nothing was read before that.
 
 - **The change is in the spike alone** (`crates/cannae-pairwise/examples/spike.rs`, on the
   branch `spike-perceive`): the test of who has an enemy near, and the Views, run on the
@@ -85,6 +85,25 @@ Nothing is read before that.
 - **The field engine:** its line is for one core, so this change does not apply to it as its
   line is written. Whether it is read again is Varro's to say.
 
+**Varro's agreement (2026-11-11, 16:32 UTC; call 0001, turn 98),** after he read the diff
+`91185c4..200ef7b` and the script:
+
+- **His addition, which I accept: what happens if one scene is read and the other is not**
+  (the load stayed at 2 or more for thirty minutes, or its run was void twice). The figure
+  that was read stands and is not read again. The missing scene alone is taken once more, by
+  the same command and binary. If that fails too, nothing more is read until both of us
+  agree and Michal is told.
+- **What he checked in the change:** `coarse` and `view` take `&self`, and neither
+  perception holds a cell, a lock or an atomic. The workspace forbids `unsafe`, so the bound
+  `P: Sync` is the compiler's proof that nothing is written while the threads run. The
+  result is a count and a sum of integers, so the order of the threads cannot matter. At
+  200ef7b the core, the field, the man, the gauges and the pairwise engine's own source
+  equal the freeze.
+- **The field engine is not read again** (Varro): its line is for one core, and its pocket
+  was under 10x with the perception's time taken out.
+- **His side of the Mac:** nothing of his runs there from 16:28 UTC until I say the reading
+  is over.
+
 **The change is written and gives the same thing (2026-11-11, 16:11 UTC). Nothing is read.**
 It is d24b053 on `spike-perceive`: 29 lines added and 14 removed, in `examples/spike.rs` alone.
 200ef7b after it corrects the file's header comment and changes no code; the reading is taken
@@ -103,8 +122,8 @@ Ten runs of ten simulated seconds on the Pi, where nothing is timed:
   what test the change there.
 - **It was run on the Pi and the reading is taken on the Mac.** The same ten runs are repeated
   on the Mac just before the reading, and must give these figures.
-- **Varro reads the change before anything is read** (call 0001, note 65): it calls his
-  perception from several threads.
+- **Varro read the change before anything was read** (above): it calls his perception from
+  several threads.
 
 ## Verdict so far
 
