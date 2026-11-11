@@ -1,0 +1,443 @@
+The field's cell check: the nominal set on base, 30 runs a group.
+Moved: A at or below 0.35, or at or above 0.65, with at least 10 values in each group.
+
+====================================================================================================
+THE HALF CELL: 0.512 m, seeds 1 to 30 (second) against 1.024 m, seeds 31 to 60 (first). The line is read on this one.
+A: the chance that a run of the second group gives a larger value than a run of the first, ties half.
+
+Rung 0: 30 runs and 30 runs
+  1.024 m: the Romans broke first in 26, the warband in 3, neither broke in 1; 38 s of machine time for 38225 simulated s
+  0.512 m: the Romans broke first in 28, the warband in 2, neither broke in 0; 46 s of machine time for 29758 simulated s
+
+  statistic                        band         first:   n   median [quartiles]          ok     second:   n   median [quartiles]          ok         A
+  1 formed phase, s                >= 300               30    42.25 [26.25, 101.2]       FAIL            30    36.12 [22.56, 64.44]       FAIL   0.429 
+  1 median gap while formed, m     >= 1                 30    1.997 [1.718, 3.463]       pass            30    1.991 [1.893, 1.996]       pass   0.444 
+  2 burstiness                     >= 0.2               30 -0.05534 [-0.1284, -0.001385] FAIL            30  -0.0195 [-0.06662, 0.02778]  FAIL   0.620 
+  2 share of quiet bins            0.2 to 0.9           26        0 [0, 0.6705]          FAIL            25        0 [0, 0]               FAIL   0.378 
+  3 depth of the first to turn     >= 0.6               29   0.3175 [0.2778, 0.4048]     FAIL            30   0.2778 [0.2188, 0.3552]     FAIL   0.387 
+  4 spread, Spearman's rho         >= 0.3               29   0.8634 [0.5768, 0.9518]     pass            30   0.8549 [0.7538, 0.9374]     pass   0.489 
+  4 spread, s for 80 % of bins     10 to 900            22     12.5 [7, 33.12]           pass            30    16.62 [6.625, 28.44]       pass   0.497 
+  5 loser's hits after the break   >= 0.6               27    0.375 [0.2321, 0.6705]     FAIL            30     0.25 [0, 0.5]             FAIL   0.379 
+  6 time to break, s (never: last) not banded           30    42.25 [26.25, 101.2]                       30    36.12 [22.56, 64.44]              0.429 
+  7 hits per front file per hour   0.1 to 2             60    6.316 [0.05211, 11.26]     FAIL            60    7.048 [1.716, 11.8]        FAIL   0.547 
+  7 lethality per bout             0.002 to 0.15         30  0.05281 [0.03753, 0.07122]   pass            30  0.05595 [0.03537, 0.06932]   pass   0.520 
+  1.024 m: 6 broke within 300 s of contact 26 of 30 (86.7 %), at most 10 %; unbroken 7200 s after it 1 of 30 (3.3 %), at most 25 %
+  1.024 m: 8 leaders' share of hits while formed 11 of 142 (7.7 %), after the break 1 of 111 (0.9 %)
+  0.512 m: 6 broke within 300 s of contact 29 of 30 (96.7 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  0.512 m: 8 leaders' share of hits while formed 14 of 120 (11.7 %), after the break 4 of 182 (2.2 %)
+
+  pattern                            first       second     
+  1 standoff                         FAIL        FAIL        
+  2 pulses and lulls                 FAIL        FAIL        
+  3 rear-first collapse              FAIL        FAIL        
+  4 lateral spread                   pass        pass        
+  5 casualty asymmetry               FAIL        FAIL        
+  6 holds, then breaks (band only)   FAIL        FAIL        
+  7 casualty clock                   FAIL        FAIL        
+  8 centurion gradient               pass        pass        
+
+Rung 1: 30 runs and 30 runs
+  1.024 m: the Romans broke first in 26, the warband in 3, neither broke in 1; 58 s of machine time for 38125 simulated s
+  0.512 m: the Romans broke first in 29, the warband in 1, neither broke in 0; 61 s of machine time for 31892 simulated s
+
+  statistic                        band         first:   n   median [quartiles]          ok     second:   n   median [quartiles]          ok         A
+  1 formed phase, s                >= 300               30    42.25 [26.25, 93.94]       FAIL            30    34.75 [22.56, 66.5]        FAIL   0.430 
+  1 median gap while formed, m     >= 1                 30    1.998 [1.616, 3.475]       pass            30    1.991 [1.817, 1.998]       pass   0.454 
+  2 burstiness                     >= 0.2               30 -0.05265 [-0.1281, 0.003785]  FAIL            30 -0.02011 [-0.09965, 0.04107]  FAIL   0.597 
+  2 share of quiet bins            0.2 to 0.9           26        0 [0, 0.6705]          FAIL            25        0 [0, 0]               FAIL   0.403 
+  3 depth of the first to turn     >= 0.6               29   0.3175 [0.2698, 0.4365]     FAIL            30    0.254 [0.1944, 0.3214]     FAIL   0.360 
+  4 spread, Spearman's rho         >= 0.3               29   0.8634 [0.5449, 0.9518]     pass            30   0.8569 [0.7193, 0.9374]     pass   0.521 
+  4 spread, s for 80 % of bins     10 to 900            25    15.75 [6.75, 35]           pass            26    13.25 [6.625, 26.12]       pass   0.468 
+  5 loser's hits after the break   >= 0.6               27   0.4615 [0.1396, 0.7122]     FAIL            30   0.1667 [0, 0.5536]          FAIL   0.370 
+  6 time to break, s (never: last) not banded           30    42.25 [26.25, 93.94]                       30    34.75 [22.56, 66.5]               0.430 
+  7 hits per front file per hour   0.1 to 2             60    6.372 [0, 11.26]           FAIL            60    7.342 [1.154, 12.48]       FAIL   0.554 
+  7 lethality per bout             0.002 to 0.15         30  0.05688 [0.03849, 0.07122]   pass            30  0.06066 [0.04161, 0.07524]   pass   0.548 
+  1.024 m: 6 broke within 300 s of contact 26 of 30 (86.7 %), at most 10 %; unbroken 7200 s after it 1 of 30 (3.3 %), at most 25 %
+  1.024 m: 8 leaders' share of hits while formed 11 of 147 (7.5 %), after the break 0 of 111 (0.0 %)
+  0.512 m: 6 broke within 300 s of contact 28 of 30 (93.3 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  0.512 m: 8 leaders' share of hits while formed 14 of 148 (9.5 %), after the break 1 of 114 (0.9 %)
+
+  pattern                            first       second     
+  1 standoff                         FAIL        FAIL        
+  2 pulses and lulls                 FAIL        FAIL        
+  3 rear-first collapse              FAIL        FAIL        
+  4 lateral spread                   pass        pass        
+  5 casualty asymmetry               FAIL        FAIL        
+  6 holds, then breaks (band only)   FAIL        FAIL        
+  7 casualty clock                   FAIL        FAIL        
+  8 centurion gradient               pass        pass        
+
+Rung 2: 30 runs and 30 runs
+  1.024 m: the Romans broke first in 26, the warband in 3, neither broke in 1; 61 s of machine time for 36976 simulated s
+  0.512 m: the Romans broke first in 26, the warband in 4, neither broke in 0; 50 s of machine time for 29482 simulated s
+
+  statistic                        band         first:   n   median [quartiles]          ok     second:   n   median [quartiles]          ok         A
+  1 formed phase, s                >= 300               30    33.25 [20.81, 48.31]       FAIL            30    21.88 [14.06, 31.12]       FAIL   0.347 MOVED
+  1 median gap while formed, m     >= 1                 30    1.944 [1, 2]               pass            30    1.977 [1.275, 1.993]       pass   0.482 
+  2 burstiness                     >= 0.2               30  -0.1109 [-0.1686, -0.02201]  FAIL            29  -0.0682 [-0.1407, 0.007686]  FAIL   0.598 
+  2 share of quiet bins            0.2 to 0.9           24        0 [0, 0.3125]          FAIL            16        0 [0, 0.08333]         FAIL   0.453 
+  3 depth of the first to turn     >= 0.6               29   0.2937 [0.2222, 0.3968]     FAIL            30   0.2738 [0.2063, 0.3363]     FAIL   0.409 
+  4 spread, Spearman's rho         >= 0.3               29    0.818 [0.6712, 0.9448]     pass            30   0.9178 [0.8043, 0.9407]     pass   0.599 
+  4 spread, s for 80 % of bins     10 to 900            27       14 [5.625, 18.5]        pass            30        6 [4.5, 10.12]         FAIL   0.294 MOVED
+  5 loser's hits after the break   >= 0.6               26     0.45 [0, 0.6574]          FAIL            30   0.3333 [0, 0.5]             FAIL   0.467 
+  6 time to break, s (never: last) not banded           30    33.25 [20.81, 48.31]                       30    21.88 [14.06, 31.12]              0.347 MOVED
+  7 hits per front file per hour   0.1 to 2             60     6.79 [0, 13.98]           FAIL            60    7.199 [0, 14.69]           FAIL   0.507 
+  7 lethality per bout             0.002 to 0.15         30  0.05688 [0.03005, 0.07965]   pass            30  0.05556 [0.03471, 0.09881]   pass   0.528 
+  1.024 m: 6 broke within 300 s of contact 28 of 30 (93.3 %), at most 10 %; unbroken 7200 s after it 1 of 30 (3.3 %), at most 25 %
+  1.024 m: 8 leaders' share of hits while formed 9 of 99 (9.1 %), after the break 0 of 66 (0.0 %)
+  0.512 m: 6 broke within 300 s of contact 28 of 30 (93.3 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  0.512 m: 8 leaders' share of hits while formed 11 of 73 (15.1 %), after the break 1 of 96 (1.0 %)
+
+  pattern                            first       second     
+  1 standoff                         FAIL        FAIL        
+  2 pulses and lulls                 FAIL        FAIL        
+  3 rear-first collapse              FAIL        FAIL        
+  4 lateral spread                   pass        FAIL        CHANGED
+  5 casualty asymmetry               FAIL        FAIL        
+  6 holds, then breaks (band only)   FAIL        FAIL        
+  7 casualty clock                   FAIL        FAIL        
+  8 centurion gradient               pass        pass        
+
+Rung 3: 30 runs and 30 runs
+  1.024 m: the Romans broke first in 27, the warband in 3, neither broke in 0; 50 s of machine time for 31273 simulated s
+  0.512 m: the Romans broke first in 29, the warband in 1, neither broke in 0; 50 s of machine time for 29493 simulated s
+
+  statistic                        band         first:   n   median [quartiles]          ok     second:   n   median [quartiles]          ok         A
+  1 formed phase, s                >= 300               30    36.25 [25.06, 67.19]       FAIL            30    28.75 [20.94, 50.56]       FAIL   0.423 
+  1 median gap while formed, m     >= 1                 30    1.996 [1.509, 2.228]       pass            30    1.985 [1.761, 1.993]       pass   0.426 
+  2 burstiness                     >= 0.2               30 -0.06649 [-0.165, -0.0003374] FAIL            30 -0.00343 [-0.08397, 0.0345]   FAIL   0.611 
+  2 share of quiet bins            0.2 to 0.9           26        0 [0, 0.4583]          FAIL            23        0 [0, 0]               FAIL   0.410 
+  3 depth of the first to turn     >= 0.6               30   0.3333 [0.246, 0.4048]      FAIL            30   0.2698 [0.2163, 0.3294]     FAIL   0.356 
+  4 spread, Spearman's rho         >= 0.3               30   0.8781 [0.5656, 0.9487]     pass            30   0.8483 [0.7133, 0.9202]     pass   0.490 
+  4 spread, s for 80 % of bins     10 to 900            26    12.88 [6.938, 31.5]        pass            29    13.75 [6.75, 27]           pass   0.469 
+  5 loser's hits after the break   >= 0.6               28   0.3095 [0, 0.6354]          FAIL            27   0.1667 [0, 0.5]             FAIL   0.410 
+  6 time to break, s (never: last) not banded           30    36.25 [25.06, 67.19]                       30    28.75 [20.94, 50.56]              0.423 
+  7 hits per front file per hour   0.1 to 2             60    6.344 [0, 11.9]            FAIL            60    7.726 [0, 12.72]           FAIL   0.542 
+  7 lethality per bout             0.002 to 0.15         30  0.05173 [0.03834, 0.07936]   pass            30  0.05635 [0.03343, 0.09253]   pass   0.550 
+  1.024 m: 6 broke within 300 s of contact 27 of 30 (90.0 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  1.024 m: 8 leaders' share of hits while formed 11 of 130 (8.5 %), after the break 0 of 83 (0.0 %)
+  0.512 m: 6 broke within 300 s of contact 29 of 30 (96.7 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  0.512 m: 8 leaders' share of hits while formed 13 of 104 (12.5 %), after the break 0 of 104 (0.0 %)
+
+  pattern                            first       second     
+  1 standoff                         FAIL        FAIL        
+  2 pulses and lulls                 FAIL        FAIL        
+  3 rear-first collapse              FAIL        FAIL        
+  4 lateral spread                   pass        pass        
+  5 casualty asymmetry               FAIL        FAIL        
+  6 holds, then breaks (band only)   FAIL        FAIL        
+  7 casualty clock                   FAIL        FAIL        
+  8 centurion gradient               pass        pass        
+
+Moved: 3 of 44 comparisons.
+  rung 2, formed phase, s (A 0.347)
+  rung 2, spread, s for 80 % of bins (A 0.294)
+  rung 2, time to break, s (never: last) (A 0.347)
+Verdicts changed: 1 of 32.
+  rung 2, 4 lateral spread: pass to FAIL
+
+====================================================================================================
+THE SAME SEEDS: 0.512 m (second) against 1.024 m (first), seeds 1 to 30. Beside the line, not the line.
+A: the chance that a run of the second group gives a larger value than a run of the first, ties half.
+
+Rung 0: 30 runs and 30 runs
+  1.024 m: the Romans broke first in 28, the warband in 2, neither broke in 0; 30 s of machine time for 29723 simulated s
+  0.512 m: the Romans broke first in 28, the warband in 2, neither broke in 0; 46 s of machine time for 29758 simulated s
+
+  statistic                        band         first:   n   median [quartiles]          ok     second:   n   median [quartiles]          ok         A
+  1 formed phase, s                >= 300               30    35.75 [23.31, 72.44]       FAIL            30    36.12 [22.56, 64.44]       FAIL   0.506 
+  1 median gap while formed, m     >= 1                 30    1.991 [1.892, 1.998]       pass            30    1.991 [1.893, 1.996]       pass   0.452 
+  2 burstiness                     >= 0.2               30 -0.01504 [-0.09173, 0.01942]  FAIL            30  -0.0195 [-0.06662, 0.02778]  FAIL   0.520 
+  2 share of quiet bins            0.2 to 0.9           23        0 [0, 0]               FAIL            25        0 [0, 0]               FAIL   0.491 
+  3 depth of the first to turn     >= 0.6               30   0.2619 [0.2222, 0.3651]     FAIL            30   0.2778 [0.2188, 0.3552]     FAIL   0.516 
+  4 spread, Spearman's rho         >= 0.3               30   0.8737 [0.7461, 0.9409]     pass            30   0.8549 [0.7538, 0.9374]     pass   0.469 
+  4 spread, s for 80 % of bins     10 to 900            24    9.625 [6.188, 32.06]       FAIL            30    16.62 [6.625, 28.44]       pass   0.515 
+  5 loser's hits after the break   >= 0.6               30   0.4167 [0.04167, 0.7292]    FAIL            30     0.25 [0, 0.5]             FAIL   0.420 
+  6 time to break, s (never: last) not banded           30    35.75 [23.31, 72.44]                       30    36.12 [22.56, 64.44]              0.506 
+  7 hits per front file per hour   0.1 to 2             60    6.738 [1.985, 11.34]       FAIL            60    7.048 [1.716, 11.8]        FAIL   0.497 
+  7 lethality per bout             0.002 to 0.15         30  0.05163 [0.03106, 0.07401]   pass            30  0.05595 [0.03537, 0.06932]   pass   0.521 
+  1.024 m: 6 broke within 300 s of contact 29 of 30 (96.7 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  1.024 m: 8 leaders' share of hits while formed 13 of 117 (11.1 %), after the break 1 of 69 (1.4 %)
+  0.512 m: 6 broke within 300 s of contact 29 of 30 (96.7 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  0.512 m: 8 leaders' share of hits while formed 14 of 120 (11.7 %), after the break 4 of 182 (2.2 %)
+
+  pattern                            first       second     
+  1 standoff                         FAIL        FAIL        
+  2 pulses and lulls                 FAIL        FAIL        
+  3 rear-first collapse              FAIL        FAIL        
+  4 lateral spread                   FAIL        pass        CHANGED
+  5 casualty asymmetry               FAIL        FAIL        
+  6 holds, then breaks (band only)   FAIL        FAIL        
+  7 casualty clock                   FAIL        FAIL        
+  8 centurion gradient               pass        pass        
+
+Rung 1: 30 runs and 30 runs
+  1.024 m: the Romans broke first in 28, the warband in 2, neither broke in 0; 44 s of machine time for 29722 simulated s
+  0.512 m: the Romans broke first in 29, the warband in 1, neither broke in 0; 61 s of machine time for 31892 simulated s
+
+  statistic                        band         first:   n   median [quartiles]          ok     second:   n   median [quartiles]          ok         A
+  1 formed phase, s                >= 300               30    35.75 [23.31, 75.25]       FAIL            30    34.75 [22.56, 66.5]        FAIL   0.497 
+  1 median gap while formed, m     >= 1                 30    1.991 [1.892, 1.998]       pass            30    1.991 [1.817, 1.998]       pass   0.473 
+  2 burstiness                     >= 0.2               30 -0.01269 [-0.09173, 0.02534]  FAIL            30 -0.02011 [-0.09965, 0.04107]  FAIL   0.507 
+  2 share of quiet bins            0.2 to 0.9           23        0 [0, 0]               FAIL            25        0 [0, 0]               FAIL   0.513 
+  3 depth of the first to turn     >= 0.6               30   0.2976 [0.2242, 0.373]      FAIL            30    0.254 [0.1944, 0.3214]     FAIL   0.413 
+  4 spread, Spearman's rho         >= 0.3               30   0.8849 [0.7458, 0.9409]     pass            30   0.8569 [0.7193, 0.9374]     pass   0.463 
+  4 spread, s for 80 % of bins     10 to 900            26    11.75 [6.438, 39.19]       pass            26    13.25 [6.625, 26.12]       pass   0.479 
+  5 loser's hits after the break   >= 0.6               30      0.5 [0.125, 0.6667]      FAIL            30   0.1667 [0, 0.5536]          FAIL   0.384 
+  6 time to break, s (never: last) not banded           30    35.75 [23.31, 75.25]                       30    34.75 [22.56, 66.5]               0.497 
+  7 hits per front file per hour   0.1 to 2             60    7.406 [1.985, 11.83]       FAIL            60    7.342 [1.154, 12.48]       FAIL   0.498 
+  7 lethality per bout             0.002 to 0.15         30  0.05577 [0.03106, 0.07401]   pass            30  0.06066 [0.04161, 0.07524]   pass   0.536 
+  1.024 m: 6 broke within 300 s of contact 29 of 30 (96.7 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  1.024 m: 8 leaders' share of hits while formed 13 of 121 (10.7 %), after the break 1 of 79 (1.3 %)
+  0.512 m: 6 broke within 300 s of contact 28 of 30 (93.3 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  0.512 m: 8 leaders' share of hits while formed 14 of 148 (9.5 %), after the break 1 of 114 (0.9 %)
+
+  pattern                            first       second     
+  1 standoff                         FAIL        FAIL        
+  2 pulses and lulls                 FAIL        FAIL        
+  3 rear-first collapse              FAIL        FAIL        
+  4 lateral spread                   pass        pass        
+  5 casualty asymmetry               FAIL        FAIL        
+  6 holds, then breaks (band only)   FAIL        FAIL        
+  7 casualty clock                   FAIL        FAIL        
+  8 centurion gradient               pass        pass        
+
+Rung 2: 30 runs and 30 runs
+  1.024 m: the Romans broke first in 26, the warband in 4, neither broke in 0; 44 s of machine time for 29150 simulated s
+  0.512 m: the Romans broke first in 26, the warband in 4, neither broke in 0; 50 s of machine time for 29482 simulated s
+
+  statistic                        band         first:   n   median [quartiles]          ok     second:   n   median [quartiles]          ok         A
+  1 formed phase, s                >= 300               30    23.25 [14, 33.88]          FAIL            30    21.88 [14.06, 31.12]       FAIL   0.488 
+  1 median gap while formed, m     >= 1                 30    1.974 [1.067, 1.996]       pass            30    1.977 [1.275, 1.993]       pass   0.510 
+  2 burstiness                     >= 0.2               29 -0.04092 [-0.143, -8.708e-05] FAIL            29  -0.0682 [-0.1407, 0.007686]  FAIL   0.501 
+  2 share of quiet bins            0.2 to 0.9           18        0 [0, 0]               FAIL            16        0 [0, 0.08333]         FAIL   0.542 
+  3 depth of the first to turn     >= 0.6               30    0.252 [0.1835, 0.3532]     FAIL            30   0.2738 [0.2063, 0.3363]     FAIL   0.522 
+  4 spread, Spearman's rho         >= 0.3               30    0.909 [0.7998, 0.9407]     pass            30   0.9178 [0.8043, 0.9407]     pass   0.518 
+  4 spread, s for 80 % of bins     10 to 900            27     5.75 [4.375, 12.38]       FAIL            30        6 [4.5, 10.12]         FAIL   0.467 
+  5 loser's hits after the break   >= 0.6               30   0.4167 [0, 0.5714]          FAIL            30   0.3333 [0, 0.5]             FAIL   0.501 
+  6 time to break, s (never: last) not banded           30    23.25 [14, 33.88]                          30    21.88 [14.06, 31.12]              0.488 
+  7 hits per front file per hour   0.1 to 2             60    7.743 [0, 14.93]           FAIL            60    7.199 [0, 14.69]           FAIL   0.482 
+  7 lethality per bout             0.002 to 0.15         30  0.05719 [0.03567, 0.09826]   pass            30  0.05556 [0.03471, 0.09881]   pass   0.490 
+  1.024 m: 6 broke within 300 s of contact 29 of 30 (96.7 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  1.024 m: 8 leaders' share of hits while formed 10 of 74 (13.5 %), after the break 1 of 52 (1.9 %)
+  0.512 m: 6 broke within 300 s of contact 28 of 30 (93.3 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  0.512 m: 8 leaders' share of hits while formed 11 of 73 (15.1 %), after the break 1 of 96 (1.0 %)
+
+  pattern                            first       second     
+  1 standoff                         FAIL        FAIL        
+  2 pulses and lulls                 FAIL        FAIL        
+  3 rear-first collapse              FAIL        FAIL        
+  4 lateral spread                   FAIL        FAIL        
+  5 casualty asymmetry               FAIL        FAIL        
+  6 holds, then breaks (band only)   FAIL        FAIL        
+  7 casualty clock                   FAIL        FAIL        
+  8 centurion gradient               pass        pass        
+
+Rung 3: 30 runs and 30 runs
+  1.024 m: the Romans broke first in 29, the warband in 1, neither broke in 0; 49 s of machine time for 29513 simulated s
+  0.512 m: the Romans broke first in 29, the warband in 1, neither broke in 0; 50 s of machine time for 29493 simulated s
+
+  statistic                        band         first:   n   median [quartiles]          ok     second:   n   median [quartiles]          ok         A
+  1 formed phase, s                >= 300               30    29.62 [21.94, 54.25]       FAIL            30    28.75 [20.94, 50.56]       FAIL   0.488 
+  1 median gap while formed, m     >= 1                 30    1.991 [1.967, 1.998]       pass            30    1.985 [1.761, 1.993]       pass   0.427 
+  2 burstiness                     >= 0.2               30 -0.004554 [-0.1032, 0.02339]   FAIL            30 -0.00343 [-0.08397, 0.0345]   FAIL   0.516 
+  2 share of quiet bins            0.2 to 0.9           23        0 [0, 0]               FAIL            23        0 [0, 0]               FAIL   0.500 
+  3 depth of the first to turn     >= 0.6               30   0.2579 [0.2222, 0.3651]     FAIL            30   0.2698 [0.2163, 0.3294]     FAIL   0.494 
+  4 spread, Spearman's rho         >= 0.3               30   0.8836 [0.7174, 0.9467]     pass            30   0.8483 [0.7133, 0.9202]     pass   0.436 
+  4 spread, s for 80 % of bins     10 to 900            29       14 [7.25, 31.75]        pass            29    13.75 [6.75, 27]           pass   0.455 
+  5 loser's hits after the break   >= 0.6               29      0.4 [0, 0.7273]          FAIL            27   0.1667 [0, 0.5]             FAIL   0.407 
+  6 time to break, s (never: last) not banded           30    29.62 [21.94, 54.25]                       30    28.75 [20.94, 50.56]              0.488 
+  7 hits per front file per hour   0.1 to 2             60    7.435 [0, 13.55]           FAIL            60    7.726 [0, 12.72]           FAIL   0.514 
+  7 lethality per bout             0.002 to 0.15         30   0.0515 [0.03234, 0.08519]   pass            30  0.05635 [0.03343, 0.09253]   pass   0.524 
+  1.024 m: 6 broke within 300 s of contact 29 of 30 (96.7 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  1.024 m: 8 leaders' share of hits while formed 11 of 101 (10.9 %), after the break 2 of 74 (2.7 %)
+  0.512 m: 6 broke within 300 s of contact 29 of 30 (96.7 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  0.512 m: 8 leaders' share of hits while formed 13 of 104 (12.5 %), after the break 0 of 104 (0.0 %)
+
+  pattern                            first       second     
+  1 standoff                         FAIL        FAIL        
+  2 pulses and lulls                 FAIL        FAIL        
+  3 rear-first collapse              FAIL        FAIL        
+  4 lateral spread                   pass        pass        
+  5 casualty asymmetry               FAIL        FAIL        
+  6 holds, then breaks (band only)   FAIL        FAIL        
+  7 casualty clock                   FAIL        FAIL        
+  8 centurion gradient               pass        pass        
+
+Moved: 0 of 44 comparisons.
+Verdicts changed: 1 of 32.
+  rung 0, 4 lateral spread: FAIL to pass
+
+====================================================================================================
+THE CONTROL: 1.024 m, seeds 31 to 60 (second) against seeds 1 to 30 (first)
+A: the chance that a run of the second group gives a larger value than a run of the first, ties half.
+
+Rung 0: 30 runs and 30 runs
+  seeds 1 to 30: the Romans broke first in 28, the warband in 2, neither broke in 0; 30 s of machine time for 29723 simulated s
+  seeds 31 to 60: the Romans broke first in 26, the warband in 3, neither broke in 1; 38 s of machine time for 38225 simulated s
+
+  statistic                        band         first:   n   median [quartiles]          ok     second:   n   median [quartiles]          ok         A
+  1 formed phase, s                >= 300               30    35.75 [23.31, 72.44]       FAIL            30    42.25 [26.25, 101.2]       FAIL   0.584 
+  1 median gap while formed, m     >= 1                 30    1.991 [1.892, 1.998]       pass            30    1.997 [1.718, 3.463]       pass   0.521 
+  2 burstiness                     >= 0.2               30 -0.01504 [-0.09173, 0.01942]  FAIL            30 -0.05534 [-0.1284, -0.001385] FAIL   0.392 
+  2 share of quiet bins            0.2 to 0.9           23        0 [0, 0]               FAIL            26        0 [0, 0.6705]          FAIL   0.612 
+  3 depth of the first to turn     >= 0.6               30   0.2619 [0.2222, 0.3651]     FAIL            29   0.3175 [0.2778, 0.4048]     FAIL   0.618 
+  4 spread, Spearman's rho         >= 0.3               30   0.8737 [0.7461, 0.9409]     pass            29   0.8634 [0.5768, 0.9518]     pass   0.480 
+  4 spread, s for 80 % of bins     10 to 900            24    9.625 [6.188, 32.06]       FAIL            22     12.5 [7, 33.12]           pass   0.515 
+  5 loser's hits after the break   >= 0.6               30   0.4167 [0.04167, 0.7292]    FAIL            27    0.375 [0.2321, 0.6705]     FAIL   0.537 
+  6 time to break, s (never: last) not banded           30    35.75 [23.31, 72.44]                       30    42.25 [26.25, 101.2]              0.584 
+  7 hits per front file per hour   0.1 to 2             60    6.738 [1.985, 11.34]       FAIL            60    6.316 [0.05211, 11.26]     FAIL   0.454 
+  7 lethality per bout             0.002 to 0.15         30  0.05163 [0.03106, 0.07401]   pass            30  0.05281 [0.03753, 0.07122]   pass   0.503 
+  seeds 1 to 30: 6 broke within 300 s of contact 29 of 30 (96.7 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  seeds 1 to 30: 8 leaders' share of hits while formed 13 of 117 (11.1 %), after the break 1 of 69 (1.4 %)
+  seeds 31 to 60: 6 broke within 300 s of contact 26 of 30 (86.7 %), at most 10 %; unbroken 7200 s after it 1 of 30 (3.3 %), at most 25 %
+  seeds 31 to 60: 8 leaders' share of hits while formed 11 of 142 (7.7 %), after the break 1 of 111 (0.9 %)
+
+  pattern                            first       second     
+  1 standoff                         FAIL        FAIL        
+  2 pulses and lulls                 FAIL        FAIL        
+  3 rear-first collapse              FAIL        FAIL        
+  4 lateral spread                   FAIL        pass        CHANGED
+  5 casualty asymmetry               FAIL        FAIL        
+  6 holds, then breaks (band only)   FAIL        FAIL        
+  7 casualty clock                   FAIL        FAIL        
+  8 centurion gradient               pass        pass        
+
+Rung 1: 30 runs and 30 runs
+  seeds 1 to 30: the Romans broke first in 28, the warband in 2, neither broke in 0; 44 s of machine time for 29722 simulated s
+  seeds 31 to 60: the Romans broke first in 26, the warband in 3, neither broke in 1; 58 s of machine time for 38125 simulated s
+
+  statistic                        band         first:   n   median [quartiles]          ok     second:   n   median [quartiles]          ok         A
+  1 formed phase, s                >= 300               30    35.75 [23.31, 75.25]       FAIL            30    42.25 [26.25, 93.94]       FAIL   0.577 
+  1 median gap while formed, m     >= 1                 30    1.991 [1.892, 1.998]       pass            30    1.998 [1.616, 3.475]       pass   0.536 
+  2 burstiness                     >= 0.2               30 -0.01269 [-0.09173, 0.02534]  FAIL            30 -0.05265 [-0.1281, 0.003785]  FAIL   0.401 
+  2 share of quiet bins            0.2 to 0.9           23        0 [0, 0]               FAIL            26        0 [0, 0.6705]          FAIL   0.612 
+  3 depth of the first to turn     >= 0.6               30   0.2976 [0.2242, 0.373]      FAIL            29   0.3175 [0.2698, 0.4365]     FAIL   0.551 
+  4 spread, Spearman's rho         >= 0.3               30   0.8849 [0.7458, 0.9409]     pass            29   0.8634 [0.5449, 0.9518]     pass   0.447 
+  4 spread, s for 80 % of bins     10 to 900            26    11.75 [6.438, 39.19]       pass            25    15.75 [6.75, 35]           pass   0.504 
+  5 loser's hits after the break   >= 0.6               30      0.5 [0.125, 0.6667]      FAIL            27   0.4615 [0.1396, 0.7122]     FAIL   0.527 
+  6 time to break, s (never: last) not banded           30    35.75 [23.31, 75.25]                       30    42.25 [26.25, 93.94]              0.577 
+  7 hits per front file per hour   0.1 to 2             60    7.406 [1.985, 11.83]       FAIL            60    6.372 [0, 11.26]           FAIL   0.447 
+  7 lethality per bout             0.002 to 0.15         30  0.05577 [0.03106, 0.07401]   pass            30  0.05688 [0.03849, 0.07122]   pass   0.492 
+  seeds 1 to 30: 6 broke within 300 s of contact 29 of 30 (96.7 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  seeds 1 to 30: 8 leaders' share of hits while formed 13 of 121 (10.7 %), after the break 1 of 79 (1.3 %)
+  seeds 31 to 60: 6 broke within 300 s of contact 26 of 30 (86.7 %), at most 10 %; unbroken 7200 s after it 1 of 30 (3.3 %), at most 25 %
+  seeds 31 to 60: 8 leaders' share of hits while formed 11 of 147 (7.5 %), after the break 0 of 111 (0.0 %)
+
+  pattern                            first       second     
+  1 standoff                         FAIL        FAIL        
+  2 pulses and lulls                 FAIL        FAIL        
+  3 rear-first collapse              FAIL        FAIL        
+  4 lateral spread                   pass        pass        
+  5 casualty asymmetry               FAIL        FAIL        
+  6 holds, then breaks (band only)   FAIL        FAIL        
+  7 casualty clock                   FAIL        FAIL        
+  8 centurion gradient               pass        pass        
+
+Rung 2: 30 runs and 30 runs
+  seeds 1 to 30: the Romans broke first in 26, the warband in 4, neither broke in 0; 44 s of machine time for 29150 simulated s
+  seeds 31 to 60: the Romans broke first in 26, the warband in 3, neither broke in 1; 61 s of machine time for 36976 simulated s
+
+  statistic                        band         first:   n   median [quartiles]          ok     second:   n   median [quartiles]          ok         A
+  1 formed phase, s                >= 300               30    23.25 [14, 33.88]          FAIL            30    33.25 [20.81, 48.31]       FAIL   0.655 MOVED
+  1 median gap while formed, m     >= 1                 30    1.974 [1.067, 1.996]       pass            30    1.944 [1, 2]               pass   0.533 
+  2 burstiness                     >= 0.2               29 -0.04092 [-0.143, -8.708e-05] FAIL            30  -0.1109 [-0.1686, -0.02201]  FAIL   0.401 
+  2 share of quiet bins            0.2 to 0.9           18        0 [0, 0]               FAIL            24        0 [0, 0.3125]          FAIL   0.586 
+  3 depth of the first to turn     >= 0.6               30    0.252 [0.1835, 0.3532]     FAIL            29   0.2937 [0.2222, 0.3968]     FAIL   0.601 
+  4 spread, Spearman's rho         >= 0.3               30    0.909 [0.7998, 0.9407]     pass            29    0.818 [0.6712, 0.9448]     pass   0.407 
+  4 spread, s for 80 % of bins     10 to 900            27     5.75 [4.375, 12.38]       FAIL            27       14 [5.625, 18.5]        pass   0.660 MOVED
+  5 loser's hits after the break   >= 0.6               30   0.4167 [0, 0.5714]          FAIL            26     0.45 [0, 0.6574]          FAIL   0.533 
+  6 time to break, s (never: last) not banded           30    23.25 [14, 33.88]                          30    33.25 [20.81, 48.31]              0.655 MOVED
+  7 hits per front file per hour   0.1 to 2             60    7.743 [0, 14.93]           FAIL            60     6.79 [0, 13.98]           FAIL   0.472 
+  7 lethality per bout             0.002 to 0.15         30  0.05719 [0.03567, 0.09826]   pass            30  0.05688 [0.03005, 0.07965]   pass   0.459 
+  seeds 1 to 30: 6 broke within 300 s of contact 29 of 30 (96.7 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  seeds 1 to 30: 8 leaders' share of hits while formed 10 of 74 (13.5 %), after the break 1 of 52 (1.9 %)
+  seeds 31 to 60: 6 broke within 300 s of contact 28 of 30 (93.3 %), at most 10 %; unbroken 7200 s after it 1 of 30 (3.3 %), at most 25 %
+  seeds 31 to 60: 8 leaders' share of hits while formed 9 of 99 (9.1 %), after the break 0 of 66 (0.0 %)
+
+  pattern                            first       second     
+  1 standoff                         FAIL        FAIL        
+  2 pulses and lulls                 FAIL        FAIL        
+  3 rear-first collapse              FAIL        FAIL        
+  4 lateral spread                   FAIL        pass        CHANGED
+  5 casualty asymmetry               FAIL        FAIL        
+  6 holds, then breaks (band only)   FAIL        FAIL        
+  7 casualty clock                   FAIL        FAIL        
+  8 centurion gradient               pass        pass        
+
+Rung 3: 30 runs and 30 runs
+  seeds 1 to 30: the Romans broke first in 29, the warband in 1, neither broke in 0; 49 s of machine time for 29513 simulated s
+  seeds 31 to 60: the Romans broke first in 27, the warband in 3, neither broke in 0; 50 s of machine time for 31273 simulated s
+
+  statistic                        band         first:   n   median [quartiles]          ok     second:   n   median [quartiles]          ok         A
+  1 formed phase, s                >= 300               30    29.62 [21.94, 54.25]       FAIL            30    36.25 [25.06, 67.19]       FAIL   0.567 
+  1 median gap while formed, m     >= 1                 30    1.991 [1.967, 1.998]       pass            30    1.996 [1.509, 2.228]       pass   0.537 
+  2 burstiness                     >= 0.2               30 -0.004554 [-0.1032, 0.02339]   FAIL            30 -0.06649 [-0.165, -0.0003374] FAIL   0.413 
+  2 share of quiet bins            0.2 to 0.9           23        0 [0, 0]               FAIL            26        0 [0, 0.4583]          FAIL   0.590 
+  3 depth of the first to turn     >= 0.6               30   0.2579 [0.2222, 0.3651]     FAIL            30   0.3333 [0.246, 0.4048]      FAIL   0.623 
+  4 spread, Spearman's rho         >= 0.3               30   0.8836 [0.7174, 0.9467]     pass            30   0.8781 [0.5656, 0.9487]     pass   0.444 
+  4 spread, s for 80 % of bins     10 to 900            29       14 [7.25, 31.75]        pass            26    12.88 [6.938, 31.5]        pass   0.493 
+  5 loser's hits after the break   >= 0.6               29      0.4 [0, 0.7273]          FAIL            28   0.3095 [0, 0.6354]          FAIL   0.490 
+  6 time to break, s (never: last) not banded           30    29.62 [21.94, 54.25]                       30    36.25 [25.06, 67.19]              0.567 
+  7 hits per front file per hour   0.1 to 2             60    7.435 [0, 13.55]           FAIL            60    6.344 [0, 11.9]            FAIL   0.473 
+  7 lethality per bout             0.002 to 0.15         30   0.0515 [0.03234, 0.08519]   pass            30  0.05173 [0.03834, 0.07936]   pass   0.479 
+  seeds 1 to 30: 6 broke within 300 s of contact 29 of 30 (96.7 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  seeds 1 to 30: 8 leaders' share of hits while formed 11 of 101 (10.9 %), after the break 2 of 74 (2.7 %)
+  seeds 31 to 60: 6 broke within 300 s of contact 27 of 30 (90.0 %), at most 10 %; unbroken 7200 s after it 0 of 30 (0.0 %), at most 25 %
+  seeds 31 to 60: 8 leaders' share of hits while formed 11 of 130 (8.5 %), after the break 0 of 83 (0.0 %)
+
+  pattern                            first       second     
+  1 standoff                         FAIL        FAIL        
+  2 pulses and lulls                 FAIL        FAIL        
+  3 rear-first collapse              FAIL        FAIL        
+  4 lateral spread                   pass        pass        
+  5 casualty asymmetry               FAIL        FAIL        
+  6 holds, then breaks (band only)   FAIL        FAIL        
+  7 casualty clock                   FAIL        FAIL        
+  8 centurion gradient               pass        pass        
+
+Moved: 3 of 44 comparisons.
+  rung 2, formed phase, s (A 0.655)
+  rung 2, spread, s for 80 % of bins (A 0.660)
+  rung 2, time to break, s (never: last) (A 0.655)
+Verdicts changed: 2 of 32.
+  rung 0, 4 lateral spread: FAIL to pass
+  rung 2, 4 lateral spread: FAIL to pass
+
+====================================================================================================
+SEEDS ALONE: 1000 random splits of the 60 runs at 1.024 m into 30 and 30, the four rungs of a seed kept together
+
+  Each statistic over the four rungs: the mean of A less 0.5; and the splits in which seeds alone
+  move it as far as the half cell did or farther, either way.
+  statistic                         half cell  same seeds   control         splits
+  1 formed phase, s                    -0.093      -0.005    +0.096    194 of 1000
+  1 median gap while formed, m         -0.048      -0.034    +0.032    522 of 1000
+  2 burstiness                         +0.106      +0.011    -0.098    120 of 1000
+  2 share of quiet bins                -0.089      +0.012    +0.100    179 of 1000
+  3 depth of the first to turn         -0.122      -0.014    +0.098     33 of 1000
+  4 spread, Spearman's rho             +0.025      -0.028    -0.055    722 of 1000
+  4 spread, s for 80 % of bins         -0.068      -0.021    +0.043    298 of 1000
+  5 loser's hits after the break       -0.093      -0.072    +0.022     85 of 1000
+  6 time to break, s (never: last)     -0.093      -0.005    +0.096    194 of 1000
+  7 hits per front file per hour       +0.038      -0.002    -0.038    487 of 1000
+  7 lethality per bout                 +0.036      +0.018    -0.017    607 of 1000
+
+  The largest of the eleven moves: seeds alone give a median of 0.116, and at most 0.183 in 95 splits of 100
+    half cell    0.122; splits that reach it: 435 of 1000
+    same seeds   0.072; splits that reach it: 923 of 1000
+    control      0.100; splits that reach it: 678 of 1000
+
+  Verdicts changed: seeds alone give a median of 3, and at most 4 in 95 splits of 100
+    half cell        1; splits that reach it: 1000 of 1000
+    same seeds       1; splits that reach it: 1000 of 1000
+    control          2; splits that reach it: 888 of 1000
+
+  Comparisons marked MOVED (no line): seeds alone give a median of 1, and at most 8 in 95 splits of 100
+    half cell        3; splits that reach it: 264 of 1000
+    same seeds       0; splits that reach it: 1000 of 1000
+    control          3; splits that reach it: 264 of 1000
+
+  The line: fewer than 25 of the 1000 splits reach the half cell's largest move, or its count of changed verdicts.
+  THE CELL MATTERS AT THE CENTRE: NO
+
+The scorer's own verdicts: 96 of 96 are this script's.
