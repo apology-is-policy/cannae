@@ -85,6 +85,25 @@ Nothing is read before that.
 - **The field engine:** its line is for one core, so this change does not apply to it as its
   line is written. Whether it is read again is Varro's to say.
 
+**The change is written and gives the same thing (2026-11-11, 16:11 UTC). Nothing is read.**
+It is d24b053 on `spike-perceive`: 29 lines added and 14 removed, in `examples/spike.rs` alone.
+Ten runs of ten simulated seconds on the Pi, where nothing is timed:
+
+| Scene | Spike | Threads | Views | Check | Final hash |
+|---|---|---|---|---|---|
+| Line | as built, 91185c4 | 1 and 8 | 453,000 | 640,000 | `3ab06d787dd54e81` |
+| Line | with the pool, d24b053 | 1, 4 and 8 | 453,000 | 640,000 | `3ab06d787dd54e81` |
+| Pocket | as built, 91185c4 | 1 and 8 | 809,613 | 7,715,255 | `69cd46eef151b1f5` |
+| Pocket | with the pool, d24b053 | 1, 4 and 8 | 809,613 | 7,715,255 | `69cd46eef151b1f5` |
+
+- **The line's hash says little:** it is the same after ten seconds as after the ten minutes
+  of the first reading, so that scene's men no longer move. Its Views and their check are
+  what test the change there.
+- **It was run on the Pi and the reading is taken on the Mac.** The same ten runs are repeated
+  on the Mac just before the reading, and must give these figures.
+- **Varro reads the change before anything is read** (call 0001, note 65): it calls his
+  perception from several threads.
+
 ## Verdict so far
 
 | Setup | 1 core | 4 cores, 10 min sustained | 8 cores, 3 min, machine hot |
