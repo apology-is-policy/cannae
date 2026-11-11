@@ -390,6 +390,7 @@ es.addEventListener('frame', e => {
   const f = JSON.parse(e.data);
   if (!M || M.error || !f.x) return;
   S = f; onFrame();
+  if (want >= 0 && want < M.n && seconds() >= wantT) { sel = want; want = -1; describe(); dirty = true; }
 });
 es.addEventListener('news', e => {
   if (!M || M.error) return;
@@ -435,6 +436,19 @@ $('step').onclick = () => cmd('do=step');
 $('speed').onchange = e => cmd('do=speed&x=' + e.target.value);
 $('new').onclick = () => cmd(`do=restart&engine=${$('engine').value}&rung=${$('rung').value}` +
   `&variant=${$('variant').value}&seed=${encodeURIComponent($('seed').value || '1')}`);
+// A link may name a battle and a moment, and a man to pick out there:
+// ?engine=field&rung=0&variant=base&seed=1&t=27&man=82
+let want = -1, wantT = 0;
+{
+  const q = new URLSearchParams(location.search), enc = encodeURIComponent;
+  if (q.has('engine')) {
+    const t = Math.max(0, Math.floor(+q.get('t') || 0));
+    cmd(`do=restart&engine=${enc(q.get('engine'))}&rung=${enc(q.get('rung') || '0')}` +
+        `&variant=${enc(q.get('variant') || 'base')}&seed=${enc(q.get('seed') || '1')}`)
+      .then(() => cmd('do=seek&t=' + t))
+      .then(() => { if (q.has('man')) { want = +q.get('man'); wantT = t; } });
+  }
+}
 function look(m) {
   mode = m;
   $('line').setAttribute('aria-pressed', String(m === 'line'));

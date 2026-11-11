@@ -11,18 +11,9 @@
 //! touches the state: the battle shown for a seed is the battle any run of that seed gives.
 
 use cannae_core::schedule::BASE_TICK;
-use cannae_core::{
-    Bodies, Bouts, Event, EventKind, Frames, GridPerception, ManModel, Perceive, Posture, Resolver,
-    Rng, Substrate, Wall,
-};
-use cannae_field::{Field, FieldPerception};
-use cannae_gauges::Rung3;
-use cannae_harness::scenario::frames_with;
-use cannae_harness::{Runner, Scenario, place};
-use cannae_man::{Marks, Men};
-use cannae_pairwise::Pairwise;
+use cannae_core::{EventKind, Posture};
 use cannae_score::Engine;
-use cannae_score::draw::{Cell, SubstrateParams, nominal};
+use cannae_view::{Battle, Config, VARIANTS, build, esc, ints};
 use std::collections::VecDeque;
 use std::fmt::Write as _;
 use std::io::{BufRead, BufReader, Write};
@@ -33,12 +24,6 @@ use std::time::{Duration, Instant};
 
 const PAGE: &str = include_str!("page.html");
 
-/// The scenario files of `scenarios/patch`. A variant named in a request is checked against
-/// this list before it becomes part of a path.
-const VARIANTS: [&str; 8] = [
-    "base", "veterans", "recruits", "flank", "backed", "relief", "volleys", "shock",
-];
-
 /// The longest a frame may wait while the battle is stepped, and the least time between frames.
 const STEP_BUDGET: Duration = Duration::from_millis(12);
 const FRAME_EVERY: Duration = Duration::from_millis(33);
@@ -46,228 +31,15 @@ const FRAME_EVERY: Duration = Duration::from_millis(33);
 /// How many frames' worth of news are kept for a reader that joins late or falls behind.
 const NEWS_KEPT: usize = 600;
 
-#[derive(Clone, Debug)]
-struct Config {
-    engine: Engine,
-    rung: u8,
-    variant: String,
-    seed: u64,
-}
-
 enum Cmd {
     Play(bool),
     /// Simulated seconds per wall second; infinite for as fast as the machine goes.
     Speed(f64),
     /// On to the end of the next man step.
     Step,
+    /// On to a simulated second, and paused there; from the start again if it is already past.
+    Seek(u32),
     Restart(Config),
-}
-
-/// A battle under way, whatever its engine and memory.
-trait Live {
-    /// One base tick. Returns whether it was a man step.
-    fn step(&mut self) -> bool;
-    fn tick(&self) -> u32;
-    fn bodies(&self) -> &Bodies;
-    fn events(&self) -> &[Event];
-}
-
-impl<P: Perceive, M: ManModel, S: Substrate, F: Frames, R: Resolver> Live
-    for Runner<P, M, S, F, R>
-{
-    fn step(&mut self) -> bool {
-        Runner::step(self)
-    }
-
-    fn tick(&self) -> u32 {
-        self.tick
-    }
-
-    fn bodies(&self) -> &Bodies {
-        &self.bodies
-    }
-
-    fn events(&self) -> &[Event] {
-        self.log.all()
-    }
-}
-
-struct Battle {
-    live: Box<dyn Live>,
-    end_tick: u32,
-    /// How many events of the log earlier frames have already carried.
-    sent: usize,
-}
-
-impl Battle {
-    fn ended(&self) -> bool {
-        self.live.tick() >= self.end_tick
-    }
-}
-
-/// Builds the battle as `cannae_score` builds a scored run, and describes it for the page.
-fn build(c: &Config) -> Result<(Battle, String), String> {
-    if !VARIANTS.contains(&c.variant.as_str()) {
-        return Err(format!("unknown variant {:?}", c.variant));
-    }
-    let path = format!(
-        "{}/../scenarios/patch/{}.toml",
-        env!("CARGO_MANIFEST_DIR"),
-        c.variant
-    );
-    let text = std::fs::read_to_string(&path).map_err(|e| format!("{path}: {e}"))?;
-    let s = Scenario::from_toml(&text).map_err(|e| format!("{path}: {e}"))?;
-    let d = nominal(Cell {
-        engine: c.engine,
-        rung: c.rung,
-    })?;
-    let troops = s
-        .bodies
-        .iter()
-        .map(|b| {
-            d.troop(&b.troop)
-                .ok_or_else(|| format!("unknown troop {:?}", b.troop))
-        })
-        .collect::<Result<Vec<_>, _>>()?;
-    let (bodies, placed) = place(&s);
-    let frames = frames_with(&s, &placed, &bodies, |t| d.tie(t))?;
-    let n = bodies.len();
-    let rng = Rng::new(c.seed);
-    let walls = s.walls();
-    let volleys = s.volleys()?;
-    let meta = meta_json(c, &s, &bodies, &walls);
-    macro_rules! battle {
-        ($perception:expr, $memory:expr, $substrate:expr) => {{
-            let mut men = Men::with_memory($memory, d.man, &bodies, &troops, &rng);
-            men.power = d.power;
-            let fighting = (Bouts::new(d.bouts, men.kits()), volleys);
-            let runner = Runner::new(
-                bodies,
-                $perception,
-                men,
-                $substrate,
-                frames,
-                fighting,
-                rng,
-                d.speeds,
-            );
-            Box::new(runner) as Box<dyn Live>
-        }};
-    }
-    let live = match (d.substrate, d.rung()) {
-        (SubstrateParams::Pairwise(p), rung) => {
-            let mut substrate = Pairwise::new(p);
-            substrate.walls = walls;
-            match rung {
-                Some(r) => battle!(
-                    GridPerception::default(),
-                    Marks::new(r, &d.man, n),
-                    substrate
-                ),
-                None => battle!(
-                    GridPerception::default(),
-                    Rung3::new(&d.man, d.gauges, n),
-                    substrate
-                ),
-            }
-        }
-        (SubstrateParams::Field(p), rung) => {
-            let substrate = Field::with_walls(p, &walls);
-            match rung {
-                Some(r) => battle!(
-                    FieldPerception::default(),
-                    Marks::new(r, &d.man, n),
-                    substrate
-                ),
-                None => battle!(
-                    FieldPerception::default(),
-                    Rung3::new(&d.man, d.gauges, n),
-                    substrate
-                ),
-            }
-        }
-    };
-    let battle = Battle {
-        live,
-        end_tick: s.duration_s * 1000 / BASE_TICK.0,
-        sent: 0,
-    };
-    Ok((battle, meta))
-}
-
-fn engine_name(e: Engine) -> &'static str {
-    match e {
-        Engine::Pairwise => "pairwise",
-        Engine::Field => "field",
-    }
-}
-
-/// A string made safe inside a JSON string.
-fn esc(s: &str) -> String {
-    let mut out = String::with_capacity(s.len());
-    for c in s.chars() {
-        match c {
-            '"' => out.push_str("\\\""),
-            '\\' => out.push_str("\\\\"),
-            c if (c as u32) < 0x20 => out.push(' '),
-            c => out.push(c),
-        }
-    }
-    out
-}
-
-fn ints(out: &mut String, values: impl Iterator<Item = i64>) {
-    out.push('[');
-    for (i, v) in values.enumerate() {
-        if i > 0 {
-            out.push(',');
-        }
-        let _ = write!(out, "{v}");
-    }
-    out.push(']');
-}
-
-/// What does not change during a battle: who each man is, and the ground.
-fn meta_json(c: &Config, s: &Scenario, b: &Bodies, walls: &[Wall]) -> String {
-    let mut m = String::new();
-    let _ = write!(
-        m,
-        "{{\"scenario\":\"{}\",\"engine\":\"{}\",\"rung\":{},\"variant\":\"{}\",\"seed\":\"{}\",\
-         \"tickMs\":{},\"durationS\":{},\"n\":{}",
-        esc(&s.name),
-        engine_name(c.engine),
-        c.rung,
-        esc(&c.variant),
-        c.seed,
-        BASE_TICK.0,
-        s.duration_s,
-        b.len()
-    );
-    m.push_str(",\"side\":");
-    ints(&mut m, b.side.iter().map(|&x| x as i64));
-    m.push_str(",\"role\":");
-    ints(&mut m, b.role.iter().map(|&x| x as i64));
-    m.push_str(",\"body\":");
-    ints(
-        &mut m,
-        b.body.iter().map(|x| x.map_or(-1, |id| id.0 as i64)),
-    );
-    m.push_str(",\"bodies\":[");
-    for (i, body) in s.bodies.iter().enumerate() {
-        if i > 0 {
-            m.push(',');
-        }
-        let _ = write!(m, "\"{}\"", esc(&body.name));
-    }
-    m.push_str("],\"walls\":[");
-    for (i, w) in walls.iter().enumerate() {
-        if i > 0 {
-            m.push(',');
-        }
-        let _ = write!(m, "[{},{},{},{}]", w.a.x, w.a.y, w.b.x, w.b.y);
-    }
-    m.push_str("]}");
-    m
 }
 
 /// The observable state now; and, apart from it, the news since the last call: bouts, changes
@@ -408,9 +180,10 @@ impl Hub {
 
 fn start(hub: &Hub, config: &Config, speed: f64, playing: bool) -> Option<Battle> {
     match build(config) {
-        Ok((mut battle, meta)) => {
+        Ok(built) => {
+            let mut battle = built.battle;
             let update = frame_json(&mut battle, 0.0, speed, playing);
-            hub.publish(Some(meta), update);
+            hub.publish(Some(built.meta), update);
             Some(battle)
         }
         Err(e) => {
@@ -456,6 +229,20 @@ fn simulate(hub: Arc<Hub>, commands: Receiver<Cmd>, mut config: Config) {
                     playing = false;
                     if let Some(b) = battle.as_mut() {
                         while !b.ended() && !b.live.step() {}
+                    }
+                }
+                Cmd::Seek(second) => {
+                    playing = false;
+                    let to = second.saturating_mul(1000 / BASE_TICK.0);
+                    if battle.as_ref().is_some_and(|b| b.live.tick() > to) {
+                        battle = start(&hub, &config, speed, playing);
+                    }
+                    if let Some(b) = battle.as_mut() {
+                        while !b.ended() && b.live.tick() < to {
+                            b.live.step();
+                        }
+                        // What happened on the way is not told item by item.
+                        b.sent = b.live.events().len();
                     }
                 }
                 Cmd::Restart(c) => {
@@ -530,6 +317,10 @@ fn command(query: &str) -> Result<Cmd, String> {
         Some("play") => Ok(Cmd::Play(true)),
         Some("pause") => Ok(Cmd::Play(false)),
         Some("step") => Ok(Cmd::Step),
+        Some("seek") => get("t")
+            .and_then(|v| v.parse::<u32>().ok())
+            .map(Cmd::Seek)
+            .ok_or_else(|| "seek needs t, in whole seconds".to_string()),
         Some("speed") => match get("x") {
             Some("max") => Ok(Cmd::Speed(f64::INFINITY)),
             Some(x) => match x.parse::<f64>() {
