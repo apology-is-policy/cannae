@@ -87,6 +87,8 @@ Nothing is read before that.
 
 **The change is written and gives the same thing (2026-11-11, 16:11 UTC). Nothing is read.**
 It is d24b053 on `spike-perceive`: 29 lines added and 14 removed, in `examples/spike.rs` alone.
+200ef7b after it corrects the file's header comment and changes no code; the reading is taken
+at 200ef7b, with `tools/s07-readings-pairwise-2.sh`, which was written before it.
 Ten runs of ten simulated seconds on the Pi, where nothing is timed:
 
 | Scene | Spike | Threads | Views | Check | Final hash |
