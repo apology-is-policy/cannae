@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-11, 21:44 UTC.
+**Last updated:** 2026-11-11, 21:43 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
