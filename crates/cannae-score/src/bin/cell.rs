@@ -26,13 +26,13 @@
 use cannae_harness::Scenario;
 use cannae_score::draw::{Cell, drawn, nominal};
 use cannae_score::{Engine, Record, Run, Spec, run};
-use rayon::prelude::*;
 use std::collections::HashSet;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 use std::sync::Mutex;
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::time::Instant;
 
 /// Every this many sets, one is audited.
@@ -142,36 +142,54 @@ fn main() -> ExitCode {
             todo.len()
         );
     }
-    let pool = rayon::ThreadPoolBuilder::new()
-        .num_threads(jobs)
-        .build()
-        .expect("thread pool");
     let started = Instant::now();
-    let runs: Vec<Result<Run, String>> = pool.install(|| {
-        todo.into_par_iter()
-            .map(|(d, seed, whole)| {
-                let r = run(
-                    &s,
-                    d,
-                    Spec {
-                        seed,
-                        duration_s,
-                        stop_at_rout_end: !whole,
-                    },
-                )?;
-                print_run(&r);
-                if let Some(f) = &file {
-                    let rec = Record::new(cell, &variant, freeze, whole, &r);
-                    let line = serde_json::to_string(&rec).map_err(|e| e.to_string())? + "\n";
-                    let mut f = f.lock().map_err(|e| e.to_string())?;
-                    f.write_all(line.as_bytes())
-                        .and_then(|()| f.flush())
-                        .map_err(|e| e.to_string())?;
+    let one = |&(d, seed, whole): &(_, u64, bool)| -> Result<Run, String> {
+        let r = run(
+            &s,
+            d,
+            Spec {
+                seed,
+                duration_s,
+                stop_at_rout_end: !whole,
+            },
+        )?;
+        print_run(&r);
+        if let Some(f) = &file {
+            let rec = Record::new(cell, &variant, freeze, whole, &r);
+            let line = serde_json::to_string(&rec).map_err(|e| e.to_string())? + "\n";
+            let mut f = f.lock().map_err(|e| e.to_string())?;
+            f.write_all(line.as_bytes())
+                .and_then(|()| f.flush())
+                .map_err(|e| e.to_string())?;
+        }
+        Ok(r)
+    };
+    // Battles run on plain threads, each taking the next one in turn, and not as the tasks of
+    // a rayon pool. The pairwise substrate hands every step to a pool of its own, and a rayon
+    // worker that waits on another pool runs more of its own pool's tasks meanwhile: it began
+    // the next battle on top of the one it was in, and a whole cell nested some two thousand
+    // battles deep and overflowed the stack. A plain thread only waits.
+    let next = AtomicUsize::new(0);
+    let made: Mutex<Vec<Option<Result<Run, String>>>> =
+        Mutex::new(todo.iter().map(|_| None).collect());
+    std::thread::scope(|scope| {
+        for _ in 0..jobs.max(1) {
+            scope.spawn(|| {
+                loop {
+                    let k = next.fetch_add(1, Ordering::Relaxed);
+                    let Some(task) = todo.get(k) else { break };
+                    let r = one(task);
+                    made.lock().expect("no thread panicked holding it")[k] = Some(r);
                 }
-                Ok(r)
-            })
-            .collect()
+            });
+        }
     });
+    let runs: Vec<Result<Run, String>> = made
+        .into_inner()
+        .expect("no thread panicked holding it")
+        .into_iter()
+        .map(|r| r.expect("every battle was run"))
+        .collect();
     let wall = started.elapsed().as_secs_f64();
     let mut ok = Vec::new();
     for r in runs {
