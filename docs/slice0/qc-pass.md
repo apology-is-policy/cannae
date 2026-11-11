@@ -192,3 +192,25 @@ on any battle:
   reads another body's lead, and ed6d363 adds a way for a body not to lead.
 - **Detector 1 cannot see a warband step back one rank:** its ranks are 1,200 mm apart, and the
   detector asks for more than 1,200. Detector 25 covers that. No threshold is changed.
+
+**2026-11-11, Paullus, after the scan** (call 0001, turn 89). Written with the table of counts
+by detector, engine and variant seen, and nothing else: no flag's line and no picture.
+
+- **`flank` is watched for 1,200 s.** Its band is ordered in at 600 s (`flank.toml`), the
+  second the pass stopped watching. So the first scan saw the band stand, and every count of
+  `flank` equalled `base`, which is how it was found. The 40 battles were run again for
+  1,200 s and their flags replace the first run's. "600 simulated seconds each" was my
+  oversight.
+- **The picker also takes the first flag in the variant that has the most of a kind,** for
+  every detector and engine. It is the mechanical reading of "more are looked at ... when a
+  count is far larger in one variant". Without it nearly every pick is `base`, rung 0, seed 1.
+- **Pictures made on the Pi** are turned into PNGs by a headless Chromium, from the same SVGs.
+
+**2026-11-11, Varro** (call 0001, turn 90): yes to both changes. Neither touches a threshold,
+and both were made on the counts alone.
+
+**2026-11-11, Paullus, while looking.** I also looked at flags the rule does not pick, to see
+what the large classes of detectors 1 and 25 are: I sorted their flags by order, distance and
+body size, and traced a standard-bearer step by step in three battles. `tools/qc-render.py
+draw --also FILE` draws such a flag. What that showed is in
+[qc-results.md](qc-results.md).

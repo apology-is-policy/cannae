@@ -188,6 +188,31 @@ overnight.
   [spike-field.md](slice0/spike-field.md). By the rule both signed, a reading under the line
   is final, since the man only adds cost. My own readings start when he hands the Mac over.
 
+**Since then (2026-11-11, 13:00 UTC):**
+
+- **My engine is under its own speed line too: 2.67x against 3x over a whole battle.** The
+  pocket ran at 1.59x sustained on eight threads and the line at 8.42x, both valid by the rule,
+  and the man is not in it yet ([spike-pairwise.md](slice0/spike-pairwise.md)). So both
+  engines miss their speed lines on the Air. What follows from that is Michal's to decide
+  with the Slice 0 report.
+- **The Mac was restarted at about 09:13 UTC,** during my third run. The two runs that set the
+  figure were complete; three side runs are missing. Something unknown had held the Mac's load
+  near 1.8 during my runs; it is logged, and the rule's own test for a disturbed run did not
+  trigger. A second reading on the restarted Mac would stand beside the first, not replace it.
+- **The QC pass ran:** 320 battles on the fixed code, 151,258 flags, 170 picked by the rule
+  and drawn. Six detectors found nothing on either engine, and both dormancy checks pass
+  everywhere.
+- **The pairwise half is looked at** ([qc-results.md](slice0/qc-results.md)): 75 flags, **no
+  defect,** 37 fine, 38 gaps. The fix for the step back works. Thirteen things look wrong
+  although the code does what it says. The ones Michal has not seen yet: a century still
+  steps back as one, by 0.65 m, when its standard-bearer himself gives ground; the
+  standard-bearer moves up into the front rank and fights; the fronts pack into a dense band
+  after two minutes; runners keep their file lines; pursuit never ends; men attacked from
+  behind rarely face about.
+- **Still to come:** Varro's list for the field engine, each reading the other's, the page
+  with pictures for Michal, then Addendum 4, the re-freeze and the new batch. **Nothing runs
+  on the Pi meanwhile.**
+
 **The crosswise check of the two perceptions passed** (finished 00:04 UTC): all 160 runs gave
 the same end state and the same event log through either perception, and the 80 that the batch
 had also made agree with its records, field for field.

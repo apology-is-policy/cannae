@@ -36,12 +36,12 @@ const SEEDS: std::ops::RangeInclusive<u64> = 1..=5;
 const STEP_S: f64 = 0.25;
 
 /// How long a battle is watched: `relief` and `backed` longer, since their second line acts
-/// late.
+/// late, and `flank` for ten minutes past the order that sends its band in at ten minutes.
 fn watched_s(variant: &str) -> u32 {
-    if matches!(variant, "relief" | "backed") {
-        1_800
-    } else {
-        600
+    match variant {
+        "relief" | "backed" => 1_800,
+        "flank" => 1_200,
+        _ => 600,
     }
 }
 

@@ -5,13 +5,21 @@
       The counts by detector, engine and variant, and by kind, as Markdown.
   tools/qc-render.py pick QCDIR [--engine field|pairwise]
       The flags the rule says are looked at: for each detector, engine and kind, the first
-      three in the order of variant, rung, seed and time; and of detectors 25 and 26 the first
-      of each kind in `backed` and in `relief`. One line each.
-  tools/qc-render.py draw QCDIR [--engine E] [--only ID] [--png]
+      three in the order of variant, rung, seed and time; the first in the variant that has
+      the most of that kind; and of detectors 25 and 26 the first of each kind in `backed` and
+      in `relief`. One line each.
+  tools/qc-render.py draw QCDIR [--engine E] [--only ID] [--also FILE] [--png] [--scale S]
+                          [--jobs N]
       A picture for each picked flag, in QCDIR/pictures: the men within 15 m at four moments,
-      as SVG. The battle is run again for it (`cannae-qc clip`), which gives the same battle.
-      With --png each is also made a PNG by Quick Look. Writes QCDIR/pictures/page-ENGINE.md,
-      one entry for each picture, with the link that opens the live viewer there.
+      as SVG. The battle is run again for it (`cannae-qc clip`), which gives the same battle;
+      --jobs runs that many at a time. With --png each is also made a PNG, by Quick Look on a
+      Mac and by a headless Chromium elsewhere (--scale: its pixels to a unit of the drawing, 2
+      if not given). Writes QCDIR/pictures/page-ENGINE.md, one entry for each picture, with the
+      link that opens the live viewer there.
+      --also FILE draws, in place of the picks, the flags a file names: one to a line as
+      `ENGINE RUNG VARIANT SEED DETECTOR-NUMBER FROM_S [BODY]`, for a flag someone chose to
+      look at beyond the rule. Their pictures are named `also-...` and their page is
+      page-also-ENGINE.md.
 
 QCDIR is the folder `cannae-qc scan --out` wrote. The battles are run again by the program at
 viewer/target/release/cannae-qc, or the one the environment's CANNAE_QC names: it must be the
@@ -20,9 +28,13 @@ build that made the flags. Nothing here judges a flag.
 import json
 import math
 import os
+import re
+import shutil
 import subprocess
 import sys
+import tempfile
 from collections import Counter, defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -34,6 +46,15 @@ PICKED = 3
 # Varro, 2026-11-11: of detectors 25 and 26 the first flag of each kind in each of these
 # variants is looked at too, since the relief is where his fix meets other code.
 ALSO = {25: ["backed", "relief"], 26: ["backed", "relief"]}
+# Every detector of the list (docs/slice0/qc-pass.md), so that one with no flag has its row.
+NAMES = {
+    1: "slot-jump", 2: "halted-body-walks", 3: "pinned-runner", 4: "overlap-enemies",
+    5: "overlap-own", 6: "crowd", 7: "jump", 8: "down-moves", 9: "facing-in-place",
+    10: "flight-toward", 11: "bout-reach", 12: "bout-state", 13: "bout-through", 14: "flicker",
+    15: "standard-front", 16: "out-of-place", 17: "forward-idle", 18: "gap", 19: "leaderless",
+    20: "far", 23: "slot-twice", 24: "down-rises", 25: "slot-back", 26: "stalled",
+    27: "over-packed", 28: "sudden-flight",
+}
 RADIUS = 15_000
 PANEL = 400
 POSTURES = ["steady", "forward", "giving ground", "in flight", "down"]
@@ -59,7 +80,11 @@ def picked(flags, engine=None):
     out = []
     for (n, eng, kind), fs in sorted(groups.items()):
         chosen = fs[:PICKED]
-        for v in ALSO.get(n, []):
+        # "More are looked at ... when a count is far larger in one variant": the first flag in
+        # the variant with the most of this kind, the earlier variant if two have as many.
+        by_variant = Counter(f["variant"] for f in fs)
+        most = max(ORDER, key=lambda v: by_variant[v])
+        for v in ALSO.get(n, []) + [most]:
             first = next((f for f in fs if f["variant"] == v), None)
             if first is not None and first not in chosen:
                 chosen.append(first)
@@ -71,11 +96,33 @@ def picked(flags, engine=None):
     return out
 
 
+def also(flags, path):
+    """The flags a file names, beyond the rule: each with an id that says where it is."""
+    out = []
+    for line in Path(path).read_text().splitlines():
+        w = line.split("#")[0].split()
+        if not w:
+            continue
+        eng, rung, variant, seed, n, start = w[0], int(w[1]), w[2], int(w[3]), int(w[4]), float(w[5])
+        body = int(w[6]) if len(w) > 6 else None
+        found = [f for f in flags
+                 if (f["engine"], f["rung"], f["variant"], f["seed"], f["n"], f["from_s"])
+                 == (eng, rung, variant, seed, n, start) and body in (None, f["body"])]
+        if not found:
+            sys.exit(f"no such flag: {line}")
+        f = dict(found[0])
+        f["id"] = (f"also-{n:02d}-{f['detector']}-{eng}-{variant}-r{rung}-s{seed}-t{start:g}"
+                   + (f"-b{body}" if body is not None else ""))
+        f["of"] = sum(1 for g in flags if (g["n"], g["engine"], g["kind"]) == (n, eng, f["kind"]))
+        out.append(f)
+    return out
+
+
 def counts(qcdir):
     flags = load(qcdir, "flags.jsonl")
     battles = load(qcdir, "battles.jsonl")
     lines = []
-    names = {}
+    names = dict(NAMES)
     for f in flags:
         names[f["n"]] = f["detector"]
     for eng in ENGINES:
@@ -324,6 +371,25 @@ def entry(f):
     ])
 
 
+def to_png(svg, scale):
+    """A PNG beside the SVG, named as Quick Look names it: ID.svg.png."""
+    if shutil.which("qlmanage"):
+        subprocess.run(["qlmanage", "-t", "-s", "1640", "-o", str(svg.parent), str(svg)],
+                       check=False, capture_output=True)
+        return
+    browser = shutil.which("chromium") or shutil.which("chromium-browser")
+    if browser is None:
+        return
+    side = re.search(r'width="(\d+)"', svg.read_text()).group(1)
+    # A profile of its own, so that several can run at once.
+    with tempfile.TemporaryDirectory() as profile:
+        subprocess.run([browser, "--headless", "--disable-gpu", "--no-sandbox",
+                        "--hide-scrollbars", f"--user-data-dir={profile}",
+                        f"--force-device-scale-factor={scale}", f"--window-size={side},{side}",
+                        f"--screenshot={svg.resolve()}.png", f"file://{svg.resolve()}"],
+                       check=False, capture_output=True)
+
+
 def main(argv):
     if len(argv) < 3 or argv[1] not in ("counts", "pick", "draw"):
         print(__doc__)
@@ -334,7 +400,11 @@ def main(argv):
     if what == "counts":
         print(counts(qcdir))
         return 0
-    flags = picked(load(qcdir, "flags.jsonl"), engine)
+    extra = rest[rest.index("--also") + 1] if "--also" in rest else None
+    if extra:
+        flags = also(load(qcdir, "flags.jsonl"), extra)
+    else:
+        flags = picked(load(qcdir, "flags.jsonl"), engine)
     if what == "pick":
         for f in flags:
             print(f"{f['id']}: {f['variant']} r{f['rung']} seed {f['seed']} at {f['from_s']:g} s"
@@ -343,19 +413,26 @@ def main(argv):
     pictures = Path(qcdir) / "pictures"
     pictures.mkdir(exist_ok=True)
     pages = defaultdict(list)
-    for f in flags:
-        if only and f["id"] != only:
-            continue
+    jobs = int(rest[rest.index("--jobs") + 1]) if "--jobs" in rest else 1
+    scale = rest[rest.index("--scale") + 1] if "--scale" in rest else "2"
+    flags = [f for f in flags if not only or f["id"] == only]
+
+    def draw(f):
         svg = pictures / f"{f['id']}.svg"
         svg.write_text(picture(f, clip(f)))
-        pages[f["engine"]].append(entry(f))
         if "--png" in rest:
-            subprocess.run(["qlmanage", "-t", "-s", "1640", "-o", str(pictures), str(svg)],
-                           check=False, capture_output=True)
-        print(svg)
+            to_png(svg, scale)
+        return svg
+
+    # The work is in the programs run, so threads are enough; the pages keep the picking order.
+    with ThreadPoolExecutor(max_workers=jobs) as pool:
+        for f, svg in zip(flags, pool.map(draw, flags)):
+            pages[f["engine"]].append(entry(f))
+            print(svg, flush=True)
     if not only:
         for eng, entries in pages.items():
-            (pictures / f"page-{eng}.md").write_text("\n".join(entries))
+            name = f"page-also-{eng}.md" if extra else f"page-{eng}.md"
+            (pictures / name).write_text("\n".join(entries))
     return 0
 
 
