@@ -390,9 +390,10 @@ def main():
 
     if args.score_dir:
         disagree, checked = [], 0
-        for name, ours, k in (("1024", control, 0), ("512", half, 1), ("1024b", control, 1)):
+        for name, ours, which in (("1024", control, 0), ("512", half, 1),
+                                  ("1024b", control, 1)):
             for rung in RUNGS:
-                mine = ours[2][rung][k]
+                mine = ours[2][rung][which]
                 path = Path(args.score_dir) / f"score-{name}-r{rung}.txt"
                 theirs = scorer_verdicts(path) if path.exists() else ["missing"] * 8
                 for k in range(8):

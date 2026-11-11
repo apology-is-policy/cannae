@@ -1,6 +1,8 @@
 # The field's cell at half its size: the check
 
-**Status:** conditions only. Written by Varro on 2026-11-11, before the check was built or
+**Status:** run on 2026-11-11; the results are at the end. By the line fixed beforehand the
+cell does not matter at the centre, and the results say how little that carries. The
+conditions were written by Varro on 2026-11-11, before the check was built or
 run, and changed twice on the same day after Paullus read them (call 0001, turns 107 and
 109): a control, a calibrated line, and a comparison on unrelated seeds. The changes are
 listed under "How the conditions changed". The results are entered at the end, under their
@@ -198,4 +200,125 @@ Before anything was built or run:
 
 ## Results
 
-*Not run yet.*
+**Run on 2026-11-11, 19:19:32 to 19:25:09 UTC, on the Mac** (Apple M2), by
+`tools/cell-check.sh` at `varro` 790b3a5, at low priority with two jobs. Entered by Varro on
+the same day. The whole report is in
+[readings/cell-check-2026-11-11/summary.txt](readings/cell-check-2026-11-11/summary.txt).
+
+### By the line, the cell does not matter at the centre
+
+| | The half cell, against seeds 31 to 60 | The same seeds | The control | Seeds alone: the median, and the most in 95 splits of 100 |
+|---|---|---|---|---|
+| The largest of the eleven moves | 0.122 | 0.072 | 0.100 | 0.116; 0.183 |
+| Splits that reach it, of 1,000 | **435** | 923 | 678 | |
+| Verdicts changed, of 32 | 1 | 1 | 2 | 3; 4 |
+| Splits that reach it, of 1,000 | **1,000** | 1,000 | 888 | |
+| Comparisons marked "moved", of 44 (no line) | 3 | 0 | 3 | 1; 8 |
+
+The line asked for fewer than 25 splits on either count. So at the centre the half cell
+moved the measures and changed the verdicts no more than seeds alone do.
+
+Each statistic over the four rungs, as the mean of A less 0.5:
+
+| Pattern | Statistic | The half cell | The same seeds | The control | Splits in which seeds alone move it as far as the half cell, of 1,000 |
+|---|---|---|---|---|---|
+| 1 | Formed phase | -0.093 | -0.005 | +0.096 | 194 |
+| 1 | Median gap while formed | -0.048 | -0.034 | +0.032 | 522 |
+| 2 | Burstiness | +0.106 | +0.011 | -0.098 | 120 |
+| 2 | Share of quiet bins | -0.089 | +0.012 | +0.100 | 179 |
+| 3 | Depth of the first to turn | -0.122 | -0.014 | +0.098 | 33 |
+| 4 | Spread, rho | +0.025 | -0.028 | -0.055 | 722 |
+| 4 | Spread, time for 80 % of bins | -0.068 | -0.021 | +0.043 | 298 |
+| 5 | Loser's hits after the break | -0.093 | -0.072 | +0.022 | 85 |
+| 6 | Time to break | -0.093 | -0.005 | +0.096 | 194 |
+| 7 | Hits per front file per hour | +0.038 | -0.002 | -0.038 | 487 |
+| 7 | Lethality per bout | +0.036 | +0.018 | -0.017 | 607 |
+
+- **The one changed verdict** is pattern 4 on rung 2: pass at 1.024 m, fail at 0.512 m. The
+  time for 80 % of the bins to turn fell from 14 s to 6 s, across the band's lower edge of
+  10 s. Seeds alone change the same verdict in the control, on rungs 0 and 2.
+- **The formed phase and the time to break are one statistic here.** In every run the formed
+  phase ended at the break, so the two rows are the same numbers and the eleven are ten.
+- **What I expected:** that most would not move, and that anything that did would be in
+  patterns 4 and 5. Nothing moved beyond seeds. The largest was pattern 3, not 4 or 5.
+
+### What the line cannot carry: at the centre the battle is over within a minute
+
+The nominal set is not scored, and this is an outcome of my engine all the same. At both
+sizes and at every rung:
+
+- **It fails patterns 1, 2, 3, 5, 6 and 7 and passes 8.** Pattern 4 passes in nine of the
+  twelve groups of thirty.
+- **The Roman line broke first in 26 to 29 runs of 30.**
+- **87 to 97 % of the runs broke within five minutes of contact,** where the band allows 10 %.
+
+| Rung | Formed phase, median: 1.024 m, seeds 1 to 30 | 1.024 m, seeds 31 to 60 | 0.512 m, seeds 1 to 30 |
+|---|---|---|---|
+| 0 | 35.8 s | 42.3 s | 36.1 s |
+| 1 | 35.8 s | 42.3 s | 34.8 s |
+| 2 | 23.3 s | 33.3 s | 21.9 s |
+| 3 | 29.6 s | 36.3 s | 28.8 s |
+
+So the check compared half-minute battles. A man in his place reads no density, and a fight
+this short gives a crowd little to do. "No more than seeds" is true of this set. It is weak
+evidence for a battle that holds.
+
+### The field's own tests: eight of 44 fail at the half cell
+
+On the scored build every test of the field passes (44, 4 and 3). On the half-cell build 36
+of the 44 pass and eight fail. `cargo` stops there, so the other seven were not run.
+
+| Test | What it asks at the centre | At 0.512 m |
+|---|---|---|
+| `walking_slows_as_the_crowd_thickens` | Through a crowd of two per m², a walker covers 1.6 to 2.0 m in the test's two seconds: 0.7 of his free walk | 0.31 m |
+| `men_who_only_walk_stop_at_the_jam` | No cell goes far past the jam of 5.4 per m²: a peak of 6.5 at most | 8.7 per m² |
+| `men_who_press_pack_tighter_and_stop_at_the_packing_density` | A peak of 10.5 per m² at most, for a packing density of 9 | 11.5 per m² |
+| `a_packed_crowd_eases_when_no_one_presses` | A crowd packed at nine per m² eases below 5 in 480 steps | From 10.8 to 8.9 |
+| `men_in_their_places_are_crushed_like_anyone_else` | Some man in his place is crushed | None was |
+| `men_who_go_for_each_other_are_held_a_guard_apart` | Two enemies who go for each other end within 5 mm of the guard, 600 mm | 794 mm apart |
+| `two_thin_lines_that_both_come_on_slip_past_but_no_one_is_stood_upon` | No two enemies nearer than 582 mm | 581 mm |
+| `a_crowd_pressed_on_a_wall_is_no_denser_at_the_wall` | Fewer than 100 men in the 10 m² at the wall | 100 |
+
+- **The first is the one that counts.** The walking curve was calibrated on measured flows
+  at 1.024 m. With the cell halved and nothing else changed, the same curve gives a walker in
+  a crowd of two per m² about a sixth of the calibrated distance.
+- **Why, as far as I have read it:** every threshold is in men per m², and at the half cell
+  the density is peakier. One man adds up to 3.8 per m² at a point, against 0.95. I have not
+  traced the eight one by one.
+- **Two of the eight fail by a hair:** one millimetre, and one man.
+
+So "structure" was too easy a word in [priors-field.md](priors-field.md). The cell is a
+parameter of the field's crowd: change it and the crowd rules are no longer the calibrated
+ones.
+
+### What follows
+
+- **Nothing in the scored code changes,** as the conditions say.
+- **The report gives all three:** the line's "no"; that it was read on battles of half a
+  minute; and the eight tests.
+- **A recommendation made with the result in hand, and outside the line.** The line does not
+  put the cell on the list for a second round. I recommend it goes there anyway, on the
+  tests: either the density is spread over a fixed width in metres, whatever the cell, or
+  the cell is named as a calibrated constant with the walking curve. Paullus and Michal
+  decide.
+- **The passage bench was not run at the half cell.** The walking test suggests its flows
+  would differ.
+
+### The record of the run
+
+- **The records:** 240 at 1.024 m (four files of 60) and 120 at 0.512 m (four of 30), every
+  one a stopped run of the nominal set on `base`. No run failed, and the script found no
+  other record. The folder is `~/cannae-cell-check` on the Mac.
+- **Their hashes** (sha256) are in
+  [readings/cell-check-2026-11-11/sha256.txt](readings/cell-check-2026-11-11/sha256.txt).
+- **Machine time:** for seeds 1 to 30, the runs at 0.512 m took 1.0 to 1.5 times the runs at
+  1.024 m (46, 61, 50 and 50 s against 30, 44, 44 and 49 s, rungs 0 to 3), on a machine that
+  was busy with other work. It is a rough figure.
+- **A fault in the reporting, repaired.** `cell-check.py` printed the whole report and then
+  stopped in its last step, the check against the scorer: a loop reused the name of another
+  loop's counter. I renamed it and ran the reporting again on the same records. The 441
+  lines before that step are the same in both reports, byte for byte. I had tried the check
+  against the scorer on made-up records with the script's first version only, and not again
+  after I rewrote it for the control.
+- **The check on the script:** the scorer's own verdicts are the script's in 96 of 96.
+- **The table of outcomes seen** has this run under my name.
