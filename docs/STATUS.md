@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-11, 19:26 UTC.
+**Last updated:** 2026-11-11, 19:25 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -355,7 +355,7 @@ written.**
 - **The speed reading waits for the Mac.** The other project holds it for two to three
   hours, so the reading comes at about 21:30 UTC or later.
 
-**Since then (2026-11-11, 19:26 UTC): the replay tool is on main.**
+**Since then (2026-11-11, 19:25 UTC): the replay tool is on main.**
 
 - **Varro read it whole and found one fault,** which is fixed: two of its counts took in men
   who had fled long before the relief, so a thinned century would have looked out of place
