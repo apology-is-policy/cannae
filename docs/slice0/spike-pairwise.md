@@ -47,9 +47,15 @@ perception, ten minutes each. The raw reports are in
 the reference perception never started. None of them enters the figure.
 
 **A second reading would be a second line.** The rule says nothing is read again as the same
-line. Varro and I put one joint question to Michal, with both verdicts side by side, and no
-second reading of either engine is taken before they answer. If one is allowed, its conditions
-and which figure decides are written before it is taken, and both figures are reported.
+line. Varro and I put one joint question to Michal, with both verdicts side by side.
+
+**Michal's decision (2026-11-11, about 15:40 UTC): the perception is put on all threads, and
+the speed is read again as a new line.** That is new work. Its conditions and the figure that
+decides are written before it is read. The readings above stay in the report as the verdict on
+the engine as built. The other choices were to hold the rule as it stands, and to read once
+more as built; neither of us recommended the second. What I expect, unmeasured: about 5x over a
+whole battle, if the perception runs four times faster on the Air's eight cores. The 7.4x above
+is with its time taken out entirely.
 
 ## Verdict so far
 

@@ -238,7 +238,7 @@ overnight.
   battles, none in `base`). Two enemies on their feet can come nearer than the guard's
   distance when both count as in their places; the nearest pair stood 11 mm apart. I read
   the text and the code and agree that it is a defect. Both of us recommend that it is
-  recorded and left out of the re-freeze. Michal decides.
+  recorded and left out of the re-freeze.
 - **Each of us has read the other's list.** Varro agrees with all 75 pairwise bins. The step
   back that remains (A on the page) is larger on his engine: a century of 72 walks back
   15.6 m in twelve seconds behind a standard-bearer who gives ground.
@@ -246,10 +246,20 @@ overnight.
   another (the field engine only); a man at the edge of his alarm flickers between steady
   and giving ground; a body ordered to retire walks off for good (both engines); the second
   line runs within seconds of the first, untouched.
-- **Open with Michal:** the candidate defect, the step back that remains, and one joint
-  question on the speed readings.
-- **Still to come:** both signatures on Addendum 4, then the re-freeze, the pre-flight and
-  the new batch. **Nothing runs on the Pi meanwhile.**
+
+**Michal's three decisions (2026-11-11, about 15:40 UTC),** each on the recommendation of both
+of us:
+
+1. **The field engine's defect is recorded and left in.** The re-frozen code is the frozen
+   code with the two fixes and nothing more. The report names the defect with its counts.
+2. **The step back that remains stays in the new batch** and goes first on the list for the
+   second round (11 below). The code does it on purpose: a formation follows its standard.
+3. **Speed: the shared perception is put on all threads and the speed is read again as a new
+   line,** conditions written first. The first readings stay in the report as the verdict on
+   the engines as built. It does not hold up the batch.
+
+**Still to come:** both signatures on Addendum 4 and Michal's approval of it, then the
+re-freeze, the pre-flight and the new batch. **Nothing runs on the Pi meanwhile.**
 
 **The crosswise check of the two perceptions passed** (finished 00:04 UTC): all 160 runs gave
 the same end state and the same event log through either perception, and the 80 that the batch
@@ -320,6 +330,34 @@ do this. Candidates for a second round, none decided (5 to 10 came from Michal's
    and the rear officer.
 10. **The first to turn are front-rank men.** The sources and our own pre-registered pattern
    say a collapse starts at the rear. The batch scores how often it does.
+
+**11 to 24 came from the QC pass (2026-11-11).** The letters are those of
+[qc-results.md](slice0/qc-results.md) and [qc-results-field.md](slice0/qc-results-field.md);
+the pictures are on [the page](slice0/qc/README.md). C is 5 above, D is 8, and L is 3.
+
+11. **A: a formation follows its standard-bearer wherever his own posture takes him.** A
+    century steps back as one when he gives ground: 0.65 m at a time on my engine, 15.6 m in
+    twelve seconds on Varro's. **Michal: it stays in the batch and is first here.**
+12. **B: the standard-bearer moves up into the front rank and fights.** A starts there.
+13. **E: a runner does not read where the enemy is,** and a pursuer ignores a runner behind
+    him.
+14. **F: runners keep their file lines,** nose to tail.
+15. **G: pursuit never ends.** Nobody is caught and nobody gives up.
+16. **H: the two fronts pack into one dense band,** and the Romans' fighting room is gone.
+17. **I: a strike passes through a comrade.**
+18. **J: men attacked from behind rarely face about.**
+19. **K: a lost file is never closed from the side.**
+20. **M: a body halts at its standoff before a single man.**
+21. **N: pursuers of one side stand on one another** (the field engine only).
+22. **O: a man at the edge of his alarm flickers** between steady and giving ground, six times
+    in five seconds. When he carries the standard, the century steps with him each time.
+23. **P: a body ordered to retire walks off for good,** and its men never regain their slots
+    (both engines).
+24. **R: the second line runs within seconds of the first, untouched.** A man's alarm counts
+    his side's runners, not his body's.
+
+**A defect left in by decision: D1, in the field engine.** Two enemies on their feet can stand
+nearer than the guard's distance (Michal's first decision above).
 
 **A defect found by watching (Michal, 2026-11-10).** When the man in front of a century's
 standard-bearer falls, the whole century steps back one rank, 1.8 m, two seconds later. A

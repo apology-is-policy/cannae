@@ -1,8 +1,9 @@
 # Slice 0: what the visual QC pass found
 
-**Status:** Paullus, 2026-11-11. The pairwise engine's list is complete. Varro's list for the
-field engine is to come, and neither of us has read the other's yet. The rules of the pass are
-in [qc-pass.md](qc-pass.md).
+**Status:** Paullus, 2026-11-11. The pairwise engine's list is complete. Varro has read it and
+agrees with every bin (call 0001, note 61). His list for the field engine is
+[qc-results-field.md](qc-results-field.md). The rules of the pass, and Michal's decisions on
+what it found, are in [qc-pass.md](qc-pass.md).
 
 - **The page for Michal:** [qc/README.md](qc/README.md), one picture for each gap.
 - **Every pairwise flag with its picture:** [qc/pairwise.md](qc/pairwise.md).
@@ -221,8 +222,12 @@ None changes a bin. The thresholds are not touched during the pass.
 - **My list watched `flank` for 600 s,** the second its band is ordered in. Found from the
   counts and run again.
 
-## Still to come
+## What followed
 
-- Varro's list for the field engine, and each of us reading the other's.
-- The field engine's half of the page for Michal.
-- Any defect either list finds goes to Michal before the re-freeze.
+- **Varro read this list** and agrees with every bin. He checked gaps A, I and J against the
+  text, as the three nearest to a defect.
+- **His list has one defect, D1, in the field engine.** I agree with it. Michal decided that
+  it is recorded and left out of the re-freeze.
+- **Michal decided that gap A stays in the new batch** and goes first on the second round's
+  list ([STATUS](../STATUS.md), 11 to 24).
+- **Still to come:** the field engine's half of the page for Michal.

@@ -227,3 +227,27 @@ draw --also FILE` draws such a flag. What that showed is in
   ones I looked at, compared line for line.
 - **The page's own comparison of the drawings** finds the same twelve repeats that my list
   marks with "=".
+
+**2026-11-11, Paullus, on D1** (call 0001, turn 95). Varro's list has one candidate defect, in
+the field engine: two enemies on their feet nearer than the guard when both count as in their
+places ([qc-results-field.md](qc-results-field.md)). I read `field.rs`, `lib.rs`, F6 and the
+step's code, and I agree that it is a defect.
+
+- **The text states the guard without exception:** F6, "the nearest two enemies on their feet
+  can stand", and `field.rs`, "no two enemies on their feet may stand closer".
+- **The code skips the pair:** a man in his place leaves the step before the pass over
+  positions, so a pair of whom both are in their places is never looked at.
+- **The other reading does not hold.** "Any free man ... is handled by positions" says who is
+  processed. It rests on two men in their places never being within a guard of each other,
+  and the code lets that fail.
+- **The first step of a flight is a defect under either reading.** The man is not moving by
+  his tie to his slot; he counts as in his place only because the flag is a step old.
+
+**2026-11-11, Michal's decisions, at about 15:40 UTC,** asked by Paullus with both
+recommendations:
+
+- **D1 is recorded and left out of the re-freeze.** Both recommended that.
+- **Gap A stays in the new batch** and goes first on the second round's list. It was put to
+  Michal by itself because it is the nearest to the defect they saw. Both recommended that.
+- The speed question was put with these two; its answer is in
+  [spike-pairwise.md](spike-pairwise.md).
