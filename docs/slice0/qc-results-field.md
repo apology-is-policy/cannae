@@ -5,6 +5,10 @@
 Paullus has not read this list. The rules of the pass are in [qc-pass.md](qc-pass.md), and
 the pairwise engine's list is in [qc-results.md](qc-results.md).
 
+**Corrected on 2026-11-11, after the first commit of this list (18e4015):** gap Q is withdrawn.
+I had listed it without tracing it and pointed at Paullus's bout resolver. Replayed, its three
+flags are the ordinary wait for a bout followed by gap G. The counts above do not change.
+
 **What I knew while judging.** On the frozen code the field engine fails the 10 % rule on
 `base` at rungs 0 to 3, and it has failed its speed line
 ([spike-field.md](spike-field.md)). The candidate defect is in that engine and was found by its
@@ -103,7 +107,7 @@ before the scan and is not changed.
 ## The gaps
 
 A to M are Paullus's, from [qc-results.md](qc-results.md); only those the field's pictures
-show are repeated. N to R are new here.
+show are repeated. N, O, P and R are new here; Q is withdrawn.
 
 | | What looks wrong on the field engine | What the code says | Best picture |
 |---|---|---|---|
@@ -118,7 +122,7 @@ show are repeated. N to R are new here.
 | **N** | **Pursuers stand on one another.** 24 to 30 Gauls stand in one 2 m cell around one runner | Men of one side are not solid on this engine. Detector 5 counts it: 50,089 flags of two comrades nearer than 300 mm | `06-crowd-field-1` |
 | **O** | **A man at the edge of his alarm goes from steady to back and again, six times in five seconds.** When he carries the standard, the century steps back with him each time | Giving ground and standing again are two thresholds with a small margin between them | `14-flicker-field-gives-way-1` |
 | **P** | **A man left behind stays behind.** A Gaul of the rear band who chased a runner is 107 m from his slot at 169 s, and is still steady and out of his place when the run ends at 600 s | Not traced. The band is ordered to retire at 180 s, and no order ends a retirement; I take it that he walks after a frame that walks as fast as he does | `16-out-of-place-field-4` |
-| **Q** | **A man stands forward at the enemy's line for one to two minutes with no bout.** 91 s and 131 s in the two picks. I have not traced why; the bout resolver is Paullus's | Not traced | `17-forward-idle-field-1` |
+| **Q** | *Withdrawn.* I had written: "A man stands forward at the enemy's line for one to two minutes with no bout", 91 s and 131 s in the two picks, not traced. Replayed (`base`, rung 0, seed 1, men 170 and 180), each man's time is two things already on the lists: 33 to 35 s at the Roman line with a standing Roman a metre ahead and no bout, and then 55 s and 94 s forward behind a runner who is never nearer than 1.75 m | The first is the ordinary tail of a bout rate of one in ten seconds (`bouts.rs`, `rate_q16`), as in Paullus's `17` rows, which are 24 to 34 s. The second is gap G: a man's reach is 1.5 m, and pursuer and runner move at the same 4 m/s. The bout resolver does what its text says | `17-forward-idle-field-1` |
 | **R** | **The second line dissolved seconds after the first, untouched.** Beside the flag, in one battle (`backed`, rung 0, seed 4), read from the flags' counts of slotted men: the first century has 2 left at 79.75 s; a century of the second line, 24 m behind, has 81 at 79.5 s and 3 at 84 s | The men of the second line see the first line's backs. I did not trace it | none |
 
 ## Every field flag looked at
@@ -155,9 +159,9 @@ its note. "clip" marks a replay.
 | `16` 1 | base r0 s1, 16.5 s | fine | The closer walks 16 m through his century to the fallen leader's slot: the succession |
 | `16` 2, 3 | base r0 s1, 40.75 s | gap A | Gauls stay steady and 2 m from their slots to the end: the frame runs on behind the chieftain |
 | `16` 4 | shock r0 s1, 169.25 s | gap P | A Gaul who chased a runner follows his retiring band at its own pace |
-| `17` 1; 4 = 1 | base r0 s1, 3.75 s to 95 s | gap Q | Forward at the Roman line for 91 s with no bout |
+| `17` 1; 4 = 1 | base r0 s1, 3.75 s to 95 s | gap G | By replay, man 170: from 5.5 s a standing Roman a metre ahead for 35 s and no bout (the tail, as `17` 2); from 40.5 s he is forward for 55 s behind runners who stay out of his reach |
 | `17` 2 | base r0 s1, 5.75 s to 30.75 s | fine | 25 s: the ordinary tail of the bout rate, as on the pairwise engine |
-| `17` 3 | base r0 s1, 7 s to 138.5 s | gap Q | 131 s |
+| `17` 3 | base r0 s1, 7 s to 138.5 s | gap G | By replay, man 180: his last bout is at 7 s; 33 s more at the line with no other; from 44.25 s he is forward for 94 s behind a runner 1.8 to 2.6 m ahead at his own pace |
 | `18` left 1, 2, 3; 4 (note) | base r0 s1, 42.5 s; base r0 s2, 189.25 s, 214.5 s; backed r0 s1 | gap K | A front-rank man stands beside a file that is empty to the end |
 | `18` right 1, 2; 3, 4 (note) | base r0 s2, 216.25 s; veterans r0 s1, 103 s; veterans r1 s1; recruits r0 s1 | gap K | The same. In `veterans` the warband walks past 14 steady Romans 5 m off |
 | `19` closer-in-flight 1; 2 = 1; 3 (note) | flank r0, r1 s1; flank r2 s3, 617.5 s | fine | The century is in flight, the closer with it. The rule gives a closer in flight no succession |
@@ -206,5 +210,5 @@ None changes a bin, and no threshold is touched.
 
 - Paullus reads this list, and judges D1.
 - If he agrees that D1 is a defect, it goes to Michal with both our recommendations.
-- The gaps N to R go on the second-round list in [STATUS](../STATUS.md), which is Paullus's
+- The gaps N, O, P and R go on the second-round list in [STATUS](../STATUS.md), which is Paullus's
   to edit.
