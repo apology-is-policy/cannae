@@ -183,3 +183,12 @@ with the list.
 
 **The tool's own tests** are on hand-made scenes: for each detector a case that must be flagged
 and a case just under its threshold.
+
+**2026-11-11, Varro, a second line** (call 0001, turn 86), still before the tool has been run
+on any battle:
+
+- **Detectors 25 and 26 in `backed` and `relief`:** the first flag of each kind in each of
+  these two variants is looked at as well, on both engines. The relief is the one place that
+  reads another body's lead, and ed6d363 adds a way for a body not to lead.
+- **Detector 1 cannot see a warband step back one rank:** its ranks are 1,200 mm apart, and the
+  detector asks for more than 1,200. Detector 25 covers that. No threshold is changed.
