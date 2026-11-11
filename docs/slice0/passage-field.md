@@ -130,6 +130,19 @@ on such fits predict 1.2 to 1.6 through a bottleneck, below what is measured the
 ([crowd-physics.md](crowd-physics.md)). The field is calibrated on the gaps, because a gap is
 where the patch's relief variant reads this curve.
 
+**Corrected by Varro on 2026-11-11, before any record of `relief` was read.** That reason does
+not hold for the relief as it was scripted afterwards:
+
+- **The drill has no gap.** Files pass through files, and both centuries walk in their places.
+- **A man in his place reads no density.** His tie alone moves him
+  (`crates/cannae-field/src/field.rs`, "In his place: the tie alone moves him"), so the lanes
+  are walked at the frames' pace whatever the curve says.
+- **So in `relief` the curve is read as in every other variant:** by men out of their places,
+  who went forward, give ground, flee or pursue.
+
+The calibration stands as it was made, on the measured flows. What falls is the claim that the
+scored relief leans on it.
+
 ## The interval
 
 A maniple of 120, 12 files by 10 ranks, falls back through an interval in the line behind it.
