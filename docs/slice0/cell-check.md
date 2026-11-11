@@ -177,8 +177,8 @@ Before anything was built or run:
 
 | When (UTC) | What |
 |---|---|
-| 2026-11-11, about 19:05 | First written (b59f7a9): 240 runs, and two lines for "the cell matters": any verdict changed on any rung, or five or more of the 44 comparisons moved |
-| 2026-11-11, about 19:30 | **The control added, and both lines replaced.** Paullus (turn 107): the two lines had nothing beside them. A pooled median near its band's edge flips by seeds alone, and the four rungs share their seeds, so the 44 comparisons are not 44. He asked for seeds 31 to 60 at 1.024 m as a control. I added the 1,000 splits, which say how often seeds alone do as much, and made the lines out of them |
+| 2026-11-11, 19:03 | First written (b59f7a9): 240 runs, and two lines for "the cell matters": any verdict changed on any rung, or five or more of the 44 comparisons moved |
+| 2026-11-11, 19:12 | **The control added, and both lines replaced.** Paullus (turn 107): the two lines had nothing beside them. A pooled median near its band's edge flips by seeds alone, and the four rungs share their seeds, so the 44 comparisons are not 44. He asked for seeds 31 to 60 at 1.024 m as a control. I added the 1,000 splits, which say how often seeds alone do as much, and made the lines out of them |
 | | **Why the count of moved comparisons is no longer a line.** On made-up records (random numbers in the record's format), a difference built into one statistic, large enough to give A = 0.95 on all four rungs, moved five of the 44; and seeds alone moved five or more in 61 of 1,000 splits. The count could not tell the difference from seeds. The largest mean move could: no split reached it. Seeds alone also changed at least one verdict in 998 of those 1,000 splits, because the made-up medians lay near their bands' edges |
 | | Also from Paullus: the reporting may be repaired and run again on the same records; the records stay out of the repository with their hashes here; the kinds of record are counted |
 
