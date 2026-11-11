@@ -12,7 +12,10 @@ gets a page with a picture and a caption for each flag looked at").
 
 The table's rows are `| FLAG | where | bin | reason |`, where FLAG is the detector's number
 in backticks, the kind if the detector has several, and the flag's place among the picked
-ones: "`01` by-the-lead 2". Each row is joined to the picture of that name and to what the
+ones: "`01` by-the-lead 2". A row may stand for several flags with one bin and reason:
+"`02` 1, 2, 3; 4 = 1" (the fourth is the same drawing as the first), "`18` left 1, 2; 3
+(note)" (the third was judged from its note alone), "`19` closer-standing 2 (clip)" (judged
+by a replay of the battle). Each flag is joined to the picture of that name and to what the
 tool measured there. Nothing is judged here: the bin and the reason are copied.
 
 A picture whose panels are the same drawing as an earlier one's (the same moment in a
@@ -26,7 +29,8 @@ from pathlib import Path
 
 
 def rows(results, heading):
-    """(number, kind or None, place, where, bin, reason) for each row of the table."""
+    """(number, kind or None, place, bin, reason, how judged, the place it is said to equal)
+    for each flag of the table."""
     text = Path(results).read_text()
     start = text.find(f"## {heading}\n")
     if start < 0:
@@ -34,9 +38,18 @@ def rows(results, heading):
     body = text[start:].split("\n## ", 1)[0]
     out = []
     for line in body.splitlines():
-        m = re.match(r"\| `(\d\d)` (?:([a-z-]+) )?(\d+) \| (.*?) \| (.*?) \| (.*) \|$", line)
-        if m:
-            out.append((m.group(1), m.group(2), int(m.group(3)), *m.group(4, 5, 6)))
+        m = re.match(r"\| `(\d\d)` (?:([a-z-]+) )?([\d,;= ()a-z]+?) \| (.*?) \| (.*?) \| (.*) \|$",
+                     line)
+        if not m:
+            continue
+        number, kind, flags, _, bin_, reason = m.groups()
+        for part in flags.split(";"):
+            g = re.match(r"\s*([\d, ]+?)(?: = (\d+)| \((note|clip)\))?\s*$", part)
+            if not g:
+                sys.exit(f"cannot read the flags of the row: {line}")
+            for place in g.group(1).split(","):
+                out.append((number, kind, int(place), bin_.strip("*"), reason, g.group(3),
+                            int(g.group(2)) if g.group(2) else None))
     return out
 
 
@@ -69,7 +82,8 @@ def main(argv):
         shutil.rmtree(folder)
     folder.mkdir(parents=True)
     counts = {}
-    for number, kind, place, where, bin_, reason in table:
+    said, found = {}, {}
+    for number, kind, place, bin_, reason, how, equals in table:
         mine = [i for i in made if i.startswith(f"{number}-") and f"-{engine}-" in i]
         if kind:
             ids = [i for i in mine if i.endswith(f"-{engine}-{kind}-{place}")]
@@ -85,6 +99,10 @@ def main(argv):
         counts[bin_.split()[0]] = counts.get(bin_.split()[0], 0) + 1
         drawn = drawing(pictures / f"{pid}.svg")
         twin = seen.get(drawn)
+        if equals is not None:
+            said[pid] = pid.rsplit("-", 1)[0] + f"-{equals}"
+        if twin is not None:
+            found[pid] = twin
         if twin is None:
             seen[drawn] = pid
             shutil.copyfile(pictures / f"{pid}.svg", folder / f"{pid}.svg")
@@ -99,15 +117,19 @@ def main(argv):
             "",
             f"- **Where:** {f['Where']}",
             f"- **Measured:** {f['Measured']}",
-            f"- **Bin:** {bin_}. {reason}" + ("" if reason.endswith(".") else "."),
+            f"- **Bin:** {bin_}. {reason}" + ("" if reason.endswith(".") else ".")
+            + {None: "", "note": " Judged from the flag's note; the picture was not looked at.",
+               "clip": " Judged by a replay of the battle."}[how],
             f"- **In the viewer:** {f['In the viewer']}",
             "",
         ]))
     left = sorted(i for i in made if i not in used)
     if left:
         sys.exit(f"pictures without a row: {', '.join(left)}")
-    tally = ", ".join(f"{n} {name}" + ("s" if name != "fine" and n != 1 else "")
-                      for name, n in sorted(counts.items()))
+    words = {"fine": "{n} fine", "gap": "{n} gaps", "defect": "{n} of a defect"}
+    tally = ", ".join(words.get(name, "{n} " + name).format(n=n)
+                      for name, n in sorted(counts.items(), key=lambda c: c[0] != "defect"))
+    listed = Path(results).name
     head = "\n".join([
         f"# Slice 0, QC pass: every {engine} flag looked at",
         "",
@@ -116,19 +138,25 @@ def main(argv):
         "measured, the bin it went into and why, and the link that opens the live viewer a few",
         "seconds before it (on the Mac only, while the viewer runs there).",
         "",
-        f"- **Bins:** {tally}. The gaps' letters are explained in",
-        "  [qc-results.md](../qc-results.md), and the page that shows one picture for each of",
-        "  them is [README.md](README.md).",
+        f"- **Bins:** {tally}. The letters are explained in",
+        f"  [{listed}](../{listed}), and the page that shows one picture for each kind of",
+        "  thing found is [README.md](README.md).",
         "- **A picture** has four panels of 30 m by 30 m: the moments around the flag. A",
         f"  drawing shown once already is not repeated: {len(seen)} pictures for {len(table)} "
         "flags.",
         "- **Made by** [`tools/qc-page.py`](../../../tools/qc-page.py) from the table in",
-        "  qc-results.md and the pictures of [`tools/qc-render.py`](../../../tools/qc-render.py).",
+        f"  {listed} and the pictures of [`tools/qc-render.py`](../../../tools/qc-render.py).",
         "  Nothing here is written by hand.",
         "",
     ])
     (out / f"{engine}.md").write_text(head + "\n" + "\n".join(parts))
     print(f"{len(table)} flags, {len(seen)} pictures, {tally}")
+    # What the table says is the same drawing against what the files say. For the reader of
+    # this output only: the page shows what the files say.
+    for pid in sorted(set(said) | set(found)) if said else []:
+        if said.get(pid) != found.get(pid):
+            print(f"  {pid}: the table says {said.get(pid, 'its own drawing')}, "
+                  f"the files say {found.get(pid, 'its own drawing')}")
     return 0
 
 

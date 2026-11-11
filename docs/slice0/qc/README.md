@@ -1,28 +1,32 @@
 # Slice 0: what the QC pass saw, in pictures
 
-**For Michal.** Paullus, 2026-11-11. This is the pairwise engine's half. Varro's half, for the
-field engine, is added when his list is in.
+**For Michal.** Paullus, 2026-11-11. The pictures A to M are from the pairwise engine, from my
+list. [The last section](#from-the-field-engine-varros-list) is from Varro's list for the
+field engine.
 
 You asked for a close look at the frames, because there might be more that you had not
 noticed. There is, and this page shows it.
 
 - **This page:** one picture for each kind of thing that looks wrong.
-- **[pairwise.md](pairwise.md):** all 75 flags I looked at, each with its four-panel picture,
-  its bin and the reason.
-- **[qc-results.md](../qc-results.md):** the counts and the list in full. The rules of the
-  pass are in [qc-pass.md](../qc-pass.md).
+- **[pairwise.md](pairwise.md) and [field.md](field.md):** every flag looked at on each
+  engine, 75 and 95, each with its four-panel picture, its bin and the reason.
+- **[qc-results.md](../qc-results.md) and [qc-results-field.md](../qc-results-field.md):** the
+  counts and the two lists in full. The rules of the pass are in
+  [qc-pass.md](../qc-pass.md).
 
 ## In short
 
-- **No defect.** In the 75 moments I looked at, the code never contradicts its own text. The
-  step back of a whole rank that you saw is gone.
+- **No defect on my engine.** In the 75 moments I looked at, the code never contradicts its
+  own text. The step back of a whole rank that you saw is gone.
 - **Thirteen things look wrong although the code does what it says.** You have seen two of
   them (C and D), and a larger form of a third (A). Ten are new.
-- **None of them is changed before the new batch.** The rule Varro and I wrote fixes only a
-  defect. A thing that looks wrong but is what the code says is the model's own behaviour,
-  and the batch is there to measure that. All thirteen are candidates for the second round.
-- **Look at A first.** It is the nearest to what you saw. Varro and I come back to you about
-  it once he has read this list.
+- **One defect on Varro's engine,** found by him: two enemies can stand nearer than the code
+  promises (D1 below). His list adds four more things that look wrong (N, O, P, R).
+- **None of it is changed before the new batch. You decided so on 2026-11-11:** the defect is
+  recorded and left in, and A stays and goes first on the list for the second round. The
+  rule Varro and I wrote fixes only a defect; a thing that looks wrong but is what the code
+  says is the model's own behaviour, and the batch is there to measure that.
+- **Look at A first.** It is the nearest to what you saw.
 
 ## How to read a picture
 
@@ -243,10 +247,93 @@ back of the Roman line from the left.*
 - **In the viewer:** [from 1,646 s](http://127.0.0.1:8377/?engine=pairwise&rung=0&variant=backed&seed=2&t=1646).
   The viewer needs a moment to run that far.
 
+## From the field engine (Varro's list)
+
+Varro looked at the field engine's 95 flags. His pictures show A, B, D, E, G, I, K and M on
+his engine too. This section has what is different there, or new. What was seen is in his
+words, shortened.
+
+### D1, the one defect: two enemies nearer than the guard
+
+![A Roman and a Gaul 200 mm apart, their dots on one another](d1-enemies-overlap.png)
+
+*Field engine, `veterans`, seed 5, at 549 s. Part of a panel, 12 m across.*
+
+- **Look at the two ringed men in the middle,** 83 and 187. A Roman and a Gaul stand 200 mm
+  apart, centre to centre: the orange dot lies on the blue one. The code promises 600 mm
+  between two enemies on their feet. Around them the Gauls' ranks stand inside the Romans'
+  files.
+- **Why.** The rule is kept only where one of the two is out of his place in his formation.
+  Here both count as in their places: the Gaul walked to a slot that lies beside the
+  Roman's.
+- **How often.** 123 times in 27 of 160 battles, never in `base`, and mostly for a quarter
+  of a second.
+- **You decided that it is recorded and left in.**
+- **In the viewer:** [man 83 from 546 s](http://127.0.0.1:8377/?engine=field&rung=0&variant=veterans&seed=5&t=546&man=83).
+  The viewer needs a moment to run that far.
+
+### A is larger on the field engine
+
+No picture: the step looks the same as on mine, and it is the number of steps that differs.
+
+- **A century of 72 walks back 15.6 m in twelve seconds,** steady, behind a standard-bearer
+  who gives ground (`veterans`, seed 1, from 54.5 s). On this engine he walks back through
+  his own ranks, 24 steps in a row. On mine the longest run is 5.
+- **In the viewer:** [from 52 s](http://127.0.0.1:8377/?engine=field&rung=0&variant=veterans&seed=1&t=52).
+
+### N. Pursuers stand on one another
+
+![Knots of Gauls standing on one another around single runners](n-pursuers-knot.png)
+
+*Field engine, `veterans`, rung 1, seed 1, at 113.5 s. Part of a panel, 15 m across.*
+
+- **Look at the knot right of the middle.** It holds 24 Gauls in one cell of 2 m, around two
+  runners. They stand on one another, so the picture shows only a few of them. Seconds
+  later there are 30.
+- **Why.** Men of one side are not solid on this engine. Two comrades nearer than 300 mm
+  were counted 50,089 times.
+- **In the viewer:** [from 110 s](http://127.0.0.1:8377/?engine=field&rung=1&variant=veterans&seed=1&t=110).
+
+### O. A man at the edge of his alarm flickers
+
+No picture: a still cannot show it.
+
+- **A man goes from steady to giving ground and back six times in five seconds**
+  (`veterans`, rung 1, seed 5, from 580 s). When he carries the standard, the century steps
+  back with him each time.
+- **Why.** Giving ground and standing again are two thresholds with a small margin between
+  them.
+- **In the viewer:** [man 15 from 577 s](http://127.0.0.1:8377/?engine=field&rung=1&variant=veterans&seed=5&t=577&man=15).
+
+### P. A body ordered to retire walks off for good
+
+No picture.
+
+- **In `shock` the rear band is ordered off at 180 s,** with 29 of its 36 men out of their
+  places in pursuit. The formation walks back at 1.3 m/s to the end of the run, 550 m in
+  seven minutes, and the men walk after their slots at the same pace. From 190 s on the
+  median man is 25 m from his slot.
+- **On both engines:** in 15 of the 20 `shock` battles on the field engine and in 5 of 20 on
+  mine.
+- **Why.** No order ends a retirement.
+- **In the viewer:** [from 178 s](http://127.0.0.1:8377/?engine=field&rung=0&variant=shock&seed=1&t=178).
+
+### R. The second line runs within seconds of the first, untouched
+
+No picture.
+
+- **In `backed`, seed 4:** at 76 s, 101 men of the first line are in flight, and both
+  centuries of the second line, 24 m behind, are steady to a man. By 82.5 s every man of
+  both is in flight. No enemy came nearer to them than 5.5 m.
+- **Why.** A man's alarm counts the men of his own side in flight in his view, whichever
+  body they belong to, and the first line's runners come through the second. Varro did not
+  isolate which part of the alarm carried it.
+- **In the viewer:** [from 72 s](http://127.0.0.1:8377/?engine=field&rung=0&variant=backed&seed=4&t=72).
+
 ## How the pictures were made
 
 The pass's tool drew four panels for each flag, on the Raspberry Pi
 ([`tools/qc-render.py`](../../../tools/qc-render.py)); those are in
-[pairwise.md](pairwise.md). Each picture here is one of those panels, or a part of one, cut
+[pairwise.md](pairwise.md) and [field.md](field.md). Each picture here is one of those panels, or a part of one, cut
 out without drawing anything again ([`tools/qc-crop.py`](../../../tools/qc-crop.py), from the
 list in [cuts.txt](cuts.txt)).

@@ -10,3 +10,5 @@ h-dense-band     09-facing-in-place-pairwise-1            1  0.10 0.00 0.90 0.80
 j-rear           25-slot-back-pairwise-other-6            4  0.15 0.30 0.95 0.95
 kl-staircase     18-gap-pairwise-left-2                   4
 m-one-man        26-stalled-pairwise-1                    3  0.25 0.00 0.90 0.65
+d1-enemies-overlap  04-overlap-enemies-field-2           2  0.30 0.30 0.70 0.70
+n-pursuers-knot  06-crowd-field-1                        2  0.25 0.25 0.75 0.75

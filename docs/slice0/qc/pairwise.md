@@ -4,9 +4,9 @@ The 75 flags the rule picks on the pairwise engine, each with its picture, what 
 measured, the bin it went into and why, and the link that opens the live viewer a few
 seconds before it (on the Mac only, while the viewer runs there).
 
-- **Bins:** 37 fine, 38 gaps. The gaps' letters are explained in
-  [qc-results.md](../qc-results.md), and the page that shows one picture for each of
-  them is [README.md](README.md).
+- **Bins:** 37 fine, 38 gaps. The letters are explained in
+  [qc-results.md](../qc-results.md), and the page that shows one picture for each kind of
+  thing found is [README.md](README.md).
 - **A picture** has four panels of 30 m by 30 m: the moments around the flag. A
   drawing shown once already is not repeated: 63 pictures for 75 flags.
 - **Made by** [`tools/qc-page.py`](../../../tools/qc-page.py) from the table in
