@@ -593,6 +593,86 @@ until the batch ends.
 | Paullus | **signed, 2026-11-10** |
 | Varro | **signed, 2026-11-10**, with the fix written and tested as above. I agree with the rule, and with repeating all eight cells |
 
+## Addendum 4 (draft, 2026-11-11): the batch is restarted once, on a re-frozen code
+
+**A draft, not signed.** It is final when the QC pass has run
+([qc-pass.md](qc-pass.md)), since that pass can still add to the list below. It replaces the
+rule of Addendum 3: the batch does not run to its end on the frozen code, and `base` is not
+repeated after it. Addendum 3's account of the defect and its conditions on the fix stand.
+
+**The decision.** Michal decided on one restart of the batch. Paullus asked on 2026-11-10 at
+23:25 UTC, with both recommendations, and Michal answered on 2026-11-11 at about 06:38 UTC.
+
+**Why.**
+
+- **The defect is in most runs while they still matter.** Varro's test of his fix on 144
+  unscored runs (Addendum 3) counted the frame held 263 times, 131 of them before the body
+  broke; in 99 of the 144 runs it happened while the body was still formed. A comparison of
+  runs with the defect against runs without it would have rested on a handful.
+- **Half the batch could not run.** Every step of the pairwise engine died within a second of
+  starting, at 05:29 UTC on 2026-11-11: a stack overflow in the batch runner, which ran
+  battles as tasks of one pool of threads while each pairwise battle used a pool of its own.
+  It changes no result. It was Paullus's fault: no whole pairwise cell had been run before the
+  batch.
+
+**The re-frozen code, pinned.**
+
+| Part | What | Shown how |
+|---|---|---|
+| The frozen code | dd9d90a | |
+| The standard-bearer fix | ed6d363, exactly as Varro committed it on 2026-11-10 at 23:15 UTC | Addendum 3: its tests, its 20 mutations, and the 3 runs with a count of zero that are unchanged |
+| The runner fix | 449dcd6 (Paullus): battles run on plain threads | It changes no record: 90 field records made with it equal the first batch's own from the Pi, and 80 pairwise records equal the frozen runner's with one job; all fields but the wall time |
+| Defects from the QC pass | *to be listed, or "none"* | Each judged against the code's own text and never against a band; accepted by both; approved by Michal; fixed by the code's owner, reviewed by the other, checked by mutation |
+
+Nothing else changes: the same freeze seed, the same 200 parameter sets, the same ten seeds for
+each, the same priors, bands, scorer, stop rule and audit. So every run of the new batch has
+its pair in the first one.
+
+**The rule from here on.** No restart once the batch script's gate has run.
+
+**This restart is an exception to that rule, by the clock.** The script wrote its gate lines
+for the four field cells at 05:29 UTC, when the pairwise steps had failed. Michal's answer came
+at about 06:38. What stands against the clock is the record:
+
+- Varro's fix was committed at 23:15 UTC the evening before, his recommendation to restart was
+  made at 23:21, and the question went to Michal at 23:25: all six hours before the gate ran.
+- Paullus first looked at the Pi at 06:39, after the answer.
+- Michal had not seen any output of the Pi's batch before answering. Varro asked them
+  directly; their answer was "No, I had not" (call 0001, note 49).
+
+**What is known, and what it means for the re-freeze.** Both of us know that on the frozen code
+the field engine's four cells are ruled out on `base` (the table below, 06:39 and 06:47). So:
+
+- **The first batch's field result stays a result.** Its 8,400 records of `base` are kept as
+  they are and scored with the batch, and the gate's lines and counts are read then and not
+  before. It is the pre-registered verdict of the frozen code for those four cells.
+- **Each of those runs is paired with its run in the new batch,** and the fixed build's count
+  of held frames says in which runs the defect could act.
+- **The engines are compared on the re-frozen code only.** The field engine has two results
+  and the pairwise engine one, because its half could not run on the frozen code. The report
+  says so wherever it compares them.
+- **Nothing in the re-freeze was chosen with the verdict in hand,** except what the QC pass
+  adds. That is why the fix is pinned to the commit made before the gate ran, why the runner's
+  fix is shown to change no record, and why a QC defect is judged against the code's own text.
+  Each QC defect is listed above as found after the verdict was known.
+
+**Before the new batch starts.**
+
+- The frozen commit named in `tools/s09-batch.sh` and `tools/s09-recheck.py` is the re-frozen
+  one, and the gate's scorer is built from it.
+- `tools/s09-preflight.sh` has started every one of the 64 steps on the machine that runs the
+  batch, and none has died. The batch runs nothing for the first time.
+- The crosswise check of the two perceptions (Addendum 2) is run again on the re-frozen code
+  as the batch goes, on the same sample.
+- A comparison with the first batch's records leaves out the wall time and the new count of
+  held frames.
+- The first batch is stopped and its folder kept unchanged.
+
+| Addendum 4 | Signed |
+|---|---|
+| Paullus | *draft* |
+| Varro | |
+
 ## Outcomes seen during the batch
 
 A record of every scored run's outcome either of us sees before the batch is scored, as it
