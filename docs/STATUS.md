@@ -188,14 +188,14 @@ overnight.
   [spike-field.md](slice0/spike-field.md). By the rule both signed, a reading under the line
   is final, since the man only adds cost. My own readings start when he hands the Mac over.
 
-**Since then (2026-11-11, 13:00 UTC):**
+**Since then (2026-11-11, 12:40 UTC):**
 
 - **My engine is under its own speed line too: 2.67x against 3x over a whole battle.** The
   pocket ran at 1.59x sustained on eight threads and the line at 8.42x, both valid by the rule,
   and the man is not in it yet ([spike-pairwise.md](slice0/spike-pairwise.md)). So both
   engines miss their speed lines on the Air. What follows from that is Michal's to decide
   with the Slice 0 report.
-- **The Mac was restarted at about 09:13 UTC,** during my third run. The two runs that set the
+- **The Mac went down at about 09:13 UTC,** during my third run, and was back at 12:14. The two runs that set the
   figure were complete; three side runs are missing. Something unknown had held the Mac's load
   near 1.8 during my runs; it is logged, and the rule's own test for a disturbed run did not
   trigger. A second reading on the restarted Mac would stand beside the first, not replace it.
@@ -217,6 +217,39 @@ overnight.
 - **Still to come:** Varro's list for the field engine, each reading the other's, the page
   with pictures for Michal, then Addendum 4, the re-freeze and the new batch. **Nothing runs
   on the Pi meanwhile.**
+
+**Since then (2026-11-11, 15:45 UTC):**
+
+- **The page with pictures is there: [slice0/qc/README.md](slice0/qc/README.md).** One
+  picture and a few lines for each of the thirteen things that look wrong on the pairwise
+  engine, made to be read on a phone. The one to look at first is A: a century still steps
+  back as one, by 0.65 m, when its standard-bearer gives ground.
+- **Every pairwise flag looked at, with its four-panel picture, bin and reason:**
+  [slice0/qc/pairwise.md](slice0/qc/pairwise.md). 75 flags, 63 distinct pictures.
+- **The page's links open the live viewer on the Mac.** It runs there now, built from the
+  fixed code, on 127.0.0.1 only. It is stopped before anyone reads a speed again.
+- **The draft of Addendum 4 has the four changes Varro asked for** (call 0001, note 59): which
+  batch pairs with which, the runner fix named as chosen after the verdict was known, both
+  speed verdicts known before the re-freeze, and a place for his own check of the runner fix.
+  It is still unsigned.
+- **Varro's list for the field engine is in**
+  ([qc-results-field.md](slice0/qc-results-field.md)): 95 flags, 41 fine, 50 gaps, and
+  **one candidate defect, in his own field code** (4 flags; 123 of its kind in 27 of 160
+  battles, none in `base`). Two enemies on their feet can come nearer than the guard's
+  distance when both count as in their places; the nearest pair stood 11 mm apart. I read
+  the text and the code and agree that it is a defect. Both of us recommend that it is
+  recorded and left out of the re-freeze. Michal decides.
+- **Each of us has read the other's list.** Varro agrees with all 75 pairwise bins. The step
+  back that remains (A on the page) is larger on his engine: a century of 72 walks back
+  15.6 m in twelve seconds behind a standard-bearer who gives ground.
+- **Four more things that look wrong, from his list:** pursuers of one side stand on one
+  another (the field engine only); a man at the edge of his alarm flickers between steady
+  and giving ground; a body ordered to retire walks off for good (both engines); the second
+  line runs within seconds of the first, untouched.
+- **Open with Michal:** the candidate defect, the step back that remains, and one joint
+  question on the speed readings.
+- **Still to come:** both signatures on Addendum 4, then the re-freeze, the pre-flight and
+  the new batch. **Nothing runs on the Pi meanwhile.**
 
 **The crosswise check of the two perceptions passed** (finished 00:04 UTC): all 160 runs gave
 the same end state and the same event log through either perception, and the 80 that the batch

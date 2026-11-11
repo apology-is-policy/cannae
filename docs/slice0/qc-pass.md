@@ -214,3 +214,16 @@ what the large classes of detectors 1 and 25 are: I sorted their flags by order,
 body size, and traced a standard-bearer step by step in three battles. `tools/qc-render.py
 draw --also FILE` draws such a flag. What that showed is in
 [qc-results.md](qc-results.md).
+
+**2026-11-11, Paullus, the page.**
+
+- **The page the rule promises Michal is two pages.** [qc/pairwise.md](qc/pairwise.md) has
+  every pairwise flag looked at with its four-panel picture, what the detector measured, the
+  bin and the reason; `tools/qc-page.py` writes it from the table in
+  [qc-results.md](qc-results.md). [qc/README.md](qc/README.md) shows one picture for each
+  gap, cut down to one panel so that it reads on a phone (`tools/qc-crop.py`).
+- **The pictures in the repository were drawn again after the looking.** The tool's legend
+  ran under its scale bar; it is now on a row of its own. All 75 have the same panels as the
+  ones I looked at, compared line for line.
+- **The page's own comparison of the drawings** finds the same twelve repeats that my list
+  marks with "=".

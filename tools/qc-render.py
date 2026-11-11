@@ -303,8 +303,10 @@ def legend(x, y):
         out.append(man_svg(px, y, 0, p, 0, r))
         out.append(f'<text x="{px + 13}" y="{y + 4}" font-size="12" fill="#333">{name}</text>')
         px += 30 + 7 * len(name)
-    out.append(f'<text x="{px}" y="{y + 4}" font-size="12" fill="#333">'
-               '+ slot   □ standard   ○ the men flagged   red line: a bout</text>')
+    # A row of its own: beside the postures it ran under the scale bar.
+    out.append(f'<text x="{x}" y="{y + 22}" font-size="12" fill="#333">'
+               '+ a slot, joined to its man when he is away from it  ·  □ the standard  ·  '
+               '○ the men the flag is about  ·  red line: a bout</text>')
     return "\n".join(out)
 
 
@@ -322,7 +324,7 @@ def picture(f, data):
     cols = 2
     rows = (len(shown) + 1) // 2
     width = cols * PANEL + (cols + 1) * gap
-    height = head + rows * (PANEL + gap) + 34
+    height = head + rows * (PANEL + gap) + 52
     # Square, with the drawing centred: Quick Look crops a picture that is taller than wide.
     side = max(width, height)
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {side} {side}" '

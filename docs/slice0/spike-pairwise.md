@@ -42,9 +42,9 @@ perception, ten minutes each. The raw reports are in
   why. Without that minute the line is about 8.9x and the whole battle 2.70x.
 - **Mine during the runs:** ssh and scp to the Pi, and file edits. No build and no test.
 
-**What did not run.** The Mac was restarted at about 09:13 UTC, in the third run. The rout was
-cut off after eight minutes, and the four-thread pocket and the pocket with the reference
-perception never started. None of them enters the figure.
+**What did not run.** The Mac went down at about 09:13 UTC, in the third run, and was back at
+12:14. The rout was cut off after eight minutes, and the four-thread pocket and the pocket with
+the reference perception never started. None of them enters the figure.
 
 **A second reading would be a second line.** The rule says nothing is read again as the same
 line. Varro and I put one joint question to Michal, with both verdicts side by side, and no

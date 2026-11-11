@@ -1,8 +1,11 @@
 # Slice 0: what the visual QC pass found
 
 **Status:** Paullus, 2026-11-11. The pairwise engine's list is complete. Varro's list for the
-field engine is to come, and neither of us has read the other's yet. The page with pictures for
-Michal follows this list. The rules of the pass are in [qc-pass.md](qc-pass.md).
+field engine is to come, and neither of us has read the other's yet. The rules of the pass are
+in [qc-pass.md](qc-pass.md).
+
+- **The page for Michal:** [qc/README.md](qc/README.md), one picture for each gap.
+- **Every pairwise flag with its picture:** [qc/pairwise.md](qc/pairwise.md).
 
 ## Verdict so far
 
@@ -101,9 +104,9 @@ means the picture shows it although no detector was written for it.
 
 ## Every pairwise flag looked at
 
-The id names the picture in the pass's folder. "=" marks a flag whose picture is the same
-drawing as another's, compared file to file: the same moment in a variant that shares its start
-with `base`.
+The id names the picture; all of them are in [qc/pairwise.md](qc/pairwise.md). "=" marks a flag
+whose picture is the same drawing as another's, compared file to file: the same moment in a
+variant that shares its start with `base`.
 
 | Flag | Where | Bin | Reason |
 |---|---|---|---|
@@ -221,5 +224,5 @@ None changes a bin. The thresholds are not touched during the pass.
 ## Still to come
 
 - Varro's list for the field engine, and each of us reading the other's.
-- The page for Michal: a picture and a caption for each gap, with a link into the live viewer.
+- The field engine's half of the page for Michal.
 - Any defect either list finds goes to Michal before the re-freeze.
