@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-11, 19:20 UTC.
+**Last updated:** 2026-11-11, 19:26 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -354,6 +354,18 @@ written.**
   scored code.
 - **The speed reading waits for the Mac.** The other project holds it for two to three
   hours, so the reading comes at about 21:30 UTC or later.
+
+**Since then (2026-11-11, 19:26 UTC): the replay tool is on main.**
+
+- **Varro read it whole and found one fault,** which is fixed: two of its counts took in men
+  who had fled long before the relief, so a thinned century would have looked out of place
+  with no jam anywhere. They are now asked only of the men who were in their places when the
+  relief was ordered. The outline's sentence is corrected to match.
+- **With that he agreed to its use,** and it is merged
+  (`viewer/src/bin/cannae-replay.rs`). It is pointed at scored runs only after the scoring.
+- **In the drill alone, no man who was in his place at the order is out of it at the end.**
+  The two men I named above, the closers, have no slot of their own and are outside the
+  count.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
