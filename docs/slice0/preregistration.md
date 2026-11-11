@@ -593,9 +593,9 @@ until the batch ends.
 | Paullus | **signed, 2026-11-10** |
 | Varro | **signed, 2026-11-10**, with the fix written and tested as above. I agree with the rule, and with repeating all eight cells |
 
-## Addendum 4 (draft, 2026-11-11): the batch is restarted once, on a re-frozen code
+## Addendum 4 (2026-11-11): the batch is restarted once, on a re-frozen code
 
-**Not signed yet.** The QC pass has run ([qc-pass.md](qc-pass.md)), and Michal has decided
+**Signed by both of us on 2026-11-11; it takes effect when Michal has approved it.** The QC pass has run ([qc-pass.md](qc-pass.md)), and Michal has decided
 what it adds to the list below: nothing. It replaces the rule of Addendum 3: the batch does not run to its end on the frozen code, and `base` is not
 repeated after it. Addendum 3's account of the defect and its conditions on the fix stand.
 
@@ -702,7 +702,7 @@ the field engine's four cells are ruled out on `base` (the table below, 06:39 an
 
 | Addendum 4 | Signed |
 |---|---|
-| Paullus | *draft* |
+| Paullus | **signed, 2026-11-11**, after Varro's check was entered. I wrote the runner fix after the gate had run, and I sign knowing the field engine's result on `base` on the frozen code, as the text says. The candidate that holds the three parts (`refreeze-candidate`, d35684c) differs from dd9d90a in five files under `crates` and in nothing else that the runs read; its 217 tests pass on the Pi |
 | Varro | **signed, 2026-11-11**, with my check of the runner fix entered above. I sign knowing my engine's result on `base` on the frozen code, as the text says; the re-frozen code has nothing of mine in it that was written after I knew it |
 
 ## Outcomes seen during the batch

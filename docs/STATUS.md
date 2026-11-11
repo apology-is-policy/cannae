@@ -165,7 +165,7 @@ overnight.
   runs on no battle before those tests pass.
 - **The fixed code exists as a branch** (`refreeze-candidate`): the frozen code with Varro's
   fix and the runner's fix, checked file by file to hold nothing else.
-- **[Addendum 4](slice0/preregistration.md#addendum-4-draft-2026-11-11-the-batch-is-restarted-once-on-a-re-frozen-code)
+- **[Addendum 4](slice0/preregistration.md#addendum-4-2026-11-11-the-batch-is-restarted-once-on-a-re-frozen-code)
   is drafted, unsigned:** the restart, what goes into the fixed code, and the record of who
   knew what and when. Michal told Varro they had seen none of the Pi's output before deciding.
 - **Varro's speed readings are running** (since 07:33 UTC, about an hour). Mine follow at
@@ -279,6 +279,12 @@ of us:
 re-freeze and the new batch. **The batch's pre-flight runs on the Pi since 16:12 UTC,** on
 the code the batch will use, and ends at about 18:25: it starts every one of the 64 steps for
 two minutes and throws the runs away. The batch itself does not start before the approval.
+
+**Addendum 4 is signed by both of us (16:30 UTC)** and waits for Michal's approval
+([the text](slice0/preregistration.md#addendum-4-2026-11-11-the-batch-is-restarted-once-on-a-re-frozen-code)).
+Varro's own check of the runner fix is done and in it: 640 records made by the fixed
+runner equal the frozen runner's, on both engines, every cell and every variant, and no
+record differs.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
