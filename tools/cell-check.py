@@ -3,20 +3,29 @@
 scored cell (1.024 m) and at half of it (0.512 m). Its conditions are in
 docs/slice0/cell-check.md, written before this script read a record.
 
-    tools/cell-check.py DIR_1024 DIR_512 [--seeds 30] [--score-dir DIR]
+    tools/cell-check.py DIR_1024 DIR_512 DIR_1024B [--seeds 30] [--score-dir DIR]
 
-Each directory holds `field-r<rung>-base.jsonl` for rungs 0 to 3, as
-`cell --nominal yes --out DIR` wrote them. For each rung this prints every statistic the
-scorer pools for a set (`metrics::verdicts` in cannae-harness), at both cells, with the
-band's verdict on each, and A: the chance that a run at 0.512 m gives a larger value than a
-run at 1.024 m, ties counted half.
+DIR_1024 and DIR_512 hold `field-r<rung>-base.jsonl` for rungs 0 to 3 with seeds 1 to 30, as
+`cell --nominal yes --out DIR` wrote them. DIR_1024B holds seeds 31 to 60 at 1.024 m: the
+control, in which nothing differs but the seeds.
 
-With `--score-dir`, the eight verdicts are compared with the scorer's own, read from
-`DIR/score-<cell>-r<rung>.txt`: the output of `score` on the same records.
+For each rung this prints every statistic the scorer pools for a set (`metrics::verdicts` in
+cannae-harness) for both groups of runs, with the band's verdict on each, and A: the chance
+that a run of the second group gives a larger value than a run of the first, ties counted
+half. It does so twice: for the half cell against the scored cell, and for the control.
+
+Then it splits the sixty runs at 1.024 m into thirty and thirty at random, 1,000 times, the
+four rungs of a seed kept together, and counts how often seeds alone move a statistic as far
+over the four rungs, and change as many verdicts, as the half cell did.
+
+With `--score-dir`, the verdicts are compared with the scorer's own, read from
+`DIR/score-<group>-r<rung>.txt`: the output of `score` on the same records.
 """
 
 import argparse
+import bisect
 import json
+import random
 import re
 import sys
 import tomllib
@@ -26,11 +35,13 @@ ROOT = Path(__file__).resolve().parent.parent
 # `draw` of the nominal set (`draw::nominal`).
 NOMINAL = 2**32 - 1
 RUNGS = (0, 1, 2, 3)
-CELLS = ("1024", "512")
 # A statistic has moved when A is this far from 0.5 or farther, with at least FEWEST values
-# at each cell. Both are fixed in the conditions.
+# in each group. Both are fixed in the conditions, as are the splits and their line.
 MOVED = 0.15
 FEWEST = 10
+SPLITS = 1000
+SPLIT_SEED = 20261111
+RARE = 25
 
 
 def median(values):
@@ -57,12 +68,20 @@ def quartiles(values):
     return at(0.25), at(0.75)
 
 
-def larger(coarse, fine):
-    """The chance that a value of `fine` is larger than a value of `coarse`, ties half."""
-    if len(coarse) < FEWEST or len(fine) < FEWEST:
+def larger(first, second):
+    """The chance that a value of `second` is larger than a value of `first`, ties half."""
+    if len(first) < FEWEST or len(second) < FEWEST:
         return None
-    wins = sum(1.0 if y > x else 0.5 if y == x else 0.0 for x in coarse for y in fine)
-    return wins / (len(coarse) * len(fine))
+    v = sorted(first)
+    wins = 0.0
+    for y in second:
+        below = bisect.bisect_left(v, y)
+        wins += below + 0.5 * (bisect.bisect_right(v, y) - below)
+    return wins / (len(first) * len(second))
+
+
+def has_moved(a):
+    return a is not None and abs(a - 0.5) >= MOVED - 1e-12
 
 
 def opt(x):
@@ -113,9 +132,14 @@ PATTERNS = [
 ]
 
 
-def verdicts(runs, b):
+def values_of(runs):
+    return [[x for r in runs for x in get(r)] for _, _, get, _, _ in PER_RUN]
+
+
+def verdicts(runs, b, values=None):
     """As `metrics::verdicts`: None where a pattern cannot be scored."""
-    pooled = [median([x for r in runs for x in get(r)]) for _, _, get, _, _ in PER_RUN]
+    values = values_of(runs) if values is None else values
+    pooled = [median(v) for v in values]
     ok = [None if x is None or test is None else test(x, b)
           for x, (_, _, _, _, test) in zip(pooled, PER_RUN)]
 
@@ -137,11 +161,11 @@ def verdicts(runs, b):
             pooled, ok, (early, never, n), (lf, f, lr, ro))
 
 
-def load(directory, rung, seeds):
-    """The summaries of seeds 1 to `seeds`, the problems found, and the wall and simulated s."""
+def load(directory, rung, first, last):
+    """By seed: the records of seeds `first` to `last`; and the problems found."""
     path = Path(directory) / f"field-r{rung}-base.jsonl"
     if not path.exists():
-        return [], [f"{path}: no such file"], (0.0, 0)
+        return {}, [f"{path}: no such file"]
     runs, problems = {}, []
     for n, line in enumerate(path.read_text().splitlines(), 1):
         try:
@@ -151,17 +175,15 @@ def load(directory, rung, seeds):
             continue
         ours = (r["engine"] == "Field" and r["rung"] == rung and r["variant"] == "base"
                 and r["freeze_seed"] is None and r["draw"] == NOMINAL and not r["whole"])
-        if not ours or not 1 <= r["seed"] <= seeds or r["seed"] in runs:
+        if not ours or not first <= r["seed"] <= last or r["seed"] in runs:
             problems.append(f"{path}:{n}: not one stopped run of the nominal set on base, "
-                            f"seeds 1 to {seeds}")
+                            f"seeds {first} to {last}")
             continue
         runs[r["seed"]] = r
-    missing = [s for s in range(1, seeds + 1) if s not in runs]
+    missing = [s for s in range(first, last + 1) if s not in runs]
     if missing:
         problems.append(f"{path}: INCOMPLETE, no run of seeds {missing}")
-    kept = [runs[s] for s in sorted(runs)]
-    cost = (sum(r["wall_ms"] for r in kept) / 1000, sum(r["sim_s"] for r in kept))
-    return [r["summary"] for r in kept], problems, cost
+    return runs, problems
 
 
 def num(x):
@@ -172,7 +194,7 @@ def num(x):
     return f"{x:.4g}"
 
 
-def cell_text(values, pooled, ok):
+def group_text(values, pooled, ok):
     if not values:
         return f"{0:>3} {'none':>8} {'':<20} {'':<4}"
     q = "[{}, {}]".format(*map(num, quartiles(values)))
@@ -182,6 +204,10 @@ def cell_text(values, pooled, ok):
 
 def word(v):
     return "unscorable" if v is None else "pass" if v else "FAIL"
+
+
+def share(k, m):
+    return "none" if m == 0 else f"{k} of {m} ({100 * k / m:.1f} %)"
 
 
 def scorer_verdicts(path):
@@ -196,95 +222,183 @@ def scorer_verdicts(path):
     return [out.get(k, "missing") for k in range(1, 9)]
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("dir_1024")
-    ap.add_argument("dir_512")
-    ap.add_argument("--seeds", type=int, default=30)
-    ap.add_argument("--score-dir")
-    args = ap.parse_args()
-    bands = tomllib.loads((ROOT / "scenarios/prereg.toml").read_text())
-    dirs = dict(zip(CELLS, (args.dir_1024, args.dir_512)))
-    problems, moved, compared, changed, disagree, checked = [], [], 0, [], [], 0
-
-    print(f"The field's cell check: the nominal set on base, seeds 1 to {args.seeds}, "
-          "at 1.024 m and at 0.512 m.")
-    print("A: the chance that a run at 0.512 m gives a larger value than one at 1.024 m, "
-          f"ties half.\nMoved: A at or below {0.5 - MOVED:.2f}, or at or above "
-          f"{0.5 + MOVED:.2f}, with at least {FEWEST} values at each cell.")
+def table(title, names, groups, bands):
+    """Prints one comparison in full: `groups[k][rung]` is the records of group k by seed.
+    Returns how many verdicts changed, how many statistics moved, and each group's verdicts."""
+    print(f"\n{'=' * 100}\n{title}\nA: the chance that a run of the second group gives a "
+          "larger value than a run of the first, ties half.")
+    moved, compared, changed, all_verdicts = [], 0, [], {}
+    by_stat = [[] for _ in PER_RUN]
     for rung in RUNGS:
-        runs, got = {}, {}
-        for c in CELLS:
-            runs[c], found, cost = load(dirs[c], rung, args.seeds)
-            problems += found
-            got[c] = verdicts(runs[c], bands) + (cost,)
-        print(f"\nRung {rung}: {len(runs['1024'])} runs at 1.024 m, "
-              f"{len(runs['512'])} at 0.512 m")
-        for c, label in zip(CELLS, ("1.024 m", "0.512 m")):
-            first = [r["loser"] for r in runs[c]]
-            wall, sim = got[c][5]
-            print(f"  {label}: the Romans broke first in {first.count(0)}, the warband in "
+        records = [list(g[rung].values()) for g in groups]
+        runs = [[r["summary"] for r in rs] for rs in records]
+        vals = [values_of(rs) for rs in runs]
+        got = [verdicts(rs, bands, v) for rs, v in zip(runs, vals)]
+        all_verdicts[rung] = [g[0] for g in got]
+        print(f"\nRung {rung}: {len(runs[0])} runs and {len(runs[1])} runs")
+        for k in (0, 1):
+            first = [r["loser"] for r in runs[k]]
+            wall = sum(r["wall_ms"] for r in records[k]) / 1000
+            sim = sum(r["sim_s"] for r in records[k])
+            print(f"  {names[k]}: the Romans broke first in {first.count(0)}, the warband in "
                   f"{first.count(1)}, neither broke in {first.count(None)}; "
                   f"{wall:.0f} s of machine time for {sim} simulated s")
         head = f"{'n':>3} {'median':>8} {'[quartiles]':<20} {'ok':<4}"
-        print(f"\n  {'statistic':<32} {'band':<12} {'1.024 m: ' + head}   "
-              f"{'0.512 m: ' + head}   {'A':>5}")
-        for i, (pattern, name, get, band, _) in enumerate(PER_RUN):
-            values = {c: [x for r in runs[c] for x in get(r)] for c in CELLS}
-            a = larger(values["1024"], values["512"])
-            mark = ""
-            if a is None:
-                mark = "too few"
-            else:
+        print(f"\n  {'statistic':<32} {'band':<12} {'first: ' + head}   "
+              f"{'second: ' + head}   {'A':>5}")
+        for i, (pattern, name, _, band, _) in enumerate(PER_RUN):
+            a = larger(vals[0][i], vals[1][i])
+            mark = "too few" if a is None else ""
+            if a is not None:
                 compared += 1
-                if abs(a - 0.5) >= MOVED - 1e-12:
+                by_stat[i].append(a)
+                if has_moved(a):
                     mark = "MOVED"
                     moved.append(f"rung {rung}, {name} (A {a:.3f})")
-            texts = [cell_text(values[c], got[c][1][i], got[c][2][i]) for c in CELLS]
-            print(f"  {f'{pattern} {name}':<32} {band(bands):<12} {'':<9}{texts[0]}   "
-                  f"{'':<9}{texts[1]}   {'' if a is None else f'{a:5.3f}'} {mark}")
-        for c, label in zip(CELLS, ("1.024 m", "0.512 m")):
-            (early, never, n), (lf, f, lr, ro) = got[c][3], got[c][4]
-            share = lambda k, m: "none" if m == 0 else f"{k} of {m} ({100 * k / m:.1f} %)"
-            print(f"  {label}: 6 broke within {bands['holds_early_s']:g} s of contact "
+            texts = [group_text(vals[k][i], got[k][1][i], got[k][2][i]) for k in (0, 1)]
+            print(f"  {f'{pattern} {name}':<32} {band(bands):<12} {'':<7}{texts[0]}   "
+                  f"{'':<8}{texts[1]}   {'' if a is None else f'{a:5.3f}'} {mark}")
+        for k in (0, 1):
+            (early, never, n), (lf, f, lr, ro) = got[k][3], got[k][4]
+            print(f"  {names[k]}: 6 broke within {bands['holds_early_s']:g} s of contact "
                   f"{share(early, n)}, at most {100 * bands['holds_max_early']:g} %; "
                   f"unbroken {bands['holds_never_s']:g} s after it {share(never, n)}, "
                   f"at most {100 * bands['holds_max_never']:g} %")
-            print(f"  {label}: 8 leaders' share of hits while formed {share(lf, f)}, "
+            print(f"  {names[k]}: 8 leaders' share of hits while formed {share(lf, f)}, "
                   f"after the break {share(lr, ro)}")
-        print(f"\n  {'pattern':<34} {'1.024 m':<11} {'0.512 m':<11}")
+        print(f"\n  {'pattern':<34} {'first':<11} {'second':<11}")
         for k, name in enumerate(PATTERNS):
-            v = [got[c][0][k] for c in CELLS]
+            v = [g[0][k] for g in got]
             flag = "" if v[0] == v[1] else "CHANGED"
             if flag:
                 changed.append(f"rung {rung}, {name}: {word(v[0])} to {word(v[1])}")
             print(f"  {name:<34} {word(v[0]):<11} {word(v[1]):<11} {flag}")
-        if args.score_dir:
-            for c in CELLS:
-                path = Path(args.score_dir) / f"score-{c}-r{rung}.txt"
-                theirs = scorer_verdicts(path) if path.exists() else ["missing"] * 8
-                for k in range(8):
-                    checked += 1
-                    if theirs[k] != got[c][0][k]:
-                        disagree.append(f"rung {rung}, cell {c}, {PATTERNS[k]}: the scorer "
-                                        f"says {theirs[k]}, this script {got[c][0][k]}")
-
     print(f"\nMoved: {len(moved)} of {compared} comparisons.")
     for m in moved:
         print(f"  {m}")
     print(f"Verdicts changed: {len(changed)} of {8 * len(RUNGS)}.")
     for m in changed:
         print(f"  {m}")
+    return len(changed), len(moved), all_verdicts, [mean_move(a) for a in by_stat]
+
+
+def mean_move(a_by_rung):
+    """How far a statistic's A lies from 0.5, as a mean over the rungs that have it."""
+    return sum(a - 0.5 for a in a_by_rung) / len(a_by_rung) if a_by_rung else 0.0
+
+
+def counts(first, second, bands):
+    """Between two groups of summaries by rung: verdicts changed, statistics moved, and each
+    statistic's mean move over the rungs."""
+    changed = moved = 0
+    by_stat = [[] for _ in PER_RUN]
+    for rung in RUNGS:
+        va, vb = values_of(first[rung]), values_of(second[rung])
+        a, b = verdicts(first[rung], bands, va)[0], verdicts(second[rung], bands, vb)[0]
+        changed += sum(1 for x, y in zip(a, b) if x != y)
+        for i, (x, y) in enumerate(zip(va, vb)):
+            sup = larger(x, y)
+            if sup is not None:
+                by_stat[i].append(sup)
+                moved += has_moved(sup)
+    return changed, moved, [mean_move(a) for a in by_stat]
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("dir_1024")
+    ap.add_argument("dir_512")
+    ap.add_argument("dir_1024b")
+    ap.add_argument("--seeds", type=int, default=30)
+    ap.add_argument("--score-dir")
+    args = ap.parse_args()
+    n = args.seeds
+    bands = tomllib.loads((ROOT / "scenarios/prereg.toml").read_text())
+    problems = []
+    groups = {}
+    for name, directory, first in (("1024", args.dir_1024, 1), ("512", args.dir_512, 1),
+                                   ("1024b", args.dir_1024b, n + 1)):
+        groups[name] = {}
+        for rung in RUNGS:
+            groups[name][rung], found = load(directory, rung, first, first + n - 1)
+            problems += found
+
+    print(f"The field's cell check: the nominal set on base, {n} runs a group.")
+    print(f"Moved: A at or below {0.5 - MOVED:.2f}, or at or above {0.5 + MOVED:.2f}, with "
+          f"at least {FEWEST} values in each group.")
+    half = table(f"THE HALF CELL: 0.512 m (second) against 1.024 m (first), seeds 1 to {n}",
+                 ("1.024 m", "0.512 m"), (groups["1024"], groups["512"]), bands)
+    control = table(f"THE CONTROL: 1.024 m, seeds {n + 1} to {2 * n} (second) against "
+                    f"seeds 1 to {n} (first)",
+                    (f"seeds 1 to {n}", f"seeds {n + 1} to {2 * n}"),
+                    (groups["1024"], groups["1024b"]), bands)
+
+    print(f"\n{'=' * 100}\nSEEDS ALONE: {SPLITS} random splits of the {2 * n} runs at "
+          f"1.024 m into {n} and {n}, the four rungs of a seed kept together")
+    pool = {r: {**groups["1024"][r], **groups["1024b"][r]} for r in RUNGS}
+    seeds = sorted(pool[0])
+    if any(sorted(pool[r]) != list(range(1, 2 * n + 1)) for r in RUNGS):
+        print("  not made: the runs at 1.024 m are incomplete")
+    else:
+        rng = random.Random(SPLIT_SEED)
+        got = []
+        for _ in range(SPLITS):
+            rng.shuffle(seeds)
+            a = {r: [pool[r][s]["summary"] for s in seeds[:n]] for r in RUNGS}
+            b = {r: [pool[r][s]["summary"] for s in seeds[n:]] for r in RUNGS}
+            got.append(counts(a, b, bands))
+        print("\n  Each statistic over the four rungs: the mean of A less 0.5, and the splits "
+              "in which seeds alone\n  move it as far or farther, either way.")
+        print(f"  {'statistic':<32} {'half cell':>10} {'control':>10} {'splits':>14}")
+        for i, (pattern, name, _, _, _) in enumerate(PER_RUN):
+            reach = sum(1 for g in got if abs(g[2][i]) >= abs(half[3][i]) - 1e-12)
+            print(f"  {f'{pattern} {name}':<32} {half[3][i]:>+10.3f} {control[3][i]:>+10.3f} "
+                  f"{reach:>6} of {SPLITS}")
+        largest = max(abs(m) for m in half[3])
+        v = sorted(max(abs(m) for m in g[2]) for g in got)
+        reach_move = sum(1 for x in v if x >= largest - 1e-12)
+        print(f"\n  The largest of the eleven: half cell {largest:.3f}, control "
+              f"{max(abs(m) for m in control[3]):.3f}; seeds alone: median "
+              f"{v[SPLITS // 2]:.3f}, 95 in 100 splits at most {v[SPLITS * 95 // 100 - 1]:.3f}; "
+              f"splits that reach the half cell's: {reach_move} of {SPLITS}")
+        v = sorted(g[0] for g in got)
+        reach_verdicts = sum(1 for x in v if x >= half[0])
+        print(f"  Verdicts changed: half cell {half[0]}, control {control[0]}; seeds alone: "
+              f"median {v[SPLITS // 2]}, 95 in 100 splits at most {v[SPLITS * 95 // 100 - 1]}, "
+              f"none in {sum(1 for x in v if x == 0)}; splits that reach the half cell's: "
+              f"{reach_verdicts} of {SPLITS}")
+        v = sorted(g[1] for g in got)
+        print(f"  Comparisons marked MOVED: half cell {half[1]}, control {control[1]}; seeds "
+              f"alone: median {v[SPLITS // 2]}, 95 in 100 splits at most "
+              f"{v[SPLITS * 95 // 100 - 1]}; splits that reach the half cell's: "
+              f"{sum(1 for x in v if x >= half[1])} of {SPLITS}")
+        rare = reach_move < RARE or reach_verdicts < RARE
+        print(f"\n  The line: fewer than {RARE} of the {SPLITS} splits reach the half cell's "
+              "largest move, or its count of changed verdicts.\n  THE CELL MATTERS AT THE "
+              f"CENTRE: {'YES' if rare else 'NO'}")
+
     if args.score_dir:
-        print(f"The scorer's own verdicts: {checked - len(disagree)} of {checked} are "
+        disagree, checked = [], 0
+        for name, (_, _, ours, _) in (("1024", half), ("512", half), ("1024b", control)):
+            for rung in RUNGS:
+                mine = ours[rung][1 if name != "1024" else 0]
+                path = Path(args.score_dir) / f"score-{name}-r{rung}.txt"
+                theirs = scorer_verdicts(path) if path.exists() else ["missing"] * 8
+                for k in range(8):
+                    checked += 1
+                    if theirs[k] != mine[k]:
+                        disagree.append(f"rung {rung}, group {name}, {PATTERNS[k]}: the "
+                                        f"scorer says {theirs[k]}, this script {mine[k]}")
+        print(f"\nThe scorer's own verdicts: {checked - len(disagree)} of {checked} are "
               "this script's.")
         for m in disagree:
             print(f"  {m}")
+        problems += disagree
     if problems:
-        print(f"\nPROBLEMS WITH THE RECORDS: {len(problems)}")
+        print(f"\nPROBLEMS: {len(problems)}")
         for p in problems:
             print(f"  {p}")
-    return 1 if problems or disagree else 0
+    return 1 if problems else 0
 
 
 if __name__ == "__main__":
