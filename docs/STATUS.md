@@ -258,6 +258,21 @@ of us:
    line,** conditions written first. The first readings stay in the report as the verdict on
    the engines as built. It does not hold up the batch.
 
+**Since then (2026-11-11, 16:15 UTC):**
+
+- **The fixed code passes its tests:** 217 of 217 on the Pi, and the QC tool's own 44. A
+  marching and a charging body were traced step by step on both engines: every slot moves
+  alike, and none by a rank.
+- **The picture page has its field half:** a section from Varro's list on
+  [the page](slice0/qc/README.md), and every field flag with its picture in
+  [slice0/qc/field.md](slice0/qc/field.md).
+- **Varro's own check of the runner fix is nearly done:** 76 runs were left at 16:05 UTC,
+  and every record compared so far is equal but for the wall time. His line and signature
+  on Addendum 4 follow it.
+- **The speed work Michal chose is prepared, and nothing is read.** Its conditions are
+  written ([spike-pairwise.md](slice0/spike-pairwise.md)). The change is small and in the
+  speed test alone.
+
 **Still to come:** both signatures on Addendum 4 and Michal's approval of it, then the
 re-freeze, the pre-flight and the new batch. **Nothing runs on the Pi meanwhile.**
 

@@ -266,3 +266,10 @@ main merged in; its code is that of 9d96089, which the pass ran on).
     step, the same for each. 25 or 26 of the 36 men count as in their places while they
     run; the slowest runs 4 m behind his slot and keeps that distance.
   - **No step moves a slot by a rank,** and no slot moves apart from the others.
+
+**2026-11-11, Paullus, the field half of the page.** [qc/field.md](qc/field.md) has every one
+of the 95 field flags with its picture, Varro's bin and his reason, copied from his table by
+the same tool. Its pictures were drawn again with the legend corrected; all 95 have the same
+panels as the ones he looked at. The eleven flags his table marks as the same drawing as
+another are the eleven the files show. The phone page has a section from his list: D1 and N
+with a cut picture each, and A as it is on his engine, O, P and R in words.
