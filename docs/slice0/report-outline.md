@@ -8,6 +8,13 @@ on 2026-11-11 at 18:48 UTC, while the new batch ran its first step, and agreed w
 changes by 19:06 UTC. Section 6 has the counts for what Michal saw at the mid-range set,
 agreed in the same turns.
 
+**Four parts are proposed and not yet agreed** (Paullus, 2026-11-11, 21:23 UTC, with the new
+batch still in its first step): how a pattern's failures are counted (section 1), the
+field engine's two results side by side (section 2), how stragglers and tempo are given
+(section 3), and how one rung is counted against another (section 4). Each fixes how a
+promised figure is counted, before a record is read. Each says so at its head until Varro
+has read it.
+
 This is a list, with no result in it. Everything below was promised before the runs: in the
 [pre-registration](preregistration.md) and its addenda, in [STATUS](../STATUS.md), or to
 Michal. It is collected here so that the report leaves nothing out, and so that nothing gets
@@ -45,6 +52,35 @@ For each of the eight cells (two engines, rungs 0 to 3), on the re-frozen code:
 | Which patterns fail most often, and how | The procedure |
 | Pattern 6 with and without its two dose-response legs, so that a reader sees which half failed | Scoring a parameter set |
 
+### How a pattern fails: the count
+
+**Proposed by Paullus on 2026-11-11 at 21:23 UTC,** while the new batch ran its first step
+(`base` on the field's rung 0). Varro has not read it yet. Neither of us has read a record
+of the new batch.
+
+The scorer prints, for each pattern, how many sets pass, how many fail and how many cannot
+be scored. The table above also promises how they fail. A pattern is a band on one or two
+values pooled over a set's seeds, so a set fails it on one part or another. For each cell,
+on `base`, the report gives the failing sets by the part that failed:
+
+| Pattern | The parts a set can fail on |
+|---|---|
+| 1 Standoff | the formed phase under its minimum; the gap under its minimum |
+| 2 Pulses and lulls | burstiness under its minimum; the share of quiet bins under its band, or over it |
+| 3 Rear-first collapse | the depth of the first to turn under its minimum |
+| 4 Lateral spread | the correlation under its minimum; the time of the spread under its band, or over it |
+| 5 Casualty asymmetry | the loser's share of hits after the break under its minimum |
+| 6 Holds, then breaks | too many seeds break early; too many never break. The two dose-response legs are in the scorer's own table |
+| 7 Casualty clock | hits per file-hour under the band, or over it; harm per bout under its band, or over it |
+| 8 Centurion gradient | the leaders' share of hits in the formed fight not above their share in the rout |
+
+- **A set that fails on two parts is counted under each.**
+- **A set that cannot be scored on a pattern** is counted apart, as the scorer counts it.
+- **Beside the counts:** the quartiles over sets of each pooled value, with its band, so
+  that a reader sees how far off the sets lie.
+- **The tool must agree with the scorer.** It computes each verdict again from the parts and
+  compares it with the scorer's, set by set. If one differs, it prints nothing.
+
 Then, for each engine:
 
 - **The lowest rung that passes is kept.**
@@ -74,6 +110,59 @@ From Addendum 4, and from the conditions of Addendum 3 that still stand:
   could not run on the frozen code, through a fault in my batch runner.
 - **Which cells the gate put last** (Addendum 1). It changes the order of the runs only.
 
+### The two results side by side: the counts
+
+**Proposed by Paullus on 2026-11-11 at 21:23 UTC,** while the new batch ran its first step.
+Varro has not read it yet. It is his engine and the conditions are his, so his reading may
+change it. Neither of us has read a record of the new batch.
+
+**What the first batch can give.** It ran `base` alone on the frozen code. The two
+dose-response legs of pattern 6 need `veterans`, `recruits` and `flank`, and those never ran
+on that code. So the frozen code's result is seven patterns and the band of the sixth. Where
+the report counts "all eight" for it, pattern 6 is taken by its band alone, and the new
+batch's count taken the same way stands beside it. The new batch's full verdict is
+section 1's.
+
+For each of the field engine's four cells, on `base`:
+
+1. **The pairs.** Each record of the first batch beside the new batch's record of the same
+   set and seed, a stopped run with a stopped run and a whole run with a whole one. The
+   report gives:
+   - the number of pairs, and of records with no partner in the other batch;
+   - of the pairs whose count of held frames is zero: how many are equal field for field,
+     all but the wall time and the count. Addendum 3 says every one must be. One that is
+     not is a fault in the fix, and the report says so before anything else about the cell;
+   - of the pairs whose count is one or more: how many differ in their summary.
+2. **Where the defect could act:** the runs of `base` whose count is one or more, and the
+   sets with such a run among their ten seeds.
+3. **The verdicts of the two batches, set by set.** For each pattern, the sixth by its band:
+   the sets that pass in both batches, in the first alone, in the new one alone, and in
+   neither. The same for all eight taken that way.
+4. **Whether those runs differ from the rest on any pattern** (Addendum 3's words), two
+   ways, on the eleven values a run gives to the patterns (the list of
+   [cell-check.md](cell-check.md)):
+   - **Within the pairs whose count is one or more:** for each value, the pairs in which
+     the first batch's run has the larger value, the smaller, the same, and those where one
+     run has none. Here each run is its own control: the same set and seed, and the same
+     battle until the first held frame.
+   - **Against the rest of the cell,** in the new batch: for each value, the median of the
+     runs whose count is one or more and of the others, and the probability that a run of
+     the first group has the larger value.
+
+**How it is read, said now:**
+
+- **Item 3 is what bears on the verdict:** whether the defect changed the verdict of any
+  set, and of the cell.
+- **The pairs show what the defect did.** The comparison against the rest cannot: a set
+  whose standard-bearer is driven back differs from the others in more than that. It can
+  show that such runs are different battles, and no more.
+
+**One count before the scoring, proposed:** the equal and unequal pairs among those whose
+count is zero (item 1), as counts and nothing else, taken with the recheck and the crosswise
+check. An unequal pair would mean the fix does more than its text says, and that should be
+known before the verdicts are. It also tells how many runs have a count of one or more,
+which is no outcome of a pattern.
+
 ## 3. Reported, not banded
 
 | The report gives | For | Promised in |
@@ -85,6 +174,17 @@ From Addendum 4, and from the conditions of Addendum 3 that still stand:
 | The two dose-response statistics on the Roman side's break time alone, and the number of sets where the Roman line broke in fewer than 2 seeds of `base` | Each cell | The dose-response |
 | The loophole, by name: veterans who hold no longer than recruits but beat the warband sooner pass on skill at arms alone | Once | The dose-response |
 | Each side's front losses before contact | `shock`, `volleys` | The variants |
+
+**How two of these are given** (proposed by Paullus on 2026-11-11 at 21:23 UTC, not yet read
+by Varro; no record of the new batch had been read):
+
+- **Stragglers** are counted for each run, and a cell has 2,000 runs. The report gives, over
+  the runs of `base` in which a side broke: the share with one or more stragglers, the
+  quartiles of the count, and the largest.
+- **Tempo** is pooled as the banded values are: each set's median over its seeds, then the
+  quartiles over sets, for each of the two shares. Beside them, the number of sets inside
+  the only figures there are (5 to 25 % of the time, 10 to 25 % of the men). Those figures
+  are no band and no set fails on them.
 
 ## 4. The two memory variants
 
@@ -98,6 +198,38 @@ From Addendum 4, and from the conditions of Addendum 3 that still stand:
     more slowly than the four minutes between the shock and the front;
   - rung 3 shows more than rung 2.
 - **What `volleys` cannot test:** fear of the fire itself. Men see only the falls it causes.
+
+### One rung against another: the count
+
+**Proposed by Paullus on 2026-11-11 at 21:23 UTC,** while the new batch ran its first step.
+Varro has not read it yet, and the expectations above are mostly his. Neither of us has
+read a record of the new batch.
+
+The expectations say that one rung "shows more" than another, and nothing yet says how that
+is counted. Set *i* has the same shared values and the same weights at every rung, by
+construction (`crates/cannae-score/src/draw.rs`). So set *i* at one rung can be put beside
+set *i* at another. For each engine, and for `shock` and `volleys` apart:
+
+- **Each rung against rung 0, and each against the rung below it:** over the sets scored at
+  both, the median of the difference in the statistic, and the number of sets in which the
+  higher rung's statistic is larger, smaller, and the same.
+- **"Shows more", fixed now:** the higher rung's statistic is the larger in more sets than
+  a fair coin gives 95 times in 100, ties left out. With 200 sets and no tie that is 115
+  sets or more.
+  - **Why a count over sets:** one set's statistic rests on ten seeds a side, so its
+    difference between two rungs is mostly chance. Over 200 sets the chance cancels.
+  - **There are twenty such comparisons** (five pairs of rungs, two variants, two engines),
+    so one of them is expected past the line by chance alone. The report gives all twenty.
+- **Rung 2 against rung 1 is also given in two groups,** by the wear of *shaken* drawn for
+  the set: more than four minutes for one level to wear off, or not. The expectation is
+  that the difference shows in the first group only.
+- **Rung 1 against rung 0 cannot be given in the groups its expectation names.** The record
+  does not hold whether men fled from the shock and rallied. It is given whole, and the
+  report says so.
+
+The relief's expectation of section 5, rung 3 against rung 2, is counted the same way on
+the drill's statistic, over the sets that ran `relief`: with 50 sets and no tie the line is
+33 sets or more.
 
 ## 5. The relief
 
