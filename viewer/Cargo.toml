@@ -20,6 +20,9 @@ cannae-harness = { path = "../crates/cannae-harness" }
 cannae-man = { path = "../crates/cannae-man" }
 cannae-pairwise = { path = "../crates/cannae-pairwise" }
 cannae-score = { path = "../crates/cannae-score" }
+# For cannae-replay, which reads the batch's records. The same features as cannae-score, so
+# that a number read back is the number written.
+serde_json = { version = "1", features = ["float_roundtrip"] }
 
 [profile.release]
 debug = 1
