@@ -651,16 +651,16 @@ fn sign_line(larger: usize, smaller: usize, more: &str, less: &str) -> String {
 }
 
 /// One comparison of two rungs over the sets both have. For each set: the higher rung's
-/// statistic less the lower one's, and whether every run of the set fared the same at both
-/// rungs.
-fn against(what: &str, sets: &[(f64, bool)]) {
+/// statistic less the lower one's, and whether the set is one of those counted apart among the
+/// ties, which `apart` names.
+fn against(what: &str, sets: &[(f64, bool)], apart: &str) {
     let larger = sets.iter().filter(|s| s.0 > 0.0).count();
     let smaller = sets.iter().filter(|s| s.0 < 0.0).count();
     let same = sets.len() - larger - smaller;
-    let one_run = sets.iter().filter(|s| s.1).count();
+    let counted = sets.iter().filter(|s| s.1).count();
     println!(
         "    {what}: larger in {larger}, smaller in {smaller}, the same in {same} of {} sets \
-         ({one_run} of them the same run for run at both rungs); median difference {}; {}",
+         ({counted} of them {apart}); median difference {}; {}",
         sets.len(),
         median(sets.iter().map(|s| s.0).collect())
             .map_or("none".to_string(), |m| format!("{m:+.3}")),
@@ -692,6 +692,27 @@ fn fortunes(a: &Asked, cell: Cell, variant: &str) -> Result<Fortunes, String> {
         })
         .collect())
 }
+
+/// For one cell, each set of `relief` with whether a relief was ordered in any of its runs.
+fn relieved(a: &Asked, cell: Cell) -> Result<BTreeMap<u32, bool>, String> {
+    let Some(got) = read(&a.dir, cell, "relief", a.freeze)? else {
+        return Ok(BTreeMap::new());
+    };
+    Ok(got
+        .sets
+        .iter()
+        .map(|(d, seeds)| {
+            let ordered = seeds
+                .values()
+                .filter_map(Seed::scored)
+                .any(|r| r.relieved_s.iter().any(Option::is_some));
+            (*d, ordered)
+        })
+        .collect())
+}
+
+/// What is counted apart among the ties of the memory statistics.
+const ONE_RUN: &str = "the same run for run at both rungs";
 
 /// The statistics compared between rungs, each with the two variants it is taken over.
 const COMPARED: [(&str, [&str; 2]); 3] = [
@@ -755,7 +776,7 @@ fn rungs(a: &Asked) -> Result<(), String> {
             println!("  {variant}, P(the Roman line fares worse than in base):");
             for (hi, lo) in RUNG_PAIRS {
                 let v = diffs(k, hi, lo);
-                against(&format!("rung {hi} against rung {lo}"), &plain(&v));
+                against(&format!("rung {hi} against rung {lo}"), &plain(&v), ONE_RUN);
                 if (hi, lo) == (2, 1) {
                     let mut slow = Vec::new();
                     let mut fast = Vec::new();
@@ -773,8 +794,9 @@ fn rungs(a: &Asked) -> Result<(), String> {
                         "  the sets where one level of shaken takes more than four minutes to \
                          wear off",
                         &slow,
+                        ONE_RUN,
                     );
-                    against("  the other sets", &fast);
+                    against("  the other sets", &fast, ONE_RUN);
                 }
             }
         }
@@ -782,7 +804,21 @@ fn rungs(a: &Asked) -> Result<(), String> {
             "  the drill alone, P(the Roman line fares worse backed than relieved), on the sets \
              of the stride:"
         );
-        against("rung 3 against rung 2", &plain(&diffs(2, 3, 2)));
+        // Where no relief was ordered, `relief` is `backed` run for run and the statistic is
+        // 0.5 at both rungs: those ties are the ones that mean something here (Varro).
+        let ordered = [
+            relieved(a, Cell { engine, rung: 2 })?,
+            relieved(a, Cell { engine, rung: 3 })?,
+        ];
+        let drill: Vec<(f64, bool)> = diffs(2, 3, 2)
+            .iter()
+            .map(|(d, x, _)| (*x, ordered.iter().all(|o| o.get(d) == Some(&false))))
+            .collect();
+        against(
+            "rung 3 against rung 2",
+            &drill,
+            "with no relief ordered in any run at either rung",
+        );
         println!();
     }
     Ok(())
