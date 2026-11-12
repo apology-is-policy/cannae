@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-12, 15:08 UTC.
+**Last updated:** 2026-11-12, 15:14 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -618,7 +618,12 @@ closed.**
 - **One thing changes if the top-up is run:** its reliefs are replayed and counted apart
   from the first 50 sets'. As first written, the top-up's sets would have been mixed in
   among them, and the sample would have depended on a decision meant to be about machine
-  time alone. Varro has this and the script to read.
+  time alone. Varro read the script whole and agreed to this change (15:13 UTC).
+- **Varro corrected himself on one point, and it matters for the report** (merged,
+  15:14 UTC). The first batch has `base` alone, so the scorer's own line "All eight"
+  must read nothing passed there, whatever the frozen code did. The frozen code's share
+  for the field's four cells is counted with pattern 6 by its band instead, and the
+  comparing tool now prints it with its interval, beside the new batch's.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects

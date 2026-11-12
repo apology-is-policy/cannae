@@ -107,6 +107,8 @@ counts only (section 7).
    R=~/cannae-runs2-copy    # the batch's records, copied from the Pi
    F=~/cannae-runs1-copy    # the first batch: the four files of the field's `base`
    O=docs/slice0/scored     # kept with the report's sources
+   mkdir -p $O/replays
+   (cd viewer && cargo build --release --bin cannae-extras)
    for e in field pairwise; do for r in 0 1 2 3; do
      target/release/score --substrate $e --rung $r --dir $R --seeds 10 > $O/score-$e-r$r.txt
    done; done
@@ -120,9 +122,15 @@ counts only (section 7).
    tools/s09-open-flank.py $R > $O/open-flank.txt
    ```
 
-   - **The second loop is the first batch's own scoring** (section 2; Varro, turn 136):
-     the frozen code's share and its interval for the four field cells. The first batch has
-     `base` only, so pattern 6 is read by its band there.
+   - **The second loop is the first batch's own scoring** (section 2; Varro, turns 136
+     and 138): the frozen code's counts for the four field cells, pattern by pattern, and
+     its audit.
+   - **The frozen code's share is in `two.txt`,** with its interval, beside the new
+     batch's: all eight with pattern 6 by its band. `score`'s own lines "All eight" and "6
+     with dose-response" need the two dose-response variants, and the first batch has
+     `base` alone. In the first batch's four files those two lines read nothing passed, by
+     construction, and the report does not quote them for the frozen code (Varro, turn
+     138, from the scorer's code; checked there by Paullus).
 7. **The replays, on the Pi,** which run battles again and take hours. The Pi's checkout
    is brought to main first, after the batch's last line and not before: the batch's script
    must not change under it. The pull changes no file of the scored code.
@@ -148,6 +156,8 @@ counts only (section 7).
    tools/s09-replays.py reliefs $O/replays/reliefs-*.jsonl > $O/reliefs.txt
    tools/s09-replays.py leaders $O/replays/leaders-*.jsonl > $O/leaders.txt
    ```
+8. **Before `docs/slice0/scored` is committed,** it is searched for a home folder's path
+   and for a machine's name: the repository is public (Varro, turn 138).
 
 ## 1. The verdict
 
@@ -495,8 +505,8 @@ applied to anything.
    seen or the runs are used up. For each relief: the times and the count of item 1, and the
    three marks.
    - **If the top-up is run, its reliefs are replayed and counted apart** (Paullus,
-     2026-11-12, before a record of `relief` was read; put to Varro in call 0001, turn
-     137): after the first 50 sets' runs, and up to 100 reliefs of their own. The top-up is
+     2026-11-12, before a record of `relief` was read; agreed by Varro in call 0001, turn
+     138): after the first 50 sets' runs, and up to 100 reliefs of their own. The top-up is
      run or not on machine time alone, so the first 50 sets must give the same sample
      either way. As first written, the top-up's sets would have come between them.
 
@@ -531,8 +541,8 @@ applied to anything.
 unscored sets before it is pointed at a scored run. Varro reads it before it is used. It is
 run after the scoring, on the Pi.
 
-**The replays' lines are counted by `tools/s09-replays.py`** (Paullus, 2026-11-12; put to
-Varro in turn 137). It reads the lines alone and prints the counts of items 2 and 3 for each
+**The replays' lines are counted by `tools/s09-replays.py`** (Paullus, 2026-11-12; read
+whole by Varro, turn 138). It reads the lines alone and prints the counts of items 2 and 3 for each
 cell, the first 50 sets' and the top-up's apart. Its self-test holds eight counts made by
 hand. It was tried on the replay tool's lines of unscored sets for their form only: every
 line was of the kind it takes, and what it printed was not read.
@@ -585,8 +595,8 @@ record, and counts only if it ends in the record's own summary.
 
 **The windows are fixed now:** 5 s and 30 s. What Michal saw was three seconds.
 
-**Counted by `tools/s09-replays.py`** (Paullus, 2026-11-12; put to Varro in turn 137), with
-two edges fixed in it before any scored run was replayed: a break at exactly 5 s or 30 s
+**Counted by `tools/s09-replays.py`** (Paullus, 2026-11-12; agreed by Varro in turn 138),
+with two edges fixed in it before any scored run was replayed: a break at exactly 5 s or 30 s
 after the fall is within the window; and a break is "before a successor could have the
 place" only if it comes earlier than the set's delay, not at the same moment.
 
