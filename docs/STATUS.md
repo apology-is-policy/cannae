@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-12, 14:59 UTC.
+**Last updated:** 2026-11-12, 15:08 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -604,6 +604,21 @@ gives the top-up its time, nothing has to be written on the day.
 - **The order of the batch's end is written down,** seven steps from "the batch has
   finished" to the replays ([the outline](slice0/report-outline.md), "The order at the
   batch's end"). Varro has the two scripts to read.
+
+**Since then (2026-11-12, 15:08 UTC): Varro read the two scripts, and one more gap is
+closed.**
+
+- **Varro found a fault in the top-up's runner** (15:02 UTC): had one of its steps failed,
+  it would have refused to start again. It is fixed and tried. He also asked for the
+  scoring's commands written out in full, with every folder and file, and for the first
+  batch's own scoring to be named among them. Both are in the outline.
+- **The gap:** the replays for the report write one raw line for each relief and each
+  leader's fall, and nothing turned those lines into the counts the report owes. A script
+  does now (`tools/s09-replays.py`), tested on eight counts made by hand.
+- **One thing changes if the top-up is run:** its reliefs are replayed and counted apart
+  from the first 50 sets'. As first written, the top-up's sets would have been mixed in
+  among them, and the sample would have depended on a decision meant to be about machine
+  time alone. Varro has this and the script to read.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects

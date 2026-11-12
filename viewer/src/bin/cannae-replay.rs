@@ -19,7 +19,9 @@
 //! then says whether each relief was pressed too. That one is for checking the marks.
 //!
 //! `reliefs` runs the relieved runs of a cell's `relief` records again, lowest set first and
-//! then lowest seed, until `--max` reliefs have been ordered in them. For each relief it
+//! then lowest seed, until `--max` reliefs have been ordered in them. If the top-up was run,
+//! its sets are taken apart, after the first 50 sets' and up to `--max` reliefs of their own,
+//! so that the first 50 sets give the same sample either way. For each relief it
 //! writes one line of JSON to FILE: the times of the drill and three marks, each taken
 //! between the order and the tired century's halt, or the run's end if it never halted.
 //! - Pressed: a bout began with a man of either century.
@@ -52,7 +54,7 @@ use cannae_harness::Scenario;
 use cannae_harness::metrics::fortune;
 use cannae_man::{Spread, Troop};
 use cannae_score::draw::{Cell, Drawn, drawn, nominal};
-use cannae_score::report::ROMANS;
+use cannae_score::report::{RELIEF_EVERY, ROMANS};
 use cannae_score::{Record, Run, Spec, record_file, run_logged};
 use cannae_view::{Battle, BodyInfo, Config, build_from, engine_of, scenario_text};
 use std::fmt::Write as _;
@@ -638,6 +640,28 @@ fn relief_lines(
     Ok(lines)
 }
 
+/// The relieved runs to replay, in the order given, until `max` reliefs have been ordered in
+/// them: those of the first 50 sets, and after them, with a count of their own, the top-up's.
+/// The top-up is run or not on machine time alone, and this keeps the first 50 sets' sample
+/// the same either way.
+fn to_replay(relieved: &[Record], max: usize) -> Vec<&Record> {
+    let mut chosen = Vec::new();
+    for top_up in [false, true] {
+        let mut ordered = 0;
+        chosen.extend(
+            relieved
+                .iter()
+                .filter(|r| (r.draw % RELIEF_EVERY != 0) == top_up)
+                .take_while(|r| {
+                    let more = ordered < max;
+                    ordered += r.relieved_s.iter().filter(|t| t.is_some()).count();
+                    more
+                }),
+        );
+    }
+    chosen
+}
+
 fn reliefs(args: impl Iterator<Item = String>) -> Result<(), String> {
     let a = asked(args)?;
     let relieved: Vec<Record> = records(&a, "relief")?
@@ -645,16 +669,7 @@ fn reliefs(args: impl Iterator<Item = String>) -> Result<(), String> {
         .filter(|r| r.relieved_s.iter().any(Option::is_some))
         .collect();
     let backed = records(&a, "backed")?;
-    // The runs to replay: in order, until `max` reliefs have been ordered in them.
-    let mut ordered = 0;
-    let chosen: Vec<&Record> = relieved
-        .iter()
-        .take_while(|r| {
-            let more = ordered < a.max;
-            ordered += r.relieved_s.iter().filter(|t| t.is_some()).count();
-            more
-        })
-        .collect();
+    let chosen = to_replay(&relieved, a.max);
     let s = scenario("relief", &scenario_text("relief")?)?;
     let pairs = pairs(&s)?;
     over(&a, "relieved runs", relieved.len(), &chosen, |r| {
@@ -768,5 +783,59 @@ fn main() {
     if let Err(e) = done {
         eprintln!("{e}");
         std::process::exit(2);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use cannae_harness::metrics::RunSummary;
+    use cannae_score::Engine;
+
+    /// A relieved run of `relief`: its set, its seed, and when each relief was ordered.
+    fn relieved(draw: u32, seed: u64, ordered: &[Option<u32>]) -> Record {
+        Record {
+            engine: Engine::Field,
+            rung: 2,
+            variant: "relief".into(),
+            freeze_seed: Some(1),
+            draw,
+            seed,
+            whole: false,
+            sim_s: 0,
+            wall_ms: 0,
+            summary: RunSummary::default(),
+            audit: None,
+            relieved_s: ordered.to_vec(),
+            held: 0,
+        }
+    }
+
+    #[test]
+    fn the_top_ups_reliefs_are_replayed_apart_from_the_first_fifty_sets() {
+        let (one, both) = ([Some(1_200), None], [Some(1_200), Some(1_300)]);
+        let stride = [
+            relieved(0, 1, &both),
+            relieved(0, 2, &one),
+            relieved(4, 1, &one),
+        ];
+        let top = [
+            relieved(1, 1, &one),
+            relieved(2, 1, &both),
+            relieved(3, 1, &one),
+        ];
+        // As `records` gives them: by set, then by seed.
+        let mut all: Vec<Record> = stride.iter().chain(&top).cloned().collect();
+        all.sort_by_key(|r| (r.draw, r.seed));
+        let sets = |runs: Vec<&Record>| -> Vec<(u32, u64)> {
+            runs.iter().map(|r| (r.draw, r.seed)).collect()
+        };
+        // Three reliefs are enough: the third run of each group is not reached.
+        assert_eq!(sets(to_replay(&all, 3)), [(0, 1), (0, 2), (1, 1), (2, 1)]);
+        // The first 50 sets' sample is the same with no top-up on record.
+        assert_eq!(sets(to_replay(&stride, 3)), [(0, 1), (0, 2)]);
+        // A run that reaches the count is still replayed whole, both its reliefs.
+        assert_eq!(sets(to_replay(&all, 1)), [(0, 1), (1, 1)]);
+        assert_eq!(sets(to_replay(&all, 100)).len(), 6);
     }
 }

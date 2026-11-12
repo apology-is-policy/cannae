@@ -141,7 +141,13 @@ counts only (section 7).
    done
    ```
 
-   The files are copied to `docs/slice0/scored/replays/`.
+   The files are copied to `docs/slice0/scored/replays/` on the Mac and counted there:
+
+   ```sh
+   O=docs/slice0/scored
+   tools/s09-replays.py reliefs $O/replays/reliefs-*.jsonl > $O/reliefs.txt
+   tools/s09-replays.py leaders $O/replays/leaders-*.jsonl > $O/leaders.txt
+   ```
 
 ## 1. The verdict
 
@@ -488,6 +494,11 @@ applied to anything.
    `relief` are replayed, lowest set first and then lowest seed, until 100 reliefs have been
    seen or the runs are used up. For each relief: the times and the count of item 1, and the
    three marks.
+   - **If the top-up is run, its reliefs are replayed and counted apart** (Paullus,
+     2026-11-12, before a record of `relief` was read; put to Varro in call 0001, turn
+     137): after the first 50 sets' runs, and up to 100 reliefs of their own. The top-up is
+     run or not on machine time alone, so the first 50 sets must give the same sample
+     either way. As first written, the top-up's sets would have come between them.
 
    The report gives, for each cell: the reliefs seen; the median and the longest of each
    time; pressed against jammed as a two-by-two count; and the unfinished by reason.
@@ -519,6 +530,12 @@ applied to anything.
 **What it needs:** a small replay tool outside the scored code, written and checked on
 unscored sets before it is pointed at a scored run. Varro reads it before it is used. It is
 run after the scoring, on the Pi.
+
+**The replays' lines are counted by `tools/s09-replays.py`** (Paullus, 2026-11-12; put to
+Varro in turn 137). It reads the lines alone and prints the counts of items 2 and 3 for each
+cell, the first 50 sets' and the top-up's apart. Its self-test holds eight counts made by
+hand. It was tried on the replay tool's lines of unscored sets for their form only: every
+line was of the kind it takes, and what it printed was not read.
 
 ## 6. What is known to be wrong in the scored code
 
@@ -567,6 +584,11 @@ record, and counts only if it ends in the record's own summary.
   leader down for the rest of the battle.
 
 **The windows are fixed now:** 5 s and 30 s. What Michal saw was three seconds.
+
+**Counted by `tools/s09-replays.py`** (Paullus, 2026-11-12; put to Varro in turn 137), with
+two edges fixed in it before any scored run was replayed: a break at exactly 5 s or 30 s
+after the fall is within the window; and a break is "before a successor could have the
+place" only if it comes earlier than the set's delay, not at the same moment.
 
 **How it is read, said now:** if a centurion's fall is followed by the break within 5 s much
 more often than a file leader's, with the body in a like state, then the rule does what
