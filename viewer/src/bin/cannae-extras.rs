@@ -3,15 +3,19 @@
 //!     cannae-extras fails --records DIR [--freeze-seed F] [--seeds 10]
 //!     cannae-extras rungs --records DIR [--freeze-seed F] [--seeds 10]
 //!     cannae-extras two --first DIR --records DIR [--freeze-seed F] [--seeds 10] [--equal-only]
+//!     cannae-extras topup --records DIR [--freeze-seed F] [--seeds 10]
 //!
 //! - `fails`: for each cell, on `base`, the failing sets by the part of the band that failed,
 //!   each pooled value beside its band, the stragglers and the tempo.
 //! - `rungs`: for each engine, one rung's memory statistic against another's, set by set.
 //! - `two`: the field engine's first batch beside the new one, pair by pair.
+//! - `topup`: one figure, the machine time the relief's top-up would take over the eight cells.
 //!
 //! It reads records and runs nothing. It prints outcomes of scored runs, so it is run after
-//! the scoring. The one exception is `two --equal-only`, which prints how many pairs of
-//! records are equal and nothing they hold.
+//! the scoring. There are two exceptions, both run before it. `two --equal-only` prints how
+//! many pairs of records are equal and nothing they hold. `topup` prints its one total and
+//! names no cell, in a figure or in a refusal: Michal decides the top-up on the machine time
+//! alone, and how many sets a cell would add is an outcome of `base`.
 //!
 //! It lives outside the scored code, like the viewer, and takes its verdicts from the scorer's
 //! own functions. `fails` computes each verdict again from its parts and stops if one differs
@@ -20,7 +24,9 @@
 use cannae_core::schedule::BASE_TICK;
 use cannae_harness::metrics::{Bands, RunSummary, fortune, verdicts};
 use cannae_score::draw::{Cell, drawn};
-use cannae_score::report::{Cellbook, ROMANS};
+use cannae_score::report::{
+    Cellbook, RELIEF_EVERY, ROMANS, TOPUP_AT_S, TOPUP_MAX_SETS, TOPUP_MIN_SEEDS,
+};
 use cannae_score::{Engine, Record, record_file};
 use std::collections::BTreeMap;
 use std::path::Path;
@@ -1152,6 +1158,127 @@ fn two(a: &Asked) -> Result<(), String> {
     Ok(())
 }
 
+/// The batch runs four battles at a time on the Pi (`tools/s09-batch.sh`), so a step takes a
+/// quarter of its runs' own times added up.
+const PI_JOBS: f64 = 4.0;
+
+/// Said whichever cell it is, so that the refusal does not tell which cells have run what.
+const NOT_IN: &str = "`relief` and `backed` are not yet in for every set of the stride in every \
+                      cell; the top-up's time is read when the batch has finished";
+
+/// Whether a run of `base` was still being fought at the top-up's twenty minutes, contact made
+/// and neither side broken. The scorer's own rule is private to `Cellbook::topup`; `topup`
+/// below stops unless this one gives the scorer's sets.
+fn fought(r: &RunSummary) -> bool {
+    let at = TOPUP_AT_S * 1000 / BASE_TICK.0;
+    r.contact.is_some_and(|c| c < at) && r.side_break.iter().all(|b| b.is_none_or(|t| t >= at))
+}
+
+/// The sets of `base` still fought at twenty minutes in enough seeds for the top-up, on the
+/// stride of `relief` and off it.
+fn long_fought(base: &Sets, seeds: usize) -> Vec<u32> {
+    complete(base, seeds)
+        .into_iter()
+        .filter(|(_, runs)| runs.iter().filter(|r| fought(&r.summary)).count() >= TOPUP_MIN_SEEDS)
+        .map(|(d, _)| d)
+        .collect()
+}
+
+/// The wall time of a set's stopped runs, if every seed has one. The top-up's sets are off the
+/// audit's stride, so its runs are all stopped ones.
+fn stopped_ms(sets: &Sets, d: u32, seeds: usize) -> Option<u64> {
+    let runs: Vec<u64> = sets
+        .get(&d)?
+        .values()
+        .filter_map(|s| s.stopped.as_ref())
+        .map(|r| r.wall_ms)
+        .collect();
+    (runs.len() == seeds).then(|| runs.iter().sum())
+}
+
+/// What the top-up's runs of one variant would take in one cell, in milliseconds of the runs'
+/// own clocks: the time `base` took on the top-up's sets, times what the variant cost beside
+/// `base` on the sets of the stride that were as long fought. Where the stride has no such
+/// set, all of its sets give the ratio.
+fn topup_ms(base: &Sets, variant: &Sets, tops: &[u32], seeds: usize) -> Result<f64, String> {
+    let long = long_fought(base, seeds);
+    // (as long fought as the top-up's, the time on `base`, the time on the variant)
+    let mut stride = Vec::new();
+    for d in base.keys().filter(|d| *d % RELIEF_EVERY == 0) {
+        let Some(b) = stopped_ms(base, *d, seeds) else {
+            continue;
+        };
+        let v = stopped_ms(variant, *d, seeds).ok_or(NOT_IN)?;
+        stride.push((long.contains(d), b, v));
+    }
+    if tops.is_empty() {
+        return Ok(0.0);
+    }
+    let like = stride.iter().any(|s| s.0);
+    let (b, v) = stride
+        .iter()
+        .filter(|s| s.0 || !like)
+        .fold((0, 0), |(b, v), s| (b + s.1, v + s.2));
+    if b == 0 {
+        return Err("no time of `base` on the stride to set the variant's beside".into());
+    }
+    let mut top = 0;
+    for d in tops {
+        top += stopped_ms(base, *d, seeds)
+            .ok_or("a set of the top-up lacks a stopped run of `base` on some seed")?;
+    }
+    Ok(top as f64 * v as f64 / b as f64)
+}
+
+/// The one figure of the top-up's time, from the milliseconds of the runs' own clocks.
+fn topup_line(ms: f64) -> String {
+    let hours = ms / PI_JOBS / 3_600_000.0;
+    let time = if ms == 0.0 {
+        "no time at all, there being no set for it in any cell".to_string()
+    } else if hours < 0.5 {
+        "under half an hour of the Pi's time over the eight cells".to_string()
+    } else {
+        format!(
+            "about {:.0} hour{} of the Pi's time over the eight cells",
+            hours,
+            if hours < 1.5 { "" } else { "s" }
+        )
+    };
+    format!("The relief's top-up, if it is run: {time}.")
+}
+
+fn topup(a: &Asked) -> Result<(), String> {
+    let b = bands()?;
+    let mut ms = 0.0;
+    for engine in ENGINES {
+        for rung in 0..4 {
+            let cell = Cell { engine, rung };
+            let tops = scorer(a, cell, &b)?.topup;
+            let sets = |variant: &str| -> Result<Sets, String> {
+                Ok(read(&a.dir, cell, variant, a.freeze)?.ok_or(NOT_IN)?.sets)
+            };
+            let base = sets("base")?;
+            let mine: Vec<u32> = long_fought(&base, a.seeds)
+                .into_iter()
+                .filter(|d| d % RELIEF_EVERY != 0)
+                .take(TOPUP_MAX_SETS)
+                .collect();
+            if mine != tops {
+                return Err("the top-up's sets as found here are not the scorer's".into());
+            }
+            for variant in ["relief", "backed"] {
+                ms += topup_ms(&base, &sets(variant)?, &tops, a.seeds)?;
+            }
+        }
+    }
+    println!("{}", topup_line(ms));
+    println!(
+        "    (the time `base` took on the top-up's sets, times what `relief` and `backed` \
+         cost beside `base`\n    on the stride's sets as long fought; four runs at a time)"
+    );
+    Ok(())
+}
+
 fn main() {
     let mut args = std::env::args().skip(1);
     let command = args.next().unwrap_or_default();
@@ -1159,8 +1286,9 @@ fn main() {
         "fails" => fails(&a),
         "rungs" => rungs(&a),
         "two" => two(&a),
+        "topup" => topup(&a),
         _ => Err(
-            "usage: cannae-extras fails|rungs|two --records DIR [--first DIR] \
+            "usage: cannae-extras fails|rungs|two|topup --records DIR [--first DIR] \
              [--freeze-seed F] [--seeds 10] [--equal-only]"
                 .to_string(),
         ),
@@ -1305,5 +1433,130 @@ mod tests {
             }
         }
         assert!(seen.iter().all(|s| s.iter().all(|x| *x)), "{seen:?}");
+    }
+
+    const CELL: Cell = Cell {
+        engine: Engine::Field,
+        rung: 1,
+    };
+
+    /// A stopped run of two seeds' sets: its wall time, and whether it was still being fought
+    /// at the top-up's twenty minutes.
+    fn rec(variant: &str, draw: u32, seed: u64, wall_ms: u64, long: bool) -> Record {
+        let at = TOPUP_AT_S * 1000 / BASE_TICK.0;
+        Record {
+            engine: CELL.engine,
+            rung: CELL.rung,
+            variant: variant.into(),
+            freeze_seed: Some(1),
+            draw,
+            seed,
+            whole: false,
+            sim_s: 0,
+            wall_ms,
+            summary: RunSummary {
+                contact: Some(100),
+                side_break: [(!long).then_some(at - 1), None],
+                ..RunSummary::default()
+            },
+            audit: None,
+            relieved_s: vec![],
+            held: 0,
+        }
+    }
+
+    /// Both seeds of each set: (set, the wall time of each run, still fought at twenty minutes).
+    fn sets_of(variant: &str, sets: &[(u32, u64, bool)]) -> Sets {
+        let mut got = Sets::new();
+        for &(d, ms, long) in sets {
+            for seed in 1..=2 {
+                got.entry(d).or_default().entry(seed).or_default().stopped =
+                    Some(rec(variant, d, seed, ms, long));
+            }
+        }
+        got
+    }
+
+    #[test]
+    fn the_top_ups_sets_are_the_scorers() {
+        let at = TOPUP_AT_S * 1000 / BASE_TICK.0;
+        let mut book = Cellbook::read(Path::new("no such folder"), CELL, 2).unwrap();
+        let mut base = Sets::new();
+        // (contact, the first break) for each of two seeds, as in the scorer's own test, and
+        // more sets off the stride than the top-up takes.
+        let fought_ = (Some(100), None);
+        let late = (Some(100), Some(at));
+        let mut sets = vec![
+            (0, [fought_, fought_]),
+            (1, [fought_, late]),
+            (2, [fought_, (Some(100), Some(at - 1))]),
+            (3, [fought_, (None, None)]),
+            (5, [late, late]),
+            (6, [(Some(at), None), fought_]),
+            (7, [(Some(at - 1), None), fought_]),
+        ];
+        sets.extend((9..60).map(|d| (d, [fought_, late])));
+        for (d, runs) in sets {
+            for ((contact, broke), seed) in runs.into_iter().zip(1..) {
+                let mut r = rec("base", d, seed, 0, true);
+                r.summary.contact = contact;
+                r.summary.side_break = [None, broke];
+                book.add(r.clone());
+                base.entry(d).or_default().entry(seed).or_default().stopped = Some(r);
+            }
+        }
+        // A set with one seed missing is no set of the top-up's.
+        base.entry(61).or_default().entry(1).or_default().stopped =
+            Some(rec("base", 61, 1, 0, true));
+        book.add(rec("base", 61, 1, 0, true));
+        let mine: Vec<u32> = long_fought(&base, 2)
+            .into_iter()
+            .filter(|d| d % RELIEF_EVERY != 0)
+            .take(TOPUP_MAX_SETS)
+            .collect();
+        assert_eq!(mine, book.topup());
+        assert_eq!(mine[..3], [1, 5, 7]);
+        assert_eq!(mine.len(), TOPUP_MAX_SETS);
+    }
+
+    #[test]
+    fn the_top_ups_time() {
+        // Set 0 was long fought and cost three times as much relieved; set 4 was short and
+        // cost the same. The top-up's sets are long fought, so set 0 gives the ratio.
+        let base = sets_of(
+            "base",
+            &[
+                (0, 100, true),
+                (4, 10, false),
+                (1, 50, true),
+                (2, 7, false),
+                (3, 80, true),
+            ],
+        );
+        let relief = sets_of("relief", &[(0, 300, true), (4, 10, true)]);
+        assert_eq!(topup_ms(&base, &relief, &[1, 3], 2), Ok(3.0 * 260.0));
+        // No set of the top-up: no time, whatever the ratio.
+        assert_eq!(topup_ms(&base, &relief, &[], 2), Ok(0.0));
+        // No long-fought set on the stride: all of the stride's sets give the ratio.
+        let base = sets_of("base", &[(0, 100, false), (4, 10, false), (1, 50, true)]);
+        assert_eq!(topup_ms(&base, &relief, &[1], 2), Ok(100.0 * 620.0 / 220.0));
+        // A set of the stride not yet run on the variant: refused, and no cell is named.
+        let short = sets_of("relief", &[(0, 300, true)]);
+        assert_eq!(topup_ms(&base, &short, &[1], 2), Err(NOT_IN.to_string()));
+        assert_eq!(topup_ms(&base, &short, &[], 2), Err(NOT_IN.to_string()));
+        // A whole run is not a stopped one.
+        let mut whole = sets_of("relief", &[(0, 300, true), (4, 10, true)]);
+        let seed = whole.get_mut(&4).unwrap().get_mut(&2).unwrap();
+        seed.whole = seed.stopped.take();
+        assert_eq!(topup_ms(&base, &whole, &[1], 2), Err(NOT_IN.to_string()));
+    }
+
+    #[test]
+    fn the_top_ups_one_figure() {
+        let hours = |h: f64| topup_line(h * PI_JOBS * 3_600_000.0);
+        assert!(hours(0.0).contains("no time at all"));
+        assert!(hours(0.2).contains("under half an hour"));
+        assert!(hours(1.2).contains("about 1 hour of"));
+        assert!(hours(13.6).contains("about 14 hours of"));
     }
 }

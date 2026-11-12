@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-12, 14:40 UTC.
+**Last updated:** 2026-11-12, 14:51 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -576,6 +576,19 @@ to the other variants.**
     since a step's length and size tell its engine and variant; and the top-up's cost
     will be shown to Michal as one total over the eight cells, never cell by cell. So
     from here the batch's progress comes twice a day, and a failed step at once.
+
+**Since then (2026-11-12, 14:51 UTC): the command for the top-up's one figure is written,
+and not run.**
+
+- **What it is for:** Michal decides the relief's extra runs on machine time alone. The
+  command (`cannae-extras topup`) prints one line: about how many hours of the Pi's time
+  those runs would take over the eight cells. It names no cell.
+- **How it estimates:** the time `base` took on the sets the top-up would add, times what
+  `relief` and `backed` cost beside `base` on comparable sets they will have run by then.
+- **Checked on made-up records only,** against a count made apart. And the rule it leans
+  on, that a step takes a quarter of its runs' own times added up, holds at 0.999 on each
+  of the eight `base` steps.
+- **It is run once,** when the batch has finished and Varro has read it. He has it to read.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects

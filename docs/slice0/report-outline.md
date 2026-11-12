@@ -45,6 +45,22 @@ Each of these is done, and the report says so with its counts:
      machine time summed over the eight cells. How many sets each cell would add is an
      outcome of `base`, so it stays unread until the scoring. The total is entered in the
      table of outcomes seen, since it is not nothing.
+   - **How the figure is made** (`cannae-extras topup`, written on 2026-11-12 with `base`
+     in and nothing of it read for this): for each cell, the time `base` took on the
+     top-up's sets, times what `relief` and `backed` cost beside `base` on the stride's sets
+     that were as long fought, or on all of the stride's sets where none was. The sum over
+     the eight cells is divided by four, since the batch runs four battles at a time. It is
+     an estimate: a relieved line may fight longer on the top-up's sets than on the
+     stride's.
+     - **What it reads of `relief` and `backed`:** the wall time of their runs and nothing
+       else. It prints the one total, rounded to an hour, and names no cell, in the figure
+       or in a refusal.
+     - **Checked:** on the eight `base` steps, the runs' own times added up and divided by
+       four give 0.999 of each step's length. On made-up records the total equals a count
+       made apart in Python, among them a cell with no set for the top-up, one over the cap
+       of 25 and one with no long-fought set on the stride. Its sets are held to the
+       scorer's (`report::topup`), and it stops if they differ.
+     - **It is run once,** when the batch has finished and Varro has read it.
 
 Only then are the gate's lines and the records read.
 
