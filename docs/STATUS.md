@@ -571,6 +571,11 @@ to the other variants.**
     failed, and records equal and unequal. From here this page gives the batch's progress
     as a number of steps, with no names.
   - I asked Varro to look at the Pi the same way, and offered him the stop before the row.
+  - **Varro agreed and named four more ways the order could reach us** (14:41 UTC). The
+    two I can close are closed: my watcher now wakes twice a day and not at each step,
+    since a step's length and size tell its engine and variant; and the top-up's cost
+    will be shown to Michal as one total over the eight cells, never cell by cell. So
+    from here the batch's progress comes twice a day, and a failed step at once.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects

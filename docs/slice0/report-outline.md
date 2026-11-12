@@ -41,6 +41,10 @@ Each of these is done, and the report says so with its counts:
    then looked at to find the fault is agreed with them first.
 5. **Michal has decided the top-up of the relief** (section 5), on the machine time alone,
    before any relief statistic is read.
+   - **One figure is printed for that decision** (Varro, call 0001, turn 132): the top-up's
+     machine time summed over the eight cells. How many sets each cell would add is an
+     outcome of `base`, so it stays unread until the scoring. The total is entered in the
+     table of outcomes seen, since it is not nothing.
 
 Only then are the gate's lines and the records read.
 
@@ -515,6 +519,18 @@ arises, and the scored record holds it:
     things that document sets side by side: what the line fixed beforehand says, what kind
     of battle it was read on, and how the field's own tests fare on the half-cell build.
 - **Every outcome either of us saw before the scoring,** from the pre-registration's table.
+- **What the batch's order let through** (Paullus and Varro, 2026-11-12, call 0001, turns
+  131 and 132). After `base` the variants of the cells that can still pass run first
+  (Addendum 1), so the order of the steps is the gate's verdict. Neither of us had counted
+  that as a way of seeing an outcome until the first such step had run.
+  - **From 12 November, 14:39 UTC, the batch is looked at by counts only:** steps done and
+    failed, twice a day, and the recheck's total. No step's or file's name, no process
+    list with its arguments, no time or size of a single step. A failed step or an unequal
+    record is the exception, because then the name is needed.
+  - **Kept out of first lines too:** commit titles, the heads of STATUS and the yip
+    roadmap carry no step's name and nothing inferred from one.
+  - **What could not be closed:** a step's length differs by engine, and the top-up's
+    total above. The report says so.
 
 ## 8. Speed
 
