@@ -25,7 +25,7 @@ use cannae_core::schedule::BASE_TICK;
 use cannae_harness::metrics::{Bands, RunSummary, fortune, verdicts};
 use cannae_score::draw::{Cell, drawn};
 use cannae_score::report::{
-    Cellbook, RELIEF_EVERY, ROMANS, TOPUP_AT_S, TOPUP_MAX_SETS, TOPUP_MIN_SEEDS,
+    Cellbook, KNIFE_EDGE, RELIEF_EVERY, ROMANS, TOPUP_AT_S, TOPUP_MAX_SETS, TOPUP_MIN_SEEDS,
 };
 use cannae_score::{Engine, Record, record_file};
 use std::collections::BTreeMap;
@@ -883,6 +883,38 @@ fn equal_but(a: &Record, b: &Record) -> bool {
     strip(a) == strip(b)
 }
 
+/// The 95 % Wilson interval of k successes in n, as the scorer takes it (`report.rs`, where it
+/// is private).
+fn wilson(k: usize, n: usize) -> (f64, f64) {
+    if n == 0 {
+        return (0.0, 1.0);
+    }
+    let (p, n, z) = (k as f64 / n as f64, n as f64, 1.96f64);
+    let mid = (p + z * z / (2.0 * n)) / (1.0 + z * z / n);
+    let half = z * (p * (1.0 - p) / n + z * z / (4.0 * n * n)).sqrt() / (1.0 + z * z / n);
+    ((mid - half).max(0.0), (mid + half).min(1.0))
+}
+
+/// One batch's count of sets that pass all eight on `base` with pattern 6 by its band, with
+/// its share, its interval and the knife-edge share beside it.
+fn by_the_band(which: &str, k: usize, n: usize) -> String {
+    let (lo, hi) = wilson(k, n);
+    let share = k as f64 / n.max(1) as f64;
+    format!(
+        "all eight, pattern 6 by its band, {which}: {k} of {n} sets, {:.1} % (95 % interval \
+         {:.1}-{:.1} %); at least {:.0} %: {}",
+        100.0 * share,
+        100.0 * lo,
+        100.0 * hi,
+        100.0 * KNIFE_EDGE,
+        if n > 0 && share >= KNIFE_EDGE {
+            "yes"
+        } else {
+            "no"
+        }
+    )
+}
+
 fn two(a: &Asked) -> Result<(), String> {
     let first = a.first.as_deref().ok_or("needs --first")?;
     let b = bands()?;
@@ -1040,6 +1072,15 @@ fn two(a: &Asked) -> Result<(), String> {
                     "more sets pass in the new batch alone"
                 )
             );
+        }
+        // Each batch's own count, taken the same way: all eight with pattern 6 by its band,
+        // which is all the first batch can give. `score`'s line "All eight" needs the two
+        // dose-response statistics as well, so for a batch with `base` alone it reads 0.
+        for (which, k) in [
+            ("the first batch", table[8][0] + table[8][1]),
+            ("the new batch", table[8][0] + table[8][2]),
+        ] {
+            println!("    {}", by_the_band(which, k, both_have));
         }
         // 4. The runs the defect acted in: beside their own pairs, and beside the rest.
         let mut paired: Vec<(&RunSummary, &RunSummary)> = Vec::new();
@@ -1321,6 +1362,31 @@ mod tests {
         assert!(said(85, 115).ends_with("PAST IT THE OTHER WAY: LESS"));
         assert!(said(114, 86).ends_with("not past it"));
         assert_eq!(said(3, 2), "cannot be told with 5 sets not tied");
+    }
+
+    #[test]
+    fn a_batchs_count_by_the_band() {
+        // The interval against figures made apart, in Python, from the same formula.
+        for (k, n, lo, hi) in [
+            (0, 200, 0.0, 0.018846),
+            (7, 200, 0.017055, 0.070471),
+            (20, 200, 0.065670, 0.149407),
+            (200, 200, 0.981154, 1.0),
+        ] {
+            let got = wilson(k, n);
+            assert!(
+                (got.0 - lo).abs() < 1e-6 && (got.1 - hi).abs() < 1e-6,
+                "{k} of {n}: {got:?}"
+            );
+        }
+        assert_eq!(wilson(0, 0), (0.0, 1.0));
+        // The knife-edge share is met on it, not above it.
+        assert!(
+            by_the_band("X", 20, 200)
+                .ends_with("20 of 200 sets, 10.0 % (95 % interval 6.6-14.9 %); at least 10 %: yes")
+        );
+        assert!(by_the_band("X", 19, 200).ends_with("at least 10 %: no"));
+        assert!(by_the_band("X", 0, 0).ends_with("at least 10 %: no"));
     }
 
     #[test]
