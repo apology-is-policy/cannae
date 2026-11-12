@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-12, 08:07 UTC.
+**Last updated:** 2026-11-12, 09:01 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -517,6 +517,21 @@ batch will be shorter than I said.**
     and the pairwise engine's rungs 1 to 3 cost between what rung 0 costs and twice that.
     The costing before the batch had rung 3 at twice rung 0. The next three steps show it.
   - **`base` for all eight cells** is then done between about 14:30 and 21:00 UTC today.
+
+**Since then (2026-11-12, 09:01 UTC): the live viewer runs again,** at Michal's asking, so
+that they can look again. It had been stopped since the evening's attempt at the speed
+reading.
+
+- **It is built from the re-frozen code,** the code the batch runs. So it has the one fix
+  to the model that code has: the century no longer steps back a whole rank when its
+  standard changes hands (the moment Michal saw at 29.25 s).
+- **Everything else Michal saw is still there, by their decisions.** The smaller step back
+  of 0.65 m when the standard-bearer himself gives ground stays (candidate 11); so do the
+  century that breaks seconds after its centurion falls and the warband beside an open
+  flank (candidates 1 and 3). Nothing is retuned under this pre-registration.
+- **It listens on 127.0.0.1 only, port 8377,** and shows the mid-range set only. The links
+  on [the QC page](slice0/qc/README.md) open it at the moments named there.
+- **It is stopped before a speed is read.**
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
