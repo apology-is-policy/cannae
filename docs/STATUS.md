@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-12, 00:28 UTC.
+**Last updated:** 2026-11-12, 06:47 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -472,6 +472,34 @@ runs passed.**
 | Rung 0 | 711 | 711 | 0 | 1,389 |
 | Rung 1 | 664 | 664 | 0 | 1,436 |
 
+**Since then (2026-11-12, 06:47 UTC): the field engine's `base` is done in all four cells,
+and every check on it passed.**
+
+- **Four of the batch's 64 steps are done, none failed.** The field's rungs 2 and 3 finished
+  at 03:04 and 05:54 UTC, in 2 hours 39 minutes and 2 hours 50 minutes.
+- **Rechecked on the Mac:** two sets of each step made again, 80 records in all, every one
+  equal to the Pi's.
+- **The crosswise check:** 160 of 160 through either perception; the 89 of those runs the
+  batch has made so far agree with its records.
+- **The standard-bearer fix changed nothing where it did not act, in any of the four
+  cells.** This was the check agreed for before the scoring, and it is complete:
+
+| Field engine, `base` | Runs the fix never acted in | Equal to the first batch's | Unequal | Runs it acted in |
+|---|---|---|---|---|
+| Rung 0 | 711 | 711 | 0 | 1,389 |
+| Rung 1 | 664 | 664 | 0 | 1,436 |
+| Rung 2 | 816 | 816 | 0 | 1,284 |
+| Rung 3 | 702 | 702 | 0 | 1,398 |
+| All four | 2,893 | 2,893 | 0 | 5,507 |
+
+- **The pairwise engine's first step started at 05:54 UTC** and had 843 of its 2,100 runs
+  after 51 minutes. So far that is faster for each run than the field, where the estimate
+  of 11 days took it at twice the field's cost. I give a new estimate when the step is
+  done.
+- **I looked late.** My watcher reported the third step's end at 03:08 UTC and this session
+  woke only at 06:45 UTC, so the checks of rungs 2 and 3 came three and a half hours after
+  they could have. Nothing was missed by it.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -486,7 +514,7 @@ run again on the re-frozen code and passed again (the blocks of 18:40 and 21:38 
 **Rechecked on the Mac.** For every cell and variant, two parameter sets are run again on the
 Mac and compared with the Pi's records, field for field (`tools/s09-recheck.py`). The freeze
 seed fixes which sets, so nobody picks them. It runs as the batch goes. So far, on the new
-batch: the 40 records of its first two steps are all equal (2026-11-12, 00:28 UTC). The tool was
+batch: the 80 records of its first four steps are all equal (2026-11-12, 06:46 UTC). The tool was
 tested on a copy with one altered record, and it caught it.
 
 **Two addenda to the pre-registration** (agreed with Varro, written before any record was
