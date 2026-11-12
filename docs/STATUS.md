@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-12, 06:47 UTC.
+**Last updated:** 2026-11-12, 08:07 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -500,6 +500,24 @@ and every check on it passed.**
   woke only at 06:45 UTC, so the checks of rungs 2 and 3 came three and a half hours after
   they could have. Nothing was missed by it.
 
+**Since then (2026-11-12, 08:07 UTC): the pairwise engine's first step is done, and the
+batch will be shorter than I said.**
+
+- **Five of the 64 steps are done, none failed.** The pairwise engine's rung 0, `base`,
+  finished at 08:04 UTC: 2,100 runs in 2 hours 10 minutes. The field's four steps took
+  2 hours 49 minutes on average.
+- **This is the first step the pairwise engine has ever finished in a batch,** and it is
+  checked like the others: two of its sets made again on the Mac, 20 records, all equal to
+  the Pi's (100 of 100 over the five steps). The crosswise check stands at 160 of 160, and
+  the 101 of those runs the batch has made agree with its records.
+- **A new rough estimate: five and a half to seven days from the start,** so the batch is
+  done on about 17 to 18 November. The estimate of 11 days took the pairwise engine at
+  twice the field's cost, and on its first step it cost less than the field.
+  - **What the estimate assumes:** every step of a cell runs at the pace of its `base`,
+    and the pairwise engine's rungs 1 to 3 cost between what rung 0 costs and twice that.
+    The costing before the batch had rung 3 at twice rung 0. The next three steps show it.
+  - **`base` for all eight cells** is then done between about 14:30 and 21:00 UTC today.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -514,7 +532,7 @@ run again on the re-frozen code and passed again (the blocks of 18:40 and 21:38 
 **Rechecked on the Mac.** For every cell and variant, two parameter sets are run again on the
 Mac and compared with the Pi's records, field for field (`tools/s09-recheck.py`). The freeze
 seed fixes which sets, so nobody picks them. It runs as the batch goes. So far, on the new
-batch: the 80 records of its first four steps are all equal (2026-11-12, 06:46 UTC). The tool was
+batch: the 100 records of its first five steps are all equal (2026-11-12, 08:06 UTC). The tool was
 tested on a copy with one altered record, and it caught it.
 
 **Two addenda to the pre-registration** (agreed with Varro, written before any record was
