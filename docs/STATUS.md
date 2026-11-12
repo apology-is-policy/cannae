@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-12, 10:16 UTC.
+**Last updated:** 2026-11-12, 12:26 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -542,6 +542,14 @@ reading.
   (120 of 120 over the six steps). The crosswise check: 160 of 160, and the 121 of those
   runs the batch has made agree with its records.
 
+**Since then (2026-11-12, 12:26 UTC): seven of the 64 steps are done, none failed.**
+
+- **The pairwise engine's rung 2, `base`, finished at 12:22 UTC** in 2 hours 8 minutes. The
+  last `base` step, its rung 3, is running and should end at about 14:30 UTC.
+- **Rechecked on the Mac:** two of its sets made again, 20 records, all equal to the Pi's
+  (140 of 140 over the seven steps). The crosswise check: 160 of 160, and the 141 of those
+  runs the batch has made agree with its records.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -556,7 +564,7 @@ run again on the re-frozen code and passed again (the blocks of 18:40 and 21:38 
 **Rechecked on the Mac.** For every cell and variant, two parameter sets are run again on the
 Mac and compared with the Pi's records, field for field (`tools/s09-recheck.py`). The freeze
 seed fixes which sets, so nobody picks them. It runs as the batch goes. So far, on the new
-batch: the 120 records of its first six steps are all equal (2026-11-12, 10:16 UTC). The tool was
+batch: the 140 records of its first seven steps are all equal (2026-11-12, 12:26 UTC). The tool was
 tested on a copy with one altered record, and it caught it.
 
 **Two addenda to the pre-registration** (agreed with Varro, written before any record was
