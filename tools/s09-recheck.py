@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Rechecks Slice 0's scored batch on a second machine (S0.9).
 
-    tools/s09-recheck.py BATCH_DIR OUT_DIR [--jobs N]
+    tools/s09-recheck.py BATCH_DIR OUT_DIR [--jobs N] [--totals]
 
 For every cell and variant, two parameter sets are run again here, all ten seeds each (and the
 audit's whole runs, where a chosen set is one of the audit's), at the frozen code, and each
@@ -18,7 +18,9 @@ until two different sets are drawn; the candidates are 0..199, or every fourth f
 this can be run as the batch goes. Runs already in OUT_DIR are not made again.
 
 Prints, for each cell and variant, the sets and the counts of equal and unequal records, and
-never what happened in a run. Exits 1 if any record differs.
+never what happened in a run. Exits 1 if any record differs. With `--totals` it prints the
+last line only, and a cell's line only if one of its records differs: after `base` the batch
+runs first the cells that can still pass, so which variants are in tells the gate's verdict.
 
     tools/s09-recheck.py BATCH_DIR OUT_DIR --topup [--jobs N]
 
@@ -127,6 +129,9 @@ def main():
     topup = "--topup" in args
     if topup:
         args.remove("--topup")
+    totals = "--totals" in args
+    if totals:
+        args.remove("--totals")
     if len(args) != 2:
         sys.exit(__doc__)
     batch, out = args
@@ -155,7 +160,7 @@ def main():
                 equal, unequal = counts
                 total["equal"] += equal
                 total["unequal"] += unequal
-                if not topup:
+                if not topup and (unequal or not totals):
                     print(f"{engine:8} r{rung} {variant:8}: sets {sets[0]:3}, {sets[1]:3}: "
                           f"{equal} records equal, {unequal} unequal", flush=True)
     if topup and total["waiting"]:

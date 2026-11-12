@@ -88,18 +88,60 @@ counts only (section 7).
 
 1. **The batch has finished:** 64 steps done, none failed, and the log's last line says so.
 2. **The records are copied to the Mac and the recheck is complete:** 64 of 64 cells and
-   variants, every record equal (`tools/s09-recheck.py`).
+   variants, every record equal (`tools/s09-recheck.py --totals`, which prints the total
+   and no cell unless a record differs).
 3. **The top-up's one figure** (`cannae-extras topup` on the copy) goes into the table of
    outcomes seen and to Michal, with what the costing said beforehand: at most about one
    night ([scored-runs-cost.md](scored-runs-cost.md)).
 4. **Michal decides.** The report says which way.
-5. **If yes:** `tools/s09-topup.sh` on the Pi, in the batch's folder; then the copy again
-   and `tools/s09-recheck.py --topup`.
-6. **The scoring, on the copy:** `score` for each of the eight cells, then
-   `cannae-extras fails`, `rungs` and `two`, and `tools/s09-open-flank.py`. Each prints into
-   a file kept with the report's sources.
-7. **The replays, on the Pi,** which run battles again and take hours:
-   `cannae-replay reliefs` and `leaders` for each cell, and `drill` for each engine.
+5. **If yes:** `tools/s09-topup.sh ~/cannae-runs2` on the Pi. The top-up is whole when the
+   log's last line is "top-up finished": the runner writes it only after a pass with no
+   failed step, and a pass skips the runs already made (Varro, call 0001, turn 136). Then
+   the copy again and `tools/s09-recheck.py --topup`, which refuses while a run is missing.
+6. **The scoring, on the Mac,** from the main checkout, whose `score` is the re-frozen
+   code's. Every command and every file is fixed here, so that no argument is chosen on the
+   day (Varro, turn 136). The batch's log, with the gate's lines, is copied from the Pi
+   into the same folder as `progress.txt`.
+
+   ```sh
+   R=~/cannae-runs2-copy    # the batch's records, copied from the Pi
+   F=~/cannae-runs1-copy    # the first batch: the four files of the field's `base`
+   O=docs/slice0/scored     # kept with the report's sources
+   for e in field pairwise; do for r in 0 1 2 3; do
+     target/release/score --substrate $e --rung $r --dir $R --seeds 10 > $O/score-$e-r$r.txt
+   done; done
+   for r in 0 1 2 3; do
+     target/release/score --substrate field --rung $r --dir $F --seeds 10 \
+       > $O/first-score-field-r$r.txt
+   done
+   viewer/target/release/cannae-extras fails --records $R > $O/fails.txt
+   viewer/target/release/cannae-extras rungs --records $R > $O/rungs.txt
+   viewer/target/release/cannae-extras two --first $F --records $R > $O/two.txt
+   tools/s09-open-flank.py $R > $O/open-flank.txt
+   ```
+
+   - **The second loop is the first batch's own scoring** (section 2; Varro, turn 136):
+     the frozen code's share and its interval for the four field cells. The first batch has
+     `base` only, so pattern 6 is read by its band there.
+7. **The replays, on the Pi,** which run battles again and take hours. The Pi's checkout
+   is brought to main first, after the batch's last line and not before: the batch's script
+   must not change under it. The pull changes no file of the scored code.
+
+   ```sh
+   cd ~/cannae-batch2 && git pull && (cd viewer && cargo build --release --bin cannae-replay)
+   S=9464880715404986219; P=~/cannae-replays; mkdir -p $P
+   for e in field pairwise; do
+     viewer/target/release/cannae-replay drill --engine $e > $P/drill-$e.txt
+     for r in 0 1 2 3; do
+       for what in reliefs leaders; do
+         viewer/target/release/cannae-replay $what --records ~/cannae-runs2 --engine $e \
+           --rung $r --freeze-seed $S --out $P/$what-$e-r$r.jsonl
+       done
+     done
+   done
+   ```
+
+   The files are copied to `docs/slice0/scored/replays/`.
 
 ## 1. The verdict
 
