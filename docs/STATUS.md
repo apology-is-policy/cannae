@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-12, 12:26 UTC.
+**Last updated:** 2026-11-12, 14:40 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -550,6 +550,28 @@ reading.
   (140 of 140 over the seven steps). The crosswise check: 160 of 160, and the 141 of those
   runs the batch has made agree with its records.
 
+**Since then (2026-11-12, 14:40 UTC): `base` is done in all eight cells, and the batch is on
+to the other variants.**
+
+- **Eight of the 64 steps are done, none failed.** The pairwise engine's rung 3 finished at
+  14:35 UTC in 2 hours 13 minutes. Its four `base` steps took 2 hours 8 to 13 minutes each,
+  so its higher rungs cost no more than rung 0, and the batch should be done on about
+  17 November.
+- **Rechecked on the Mac:** two sets of every `base` step made again, 160 records in all,
+  every one equal to the Pi's.
+- **The crosswise check is complete:** 160 of 160 runs agree through either perception, and
+  all 160 agree with the batch's own records.
+- **Something leaks from here on, and I have closed what I can.** After `base` the batch
+  runs the variants of the cells that can still pass first. So the names of its steps tell
+  what the gate decided, and neither of us had counted that as a way of seeing an outcome.
+  - My watcher printed the name of the first step after `base`. What that tells, and what
+    it does not, is in the pre-registration's table of outcomes seen (row of 12 November,
+    14:37 UTC).
+  - Since 14:39 UTC my watcher and my checks print counts and times only: steps done and
+    failed, and records equal and unequal. From here this page gives the batch's progress
+    as a number of steps, with no names.
+  - I asked Varro to look at the Pi the same way, and offered him the stop before the row.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -564,7 +586,7 @@ run again on the re-frozen code and passed again (the blocks of 18:40 and 21:38 
 **Rechecked on the Mac.** For every cell and variant, two parameter sets are run again on the
 Mac and compared with the Pi's records, field for field (`tools/s09-recheck.py`). The freeze
 seed fixes which sets, so nobody picks them. It runs as the batch goes. So far, on the new
-batch: the 140 records of its first seven steps are all equal (2026-11-12, 12:26 UTC). The tool was
+batch: the 160 records of its eight `base` steps are all equal (2026-11-12, 14:40 UTC). The tool was
 tested on a copy with one altered record, and it caught it.
 
 **Two addenda to the pre-registration** (agreed with Varro, written before any record was
