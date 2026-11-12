@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-11, 21:51 UTC.
+**Last updated:** 2026-11-12, 00:28 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -455,6 +455,23 @@ runs passed.**
 - **This check is taken for each field cell as its `base` finishes,** and before anything
   is scored. It is entered in the pre-registration's table.
 
+**Since then (2026-11-12, 00:28 UTC): the second step is done and checked.**
+
+- **The batch's second step finished at 00:25 UTC** with no failure: the field engine's
+  rung 1, `base`, 2,100 runs in 2 hours 53 minutes, as the first. It is in its third step.
+- **Rechecked on the Mac:** two sets of the step made again, 20 records, all equal to the
+  Pi's. With the first step that is 40 of 40.
+- **The crosswise check:** 160 of 160 through either perception; the 41 of those runs the
+  batch has made so far agree with its records.
+- **The standard-bearer fix, where it did not act, changed nothing here either.** Of the
+  2,100 runs, 664 never met it, and all 664 equal the first batch's. In the other 1,436 it
+  acted.
+
+| Field engine, `base` | Runs the fix never acted in | Equal to the first batch's | Unequal | Runs it acted in |
+|---|---|---|---|---|
+| Rung 0 | 711 | 711 | 0 | 1,389 |
+| Rung 1 | 664 | 664 | 0 | 1,436 |
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -469,7 +486,7 @@ run again on the re-frozen code and passed again (the blocks of 18:40 and 21:38 
 **Rechecked on the Mac.** For every cell and variant, two parameter sets are run again on the
 Mac and compared with the Pi's records, field for field (`tools/s09-recheck.py`). The freeze
 seed fixes which sets, so nobody picks them. It runs as the batch goes. So far, on the new
-batch: the 20 records of its first step are all equal (2026-11-11, 21:36 UTC). The tool was
+batch: the 40 records of its first two steps are all equal (2026-11-12, 00:28 UTC). The tool was
 tested on a copy with one altered record, and it caught it.
 
 **Two addenda to the pre-registration** (agreed with Varro, written before any record was
