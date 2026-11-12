@@ -19,32 +19,58 @@ this can be run as the batch goes. Runs already in OUT_DIR are not made again.
 
 Prints, for each cell and variant, the sets and the counts of equal and unequal records, and
 never what happened in a run. Exits 1 if any record differs.
+
+    tools/s09-recheck.py BATCH_DIR OUT_DIR --topup [--jobs N]
+
+The same for the relief's top-up, once `tools/s09-topup.sh` has run it: for each cell, and for
+`relief` and `backed` apart, two of the cell's top-up sets (one, if it has only one) are run
+again here and compared. The candidates are the sets the scorer names (`report::topup`), and
+the key hashed is "<freeze seed>/<engine>/r<rung>/<variant>-topup/<k>". Which sets a cell has,
+and how many, is an outcome of `base`: this mode prints one line of totals and no cell.
+
+S09_FREEZE and S09_SEEDS are for trying the tool on unscored sets, never for the batch.
 """
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 
-FREEZE = 9464880715404986219
+FREEZE = int(os.environ.get("S09_FREEZE", 9464880715404986219))
 # The re-frozen code of Addendum 4: dd9d90a with ed6d363 and 449dcd6.
 FROZEN = "40b8dcd"
 VARIANTS = ["base", "veterans", "recruits", "flank", "shock", "volleys", "backed", "relief"]
-SEEDS = 10
+SEEDS = int(os.environ.get("S09_SEEDS", 10))
 AUDIT_EVERY = 20
 
 
-def chosen(engine, rung, variant):
-    stride = 4 if variant in ("backed", "relief") else 1
-    candidates = list(range(0, 200, stride))
+def drawn(candidates, key):
+    """Two of the candidates (all of them, if they are fewer), by the freeze seed's rule."""
     out, k = [], 0
-    while len(out) < 2:
-        h = hashlib.sha256(f"{FREEZE}/{engine}/r{rung}/{variant}/{k}".encode()).digest()
+    while len(out) < min(2, len(candidates)):
+        h = hashlib.sha256(f"{key}/{k}".encode()).digest()
         s = candidates[int.from_bytes(h[:8], "big") % len(candidates)]
         if s not in out:
             out.append(s)
         k += 1
     return sorted(out)
+
+
+def chosen(engine, rung, variant):
+    stride = 4 if variant in ("backed", "relief") else 1
+    return drawn(list(range(0, 200, stride)), f"{FREEZE}/{engine}/r{rung}/{variant}")
+
+
+def topup_sets(batch, engine, rung):
+    """The cell's top-up sets, from the scorer's own report."""
+    report = subprocess.run(
+        ["./target/release/score", "--substrate", engine, "--rung", str(rung),
+         "--dir", batch, "--seeds", str(SEEDS)],
+        capture_output=True, text=True, check=True,
+    ).stdout
+    named = re.search(r"the top-up, if it is run: sets \[(.*)\]", report)
+    return [int(x) for x in named.group(1).split(",")] if named else []
 
 
 def load(path):
@@ -64,6 +90,33 @@ def load(path):
     return out
 
 
+def recheck(batch, out, engine, rung, variant, sets, jobs):
+    """The counts of equal and unequal records of these sets, or None if the batch lacks one."""
+    name = f"{engine}-r{rung}-{variant}.jsonl"
+    want = [
+        (s, seed, whole)
+        for s in sets
+        for seed in range(1, SEEDS + 1)
+        for whole in ([False, True] if s % AUDIT_EVERY == 0 else [False])
+    ]
+    theirs = load(os.path.join(batch, name))
+    if any(k not in theirs for k in want):
+        return None
+    ours = load(os.path.join(out, name))
+    if any(k not in ours for k in want):
+        subprocess.run(
+            ["./target/release/cell", "--substrate", engine, "--rung", str(rung),
+             "--variant", variant, "--sets", ",".join(map(str, sets)),
+             "--seeds", str(SEEDS), "--freeze-seed", str(FREEZE), "--jobs", jobs,
+             "--out", out],
+            stdout=subprocess.DEVNULL,
+            check=True,
+        )
+        ours = load(os.path.join(out, name))
+    equal = sum(1 for k in want if ours.get(k) == theirs[k])
+    return equal, len(want) - equal
+
+
 def main():
     args = sys.argv[1:]
     jobs = "4"
@@ -71,6 +124,9 @@ def main():
         i = args.index("--jobs")
         jobs = args[i + 1]
         del args[i : i + 2]
+    topup = "--topup" in args
+    if topup:
+        args.remove("--topup")
     if len(args) != 2:
         sys.exit(__doc__)
     batch, out = args
@@ -86,38 +142,30 @@ def main():
     total = {"equal": 0, "unequal": 0, "waiting": 0}
     for engine in ("field", "pairwise"):
         for rung in range(4):
-            for variant in VARIANTS:
-                name = f"{engine}-r{rung}-{variant}.jsonl"
-                sets = chosen(engine, rung, variant)
-                want = [
-                    (s, seed, whole)
-                    for s in sets
-                    for seed in range(1, SEEDS + 1)
-                    for whole in ([False, True] if s % AUDIT_EVERY == 0 else [False])
-                ]
-                theirs = load(os.path.join(batch, name))
-                if any(k not in theirs for k in want):
+            candidates = topup_sets(batch, engine, rung) if topup else None
+            for variant in ("backed", "relief") if topup else VARIANTS:
+                if topup:
+                    sets = drawn(candidates, f"{FREEZE}/{engine}/r{rung}/{variant}-topup")
+                else:
+                    sets = chosen(engine, rung, variant)
+                counts = recheck(batch, out, engine, rung, variant, sets, jobs)
+                if counts is None:
                     total["waiting"] += 1
                     continue
-                ours = load(os.path.join(out, name))
-                if any(k not in ours for k in want):
-                    subprocess.run(
-                        ["./target/release/cell", "--substrate", engine, "--rung", str(rung),
-                         "--variant", variant, "--sets", ",".join(map(str, sets)),
-                         "--seeds", str(SEEDS), "--freeze-seed", str(FREEZE), "--jobs", jobs,
-                         "--out", out],
-                        stdout=subprocess.DEVNULL,
-                        check=True,
-                    )
-                    ours = load(os.path.join(out, name))
-                equal = sum(1 for k in want if ours.get(k) == theirs[k])
-                unequal = len(want) - equal
+                equal, unequal = counts
                 total["equal"] += equal
                 total["unequal"] += unequal
-                print(f"{engine:8} r{rung} {variant:8}: sets {sets[0]:3}, {sets[1]:3}: "
-                      f"{equal} records equal, {unequal} unequal", flush=True)
-    print(f"all: {total['equal']} records equal, {total['unequal']} unequal; "
-          f"{total['waiting']} of 64 cells and variants not yet in the batch")
+                if not topup:
+                    print(f"{engine:8} r{rung} {variant:8}: sets {sets[0]:3}, {sets[1]:3}: "
+                          f"{equal} records equal, {unequal} unequal", flush=True)
+    if topup and total["waiting"]:
+        # How many cells wait would tell how many have a set at all.
+        sys.exit("the top-up's runs are not all in the batch's folder yet")
+    if topup:
+        print(f"the top-up: {total['equal']} records equal, {total['unequal']} unequal")
+    else:
+        print(f"all: {total['equal']} records equal, {total['unequal']} unequal; "
+              f"{total['waiting']} of 64 cells and variants not yet in the batch")
     sys.exit(1 if total["unequal"] else 0)
 
 

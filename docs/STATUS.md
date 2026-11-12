@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-12, 14:51 UTC.
+**Last updated:** 2026-11-12, 14:59 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -588,7 +588,22 @@ and not run.**
 - **Checked on made-up records only,** against a count made apart. And the rule it leans
   on, that a step takes a quarter of its runs' own times added up, holds at 0.999 on each
   of the eight `base` steps.
-- **It is run once,** when the batch has finished and Varro has read it. He has it to read.
+- **It is run once,** when the batch has finished. Varro read it whole and agreed to it
+  (14:54 UTC); his one remark, on how half an hour is rounded, is in.
+
+**Since then (2026-11-12, 14:59 UTC): the rest of the batch's end is prepared.** If Michal
+gives the top-up its time, nothing has to be written on the day.
+
+- **A script runs the top-up on the Pi** (`tools/s09-topup.sh`). It hands the scorer's sets
+  to the runner without printing them, so we still learn nothing by cell before the scoring.
+- **The top-up's runs get the same recheck on the Mac as the batch's**
+  (`tools/s09-recheck.py --topup`). Nobody had promised that; without it the top-up would
+  be the only part of the batch with no run made a second time.
+- **Both were tried on made-up records,** and both did what they should: the runner added
+  the right runs and no other, and the recheck caught a record I had altered.
+- **The order of the batch's end is written down,** seven steps from "the batch has
+  finished" to the replays ([the outline](slice0/report-outline.md), "The order at the
+  batch's end"). Varro has the two scripts to read.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects

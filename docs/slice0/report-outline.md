@@ -60,9 +60,46 @@ Each of these is done, and the report says so with its counts:
        made apart in Python, among them a cell with no set for the top-up, one over the cap
        of 25 and one with no long-fought set on the stride. Its sets are held to the
        scorer's (`report::topup`), and it stops if they differ.
-     - **It is run once,** when the batch has finished and Varro has read it.
+     - **It is run once,** when the batch has finished. Varro read it whole and agreed to
+       it (call 0001, turn 134).
+   - **If Michal gives the time,** `tools/s09-topup.sh` runs the top-up on the Pi. The sets
+     go from the scorer to the runner unprinted and unlogged, and the new runs join the
+     cell's own files of `relief` and `backed`. Until the scoring nobody reads a step's
+     time or a log of it: a cell's number of sets is an outcome of `base`.
+   - **The top-up's runs are rechecked on the Mac like the batch's**
+     (`tools/s09-recheck.py --topup`; nobody had promised this): for each cell, and for
+     `relief` and `backed` apart, two of its top-up sets are run again and compared, or the
+     one if it has only one. The freeze seed chooses them, as for the batch. It prints one
+     line of totals and no cell.
+   - **Both were tried on made-up records of `base`** (five sets, two seeds, every figure
+     invented; the runs they added were real runs of unscored sets, of which only the set
+     and the seed were read). The runner added the 44 runs of the made-up lists and no
+     other, added nothing when run again, and refused a batch not finished and one with a
+     failed step. The recheck's mode found 40 of 40 records equal, caught a record altered
+     for it, and refused with no count while a cell's runs were missing. The batch's own 64
+     choices of sets are as they were before the mode was added.
 
 Only then are the gate's lines and the records read.
+
+### The order at the batch's end
+
+Nothing in it is chosen on the day. Until step 6 the Pi and the copies are looked at by
+counts only (section 7).
+
+1. **The batch has finished:** 64 steps done, none failed, and the log's last line says so.
+2. **The records are copied to the Mac and the recheck is complete:** 64 of 64 cells and
+   variants, every record equal (`tools/s09-recheck.py`).
+3. **The top-up's one figure** (`cannae-extras topup` on the copy) goes into the table of
+   outcomes seen and to Michal, with what the costing said beforehand: at most about one
+   night ([scored-runs-cost.md](scored-runs-cost.md)).
+4. **Michal decides.** The report says which way.
+5. **If yes:** `tools/s09-topup.sh` on the Pi, in the batch's folder; then the copy again
+   and `tools/s09-recheck.py --topup`.
+6. **The scoring, on the copy:** `score` for each of the eight cells, then
+   `cannae-extras fails`, `rungs` and `two`, and `tools/s09-open-flank.py`. Each prints into
+   a file kept with the report's sources.
+7. **The replays, on the Pi,** which run battles again and take hours:
+   `cannae-replay reliefs` and `leaders` for each cell, and `drill` for each engine.
 
 ## 1. The verdict
 

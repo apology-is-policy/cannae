@@ -1238,10 +1238,11 @@ fn topup_line(ms: f64) -> String {
     } else if hours < 0.5 {
         "under half an hour of the Pi's time over the eight cells".to_string()
     } else {
+        // Rounded by hand: `{:.0}` takes a half to the even number, and half an hour to none.
+        let h = hours.round();
         format!(
-            "about {:.0} hour{} of the Pi's time over the eight cells",
-            hours,
-            if hours < 1.5 { "" } else { "s" }
+            "about {h} hour{} of the Pi's time over the eight cells",
+            if h == 1.0 { "" } else { "s" }
         )
     };
     format!("The relief's top-up, if it is run: {time}.")
@@ -1556,7 +1557,9 @@ mod tests {
         let hours = |h: f64| topup_line(h * PI_JOBS * 3_600_000.0);
         assert!(hours(0.0).contains("no time at all"));
         assert!(hours(0.2).contains("under half an hour"));
+        assert!(hours(0.5).contains("about 1 hour of"));
         assert!(hours(1.2).contains("about 1 hour of"));
+        assert!(hours(2.5).contains("about 3 hours of"));
         assert!(hours(13.6).contains("about 14 hours of"));
     }
 }
