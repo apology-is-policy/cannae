@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-12, 15:14 UTC.
+**Last updated:** 2026-11-13, 02:44 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -625,6 +625,18 @@ closed.**
   for the field's four cells is counted with pattern 6 by its band instead, and the
   comparing tool now prints it with its interval, beside the new batch's.
 
+**Since then (2026-11-13, 02:44 UTC): eleven of the 64 steps are done, none failed, and the
+batch is slower than I estimated.**
+
+- **Rechecked on the Mac:** two sets of each new step made again. Over the eleven steps
+  that is 220 records, every one equal to the Pi's.
+- **The pace:** three steps were finished in the twelve hours since `base` ended. At the
+  pace of `base` it would have been about five.
+- **A new rough estimate: the batch ends between about 19 and 22 November,** not on the
+  17th. It takes the last twelve hours' pace for the 53 steps left. I look at the batch by
+  counts only, so I cannot say which steps are the slow ones, and the last sixteen
+  (`backed` and `relief`) are of another size than the rest.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -639,7 +651,7 @@ run again on the re-frozen code and passed again (the blocks of 18:40 and 21:38 
 **Rechecked on the Mac.** For every cell and variant, two parameter sets are run again on the
 Mac and compared with the Pi's records, field for field (`tools/s09-recheck.py`). The freeze
 seed fixes which sets, so nobody picks them. It runs as the batch goes. So far, on the new
-batch: the 160 records of its eight `base` steps are all equal (2026-11-12, 14:40 UTC). The tool was
+batch: the 220 records of its eleven steps are all equal (2026-11-13, 02:44 UTC). The tool was
 tested on a copy with one altered record, and it caught it.
 
 **Two addenda to the pre-registration** (agreed with Varro, written before any record was
