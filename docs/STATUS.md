@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-14, 02:47 UTC.
+**Last updated:** 2026-11-14, 14:49 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -656,6 +656,15 @@ batch is slower than I estimated.**
   pace, about two and a half hours a step, for the 43 steps left. The last sixteen
   (`backed` and `relief`) may go faster or slower than that.
 
+**Since then (2026-11-14, 14:49 UTC): 25 of the 64 steps are done, none failed.**
+
+- **Rechecked on the Mac:** over the 25 steps, 500 records made again, every one equal to
+  the Pi's.
+- **The pace:** four steps in the last twelve hours, nine in the last day.
+- **The estimate: the batch ends on about 19 November.** Over the two days since `base`
+  ended the batch has taken a little under three hours a step, and 39 steps are left. The
+  last sixteen of them (`backed` and `relief`) may go faster or slower than that.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -670,7 +679,7 @@ run again on the re-frozen code and passed again (the blocks of 18:40 and 21:38 
 **Rechecked on the Mac.** For every cell and variant, two parameter sets are run again on the
 Mac and compared with the Pi's records, field for field (`tools/s09-recheck.py`). The freeze
 seed fixes which sets, so nobody picks them. It runs as the batch goes. So far, on the new
-batch: the 420 records of its 21 steps are all equal (2026-11-14, 02:47 UTC). The tool was
+batch: the 500 records of its 25 steps are all equal (2026-11-14, 14:49 UTC). The tool was
 tested on a copy with one altered record, and it caught it.
 
 **Two addenda to the pre-registration** (agreed with Varro, written before any record was
