@@ -18,9 +18,10 @@ until two different sets are drawn; the candidates are 0..199, or every fourth f
 this can be run as the batch goes. Runs already in OUT_DIR are not made again.
 
 Prints, for each cell and variant, the sets and the counts of equal and unequal records, and
-never what happened in a run. Exits 1 if any record differs. With `--totals` it prints the
-last line only, and a cell's line only if one of its records differs: after `base` the batch
-runs first the cells that can still pass, so which variants are in tells the gate's verdict.
+never what happened in a run. Exits 1 if any record differs. With `--totals` it prints only
+whether every record is equal (and, once all 64 are in, that they are), and a cell's line only
+if one of its records differs: after `base` the batch runs first the cells that can still
+pass, so which variants are in tells the gate's verdict, and so would the totals of records.
 
     tools/s09-recheck.py BATCH_DIR OUT_DIR --topup [--jobs N]
 
@@ -168,6 +169,13 @@ def main():
         sys.exit("the top-up's runs are not all in the batch's folder yet")
     if topup:
         print(f"the top-up: {total['equal']} records equal, {total['unequal']} unequal")
+    elif totals:
+        # No total of records: each cell and variant adds 20 or 30 by whether a set the freeze
+        # seed chose is one of the audit's, so the totals over time would tell which steps had
+        # run. Nor the number waiting, which can run ahead of the steps done.
+        print("all: " + (f"{total['unequal']} records unequal" if total["unequal"]
+                         else "every record equal")
+              + ("; all 64 cells and variants are in" if not total["waiting"] else ""))
     else:
         print(f"all: {total['equal']} records equal, {total['unequal']} unequal; "
               f"{total['waiting']} of 64 cells and variants not yet in the batch")

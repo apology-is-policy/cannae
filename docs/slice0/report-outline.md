@@ -658,6 +658,13 @@ arises, and the scored record holds it:
     roadmap carry no step's name and nothing inferred from one.
   - **What could not be closed:** a step's length differs by engine, and the top-up's
     total above. The report says so.
+  - **One more way, found on 15 November and closed then** (Paullus, at 02:53 UTC): the
+    recheck's total of records. Each cell and variant adds 20 records, or 30 when one of
+    the two sets the freeze seed chose for it is one of the audit's, and which ones those
+    are follows from the freeze seed alone. So the totals in STATUS from 12 to 15 November
+    (160 to 590), set against that table, would tell something of which steps had run.
+    Nobody has made the table. From then the recheck prints only whether every record is
+    equal (`--totals`), and STATUS gives no total of records.
 
 ## 8. Speed
 
