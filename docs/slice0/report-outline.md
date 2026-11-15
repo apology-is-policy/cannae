@@ -651,7 +651,8 @@ arises, and the scored record holds it:
   (Addendum 1), so the order of the steps is the gate's verdict. Neither of us had counted
   that as a way of seeing an outcome until the first such step had run.
   - **From 12 November, 14:39 UTC, the batch is looked at by counts only:** steps done and
-    failed, twice a day, and the recheck's total. No step's or file's name, no process
+    failed, twice a day, and the recheck's total. From 15 November, 02:56 UTC, not even
+    those (below). No step's or file's name, no process
     list with its arguments, no time or size of a single step. A failed step or an unequal
     record is the exception, because then the name is needed.
   - **Kept out of first lines too:** commit titles, the heads of STATUS and the yip
@@ -665,6 +666,22 @@ arises, and the scored record holds it:
     (160 to 590), set against that table, would tell something of which steps had run.
     Nobody has made the table. From then the recheck prints only whether every record is
     equal (`--totals`), and STATUS gives no total of records.
+  - **And a stronger one, named by Varro the same night** (call 0001, turn 140; closed at
+    02:56 UTC): the count of steps done, at known times. The order is fixed, and `backed`
+    and `relief` run 50 sets where the others run 200, so their steps are about a quarter
+    as long. The count at which a run of short steps comes tells how many cells the gate
+    kept, and the paces and end dates drawn from the counts carry the same. Neither of us
+    has worked it out from what was published, and neither will.
+    - **What was published:** steps done at each look in STATUS and in Paullus's notes
+      (8 at 14:37 UTC on 12 November, then 11, 16, 21, 25 and 29 at about 02:45 and 14:45
+      UTC each day to 15 November), the paces and the end dates drawn from them, and the
+      recheck's totals above. Varro's yip roadmap notes repeated the counts and totals from
+      13 November 02:45 to 14 November 14:50 UTC, and his summaries to Michal did too
+      (Varro, turn 140).
+    - **From then until the batch's last line,** every report says "running, none failed"
+      and nothing more: no count of steps, no pace, no end date. The watcher still wakes
+      twice a day; it reads the count and prints only whether the batch runs, has failed
+      or has finished. A failed step is reported at once, as before.
 
 ## 8. Speed
 

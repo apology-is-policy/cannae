@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-15, 02:53 UTC.
+**Last updated:** 2026-11-15, 02:56 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -680,6 +680,20 @@ way the batch's order could reach us is closed.**
   record is equal, and this page gives no total of records. It is in the outline's list
   of what the batch's order let through.
 
+**Since then (2026-11-15, 02:56 UTC): until the batch's last line, this page says only that
+it runs and that no step has failed.**
+
+- **Why:** Varro saw that the count of steps at known times tells as much as the totals I
+  closed an hour ago, and more. The last steps of each group of cells are about four
+  times shorter than the rest, so the moment the steps come quickly tells how many cells
+  the gate kept. The paces and end dates I drew from the counts carry the same.
+- **What changes:** no count of steps, no pace and no end date from here. I check twice a
+  day that the batch runs and that no step failed, and the recheck on the Mac says only
+  whether every record is equal. A failed step reaches you at once, as before, and so does
+  the batch's end.
+- **What was already published** is listed in the outline, with the totals. Neither of us
+  has worked anything out from it.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -694,7 +708,7 @@ run again on the re-frozen code and passed again (the blocks of 18:40 and 21:38 
 **Rechecked on the Mac.** For every cell and variant, two parameter sets are run again on the
 Mac and compared with the Pi's records, field for field (`tools/s09-recheck.py`). The freeze
 seed fixes which sets, so nobody picks them. It runs as the batch goes. So far, on the new
-batch: every record of its 29 steps is equal (2026-11-15, 02:53 UTC). The tool was
+batch: every record is equal (2026-11-15, 02:56 UTC). The tool was
 tested on a copy with one altered record, and it caught it.
 
 **Two addenda to the pre-registration** (agreed with Varro, written before any record was
