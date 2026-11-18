@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-18, 11:35 UTC.
+**Last updated:** 2026-11-18, 19:59 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -714,6 +714,22 @@ of the recheck is equal.**
 **Since then (2026-11-18, 11:35 UTC): the batch runs, no step has failed, and every record
 of the recheck is equal.**
 
+**Since then (2026-11-18, 19:59 UTC): the batch has finished, every check on it passed, and
+one decision is yours before anything is scored.**
+
+- **The batch has finished:** all 64 steps, none failed, and its log ends with its last line
+  (seen at 19:42 UTC).
+- **Rechecked on the Mac:** two sets of every cell and variant made again, all 64 in, and
+  every record equal to the Pi's. The Mac's copy of the records equals the Pi's byte for
+  byte.
+- **Your decision: the relief's extra runs (the "top-up").** They would take **about 4 hours
+  of the Pi's time** over the eight cells. The costing before the batch said at most about
+  one night. The figure is the one number agreed for this decision. It names no cell, and it
+  is entered in the pre-registration's table of outcomes seen.
+  - **If yes:** the Pi runs them, the Mac rechecks a sample, and then the scoring begins.
+  - **If no:** the scoring begins now, and the report says the top-up was not run.
+- **Nothing is scored yet,** and no line of the gate has been read.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -727,8 +743,8 @@ run again on the re-frozen code and passed again (the blocks of 18:40 and 21:38 
 
 **Rechecked on the Mac.** For every cell and variant, two parameter sets are run again on the
 Mac and compared with the Pi's records, field for field (`tools/s09-recheck.py`). The freeze
-seed fixes which sets, so nobody picks them. It runs as the batch goes. So far, on the new
-batch: every record is equal (2026-11-18, 11:35 UTC). The tool was
+seed fixes which sets, so nobody picks them. It runs as the batch goes. On the new batch, complete:
+every record of all 64 cells and variants is equal (2026-11-18, 19:59 UTC). The tool was
 tested on a copy with one altered record, and it caught it.
 
 **Two addenda to the pre-registration** (agreed with Varro, written before any record was
@@ -969,7 +985,9 @@ word is singular). This is recorded in the review's disposition table.
 
 ## Open decisions
 
-**Blocking the next step:** none.
+**Blocking the next step (2026-11-18, 19:59 UTC): the relief's top-up, yes or no.** About 4
+hours of the Pi's time; the block above has what each answer does. Nothing is scored until
+it is decided.
 
 **Waiting on Michal, and holding up one thing (2026-11-11, 21:14 UTC): a quiet Mac for the
 second speed reading.** The reading needs about forty minutes in which the Mac runs nothing
