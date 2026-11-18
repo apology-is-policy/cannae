@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-17, 23:28 UTC.
+**Last updated:** 2026-11-18, 11:35 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -711,6 +711,9 @@ of the recheck is equal.**
 **Since then (2026-11-17, 23:28 UTC): the batch runs, no step has failed, and every record
 of the recheck is equal.**
 
+**Since then (2026-11-18, 11:35 UTC): the batch runs, no step has failed, and every record
+of the recheck is equal.**
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -725,7 +728,7 @@ run again on the re-frozen code and passed again (the blocks of 18:40 and 21:38 
 **Rechecked on the Mac.** For every cell and variant, two parameter sets are run again on the
 Mac and compared with the Pi's records, field for field (`tools/s09-recheck.py`). The freeze
 seed fixes which sets, so nobody picks them. It runs as the batch goes. So far, on the new
-batch: every record is equal (2026-11-17, 23:28 UTC). The tool was
+batch: every record is equal (2026-11-18, 11:35 UTC). The tool was
 tested on a copy with one altered record, and it caught it.
 
 **Two addenda to the pre-registration** (agreed with Varro, written before any record was
