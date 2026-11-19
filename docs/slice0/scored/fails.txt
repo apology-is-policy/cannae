@@ -1,0 +1,392 @@
+Pairwise rung 0, base: 200 sets of 10 seeds; 0 lines left out; every verdict as the scorer's
+  1 standoff: 2 pass, 198 fail, 0 cannot be scored
+      fail on: formed phase, s under its minimum: 198
+      fail on: median gap while formed, m under its minimum: 37
+      formed phase, s: median 19.50 (quartiles 12.88 to 42.12, 200 sets with a value); band at least 300
+      median gap while formed, m: median 1.36 (quartiles 1.06 to 2.01, 200 sets with a value); band at least 1
+  2 pulses and lulls: 2 pass, 182 fail, 16 cannot be scored
+      fail on: burstiness under its minimum: 182
+      fail on: share of quiet bins under its band: 113
+      fail on: share of quiet bins over its band: 6
+      cannot be scored: no seed gives the share of quiet bins: 16
+      burstiness: median -0.049 (quartiles -0.079 to -0.023, 200 sets with a value); band at least 0.2
+      share of quiet bins: median 0.000 (quartiles 0.000 to 0.533, 184 sets with a value); band 0.2 to 0.9
+  3 rear-first collapse: 0 pass, 200 fail, 0 cannot be scored
+      fail on: depth of the first to turn under its minimum: 200
+      depth of the first to turn: median 0.179 (quartiles 0.147 to 0.222, 200 sets with a value); band at least 0.6
+  4 lateral spread: 43 pass, 157 fail, 0 cannot be scored
+      fail on: spread, Spearman's rho under its minimum: 0
+      fail on: spread, s under its band: 157
+      fail on: spread, s over its band: 0
+      spread, Spearman's rho: median 0.875 (quartiles 0.812 to 0.903, 200 sets with a value); band at least 0.3
+      spread, s: median 6.00 (quartiles 4.62 to 9.38, 200 sets with a value); band 10 to 900
+  5 casualty asymmetry: 87 pass, 110 fail, 3 cannot be scored
+      fail on: loser's share of hits after the break under its minimum: 110
+      cannot be scored: no seed gives the loser's share of hits after the break: 3
+      loser's share of hits after the break: median 0.523 (quartiles 0.333 to 0.854, 197 sets with a value); band at least 0.6
+  6 holds, then breaks (band only): 1 pass, 199 fail, 0 cannot be scored
+      fail on: too many seeds break early: 199
+      fail on: too many seeds never break: 1
+      share of seeds breaking within 300 s: median 1.00 (quartiles 1.00 to 1.00, 200 sets); at most 0.1
+      share of seeds unbroken after 7200 s: median 0.000 (quartiles 0.000 to 0.000, 200 sets); at most 0.25
+  7 casualty clock: 19 pass, 181 fail, 0 cannot be scored
+      fail on: hits per front file per hour under its band: 106
+      fail on: hits per front file per hour over its band: 75
+      fail on: harm per bout under its band: 56
+      fail on: harm per bout over its band: 9
+      fail on: no seed gives the harm per bout: 0
+      hits per front file per hour: median 0.000 (quartiles 0.000 to 4.83, 200 sets with a value); band 0.1 to 2
+      harm per bout: median 0.025 (quartiles 0.000 to 0.068, 200 sets with a value); band 0.002 to 0.15
+  8 centurion gradient: 136 pass, 59 fail, 5 cannot be scored
+      fail on: leaders' share of hits in the formed fight not above their share in the rout: 59
+      cannot be scored: no hit in the formed fight: 4
+      cannot be scored: no hit in the rout: 4
+      leaders' share of hits, formed fight: median 0.070 (quartiles 0.000 to 0.128, 195 sets with a value)
+      leaders' share of hits, rout: median 0.000 (quartiles 0.000 to 0.030, 195 sets with a value)
+  Stragglers (the loser's men who turned before the collapse), over the 1996 runs in which a side broke: one or more in 63 (3.2 %); median 0.000 (quartiles 0.000 to 0.000, 1996 runs); the most 8
+  Tempo, share of front-rank man-time spent forward: median 0.485 (quartiles 0.442 to 0.494, 200 sets with a value); sets within 0.05 to 0.25 (no band): 11
+  Tempo, share of front-rank men who start any bout: median 0.400 (quartiles 0.300 to 0.475, 200 sets with a value); sets within 0.1 to 0.25 (no band): 28
+
+Pairwise rung 1, base: 200 sets of 10 seeds; 0 lines left out; every verdict as the scorer's
+  1 standoff: 2 pass, 198 fail, 0 cannot be scored
+      fail on: formed phase, s under its minimum: 198
+      fail on: median gap while formed, m under its minimum: 37
+      formed phase, s: median 19.50 (quartiles 12.88 to 42.12, 200 sets with a value); band at least 300
+      median gap while formed, m: median 1.36 (quartiles 1.06 to 2.01, 200 sets with a value); band at least 1
+  2 pulses and lulls: 2 pass, 182 fail, 16 cannot be scored
+      fail on: burstiness under its minimum: 182
+      fail on: share of quiet bins under its band: 113
+      fail on: share of quiet bins over its band: 6
+      cannot be scored: no seed gives the share of quiet bins: 16
+      burstiness: median -0.049 (quartiles -0.079 to -0.023, 200 sets with a value); band at least 0.2
+      share of quiet bins: median 0.000 (quartiles 0.000 to 0.556, 184 sets with a value); band 0.2 to 0.9
+  3 rear-first collapse: 0 pass, 200 fail, 0 cannot be scored
+      fail on: depth of the first to turn under its minimum: 200
+      depth of the first to turn: median 0.179 (quartiles 0.147 to 0.218, 200 sets with a value); band at least 0.6
+  4 lateral spread: 44 pass, 156 fail, 0 cannot be scored
+      fail on: spread, Spearman's rho under its minimum: 0
+      fail on: spread, s under its band: 156
+      fail on: spread, s over its band: 0
+      spread, Spearman's rho: median 0.874 (quartiles 0.811 to 0.905, 200 sets with a value); band at least 0.3
+      spread, s: median 6.00 (quartiles 4.62 to 9.38, 200 sets with a value); band 10 to 900
+  5 casualty asymmetry: 86 pass, 111 fail, 3 cannot be scored
+      fail on: loser's share of hits after the break under its minimum: 111
+      cannot be scored: no seed gives the loser's share of hits after the break: 3
+      loser's share of hits after the break: median 0.511 (quartiles 0.333 to 0.855, 197 sets with a value); band at least 0.6
+  6 holds, then breaks (band only): 1 pass, 199 fail, 0 cannot be scored
+      fail on: too many seeds break early: 199
+      fail on: too many seeds never break: 1
+      share of seeds breaking within 300 s: median 1.00 (quartiles 1.00 to 1.00, 200 sets); at most 0.1
+      share of seeds unbroken after 7200 s: median 0.000 (quartiles 0.000 to 0.000, 200 sets); at most 0.25
+  7 casualty clock: 19 pass, 181 fail, 0 cannot be scored
+      fail on: hits per front file per hour under its band: 106
+      fail on: hits per front file per hour over its band: 75
+      fail on: harm per bout under its band: 56
+      fail on: harm per bout over its band: 9
+      fail on: no seed gives the harm per bout: 0
+      hits per front file per hour: median 0.000 (quartiles 0.000 to 4.83, 200 sets with a value); band 0.1 to 2
+      harm per bout: median 0.025 (quartiles 0.000 to 0.068, 200 sets with a value); band 0.002 to 0.15
+  8 centurion gradient: 133 pass, 62 fail, 5 cannot be scored
+      fail on: leaders' share of hits in the formed fight not above their share in the rout: 62
+      cannot be scored: no hit in the formed fight: 4
+      cannot be scored: no hit in the rout: 4
+      leaders' share of hits, formed fight: median 0.070 (quartiles 0.000 to 0.130, 195 sets with a value)
+      leaders' share of hits, rout: median 0.000 (quartiles 0.000 to 0.035, 195 sets with a value)
+  Stragglers (the loser's men who turned before the collapse), over the 1996 runs in which a side broke: one or more in 61 (3.1 %); median 0.000 (quartiles 0.000 to 0.000, 1996 runs); the most 8
+  Tempo, share of front-rank man-time spent forward: median 0.485 (quartiles 0.442 to 0.494, 200 sets with a value); sets within 0.05 to 0.25 (no band): 11
+  Tempo, share of front-rank men who start any bout: median 0.400 (quartiles 0.300 to 0.475, 200 sets with a value); sets within 0.1 to 0.25 (no band): 28
+
+Pairwise rung 2, base: 200 sets of 10 seeds; 0 lines left out; every verdict as the scorer's
+  1 standoff: 1 pass, 199 fail, 0 cannot be scored
+      fail on: formed phase, s under its minimum: 199
+      fail on: median gap while formed, m under its minimum: 42
+      formed phase, s: median 18.38 (quartiles 11.75 to 32.25, 200 sets with a value); band at least 300
+      median gap while formed, m: median 1.27 (quartiles 1.03 to 1.90, 200 sets with a value); band at least 1
+  2 pulses and lulls: 1 pass, 178 fail, 21 cannot be scored
+      fail on: burstiness under its minimum: 178
+      fail on: share of quiet bins under its band: 110
+      fail on: share of quiet bins over its band: 6
+      cannot be scored: no seed gives the share of quiet bins: 21
+      burstiness: median -0.055 (quartiles -0.091 to -0.030, 200 sets with a value); band at least 0.2
+      share of quiet bins: median 0.000 (quartiles 0.000 to 0.583, 179 sets with a value); band 0.2 to 0.9
+  3 rear-first collapse: 0 pass, 200 fail, 0 cannot be scored
+      fail on: depth of the first to turn under its minimum: 200
+      depth of the first to turn: median 0.175 (quartiles 0.143 to 0.206, 200 sets with a value); band at least 0.6
+  4 lateral spread: 28 pass, 172 fail, 0 cannot be scored
+      fail on: spread, Spearman's rho under its minimum: 0
+      fail on: spread, s under its band: 172
+      fail on: spread, s over its band: 0
+      spread, Spearman's rho: median 0.878 (quartiles 0.823 to 0.906, 200 sets with a value); band at least 0.3
+      spread, s: median 5.62 (quartiles 4.25 to 7.62, 200 sets with a value); band 10 to 900
+  5 casualty asymmetry: 87 pass, 110 fail, 3 cannot be scored
+      fail on: loser's share of hits after the break under its minimum: 110
+      cannot be scored: no seed gives the loser's share of hits after the break: 3
+      loser's share of hits after the break: median 0.528 (quartiles 0.367 to 0.857, 197 sets with a value); band at least 0.6
+  6 holds, then breaks (band only): 0 pass, 200 fail, 0 cannot be scored
+      fail on: too many seeds break early: 200
+      fail on: too many seeds never break: 0
+      share of seeds breaking within 300 s: median 1.00 (quartiles 1.00 to 1.00, 200 sets); at most 0.1
+      share of seeds unbroken after 7200 s: median 0.000 (quartiles 0.000 to 0.000, 200 sets); at most 0.25
+  7 casualty clock: 18 pass, 182 fail, 0 cannot be scored
+      fail on: hits per front file per hour under its band: 108
+      fail on: hits per front file per hour over its band: 74
+      fail on: harm per bout under its band: 56
+      fail on: harm per bout over its band: 8
+      fail on: no seed gives the harm per bout: 0
+      hits per front file per hour: median 0.000 (quartiles 0.000 to 5.01, 200 sets with a value); band 0.1 to 2
+      harm per bout: median 0.030 (quartiles 0.000 to 0.071, 200 sets with a value); band 0.002 to 0.15
+  8 centurion gradient: 132 pass, 63 fail, 5 cannot be scored
+      fail on: leaders' share of hits in the formed fight not above their share in the rout: 63
+      cannot be scored: no hit in the formed fight: 4
+      cannot be scored: no hit in the rout: 4
+      leaders' share of hits, formed fight: median 0.080 (quartiles 0.000 to 0.152, 195 sets with a value)
+      leaders' share of hits, rout: median 0.000 (quartiles 0.000 to 0.036, 195 sets with a value)
+  Stragglers (the loser's men who turned before the collapse), over the 1998 runs in which a side broke: one or more in 26 (1.3 %); median 0.000 (quartiles 0.000 to 0.000, 1998 runs); the most 3
+  Tempo, share of front-rank man-time spent forward: median 0.486 (quartiles 0.455 to 0.494, 200 sets with a value); sets within 0.05 to 0.25 (no band): 13
+  Tempo, share of front-rank men who start any bout: median 0.375 (quartiles 0.287 to 0.450, 200 sets with a value); sets within 0.1 to 0.25 (no band): 31
+
+Pairwise rung 3, base: 200 sets of 10 seeds; 0 lines left out; every verdict as the scorer's
+  1 standoff: 2 pass, 198 fail, 0 cannot be scored
+      fail on: formed phase, s under its minimum: 198
+      fail on: median gap while formed, m under its minimum: 35
+      formed phase, s: median 19.38 (quartiles 12.75 to 37.12, 200 sets with a value); band at least 300
+      median gap while formed, m: median 1.36 (quartiles 1.06 to 1.97, 200 sets with a value); band at least 1
+  2 pulses and lulls: 2 pass, 182 fail, 16 cannot be scored
+      fail on: burstiness under its minimum: 182
+      fail on: share of quiet bins under its band: 115
+      fail on: share of quiet bins over its band: 6
+      cannot be scored: no seed gives the share of quiet bins: 16
+      burstiness: median -0.053 (quartiles -0.076 to -0.025, 200 sets with a value); band at least 0.2
+      share of quiet bins: median 0.000 (quartiles 0.000 to 0.556, 184 sets with a value); band 0.2 to 0.9
+  3 rear-first collapse: 0 pass, 200 fail, 0 cannot be scored
+      fail on: depth of the first to turn under its minimum: 200
+      depth of the first to turn: median 0.175 (quartiles 0.143 to 0.210, 200 sets with a value); band at least 0.6
+  4 lateral spread: 43 pass, 157 fail, 0 cannot be scored
+      fail on: spread, Spearman's rho under its minimum: 0
+      fail on: spread, s under its band: 157
+      fail on: spread, s over its band: 0
+      spread, Spearman's rho: median 0.871 (quartiles 0.806 to 0.906, 200 sets with a value); band at least 0.3
+      spread, s: median 5.75 (quartiles 4.50 to 8.75, 200 sets with a value); band 10 to 900
+  5 casualty asymmetry: 79 pass, 119 fail, 2 cannot be scored
+      fail on: loser's share of hits after the break under its minimum: 119
+      cannot be scored: no seed gives the loser's share of hits after the break: 2
+      loser's share of hits after the break: median 0.500 (quartiles 0.325 to 0.866, 198 sets with a value); band at least 0.6
+  6 holds, then breaks (band only): 1 pass, 199 fail, 0 cannot be scored
+      fail on: too many seeds break early: 199
+      fail on: too many seeds never break: 0
+      share of seeds breaking within 300 s: median 1.00 (quartiles 1.00 to 1.00, 200 sets); at most 0.1
+      share of seeds unbroken after 7200 s: median 0.000 (quartiles 0.000 to 0.000, 200 sets); at most 0.25
+  7 casualty clock: 21 pass, 179 fail, 0 cannot be scored
+      fail on: hits per front file per hour under its band: 108
+      fail on: hits per front file per hour over its band: 71
+      fail on: harm per bout under its band: 61
+      fail on: harm per bout over its band: 8
+      fail on: no seed gives the harm per bout: 0
+      hits per front file per hour: median 0.000 (quartiles 0.000 to 5.11, 200 sets with a value); band 0.1 to 2
+      harm per bout: median 0.025 (quartiles 0.000 to 0.069, 200 sets with a value); band 0.002 to 0.15
+  8 centurion gradient: 127 pass, 64 fail, 9 cannot be scored
+      fail on: leaders' share of hits in the formed fight not above their share in the rout: 64
+      cannot be scored: no hit in the formed fight: 5
+      cannot be scored: no hit in the rout: 6
+      leaders' share of hits, formed fight: median 0.070 (quartiles 0.000 to 0.125, 191 sets with a value)
+      leaders' share of hits, rout: median 0.000 (quartiles 0.000 to 0.031, 191 sets with a value)
+  Stragglers (the loser's men who turned before the collapse), over the 1999 runs in which a side broke: one or more in 51 (2.6 %); median 0.000 (quartiles 0.000 to 0.000, 1999 runs); the most 4
+  Tempo, share of front-rank man-time spent forward: median 0.485 (quartiles 0.449 to 0.494, 200 sets with a value); sets within 0.05 to 0.25 (no band): 11
+  Tempo, share of front-rank men who start any bout: median 0.388 (quartiles 0.300 to 0.475, 200 sets with a value); sets within 0.1 to 0.25 (no band): 28
+
+Field rung 0, base: 200 sets of 10 seeds; 0 lines left out; every verdict as the scorer's
+  1 standoff: 18 pass, 182 fail, 0 cannot be scored
+      fail on: formed phase, s under its minimum: 182
+      fail on: median gap while formed, m under its minimum: 20
+      formed phase, s: median 27.12 (quartiles 14.38 to 71.75, 200 sets with a value); band at least 300
+      median gap while formed, m: median 1.73 (quartiles 1.14 to 2.21, 200 sets with a value); band at least 1
+  2 pulses and lulls: 9 pass, 180 fail, 11 cannot be scored
+      fail on: burstiness under its minimum: 178
+      fail on: share of quiet bins under its band: 111
+      fail on: share of quiet bins over its band: 12
+      cannot be scored: no seed gives the share of quiet bins: 11
+      burstiness: median -0.026 (quartiles -0.065 to 0.009, 200 sets with a value); band at least 0.2
+      share of quiet bins: median 0.000 (quartiles 0.000 to 0.667, 189 sets with a value); band 0.2 to 0.9
+  3 rear-first collapse: 0 pass, 200 fail, 0 cannot be scored
+      fail on: depth of the first to turn under its minimum: 200
+      depth of the first to turn: median 0.258 (quartiles 0.214 to 0.325, 200 sets with a value); band at least 0.6
+  4 lateral spread: 83 pass, 117 fail, 0 cannot be scored
+      fail on: spread, Spearman's rho under its minimum: 0
+      fail on: spread, s under its band: 117
+      fail on: spread, s over its band: 0
+      spread, Spearman's rho: median 0.857 (quartiles 0.796 to 0.901, 200 sets with a value); band at least 0.3
+      spread, s: median 8.12 (quartiles 5.00 to 18.62, 200 sets with a value); band 10 to 900
+  5 casualty asymmetry: 116 pass, 81 fail, 3 cannot be scored
+      fail on: loser's share of hits after the break under its minimum: 81
+      cannot be scored: no seed gives the loser's share of hits after the break: 3
+      loser's share of hits after the break: median 0.667 (quartiles 0.400 to 1.00, 197 sets with a value); band at least 0.6
+  6 holds, then breaks (band only): 1 pass, 199 fail, 0 cannot be scored
+      fail on: too many seeds break early: 198
+      fail on: too many seeds never break: 5
+      share of seeds breaking within 300 s: median 1.00 (quartiles 0.900 to 1.00, 200 sets); at most 0.1
+      share of seeds unbroken after 7200 s: median 0.000 (quartiles 0.000 to 0.000, 200 sets); at most 0.25
+  7 casualty clock: 42 pass, 158 fail, 0 cannot be scored
+      fail on: hits per front file per hour under its band: 88
+      fail on: hits per front file per hour over its band: 70
+      fail on: harm per bout under its band: 58
+      fail on: harm per bout over its band: 2
+      fail on: no seed gives the harm per bout: 0
+      hits per front file per hour: median 0.532 (quartiles 0.000 to 3.61, 200 sets with a value); band 0.1 to 2
+      harm per bout: median 0.016 (quartiles 0.000 to 0.047, 200 sets with a value); band 0.002 to 0.15
+  8 centurion gradient: 122 pass, 71 fail, 7 cannot be scored
+      fail on: leaders' share of hits in the formed fight not above their share in the rout: 71
+      cannot be scored: no hit in the formed fight: 6
+      cannot be scored: no hit in the rout: 4
+      leaders' share of hits, formed fight: median 0.054 (quartiles 0.000 to 0.100, 193 sets with a value)
+      leaders' share of hits, rout: median 0.000 (quartiles 0.000 to 0.030, 193 sets with a value)
+  Stragglers (the loser's men who turned before the collapse), over the 1956 runs in which a side broke: one or more in 230 (11.8 %); median 0.000 (quartiles 0.000 to 0.000, 1956 runs); the most 19
+  Tempo, share of front-rank man-time spent forward: median 0.474 (quartiles 0.407 to 0.491, 200 sets with a value); sets within 0.05 to 0.25 (no band): 20
+  Tempo, share of front-rank men who start any bout: median 0.425 (quartiles 0.312 to 0.500, 200 sets with a value); sets within 0.1 to 0.25 (no band): 18
+
+Field rung 1, base: 200 sets of 10 seeds; 0 lines left out; every verdict as the scorer's
+  1 standoff: 17 pass, 183 fail, 0 cannot be scored
+      fail on: formed phase, s under its minimum: 183
+      fail on: median gap while formed, m under its minimum: 20
+      formed phase, s: median 27.12 (quartiles 14.38 to 73.38, 200 sets with a value); band at least 300
+      median gap while formed, m: median 1.74 (quartiles 1.14 to 2.21, 200 sets with a value); band at least 1
+  2 pulses and lulls: 8 pass, 181 fail, 11 cannot be scored
+      fail on: burstiness under its minimum: 179
+      fail on: share of quiet bins under its band: 112
+      fail on: share of quiet bins over its band: 13
+      cannot be scored: no seed gives the share of quiet bins: 11
+      burstiness: median -0.026 (quartiles -0.063 to 0.009, 200 sets with a value); band at least 0.2
+      share of quiet bins: median 0.000 (quartiles 0.000 to 0.646, 189 sets with a value); band 0.2 to 0.9
+  3 rear-first collapse: 1 pass, 199 fail, 0 cannot be scored
+      fail on: depth of the first to turn under its minimum: 199
+      depth of the first to turn: median 0.262 (quartiles 0.218 to 0.325, 200 sets with a value); band at least 0.6
+  4 lateral spread: 84 pass, 116 fail, 0 cannot be scored
+      fail on: spread, Spearman's rho under its minimum: 0
+      fail on: spread, s under its band: 116
+      fail on: spread, s over its band: 0
+      spread, Spearman's rho: median 0.855 (quartiles 0.792 to 0.897, 200 sets with a value); band at least 0.3
+      spread, s: median 8.25 (quartiles 5.38 to 18.38, 200 sets with a value); band 10 to 900
+  5 casualty asymmetry: 114 pass, 83 fail, 3 cannot be scored
+      fail on: loser's share of hits after the break under its minimum: 83
+      cannot be scored: no seed gives the loser's share of hits after the break: 3
+      loser's share of hits after the break: median 0.683 (quartiles 0.385 to 1.00, 197 sets with a value); band at least 0.6
+  6 holds, then breaks (band only): 1 pass, 199 fail, 0 cannot be scored
+      fail on: too many seeds break early: 198
+      fail on: too many seeds never break: 5
+      share of seeds breaking within 300 s: median 1.00 (quartiles 0.900 to 1.00, 200 sets); at most 0.1
+      share of seeds unbroken after 7200 s: median 0.000 (quartiles 0.000 to 0.000, 200 sets); at most 0.25
+  7 casualty clock: 39 pass, 161 fail, 0 cannot be scored
+      fail on: hits per front file per hour under its band: 90
+      fail on: hits per front file per hour over its band: 71
+      fail on: harm per bout under its band: 58
+      fail on: harm per bout over its band: 2
+      fail on: no seed gives the harm per bout: 0
+      hits per front file per hour: median 0.333 (quartiles 0.000 to 3.65, 200 sets with a value); band 0.1 to 2
+      harm per bout: median 0.016 (quartiles 0.000 to 0.047, 200 sets with a value); band 0.002 to 0.15
+  8 centurion gradient: 124 pass, 68 fail, 8 cannot be scored
+      fail on: leaders' share of hits in the formed fight not above their share in the rout: 68
+      cannot be scored: no hit in the formed fight: 6
+      cannot be scored: no hit in the rout: 5
+      leaders' share of hits, formed fight: median 0.054 (quartiles 0.000 to 0.100, 192 sets with a value)
+      leaders' share of hits, rout: median 0.000 (quartiles 0.000 to 0.030, 192 sets with a value)
+  Stragglers (the loser's men who turned before the collapse), over the 1954 runs in which a side broke: one or more in 210 (10.7 %); median 0.000 (quartiles 0.000 to 0.000, 1954 runs); the most 30
+  Tempo, share of front-rank man-time spent forward: median 0.474 (quartiles 0.411 to 0.492, 200 sets with a value); sets within 0.05 to 0.25 (no band): 18
+  Tempo, share of front-rank men who start any bout: median 0.425 (quartiles 0.312 to 0.500, 200 sets with a value); sets within 0.1 to 0.25 (no band): 18
+
+Field rung 2, base: 200 sets of 10 seeds; 0 lines left out; every verdict as the scorer's
+  1 standoff: 5 pass, 195 fail, 0 cannot be scored
+      fail on: formed phase, s under its minimum: 195
+      fail on: median gap while formed, m under its minimum: 25
+      formed phase, s: median 21.50 (quartiles 13.00 to 43.50, 200 sets with a value); band at least 300
+      median gap while formed, m: median 1.59 (quartiles 1.14 to 2.06, 200 sets with a value); band at least 1
+  2 pulses and lulls: 4 pass, 179 fail, 17 cannot be scored
+      fail on: burstiness under its minimum: 179
+      fail on: share of quiet bins under its band: 115
+      fail on: share of quiet bins over its band: 6
+      cannot be scored: no seed gives the share of quiet bins: 17
+      burstiness: median -0.042 (quartiles -0.078 to -0.014, 200 sets with a value); band at least 0.2
+      share of quiet bins: median 0.000 (quartiles 0.000 to 0.548, 183 sets with a value); band 0.2 to 0.9
+  3 rear-first collapse: 0 pass, 200 fail, 0 cannot be scored
+      fail on: depth of the first to turn under its minimum: 200
+      depth of the first to turn: median 0.246 (quartiles 0.206 to 0.294, 200 sets with a value); band at least 0.6
+  4 lateral spread: 63 pass, 137 fail, 0 cannot be scored
+      fail on: spread, Spearman's rho under its minimum: 0
+      fail on: spread, s under its band: 137
+      fail on: spread, s over its band: 0
+      spread, Spearman's rho: median 0.862 (quartiles 0.812 to 0.898, 200 sets with a value); band at least 0.3
+      spread, s: median 6.25 (quartiles 4.50 to 13.25, 200 sets with a value); band 10 to 900
+  5 casualty asymmetry: 105 pass, 92 fail, 3 cannot be scored
+      fail on: loser's share of hits after the break under its minimum: 92
+      cannot be scored: no seed gives the loser's share of hits after the break: 3
+      loser's share of hits after the break: median 0.633 (quartiles 0.333 to 1.00, 197 sets with a value); band at least 0.6
+  6 holds, then breaks (band only): 1 pass, 199 fail, 0 cannot be scored
+      fail on: too many seeds break early: 199
+      fail on: too many seeds never break: 0
+      share of seeds breaking within 300 s: median 1.00 (quartiles 0.900 to 1.00, 200 sets); at most 0.1
+      share of seeds unbroken after 7200 s: median 0.000 (quartiles 0.000 to 0.000, 200 sets); at most 0.25
+  7 casualty clock: 33 pass, 167 fail, 0 cannot be scored
+      fail on: hits per front file per hour under its band: 94
+      fail on: hits per front file per hour over its band: 73
+      fail on: harm per bout under its band: 57
+      fail on: harm per bout over its band: 1
+      fail on: no seed gives the harm per bout: 0
+      hits per front file per hour: median 0.452 (quartiles 0.000 to 4.87, 200 sets with a value); band 0.1 to 2
+      harm per bout: median 0.016 (quartiles 0.000 to 0.049, 200 sets with a value); band 0.002 to 0.15
+  8 centurion gradient: 119 pass, 73 fail, 8 cannot be scored
+      fail on: leaders' share of hits in the formed fight not above their share in the rout: 73
+      cannot be scored: no hit in the formed fight: 6
+      cannot be scored: no hit in the rout: 5
+      leaders' share of hits, formed fight: median 0.071 (quartiles 0.000 to 0.133, 192 sets with a value)
+      leaders' share of hits, rout: median 0.000 (quartiles 0.000 to 0.029, 192 sets with a value)
+  Stragglers (the loser's men who turned before the collapse), over the 1990 runs in which a side broke: one or more in 130 (6.5 %); median 0.000 (quartiles 0.000 to 0.000, 1990 runs); the most 16
+  Tempo, share of front-rank man-time spent forward: median 0.480 (quartiles 0.439 to 0.492, 200 sets with a value); sets within 0.05 to 0.25 (no band): 11
+  Tempo, share of front-rank men who start any bout: median 0.387 (quartiles 0.312 to 0.487, 200 sets with a value); sets within 0.1 to 0.25 (no band): 29
+
+Field rung 3, base: 200 sets of 10 seeds; 0 lines left out; every verdict as the scorer's
+  1 standoff: 6 pass, 194 fail, 0 cannot be scored
+      fail on: formed phase, s under its minimum: 194
+      fail on: median gap while formed, m under its minimum: 21
+      formed phase, s: median 25.62 (quartiles 14.25 to 52.50, 200 sets with a value); band at least 300
+      median gap while formed, m: median 1.69 (quartiles 1.14 to 2.12, 200 sets with a value); band at least 1
+  2 pulses and lulls: 5 pass, 183 fail, 12 cannot be scored
+      fail on: burstiness under its minimum: 182
+      fail on: share of quiet bins under its band: 122
+      fail on: share of quiet bins over its band: 10
+      cannot be scored: no seed gives the share of quiet bins: 12
+      burstiness: median -0.036 (quartiles -0.068 to -0.004, 200 sets with a value); band at least 0.2
+      share of quiet bins: median 0.000 (quartiles 0.000 to 0.500, 188 sets with a value); band 0.2 to 0.9
+  3 rear-first collapse: 0 pass, 200 fail, 0 cannot be scored
+      fail on: depth of the first to turn under its minimum: 200
+      depth of the first to turn: median 0.258 (quartiles 0.214 to 0.317, 200 sets with a value); band at least 0.6
+  4 lateral spread: 79 pass, 121 fail, 0 cannot be scored
+      fail on: spread, Spearman's rho under its minimum: 0
+      fail on: spread, s under its band: 121
+      fail on: spread, s over its band: 0
+      spread, Spearman's rho: median 0.857 (quartiles 0.806 to 0.895, 200 sets with a value); band at least 0.3
+      spread, s: median 7.75 (quartiles 5.12 to 17.00, 200 sets with a value); band 10 to 900
+  5 casualty asymmetry: 115 pass, 83 fail, 2 cannot be scored
+      fail on: loser's share of hits after the break under its minimum: 83
+      cannot be scored: no seed gives the loser's share of hits after the break: 2
+      loser's share of hits after the break: median 0.690 (quartiles 0.392 to 1.00, 198 sets with a value); band at least 0.6
+  6 holds, then breaks (band only): 0 pass, 200 fail, 0 cannot be scored
+      fail on: too many seeds break early: 199
+      fail on: too many seeds never break: 4
+      share of seeds breaking within 300 s: median 1.00 (quartiles 0.900 to 1.00, 200 sets); at most 0.1
+      share of seeds unbroken after 7200 s: median 0.000 (quartiles 0.000 to 0.000, 200 sets); at most 0.25
+  7 casualty clock: 33 pass, 167 fail, 0 cannot be scored
+      fail on: hits per front file per hour under its band: 97
+      fail on: hits per front file per hour over its band: 70
+      fail on: harm per bout under its band: 63
+      fail on: harm per bout over its band: 2
+      fail on: no seed gives the harm per bout: 0
+      hits per front file per hour: median 0.309 (quartiles 0.000 to 3.87, 200 sets with a value); band 0.1 to 2
+      harm per bout: median 0.015 (quartiles 0.000 to 0.045, 200 sets with a value); band 0.002 to 0.15
+  8 centurion gradient: 120 pass, 70 fail, 10 cannot be scored
+      fail on: leaders' share of hits in the formed fight not above their share in the rout: 70
+      cannot be scored: no hit in the formed fight: 8
+      cannot be scored: no hit in the rout: 4
+      leaders' share of hits, formed fight: median 0.060 (quartiles 0.000 to 0.108, 190 sets with a value)
+      leaders' share of hits, rout: median 0.000 (quartiles 0.000 to 0.032, 190 sets with a value)
+  Stragglers (the loser's men who turned before the collapse), over the 1968 runs in which a side broke: one or more in 168 (8.5 %); median 0.000 (quartiles 0.000 to 0.000, 1968 runs); the most 18
+  Tempo, share of front-rank man-time spent forward: median 0.476 (quartiles 0.423 to 0.492, 200 sets with a value); sets within 0.05 to 0.25 (no band): 12
+  Tempo, share of front-rank men who start any bout: median 0.412 (quartiles 0.312 to 0.500, 200 sets with a value); sets within 0.1 to 0.25 (no band): 20
+

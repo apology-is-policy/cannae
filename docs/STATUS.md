@@ -1,10 +1,10 @@
 # Status
 
-**Phase:** Slice 0, the experiment between the two designs. Both engines are built and
-frozen. The scored batch is being restarted once, on a code with two fixes; the newest
-blocks are under "Since then" below.
+**Phase:** Slice 0, the experiment between the two designs. The scored batch has run and is
+scored: **every cell fails the pre-registered test, on both engines and at every rung.** The
+report is being written; the newest blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-19, 05:10 UTC.
+**Last updated:** 2026-11-19, 09:22 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -738,6 +738,32 @@ one decision is yours before anything is scored.**
   with, it uses the batch's own programs, unchanged byte for byte.
 - **Then:** the Mac rechecks a sample of the new runs, and the scoring begins.
 
+**Since then (2026-11-19, 09:22 UTC): the batch is scored, and every cell fails.**
+
+- **The verdict:** in all eight cells, both engines at rungs 0 to 3, **not one of the 200
+  parameter sets passes all eight patterns** (0 of 200, 95 % interval 0.0 to 1.9 %). The
+  rule needed at least 10 %. So by the test written before the batch, neither design
+  reproduces the eight patterns at any rung of memory.
+- **It is not close.** A set passes a median of two of the eight patterns on the field
+  engine, and one on the pairwise engine. Two patterns almost never pass anywhere:
+  - **3, rear-first collapse:** at most 1 set of 200 in any cell;
+  - **6, holds then breaks:** at most 1 of 200, even by its band alone.
+  - Patterns 1 (a standoff before the fight) and 2 (pulses and lulls) pass in at most 18
+    and 9 sets.
+- **The first batch says the same for the frozen code:** the field engine's four cells,
+  0 of 200 each. So the two fixes made no difference to the verdict.
+- **The gate had already said it.** All eight cells "cannot pass" on `base` alone, which
+  is what the order of the steps would have shown (the pre-registration's row of 12
+  November, 14:37 UTC, left two readings open; this was the second).
+- **The checks hold:** every audit's stopped and whole runs agree (64 of 64), the
+  recheck and the crosswise check found every record equal, and the top-up's sample too
+  (320 of 320).
+- **The outputs** are in [slice0/scored/](slice0/scored/), made by the commands the
+  outline fixed beforehand.
+- **Next:** the replays on the Pi for the relief and the leaders' falls (a few hours), then
+  the report. One question will be yours after it: you decided on 10 November that rung 4
+  is built only if rungs 0 to 3 all fail, and they have.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -993,8 +1019,7 @@ word is singular). This is recorded in the review's disposition table.
 
 ## Open decisions
 
-**Blocking the next step:** none. The top-up runs (decided 2026-11-19); the scoring follows
-it.
+**Blocking the next step:** none. The batch is scored; the replays and the report follow.
 
 **Waiting on Michal, and holding up one thing (2026-11-11, 21:14 UTC): a quiet Mac for the
 second speed reading.** The reading needs about forty minutes in which the Mac runs nothing

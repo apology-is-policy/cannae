@@ -1,0 +1,46 @@
+Field rung 1: 200 parameter sets scored at 10 seeds each; freeze seed [Some(9464880715404986219)]
+
+  pattern, on base                    pass  fail  unscorable
+  1 standoff                            17   183           0
+  2 pulses and lulls                     8   181          11
+  3 rear-first collapse                  1   199           0
+  4 lateral spread                      84   116           0
+  5 casualty asymmetry                 114    83           3
+  6 holds, then breaks (band only)       1   199           0
+  7 casualty clock                      39   161           0
+  8 centurion gradient                 124    68           8
+  6 with dose-response (scored)          0   200
+
+  All eight: 0 of 200 sets, 0.0 % (95 % interval 0.0-1.9 %). Knife-edge rule, at least 10 % as observed: FAIL
+  Patterns passed per set, of eight: median 2.00 (quartiles 1.00-3.00, 200 sets)
+
+  Dose-response, how the Roman line fared (the rule, at least 0.6 to pass):
+    recruits worse than veterans   median 0.88 (quartiles 0.76-0.96, 200 sets); 194 at or above
+    flank worse than base          median 0.39 (quartiles 0.28-0.44, 200 sets); 4 at or above
+  Beside it, the Roman line's break time alone (reported):
+    recruits worse than veterans   median 0.88 (quartiles 0.76-0.97, 200 sets); 193 at or above
+    flank worse than base          median 0.39 (quartiles 0.28-0.44, 200 sets); 5 at or above
+    sets where the Roman line broke in fewer than 2 seeds of base: 0
+
+  The relief, P(the Roman line fares worse than relieved), reported:
+    backed, the drill alone: mean 0.499 (95 % interval 0.498-0.500) over 50 sets; 2 above 0.5; Spearman against the Weibull shape 0.12
+    base, the whole second line: median 0.57 (quartiles 0.50-0.65, 50 sets)
+    every fourth set: a relief was ordered in 17 of 500 runs of relief (3 %), every relief in 15; against its backed twin, the relieved line fared better in 2, worse in 5, the same in 10
+    the top-up: a relief was ordered in 99 of 250 runs of relief (40 %), every relief in 93; against its backed twin, the relieved line fared better in 28, worse in 29, the same in 42
+    the top-up, if it is run: sets [2, 3, 9, 10, 14, 17, 18, 19, 26, 49, 74, 85, 91, 93, 94, 97, 98, 105, 139, 142, 150, 155, 177, 178, 195]
+
+  Shape of the time to break on base (Weibull k, reported): median 1.08 (quartiles 0.71-1.91, 200 sets)
+  Memory variants, P(the Roman line fares worse than in base), reported:
+    shock   median 0.76 (quartiles 0.62-0.88, 200 sets)
+    volleys median 0.50 (quartiles 0.40-0.59, 200 sets)
+
+  The audit (reported):
+    backed    100 whole runs, 99 with the window closed before the end: after it, 14 with a bout, 13 with a rally, 1 with a second break; stopped and whole summaries equal in 100 of 100
+    base      100 whole runs, 99 with the window closed before the end: after it, 15 with a bout, 16 with a rally, 1 with a second break; stopped and whole summaries equal in 100 of 100
+    flank     100 whole runs, 99 with the window closed before the end: after it, 14 with a bout, 15 with a rally, 1 with a second break; stopped and whole summaries equal in 100 of 100
+    recruits  100 whole runs, 100 with the window closed before the end: after it, 12 with a bout, 10 with a rally, 0 with a second break; stopped and whole summaries equal in 100 of 100
+    relief    100 whole runs, 97 with the window closed before the end: after it, 14 with a bout, 13 with a rally, 1 with a second break; stopped and whole summaries equal in 100 of 100
+    shock     100 whole runs, 97 with the window closed before the end: after it, 20 with a bout, 16 with a rally, 2 with a second break; stopped and whole summaries equal in 100 of 100; front losses before contact, median per run: Romans 23, warband 0
+    veterans  100 whole runs, 94 with the window closed before the end: after it, 16 with a bout, 15 with a rally, 4 with a second break; stopped and whole summaries equal in 100 of 100
+    volleys   100 whole runs, 99 with the window closed before the end: after it, 14 with a bout, 9 with a rally, 1 with a second break; stopped and whole summaries equal in 100 of 100; front losses before contact, median per run: Romans 3, warband 0
+

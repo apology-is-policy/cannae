@@ -1,0 +1,40 @@
+Pairwise: sets scored at rungs 0 to 3: 200, 200, 200, 200
+  shock, P(the Roman line fares worse than in base):
+    rung 1 against rung 0: larger in 33, smaller in 11, the same in 156 of 200 sets (65 of them the same run for run at both rungs); median difference +0.000; the two-sided line is 29 of 44: PAST IT: the higher rung shows more
+    rung 2 against rung 0: larger in 91, smaller in 88, the same in 21 of 200 sets (0 of them the same run for run at both rungs); median difference +0.000; the two-sided line is 104 of 179: not past it
+    rung 3 against rung 0: larger in 77, smaller in 79, the same in 44 of 200 sets (2 of them the same run for run at both rungs); median difference +0.000; the two-sided line is 91 of 156: not past it
+    rung 2 against rung 1: larger in 81, smaller in 92, the same in 27 of 200 sets (3 of them the same run for run at both rungs); median difference +0.000; the two-sided line is 100 of 173: not past it
+      the sets where one level of shaken takes more than four minutes to wear off: larger in 52, smaller in 54, the same in 14 of 120 sets (2 of them the same run for run at both rungs); median difference +0.000; the two-sided line is 64 of 106: not past it
+      the other sets: larger in 29, smaller in 38, the same in 13 of 80 sets (1 of them the same run for run at both rungs); median difference +0.000; the two-sided line is 42 of 67: not past it
+    rung 3 against rung 2: larger in 101, smaller in 84, the same in 15 of 200 sets (0 of them the same run for run at both rungs); median difference +0.005; the two-sided line is 107 of 185: not past it
+  volleys, P(the Roman line fares worse than in base):
+    rung 1 against rung 0: larger in 46, smaller in 8, the same in 146 of 200 sets (93 of them the same run for run at both rungs); median difference +0.000; the two-sided line is 35 of 54: PAST IT: the higher rung shows more
+    rung 2 against rung 0: larger in 155, smaller in 38, the same in 7 of 200 sets (0 of them the same run for run at both rungs); median difference +0.075; the two-sided line is 111 of 193: PAST IT: the higher rung shows more
+    rung 3 against rung 0: larger in 87, smaller in 65, the same in 48 of 200 sets (3 of them the same run for run at both rungs); median difference +0.000; the two-sided line is 89 of 152: not past it
+    rung 2 against rung 1: larger in 155, smaller in 37, the same in 8 of 200 sets (0 of them the same run for run at both rungs); median difference +0.067; the two-sided line is 111 of 192: PAST IT: the higher rung shows more
+      the sets where one level of shaken takes more than four minutes to wear off: larger in 104, smaller in 12, the same in 4 of 120 sets (0 of them the same run for run at both rungs); median difference +0.105; the two-sided line is 70 of 116: PAST IT: the higher rung shows more
+      the other sets: larger in 51, smaller in 25, the same in 4 of 80 sets (0 of them the same run for run at both rungs); median difference +0.025; the two-sided line is 48 of 76: PAST IT: the higher rung shows more
+    rung 3 against rung 2: larger in 40, smaller in 156, the same in 4 of 200 sets (0 of them the same run for run at both rungs); median difference -0.075; the two-sided line is 113 of 196: PAST IT THE OTHER WAY: the higher rung shows less
+  the drill alone, P(the Roman line fares worse backed than relieved), on the sets of the stride:
+    rung 3 against rung 2: larger in 0, smaller in 2, the same in 48 of 50 sets (43 of them with no relief ordered in any run at either rung); median difference +0.000; cannot be told with 2 sets not tied
+
+Field: sets scored at rungs 0 to 3: 200, 200, 200, 200
+  shock, P(the Roman line fares worse than in base):
+    rung 1 against rung 0: larger in 73, smaller in 56, the same in 71 of 200 sets (30 of them the same run for run at both rungs); median difference +0.000; the two-sided line is 77 of 129: not past it
+    rung 2 against rung 0: larger in 145, smaller in 48, the same in 7 of 200 sets (0 of them the same run for run at both rungs); median difference +0.060; the two-sided line is 111 of 193: PAST IT: the higher rung shows more
+    rung 3 against rung 0: larger in 100, smaller in 77, the same in 23 of 200 sets (0 of them the same run for run at both rungs); median difference +0.003; the two-sided line is 103 of 177: not past it
+    rung 2 against rung 1: larger in 141, smaller in 51, the same in 8 of 200 sets (0 of them the same run for run at both rungs); median difference +0.065; the two-sided line is 111 of 192: PAST IT: the higher rung shows more
+      the sets where one level of shaken takes more than four minutes to wear off: larger in 84, smaller in 31, the same in 5 of 120 sets (0 of them the same run for run at both rungs); median difference +0.075; the two-sided line is 69 of 115: PAST IT: the higher rung shows more
+      the other sets: larger in 57, smaller in 20, the same in 3 of 80 sets (0 of them the same run for run at both rungs); median difference +0.060; the two-sided line is 48 of 77: PAST IT: the higher rung shows more
+    rung 3 against rung 2: larger in 44, smaller in 147, the same in 9 of 200 sets (0 of them the same run for run at both rungs); median difference -0.063; the two-sided line is 110 of 191: PAST IT THE OTHER WAY: the higher rung shows less
+  volleys, P(the Roman line fares worse than in base):
+    rung 1 against rung 0: larger in 55, smaller in 40, the same in 105 of 200 sets (44 of them the same run for run at both rungs); median difference +0.000; the two-sided line is 58 of 95: not past it
+    rung 2 against rung 0: larger in 145, smaller in 47, the same in 8 of 200 sets (0 of them the same run for run at both rungs); median difference +0.060; the two-sided line is 111 of 192: PAST IT: the higher rung shows more
+    rung 3 against rung 0: larger in 78, smaller in 78, the same in 44 of 200 sets (2 of them the same run for run at both rungs); median difference +0.000; the two-sided line is 91 of 156: not past it
+    rung 2 against rung 1: larger in 145, smaller in 46, the same in 9 of 200 sets (0 of them the same run for run at both rungs); median difference +0.055; the two-sided line is 110 of 191: PAST IT: the higher rung shows more
+      the sets where one level of shaken takes more than four minutes to wear off: larger in 99, smaller in 18, the same in 3 of 120 sets (0 of them the same run for run at both rungs); median difference +0.080; the two-sided line is 70 of 117: PAST IT: the higher rung shows more
+      the other sets: larger in 46, smaller in 28, the same in 6 of 80 sets (0 of them the same run for run at both rungs); median difference +0.015; the two-sided line is 46 of 74: PAST IT: the higher rung shows more
+    rung 3 against rung 2: larger in 43, smaller in 151, the same in 6 of 200 sets (0 of them the same run for run at both rungs); median difference -0.058; the two-sided line is 112 of 194: PAST IT THE OTHER WAY: the higher rung shows less
+  the drill alone, P(the Roman line fares worse backed than relieved), on the sets of the stride:
+    rung 3 against rung 2: larger in 3, smaller in 3, the same in 44 of 50 sets (37 of them with no relief ordered in any run at either rung); median difference +0.000; the two-sided line is 6 of 6: not past it
+

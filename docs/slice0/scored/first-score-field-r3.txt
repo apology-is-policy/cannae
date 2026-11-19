@@ -1,0 +1,37 @@
+Field rung 3: 200 parameter sets scored at 10 seeds each; freeze seed [Some(9464880715404986219)]
+
+  pattern, on base                    pass  fail  unscorable
+  1 standoff                             8   192           0
+  2 pulses and lulls                     3   185          12
+  3 rear-first collapse                  0   200           0
+  4 lateral spread                      83   117           0
+  5 casualty asymmetry                 105    91           4
+  6 holds, then breaks (band only)       1   199           0
+  7 casualty clock                      36   164           0
+  8 centurion gradient                 118    74           8
+  6 with dose-response (scored)          0   200
+
+  All eight: 0 of 200 sets, 0.0 % (95 % interval 0.0-1.9 %). Knife-edge rule, at least 10 % as observed: FAIL
+  Patterns passed per set, of eight: median 2.00 (quartiles 1.00-2.00, 200 sets)
+
+  Dose-response, how the Roman line fared (the rule, at least 0.6 to pass):
+    recruits worse than veterans   none; 0 at or above
+    flank worse than base          none; 0 at or above
+  Beside it, the Roman line's break time alone (reported):
+    recruits worse than veterans   none; 0 at or above
+    flank worse than base          none; 0 at or above
+    sets where the Roman line broke in fewer than 2 seeds of base: 0
+
+  The relief, P(the Roman line fares worse than relieved), reported:
+    backed, the drill alone: none
+    base, the whole second line: none
+    the top-up, if it is run: sets [3, 14, 17, 18, 19, 26, 31, 35, 49, 74, 85, 94, 98, 105, 142, 155]
+
+  Shape of the time to break on base (Weibull k, reported): median 1.19 (quartiles 0.76-2.22, 200 sets)
+  Memory variants, P(the Roman line fares worse than in base), reported:
+    shock   none
+    volleys none
+
+  The audit (reported):
+    base      100 whole runs, 100 with the window closed before the end: after it, 21 with a bout, 13 with a rally, 4 with a second break; stopped and whole summaries equal in 100 of 100
+
