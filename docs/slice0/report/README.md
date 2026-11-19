@@ -13,8 +13,8 @@ the rear.
 |---|---|
 | [1. The verdict](01-verdict.md) | drafted |
 | [2. The field engine has two results](02-two-results.md) | drafted |
-| 3. Reported, not banded | to come |
-| 4. The two memory variants | to come |
+| [3. Reported, not banded](03-reported.md) | drafted |
+| [4. The two memory variants](04-memory.md) | drafted |
 | 5. The relief | to come |
 | 6. What is known to be wrong in the scored code | to come |
 | 7. Checks on the code and the runs | to come |
