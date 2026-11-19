@@ -18,7 +18,7 @@ the rear.
 | [5. The relief](05-relief.md) | drafted |
 | [6. What is known to be wrong in the scored code](06-known-wrong.md) | drafted |
 | [7. Checks on the code and the runs](07-checks.md) | drafted |
-| 8. Speed | to come; the second reading still waits for a quiet Mac |
+| [8. Speed](08-speed.md) | drafted; the second reading still waits for a quiet Mac |
 | 9. The passages | to come |
 | 10. What Slice 0 does not answer | to come |
 | 11. After the report | to come |

@@ -4,7 +4,7 @@
 scored: **every cell fails the pre-registered test, on both engines and at every rung.** The
 report is being written; the newest blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-19, 14:53 UTC.
+**Last updated:** 2026-11-19, 14:57 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -805,6 +805,11 @@ pairwise engine's rungs 0 and 1, and none at rungs 2 and 3.
 how each was shown, what was chosen with a verdict in hand, the pre-flight, the recheck and
 the copies, the QC pass, Varro's cell check, every outcome seen before the scoring, and the
 channels the batch's order and counts let through.
+
+**Since then (2026-11-19, 14:57 UTC): section 8, speed, is drafted** from the two spike
+documents: both engines under their lines as first read (pairwise 2.67x against 3x, field
+1.43x against 10x), the shared perception the larger part of both, and the second line still
+unread, waiting for a quiet Mac.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
