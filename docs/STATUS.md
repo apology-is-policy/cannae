@@ -4,7 +4,7 @@
 scored: **every cell fails the pre-registered test, on both engines and at every rung.** The
 report is being written; the newest blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-19, 14:27 UTC.
+**Last updated:** 2026-11-19, 14:33 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -774,6 +774,10 @@ one decision is yours before anything is scored.**
   battle drifted from the scorer's, and in 8 it missed a relief ordered at exactly twenty
   minutes. The report gives both, and the tool's fault goes on the list for later.
 - **Next:** the report itself.
+
+**Since then (2026-11-19, 14:33 UTC): the report is being written.** Sections 1 to 4 are
+drafted in [slice0/report/](slice0/report/): the verdict, the field engine's two results,
+the values reported without a band, and the memory variants. Sections 5 to 11 follow.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
