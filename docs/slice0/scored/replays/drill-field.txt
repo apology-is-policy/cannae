@@ -1,0 +1,5 @@
+the relief alone, Field, nominal set, rung 2, seed 3; a man walks 1300 mm/s
+  relief 0: ordered at 30.00 s; the fresh century up after 18.75 s, its front 23725 mm forward (a free walk: 18.25 s); the tired one halted 18.75 s later, its rear 24050 mm back (a free walk: 18.50 s)
+    of the 80 and 80 men in their places at the order, 0 out of them at the halt (); nine in ten of the tired century's in their places again 0.05 s after it; nearest two men of the two 900 mm; jammed: false
+  relief 1: ordered at 30.00 s; the fresh century up after 18.75 s, its front 23725 mm forward (a free walk: 18.25 s); the tired one halted 18.75 s later, its rear 24050 mm back (a free walk: 18.50 s)
+    of the 80 and 80 men in their places at the order, 0 out of them at the halt (); nine in ten of the tired century's in their places again 0.05 s after it; nearest two men of the two 900 mm; jammed: false

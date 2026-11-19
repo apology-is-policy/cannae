@@ -4,7 +4,7 @@
 scored: **every cell fails the pre-registered test, on both engines and at every rung.** The
 report is being written; the newest blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-19, 09:22 UTC.
+**Last updated:** 2026-11-19, 14:27 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -763,6 +763,17 @@ one decision is yours before anything is scored.**
 - **Next:** the replays on the Pi for the relief and the leaders' falls (a few hours), then
   the report. One question will be yours after it: you decided on 10 November that rung 4
   is built only if rungs 0 to 3 all fail, and they have.
+
+**Since then (2026-11-19, 14:27 UTC): the replays are done and counted.**
+
+- **The replays for the relief and the leaders' falls** ran on the Pi from 09:23 to 14:15
+  UTC and are counted in [slice0/scored/](slice0/scored/) (`reliefs.txt`, `leaders.txt`).
+- **67 replayed runs were not counted,** as the outline provides: 52 of the 1,600 leaders'
+  runs and 15 of the 290 relieved runs. In every one the scorer's own run gave the record
+  back, so the records are sound. The fault is in the replay tool: in 59 its step-by-step
+  battle drifted from the scorer's, and in 8 it missed a relief ordered at exactly twenty
+  minutes. The report gives both, and the tool's fault goes on the list for later.
+- **Next:** the report itself.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
