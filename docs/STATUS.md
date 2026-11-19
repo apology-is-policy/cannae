@@ -4,7 +4,7 @@
 scored: **every cell fails the pre-registered test, on both engines and at every rung.** The
 report is being written; the newest blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-19, 14:50 UTC.
+**Last updated:** 2026-11-19, 14:53 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -800,6 +800,11 @@ pairwise engine's rungs 0 and 1, and none at rungs 2 and 3.
   centurion's fall more than twice as often as after a file leader's (38 to 69 % against 15
   to 28 %); on the pairwise engine the count cannot single him out. The open flank arises in
   7.8 to 10.6 % of the field's runs and 1.0 to 2.5 % of the pairwise's.
+
+**Since then (2026-11-19, 14:53 UTC): section 7, the checks, is drafted:** the two fixes and
+how each was shown, what was chosen with a verdict in hand, the pre-flight, the recheck and
+the copies, the QC pass, Varro's cell check, every outcome seen before the scoring, and the
+channels the batch's order and counts let through.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
