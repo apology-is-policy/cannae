@@ -16,7 +16,7 @@ the rear.
 | [3. Reported, not banded](03-reported.md) | drafted |
 | [4. The two memory variants](04-memory.md) | drafted |
 | [5. The relief](05-relief.md) | drafted |
-| 6. What is known to be wrong in the scored code | to come |
+| [6. What is known to be wrong in the scored code](06-known-wrong.md) | drafted |
 | 7. Checks on the code and the runs | to come |
 | 8. Speed | to come; the second reading still waits for a quiet Mac |
 | 9. The passages | to come |

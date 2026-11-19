@@ -4,7 +4,7 @@
 scored: **every cell fails the pre-registered test, on both engines and at every rung.** The
 report is being written; the newest blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-19, 14:43 UTC.
+**Last updated:** 2026-11-19, 14:50 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -788,6 +788,19 @@ twin about as often as worse (28 against 29 on the field's rungs 0 and 1). The d
 works on both engines, and the discs' passage fault had one jammed relief to act on at the
 pairwise engine's rungs 0 and 1, and none at rungs 2 and 3.
 
+**Since then (2026-11-19, 14:50 UTC): section 6 is drafted, and it holds a new finding.**
+- **In `flank`, the scorer starts the clock early** (item 26 below). The flank band stands
+  beside the Roman line from the start and counts as the warband's front, so contact is
+  counted from about one second, against about six in `base`. In most runs the Roman side
+  broke at the very tick it broke in `base`, so the flank leg's "wrong way round" (sections 1
+  and 3) is the clock, not a flank attack. It cannot change the verdict: pattern 6 fails on
+  its band, and no set passes all eight with pattern 6 by its band alone. Found after the
+  scoring, from the records; reported, not corrected.
+- **Michal's two sightings, counted:** on the field engine a century breaks within 5 s of its
+  centurion's fall more than twice as often as after a file leader's (38 to 69 % against 15
+  to 28 %); on the pairwise engine the count cannot single him out. The open flank arises in
+  7.8 to 10.6 % of the field's runs and 1.0 to 2.5 % of the pairwise's.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -894,6 +907,11 @@ the pictures are on [the page](slice0/qc/README.md). C is 5 above, D is 8, and L
     eight of the field's own 44 tests fail, and a walker in a crowd covers a sixth of the
     calibrated distance. Either the density is spread over a fixed width in metres whatever
     the cell, or the cell is named as a calibrated constant with the walking curve.
+26. **In `flank`, the band starts the clock** (Paullus, 2026-11-19, found after the scoring,
+    in writing the report). The flank band is not marked `front = false`, so the scorer takes
+    it among the warband's fronts and counts contact from about one second in every run,
+    against about six in `base`. The time to break is counted from contact, so the flank leg
+    of pattern 6 compares two clocks. It cannot change the verdict. Report section 6.
 
 **A defect left in by decision: D1, in the field engine.** Two enemies on their feet can stand
 nearer than the guard's distance (Michal's first decision above).

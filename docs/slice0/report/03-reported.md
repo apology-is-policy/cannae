@@ -78,9 +78,9 @@ who hold no longer than recruits but beat the warband sooner would pass on skill
 - **The loophole carried nothing:** the two measures agree in every cell.
 - **The recruits leg passes in nearly every set.**
 - **The flank leg fails in nearly every set, and the wrong way round:** its median is below
-  0.5 everywhere, so a Roman line attacked in the flank fared *better* than one that was not,
-  in most pairs of seeds. That is a finding in its own right, and section 6's open-flank count bears
-  on it.
+  0.5 everywhere, as if a Roman line attacked in the flank fared *better* than one that was
+  not. That is not a finding about a flank attack. Section 6 shows why: in `flank` the scorer
+  starts the clock about five seconds early, and the time to break is counted from it.
 - **In no cell did the Roman line break in fewer than 2 seeds of `base` in any set.**
 
 ## Front losses before contact

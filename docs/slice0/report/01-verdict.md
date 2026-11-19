@@ -66,7 +66,9 @@ casualty asymmetry, 6 holds then breaks, 7 casualty clock, 8 centurion gradient.
 **Pattern 6, by its two halves.** By its band alone it passes in at most 1 set of 200 in
 any cell. So the dose-response legs are not what fails it: the band already does. The legs
 themselves are in the scorer's outputs; on the field's rung 0, recruits fared worse than
-veterans in 194 sets of 200 by the rule's measure, and a flank attack worse than none in 5.
+veterans in 194 sets of 200 by the rule's measure, and a flank attack worse than none in 5
+(a figure that says nothing about a flank attack: the scorer started the clock early in
+`flank`, section 6).
 
 ## How the patterns fail
 
