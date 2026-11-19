@@ -1,8 +1,10 @@
 # Slice 0: the report (draft)
 
-**Being written, section by section, from [the outline](../report-outline.md).** Every count
-comes from the outputs in [../scored/](../scored/), made by the commands the outline fixed
-before the batch ended. Nothing is computed in the text that a tool did not print.
+**Drafted in full, section by section, from [the outline](../report-outline.md);** Varro has
+not yet read it. Every count comes from the outputs in [../scored/](../scored/), made by the
+commands the outline fixed before the batch ended. Nothing is computed in the text that a
+tool did not print, with one exception that section 6 names: the flank clock, counted from
+the records after the scoring.
 
 **The verdict in one line:** in all eight cells, both engines at rungs 0 to 3, not one of the
 200 parameter sets reproduces all eight patterns. The lines meet and break within seconds to
@@ -19,6 +21,6 @@ the rear.
 | [6. What is known to be wrong in the scored code](06-known-wrong.md) | drafted |
 | [7. Checks on the code and the runs](07-checks.md) | drafted |
 | [8. Speed](08-speed.md) | drafted; the second reading still waits for a quiet Mac |
-| 9. The passages | to come |
-| 10. What Slice 0 does not answer | to come |
-| 11. After the report | to come |
+| [9. The passages](09-passages.md) | drafted |
+| [10. What Slice 0 does not answer](10-not-answered.md) | drafted |
+| [11. After the report](11-after.md) | drafted |

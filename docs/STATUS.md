@@ -4,7 +4,7 @@
 scored: **every cell fails the pre-registered test, on both engines and at every rung.** The
 report is being written; the newest blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-19, 14:57 UTC.
+**Last updated:** 2026-11-19, 14:56 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -806,10 +806,15 @@ how each was shown, what was chosen with a verdict in hand, the pre-flight, the 
 the copies, the QC pass, Varro's cell check, every outcome seen before the scoring, and the
 channels the batch's order and counts let through.
 
-**Since then (2026-11-19, 14:57 UTC): section 8, speed, is drafted** from the two spike
+**Since then (2026-11-19, 14:54 UTC): section 8, speed, is drafted** from the two spike
 documents: both engines under their lines as first read (pairwise 2.67x against 3x, field
 1.43x against 10x), the shared perception the larger part of both, and the second line still
 unread, waiting for a quiet Mac.
+
+**Since then (2026-11-19, 14:56 UTC): the report is drafted in full.** Sections 9 to 11 are
+in: the passages on both engines, what Slice 0 does not answer, and what comes after. All
+eleven are in [slice0/report/](slice0/report/). Varro has not read them yet; I have asked him
+whether he wants to take the field engine's parts.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
