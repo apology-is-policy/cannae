@@ -1,13 +1,29 @@
 # Status
 
-**Phase:** Slice 0, the experiment between the two designs. The scored batch has run and is
-scored: **every cell fails the pre-registered test, on both engines and at every rung.** The
+**Phase:** Slice 0 analysis, after the experiment between the two designs. The scored batch
+has run and is scored: **every cell fails the pre-registered test, on both engines and at every rung.** The
 report is drafted in full and design review 2 has reported; the newest blocks are under
 "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-19, 21:08 UTC.
+**Last updated:** 2026-11-19, 21:10 UTC.
 
-## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
+## Current arc: Slice 0 analysis -- why the line breaks (approved 2026-11-19)
+
+Michal approved this arc on 2026-11-19, on design review 2's advice
+([reviews/2026-11-19-fable-5.2-slice0-review.md](reviews/2026-11-19-fable-5.2-slice0-review.md)),
+over building rung 4, a second round or a revision of the vision first. **It runs nothing of
+the scored code again and changes no verdict:** it reads what the batch made and replays runs,
+to find what breaks the line. It ends with a diagnosis and a proposed status table for
+`docs/vision/`, which Michal approves or not. No mechanism is changed in it.
+
+| Chunk | Content | Commit |
+|---|---|---|
+| A1 | Counts from the batch's records: who lost, by cell; losses before the break; the spread of break times within a set; the runs where a line held, and what they pass; a rank screening of the 101 drawn lines against the time to break | |
+| A2 | Mend the replay tool: why its battle drifted from the scorer's in 59 runs, and the relief it missed in a run's last second | |
+| A3 | The genealogy of the collapses, from replays with the event log's causes: what put the first men of each collapse into giving ground and what tipped them; pattern 3 with ties shared, and the stragglers' depth | |
+| A4 | The diagnosis, and a proposed status table for `docs/vision/` (failed as built, untested, withdrawn on speed), for Michal | |
+
+## Slice 0 -- the experiment (approved 2026-11-10; at its end 2026-11-19)
 
 Michal approved Slice 0 as the experiment between the vision of record and Varro's rival design.
 It takes about two weeks, on the Air, with no money spent. The plan is in
@@ -837,6 +853,10 @@ verbatim, with its disposition table).
   Analyse the existing records and replays, revise the documents' status narrowly, and
   rework the fast layer in an unscored pilot on one substrate; a second round only after.
   Michal decides.
+
+**Since then (2026-11-19, 21:10 UTC): Slice 0 is at its end, and Michal approved the next
+arc: analysis first** (above, "Current arc"). The second speed reading still waits for a quiet
+Mac; it does not block the arc.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
