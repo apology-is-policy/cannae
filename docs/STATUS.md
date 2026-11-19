@@ -4,7 +4,7 @@
 frozen. The scored batch is being restarted once, on a code with two fixes; the newest
 blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-18, 19:59 UTC.
+**Last updated:** 2026-11-19, 05:10 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -730,6 +730,14 @@ one decision is yours before anything is scored.**
   - **If no:** the scoring begins now, and the report says the top-up was not run.
 - **Nothing is scored yet,** and no line of the gate has been read.
 
+**Since then (2026-11-19, 05:10 UTC): Michal said yes to the top-up, and it runs on the Pi.**
+
+- **It started at 05:09 UTC,** after one false start: over a plain ssh session the Pi picks
+  up an older system compiler, which cannot build the code. That attempt stopped before
+  running anything and wrote nothing. Started again with the compiler the batch was built
+  with, it uses the batch's own programs, unchanged byte for byte.
+- **Then:** the Mac rechecks a sample of the new runs, and the scoring begins.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -985,9 +993,8 @@ word is singular). This is recorded in the review's disposition table.
 
 ## Open decisions
 
-**Blocking the next step (2026-11-18, 19:59 UTC): the relief's top-up, yes or no.** About 4
-hours of the Pi's time; the block above has what each answer does. Nothing is scored until
-it is decided.
+**Blocking the next step:** none. The top-up runs (decided 2026-11-19); the scoring follows
+it.
 
 **Waiting on Michal, and holding up one thing (2026-11-11, 21:14 UTC): a quiet Mac for the
 second speed reading.** The reading needs about forty minutes in which the Mac runs nothing
@@ -1008,6 +1015,9 @@ work do not wait on it.
 - Which three to five battles to seal. Needed before Slice 2 ([07](vision/07-validation.md) §5).
 
 **Michal's answers so far:**
+
+- **The relief's top-up (2026-11-19):** yes, on the one figure agreed for it: about 4 hours
+  of the Pi's time over the eight cells.
 
 - **Speed line and the frames defect (2026-11-10):** the pairwise engine's 3x is read over a
   whole battle (the line scene and the pocket at equal shares), not scene by scene. The batch
