@@ -4,7 +4,7 @@
 scored: **every cell fails the pre-registered test, on both engines and at every rung.** The
 report is being written; the newest blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-19, 14:33 UTC.
+**Last updated:** 2026-11-19, 14:43 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -769,7 +769,8 @@ one decision is yours before anything is scored.**
 - **The replays for the relief and the leaders' falls** ran on the Pi from 09:23 to 14:15
   UTC and are counted in [slice0/scored/](slice0/scored/) (`reliefs.txt`, `leaders.txt`).
 - **67 replayed runs were not counted,** as the outline provides: 52 of the 1,600 leaders'
-  runs and 15 of the 290 relieved runs. In every one the scorer's own run gave the record
+  runs and 15 of the 339 relieved runs replayed (corrected 2026-11-19 from "290", which
+  no count gives). In every one the scorer's own run gave the record
   back, so the records are sound. The fault is in the replay tool: in 59 its step-by-step
   battle drifted from the scorer's, and in 8 it missed a relief ordered at exactly twenty
   minutes. The report gives both, and the tool's fault goes on the list for later.
@@ -778,6 +779,14 @@ one decision is yours before anything is scored.**
 **Since then (2026-11-19, 14:33 UTC): the report is being written.** Sections 1 to 4 are
 drafted in [slice0/report/](slice0/report/): the verdict, the field engine's two results,
 the values reported without a band, and the memory variants. Sections 5 to 11 follow.
+
+**Since then (2026-11-19, 14:43 UTC): section 5, the relief, is drafted.** The drill hardly
+came: the script allows no relief before twenty minutes, and nearly every line had broken by
+five, so a relief was ordered in 1 to 4 % of the stride's runs. On the top-up's long-fought
+sets, where about a third of the runs were relieved, the relieved line fared better than its
+twin about as often as worse (28 against 29 on the field's rungs 0 and 1). The drill itself
+works on both engines, and the discs' passage fault had one jammed relief to act on at the
+pairwise engine's rungs 0 and 1, and none at rungs 2 and 3.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
