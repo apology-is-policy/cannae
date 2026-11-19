@@ -22,7 +22,11 @@ of its side. The flank band is neither: it stands beside the Roman line, level w
 the scorer takes its men as part of the warband side's front. **So in `flank` it finds contact
 about a second in, earlier than in `base` in every run,** before the warband has reached the
 Romans. The band also counts among the warband side's men when the scorer tests whether that
-side broke.
+side broke. **And it turns the scorer's axis** (found by design review 2): the axis runs
+between the centroids of the two sides' front men, band included (`axis_of` in
+`metrics.rs`), so in `flank` every gap and every lateral bin is measured on a turned axis.
+The reviewer works the turn out at about 26 degrees; I have not checked that figure. Marking
+the band `front = false` mends both.
 
 **The counts.** These were read from the records by a short script written for this
 section, not by a tool fixed beforehand:
@@ -51,6 +55,23 @@ longer. The leg compares two clocks:
   any cell. No reading of the flank leg could make a set pass.
 - **It goes on the list for a second round** (26 in [STATUS](../../STATUS.md)). Under this
   pre-registration it is reported and not corrected.
+
+## Found by design review 2: two of the scorer's statistics
+
+Neither is counted here. Both are the reviewer's readings of the code, checked against it by
+me, with the reviewer's estimates marked as such.
+
+- **Pattern 3 gives ties to the front rank.** The first tenth of a body's men to turn is taken
+  after sorting by tick and then by man number (`metrics.rs`), and men are numbered rank by
+  rank from the front. Men who turn at the same man step share a tick, so a tie goes to the
+  lower number, nearer the front. The reviewer estimates the bias at 0.05 to 0.1, unmeasured; it cannot carry the
+  measured 0.18 to 0.26 to the band's 0.6. The reviewer adds that the statistic asks who
+  begins the cascade, where vision 03 has rear men slip away first, before it.
+- **Pattern 8 passes by geometry.** By the reviewer's arithmetic, three leaders among 40
+  front-rank men are 0.075 of them, above the formed share observed (0.054 to 0.055), and
+  three among 322 men about 0.009, below the rout share (about 0.02). So any
+  front-rank man would pass it. The leaders' count below compares a leader with a file
+  leader, which this pattern does not.
 
 ## D1, the defect left in by decision
 
@@ -81,7 +102,10 @@ decided that it stays in the batch and goes first on the list.
 ## The list for a second round
 
 **Items 1 to 25 are in [STATUS](../../STATUS.md), and none is decided;** 26 is the flank
-clock above. The batch bears on four of them:
+clock above, and 27 a candidate registered before the freeze and left off the list until
+design review 2 found it: a blow that drives a calm man back puts him in the same posture,
+with the same ways out, as a man who gave ground from fear. The batch bears on four of
+them:
 
 - **1, a fallen leader weighs too much:** the first count below.
 - **2, nothing limits how fast turning spreads:** where pattern 4 fails, it fails because the

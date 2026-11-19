@@ -69,6 +69,11 @@ lost a median of 3 men to it before contact (section 3).
 - **Memory changes how a line takes a blow:** rung 2 makes a Roman line fare worse than it
   does without memory, after a shock or a volley on the field engine and after a volley on
   the pairwise.
+- **The engines are not compared on memory.** Before contact `shock` felled a median of 23
+  to 25 Romans on the field engine and 3 to 4 on the pairwise (section 3), and *shaken* is
+  raised by the falls a man sees. The doses differ, so a difference between the engines'
+  rows is not memory's doing (design review 2). Each rung is compared with rung 0 on its own
+  engine and variant, where the dose is about the same.
 - **But no rung passes the eight patterns** (section 1), so none of this rescues the verdict.
   The ladder's question was which memory is the least that reproduces the patterns, and the
   answer is that none of the four does.

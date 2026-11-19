@@ -2,9 +2,10 @@
 
 **Phase:** Slice 0, the experiment between the two designs. The scored batch has run and is
 scored: **every cell fails the pre-registered test, on both engines and at every rung.** The
-report is being written; the newest blocks are under "Since then" below.
+report is drafted in full and design review 2 has reported; the newest blocks are under
+"Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-19, 20:39 UTC.
+**Last updated:** 2026-11-19, 21:08 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -821,6 +822,22 @@ now.** The review is a read-only Fable reviewer on the vision, this page and the
 report will be saved verbatim in [reviews/](reviews/) with a disposition table, for Michal to
 decide on. Rung 4, a second round or a revision of the vision waits for it.
 
+**Since then (2026-11-19, 21:08 UTC): design review 2 has reported**
+([reviews/2026-11-19-fable-5.2-slice0-review.md](reviews/2026-11-19-fable-5.2-slice0-review.md),
+verbatim, with its disposition table).
+- **The verdict stands,** and it could be seen at the central values before the freeze.
+- **The reviewer's reading of the cause:** the man's fast layer and one rule of the bout
+  resolver (a blow that drives a calm man back reads as the start of flight; now item 27).
+  Memory is not involved, so rung 4 cannot mend it. A reading to be tested, not a finding.
+- **By the kill criteria agreed on 10 November, both designs die on speed,** so the agreed
+  procedure chooses neither.
+- **Nine factual corrections; all are taken into the report,** one in part. Each code claim
+  was checked first.
+- **Its advice on the next arc:** none of rung 4, a second round or a vision revision first.
+  Analyse the existing records and replays, revise the documents' status narrowly, and
+  rework the fast layer in an unscored pilot on one substrate; a second round only after.
+  Michal decides.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -932,6 +949,11 @@ the pictures are on [the page](slice0/qc/README.md). C is 5 above, D is 8, and L
     it among the warband's fronts and counts contact from about one second in every run,
     against about six in `base`. The time to break is counted from contact, so the flank leg
     of pattern 6 compares two clocks. It cannot change the verdict. Report section 6.
+27. **A blow that drives a calm man back reads as the start of flight** (Varro, registered
+    before the freeze in [priors-field.md](slice0/priors-field.md) as "the first candidate"
+    for a second round; left off this list until design review 2 found it, 2026-11-19). A
+    bout that drives a steady man back puts him in the same posture, with the same two ways
+    out, as a man who gave ground from alarm, and while there he alarms all who see him.
 
 **A defect left in by decision: D1, in the field engine.** Two enemies on their feet can stand
 nearer than the guard's distance (Michal's first decision above).

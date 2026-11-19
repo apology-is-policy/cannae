@@ -43,14 +43,16 @@ no man turned before the collapse: the line went all at once.
 Each set's median over its seeds, then the quartiles over the 200 sets. The only figures
 there are (5 to 25 % of the time, 10 to 25 % of the men) are no band.
 
-| Engine | Front-rank man-time spent forward, median (quartiles) | Sets inside 5-25 % | Front-rank men who start any bout, median (quartiles) | Sets inside 10-25 % |
+| Engine | Front-rank man-time spent forward, both sides pooled, median (quartiles) | Sets inside 5-25 % | Front-rank men who start any bout, median (quartiles) | Sets inside 10-25 % |
 |---|---|---|---|---|
 | Field, rungs 0-3 | 0.474 to 0.480 (0.41 to 0.49) | 11 to 20 | 0.387 to 0.425 (0.31 to 0.50) | 18 to 29 |
 | Pairwise, rungs 0-3 | 0.485 to 0.486 (0.44 to 0.49) | 11 to 13 | 0.375 to 0.400 (0.29 to 0.48) | 28 to 31 |
 
-The front rank spends about half its time forward, twice the top of the figures, and about
-two men in five start a bout. The fight is pressed harder than the sources describe, and it
-is short.
+**These cannot be set beside the figures.** The scorer pools the front ranks of both sides,
+and the figures are for one line's men (corrected after design review 2). A pooled share
+near one half is also what one side always forward and the other never would give, and no
+output prints the two sides apart. What can be said is that about two front-rank men in five,
+over both sides, start a bout.
 
 ## The shape of the time to break
 

@@ -18,9 +18,11 @@ it comes from.
 
 ## Added with the results
 
-- **Which mechanism is wrong.** Both engines share the man, his fear and his ties, and differ
-  in the substrate, and both fail the same way (section 1). That points at what they share;
-  it does not prove it.
+- **Which mechanism is wrong.** Both engines share the man, his fear and his ties, the bout
+  resolver, the frames, the scenario, the draws and the scorer, and differ in the substrate;
+  both fail the same way (section 1). That points at what they share; it does not prove it.
+  Design review 2 narrows it to the man's fast layer and one rule of the bout resolver, as a
+  reading to be tested.
 - **Whether priors outside the frozen ones would pass.** The 200 sets span the priors as
   frozen (section 1).
 - **Whether relief helps.** The drill was allowed only after twenty minutes, and nearly every

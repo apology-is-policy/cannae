@@ -36,7 +36,9 @@ one thread.
   the line's. Without it the same runs would read about 4.8x and 15.7x, and a whole battle
   about 7.4x.
 - **Field:** in the pocket it took 85 %. Without its time the same intervals would read 9.6x,
-  still under 10x, and the perception alone would allow 1.7x.
+  still under 10x, and the perception alone would allow 1.7x. The 9.6x is higher than the
+  substrate-alone run's 5.3x because that run reached a harder state of the scene: four times
+  as far in simulated time, with more than twice as many men pressing.
 
 The figures stand as read, with the perception in them.
 
@@ -65,6 +67,16 @@ pocket was under 10x even with the perception's time taken out.
 **The man is in neither figure.** The spikes run the substrate and the perception; the man's
 own decisions, his fear and his ties, add cost on top. So a figure under the line is final,
 and a figure over it would mean only "not failed yet".
+
+## By the kill criteria agreed beforehand
+
+[rival 06](../../rival/06-experiment.md) §4 set them on 2026-11-10, before either engine was
+measured. **By them both designs die on speed** (pointed out by design review 2): the rival's
+below 10x per core in the pocket, the vision's engine below 3x sustained at full scale. The
+rival's second criterion, a line that holds for an hour and then breaks, fails too (section
+1). With no survivor, the agreed procedure does not choose between the two. The reviewer
+would not call the pairwise reading final, from one run under an unexplained load; by the
+rule both signed it is.
 
 ## What follows
 

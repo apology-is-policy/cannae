@@ -81,7 +81,7 @@ shape: **the lines meet and break within seconds to minutes, from the front.**
 | The formed phase before a break, in s (pattern 1) | 21.5 to 27.1 | 18.4 to 19.5 | at least 300 |
 | Share of seeds that break within 300 s (pattern 6) | 1.00 in every cell | 1.00 in every cell | at most 0.10 |
 | Depth in the files of the first men to turn, 0 front to 1 rear (pattern 3) | 0.25 to 0.26 | 0.18 | at least 0.60 |
-| Burstiness of the killing (pattern 2) | -0.04 to -0.03 | -0.05 | at least 0.20 |
+| Burstiness of the bouts (pattern 2) | -0.04 to -0.03 | -0.05 | at least 0.20 |
 
 - **Pattern 1 fails on its first part in nearly every set** (field rung 0: 182 of 182 failing
   sets fail on the formed phase; 20 also on the gap).
@@ -89,8 +89,9 @@ shape: **the lines meet and break within seconds to minutes, from the front.**
   failing sets have too many seeds breaking early; 5 have too many that never break).
 - **Pattern 3 fails in every set on its only part:** the first men to turn stand near the
   front, a quarter of the way back on the field engine and less on the pairwise.
-- **Pattern 2 fails mostly on burstiness** (field rung 0: 178 of 180), and the killing has
-  no pulses: its burstiness is below zero, more even than chance.
+- **Pattern 2 fails mostly on burstiness** (field rung 0: 178 of 180), and the bouts come in
+  no pulses: the burstiness of the gaps between bouts, of any outcome, is below zero, more
+  even than chance.
 - **Patterns 4, 5, 7 and 8 pass in a share of sets.** Where 4 fails, it fails because the
   spread of the break along the line takes less than its band's 10 s (field rung 0: all 117
   failing sets), which is the same short fight again.
@@ -103,12 +104,26 @@ Addendum 4), has `base` only. Counted with pattern 6 by its band (Varro's count 
 four cells. The two fixes did not change the verdict. Section 2 sets the two batches side by
 side.
 
+## It could be seen before the freeze
+
+The frozen texts already record that the central values break a line early (pointed out by
+design review 2, P1). Before the freeze, at the centres, a side broke in every one of 128
+costing runs at a median of 32 s, with almost no one down, the Romans in 14 of 16 seeds on
+each engine; Varro did the sum that explains it, and wrote that he had chosen the centres
+without doing it ([priors-field.md](../priors-field.md), "What I have seen since"). The
+pre-registration notes that at the nominal set the Roman line breaks before the onset is
+spent ("The variants", `relief`). So the batch asked whether drawn sets around those centres
+would hold a line, and none did.
+
 ## What this does not say
 
 - **It does not say which mechanism is wrong.** Both engines share the man, his fear and his
-  ties, and differ in the substrate. Both fail the same way. That points at what they
-  share, and the report's later sections give the counts that bear on it; it does not prove
-  it.
+  ties, and also the bout resolver, the frames, the scenario, the draws and the scorer; they
+  differ in the substrate. Both fail the same way. That points at what they share, and the
+  report's later sections give the counts that bear on it; it does not prove it. Design
+  review 2 ([its report](../../reviews/2026-11-19-fable-5.2-slice0-review.md), P2) reads the
+  code and narrows it to the fast layer of the man and one rule of the bout resolver; that is
+  its reading, to be tested.
 - **It does not say the priors were too narrow.** The 200 sets span the priors as frozen.
   Whether some region outside them would pass is a question for a second round, under a new
   pre-registration.
