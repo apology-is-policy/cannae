@@ -7,6 +7,8 @@
 //!                         [--max 100] [--jobs 4] [--only D:S,..]
 //!   cannae-replay leaders --records DIR --engine E --rung R --freeze-seed F --out FILE
 //!                         [--jobs 4] [--only D:S,..]
+//!   cannae-replay genealogy --records DIR --engine E --rung R --freeze-seed F --out FILE
+//!                           [--jobs 4] [--only D:S,..]
 //!
 //! `drill` runs the relief alone, as the relief's own test does (`cannae-score`,
 //! `tests/relief.rs`): the relief patch with its reliefs allowed from half a minute, men whom
@@ -39,6 +41,18 @@
 //! his body broke, the share of the body's standing men in flight at that tick, and the
 //! succession delay of the body's tie in that set.
 //!
+//! `genealogy` is for the analysis after Slice 0 (docs/slice0/analysis/, chunk A3). It runs
+//! a cell's `base` records of sets 0, 10, .. 190 again, and every other run in which a line
+//! held five minutes and then broke, and writes one line for each: on each side, up to the
+//! first side's break, how its men came to give ground (driven back in a bout, or from fear,
+//! by the largest cause) and to turn (from giving ground or straight from their place, by the
+//! largest cause, and what last put them back); the times from contact to the first bout,
+//! the loser's first man back, first turn and break; the first man to turn; and pattern 3
+//! again, the first tenth of each broken body, with its ties broken as the scorer breaks
+//! them (by man number, so toward the front rank) and shared. It is counted only if the
+//! samples taken here give the record's whole summary through the scorer's `summarize`, and
+//! this copy of pattern 3 gives the record's depth and stragglers.
+//!
 //! A run is counted only if it is the battle of its record: the scorer's own run of that set
 //! and seed gives the record again, all but the wall time, and the battle stepped here has
 //! the same events. Both commands print the number of runs and of those not counted, and no
@@ -55,14 +69,18 @@
 
 use cannae_core::schedule::BASE_TICK;
 use cannae_core::view::Order;
-use cannae_core::{BodyId, Event, EventKind, ManId, Posture, Role};
-use cannae_harness::Scenario;
-use cannae_harness::metrics::{fortune, scoring_end};
+use cannae_core::{BodyId, Cause, Event, EventKind, ManId, Posture, Role, Wound};
+use cannae_harness::metrics::{
+    Inputs, Recorder, Sample, fortune, front_men, front_sides, scoring_end, summarize,
+};
+use cannae_harness::scenario::Layout;
+use cannae_harness::{Scenario, place};
 use cannae_man::{Spread, Troop};
 use cannae_score::draw::{Cell, Drawn, drawn, nominal};
 use cannae_score::report::{RELIEF_EVERY, ROMANS};
-use cannae_score::{Record, Run, Spec, record_file, run_logged};
+use cannae_score::{BREAK_SHARE, Record, Run, Spec, record_file, run_logged};
 use cannae_view::{Battle, BodyInfo, Config, build_from, engine_of, scenario_text};
+use std::collections::BTreeMap;
 use std::fmt::Write as _;
 use std::path::Path;
 use std::sync::Mutex;
@@ -822,17 +840,377 @@ fn leaders(args: impl Iterator<Item = String>) -> Result<(), String> {
     })
 }
 
+/// How a man came to give ground: driven back by a blow that did not wound, or from fear.
+#[derive(Clone, Copy, PartialEq)]
+enum Back {
+    Knocked,
+    Fear,
+}
+
+/// How a man turned: from giving ground (and what last put him there), or from his place.
+fn turn_kind(from: Posture, last_back: Option<Back>) -> &'static str {
+    match (from, last_back) {
+        (Posture::Back, Some(Back::Knocked)) => "after_knock_back",
+        (Posture::Back, _) => "after_fear_back",
+        _ => "from_place",
+    }
+}
+
+/// Pattern 3's collapse of a tally, as `cannae_harness::metrics::summarize` finds it: from the
+/// last sample before `until` at which under a quarter of the break share had turned, back
+/// through earlier turns of the same men chained within 30 s.
+fn collapse_from(
+    samples: &[Sample],
+    turns: &[Vec<u32>],
+    until: u32,
+    tally: &dyn Fn(&Sample) -> [u16; 5],
+    men: &[usize],
+) -> u32 {
+    const CHAIN: u32 = 30_000 / BASE_TICK.0;
+    let quarter = BREAK_SHARE / 4.0;
+    let calm = |c: &[u16; 5]| {
+        let standing = c.iter().map(|&x| x as u32).sum::<u32>() - c[Posture::Down as usize] as u32;
+        standing == 0 || (c[Posture::Turned as usize] as f64) < quarter * standing as f64
+    };
+    let from = samples
+        .iter()
+        .filter(|smp| smp.tick < until && calm(&tally(smp)))
+        .map(|smp| smp.tick)
+        .max()
+        .unwrap_or(0);
+    let mut ts: Vec<u32> = men
+        .iter()
+        .flat_map(|&i| turns[i].iter().copied())
+        .filter(|&t| t < until)
+        .collect();
+    ts.sort_unstable();
+    let mut start = from;
+    let mut next = ts.iter().copied().find(|&t| t >= from).unwrap_or(from);
+    for &t in ts.iter().rev().filter(|&&t| t < from) {
+        if next - t > CHAIN {
+            break;
+        }
+        start = t;
+        next = t;
+    }
+    start
+}
+
+/// The depth of the first `k` of `turned` (tick, man, depth), sorted by tick and man: summed
+/// as the scorer sums it (ties to the lower man number) and with the men of the last tick
+/// sharing what places are left. Returns (scorer's sum, shared sum, men counted).
+fn first_k_depth(turned: &[(u32, u32, f64)], k: usize) -> (f64, f64, usize) {
+    let take = k.min(turned.len());
+    let scorer: f64 = turned.iter().take(take).map(|x| x.2).sum();
+    if take == 0 {
+        return (0.0, 0.0, 0);
+    }
+    let last = turned[take - 1].0;
+    let before: Vec<f64> = turned.iter().filter(|x| x.0 < last).map(|x| x.2).collect();
+    let tied: Vec<f64> = turned.iter().filter(|x| x.0 == last).map(|x| x.2).collect();
+    let left = (take - before.len()) as f64;
+    let shared = before.iter().sum::<f64>() + left * tied.iter().sum::<f64>() / tied.len() as f64;
+    (scorer, shared, take)
+}
+
+/// One replayed run of `base`: how its line came apart.
+fn genealogy_line(s: &Scenario, a: &Asked, r: &Record) -> Result<Vec<String>, String> {
+    let (d, run, events) = again(s, "base", a, r)?;
+    let (mut b, _) = stepped(s, "base", a, &d, r.seed)?;
+    let end = stop_tick(s, &run, r)?;
+    let (initial, placed) = place(s);
+    let layout = Layout::of(&placed);
+    let mut rec = Recorder::new(&initial, &placed);
+    while b.live.tick() < end {
+        if b.live.step() {
+            rec.record(b.live.tick() - 1, b.live.bodies());
+        }
+    }
+    if b.live.events() != events.as_slice() {
+        return Err("the battle stepped here is not the scorer's".to_string());
+    }
+    let samples = &rec.samples;
+    let inputs = Inputs {
+        initial: &initial,
+        placed: &placed,
+        layout: &layout,
+        samples,
+        events: &events,
+        end_tick: end,
+        break_share: BREAK_SHARE,
+    };
+    let sum = &r.summary;
+    if summarize(&inputs) != *sum {
+        return Err("the samples taken here do not give the record's summary".to_string());
+    }
+
+    let n = initial.len();
+    let front = front_men(&initial, &placed);
+    let sides = front_sides(&initial, &placed);
+    let mut body_of = vec![usize::MAX; n];
+    for (k, p) in placed.iter().enumerate() {
+        for m in p.first..p.first + p.count {
+            body_of[m as usize] = k;
+        }
+    }
+    let depth = |m: usize| {
+        let p = &placed[body_of[m]];
+        if p.ranks > 1 {
+            (layout.rank[m] as f64 / (p.ranks - 1) as f64).min(1.0)
+        } else {
+            0.0
+        }
+    };
+    let loser = sum.loser.map(|l| l as usize);
+    let bt = loser.and_then(|l| sum.side_break[l]);
+    // Everything is counted up to the first side's break, or the run's end without one.
+    let until = bt.unwrap_or(end);
+    let secs_from = |t: Option<u32>, from: Option<u32>| match (t, from) {
+        (Some(t), Some(f)) => serde_json::json!(seconds(t.saturating_sub(f))),
+        _ => serde_json::Value::Null,
+    };
+
+    let mut last_back: Vec<Option<(Back, u32)>> = vec![None; n];
+    let mut turned = vec![false; n];
+    let mut backs = [[0u32; 2]; 2]; // [side][knocked, fear]
+    let mut fear_causes: [BTreeMap<String, u32>; 2] = Default::default();
+    let mut turn_causes: [BTreeMap<String, u32>; 2] = Default::default();
+    let mut kinds: [BTreeMap<&str, u32>; 2] = Default::default();
+    let mut turns = [0u32; 2];
+    let mut losses = [0u32; 2];
+    let mut hit = vec![false; n];
+    let mut bouts = 0u32;
+    let (mut first_bout, mut first_back, mut first_knock, mut first_turn) =
+        (None, None, None, None);
+    let mut first_turner = serde_json::Value::Null;
+    let mut kind_of = vec![""; n];
+    for e in events.iter().take_while(|e| e.tick < until) {
+        let m = e.man.0 as usize;
+        if !front[m] {
+            continue;
+        }
+        let side = initial.side[m] as usize;
+        match e.kind {
+            EventKind::Bout { attacker, .. } if front[attacker.0 as usize] => {
+                bouts += 1;
+                first_bout.get_or_insert(e.tick);
+            }
+            EventKind::Wound { to } if to >= Wound::Disabled && !hit[m] => {
+                hit[m] = true;
+                losses[side] += 1;
+            }
+            EventKind::Posture {
+                to: Posture::Back, ..
+            } => {
+                let how = if e.causes[0] == Cause::Bout {
+                    Back::Knocked
+                } else {
+                    *fear_causes[side]
+                        .entry(format!("{:?}", e.causes[0]))
+                        .or_default() += 1;
+                    Back::Fear
+                };
+                backs[side][(how == Back::Fear) as usize] += 1;
+                last_back[m] = Some((how, e.tick));
+                if Some(side) == loser {
+                    first_back.get_or_insert(e.tick);
+                    if how == Back::Knocked {
+                        first_knock.get_or_insert(e.tick);
+                    }
+                }
+            }
+            EventKind::Posture {
+                from,
+                to: Posture::Turned,
+            } => {
+                turns[side] += 1;
+                *turn_causes[side]
+                    .entry(format!("{:?}", e.causes[0]))
+                    .or_default() += 1;
+                if !turned[m] {
+                    turned[m] = true;
+                    let kind = turn_kind(from, last_back[m].map(|x| x.0));
+                    kind_of[m] = kind;
+                    *kinds[side].entry(kind).or_default() += 1;
+                    if Some(side) == loser && first_turn.is_none() {
+                        first_turn = Some(e.tick);
+                        first_turner = serde_json::json!({
+                            "depth": depth(m),
+                            "kind": kind,
+                            "causes": e.causes.iter().map(|c| format!("{c:?}")).collect::<Vec<_>>(),
+                            "back_for_s": match (from, last_back[m]) {
+                                (Posture::Back, Some((_, t))) => serde_json::json!(seconds(e.tick - t)),
+                                _ => serde_json::Value::Null,
+                            },
+                        });
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+
+    // Pattern 3 again, on the loser's broken bodies, and the stragglers.
+    let mut all_turns: Vec<Vec<u32>> = vec![Vec::new(); n];
+    for e in &events {
+        if let EventKind::Posture {
+            to: Posture::Turned,
+            ..
+        } = e.kind
+            && front[e.man.0 as usize]
+        {
+            all_turns[e.man.0 as usize].push(e.tick);
+        }
+    }
+    let mut p3 = serde_json::Value::Null;
+    let mut stragglers = serde_json::Value::Null;
+    if let (Some(l), Some(bt)) = (loser, bt) {
+        let (mut scorer, mut shared, mut count) = (0.0, 0.0, 0usize);
+        let mut scorer_depths = Vec::new();
+        let mut first_kinds: BTreeMap<&str, u32> = BTreeMap::new();
+        for (k, p) in placed.iter().enumerate() {
+            let (Some(body_bt), Some(side)) = (sum.body_break[k], sides[k]) else {
+                continue;
+            };
+            if side as usize != l {
+                continue;
+            }
+            let men: Vec<usize> = (p.first..p.first + p.count).map(|m| m as usize).collect();
+            let tally = |smp: &Sample| smp.postures[k];
+            let from = collapse_from(samples, &all_turns, body_bt, &tally, &men);
+            let mut in_collapse: Vec<(u32, u32, f64)> = men
+                .iter()
+                .filter_map(|&m| {
+                    all_turns[m]
+                        .iter()
+                        .copied()
+                        .find(|&t| t >= from)
+                        .map(|t| (t, m as u32, depth(m)))
+                })
+                .filter(|x| x.0 <= body_bt)
+                .collect();
+            in_collapse.sort_unstable_by_key(|x| (x.0, x.1));
+            let k10 = (p.count as usize).div_ceil(10);
+            for x in in_collapse.iter().take(k10) {
+                scorer_depths.push(x.2);
+                let kind = if kind_of[x.1 as usize].is_empty() {
+                    "turned_at_or_after_break"
+                } else {
+                    kind_of[x.1 as usize]
+                };
+                *first_kinds.entry(kind).or_default() += 1;
+            }
+            let (a_, b_, c_) = first_k_depth(&in_collapse, k10);
+            scorer += a_;
+            shared += b_;
+            count += c_;
+        }
+        let mine = (!scorer_depths.is_empty())
+            .then(|| scorer_depths.iter().sum::<f64>() / scorer_depths.len() as f64);
+        if mine != sum.first_turn_depth {
+            return Err("this copy of pattern 3 does not give the record's depth".to_string());
+        }
+        if (scorer - scorer_depths.iter().sum::<f64>()).abs() > 1e-9 {
+            return Err("the two sums of pattern 3's depths differ".to_string());
+        }
+        if count > 0 {
+            p3 = serde_json::json!({
+                "depth": mine,
+                "depth_ties_shared": shared / count as f64,
+                "men": count,
+                "kinds": first_kinds,
+            });
+        }
+        let side_tally = |smp: &Sample| {
+            let mut t = [0u16; 5];
+            for (b2, c) in smp.postures.iter().enumerate() {
+                if sides[b2].map(|x| x as usize) == Some(l) {
+                    for q in 0..5 {
+                        t[q] += c[q];
+                    }
+                }
+            }
+            t
+        };
+        let men: Vec<usize> = (0..n)
+            .filter(|&i| front[i] && initial.side[i] as usize == l)
+            .collect();
+        let from = collapse_from(samples, &all_turns, bt, &side_tally, &men);
+        let strag: Vec<f64> = men
+            .iter()
+            .filter(|&&i| all_turns[i].first().is_some_and(|&t| t < from))
+            .map(|&i| depth(i))
+            .collect();
+        if strag.len() as u32 != sum.stragglers {
+            return Err("this copy of the stragglers does not give the record's".to_string());
+        }
+        stragglers = serde_json::json!({
+            "count": strag.len(),
+            "mean_depth": (!strag.is_empty()).then(|| strag.iter().sum::<f64>() / strag.len() as f64),
+            "collapse_from_s": secs_from(Some(from), sum.contact),
+        });
+    }
+
+    let ttb = sum.time_to_break_s;
+    let line = serde_json::json!({
+        "draw": r.draw,
+        "seed": r.seed,
+        "sample": r.draw.is_multiple_of(10),
+        "held": ttb.is_none_or(|t| t >= 300.0),
+        "loser": loser,
+        "time_to_break_s": ttb,
+        "contact_to": {
+            "first_bout_s": secs_from(first_bout, sum.contact),
+            "first_back_s": secs_from(first_back, sum.contact),
+            "first_knock_back_s": secs_from(first_knock, sum.contact),
+            "first_turn_s": secs_from(first_turn, sum.contact),
+            "break_s": secs_from(bt, sum.contact),
+        },
+        "bouts": bouts,
+        "backs_knocked": [backs[0][0], backs[1][0]],
+        "backs_fear": [backs[0][1], backs[1][1]],
+        "fear_back_causes": fear_causes,
+        "turns": turns,
+        "turn_causes": turn_causes,
+        "first_turn_kinds": kinds,
+        "losses": losses,
+        "first_turner": first_turner,
+        "pattern3": p3,
+        "stragglers": stragglers,
+    });
+    Ok(vec![line.to_string()])
+}
+
+/// `base` runs of sets 0, 10, .. 190, and every other run in which a line held five minutes
+/// and then broke.
+fn genealogy(args: impl Iterator<Item = String>) -> Result<(), String> {
+    let a = asked(args)?;
+    let base = records(&a, "base")?;
+    let chosen: Vec<&Record> = base
+        .iter()
+        .filter(|r| {
+            let held_then_broke = r.summary.time_to_break_s.is_some_and(|t| t >= 300.0);
+            (r.draw.is_multiple_of(10) || held_then_broke) && a.keeps(r)
+        })
+        .collect();
+    let s = scenario("base", &scenario_text("base")?)?;
+    over(&a, "runs of base", base.len(), &chosen, |r| {
+        genealogy_line(&s, &a, r)
+    })
+}
+
 fn main() {
     let mut args = std::env::args().skip(1);
     let done = match args.next().as_deref() {
         Some("drill") => drill(args),
         Some("reliefs") => reliefs(args),
         Some("leaders") => leaders(args),
+        Some("genealogy") => genealogy(args),
         _ => Err("usage: cannae-replay drill --engine E [--fight]\n       \
                   cannae-replay reliefs --records DIR --engine E --rung R --freeze-seed F \
                   --out FILE [--max 100] [--jobs 4] [--only D:S,..]\n       \
-                  cannae-replay leaders --records DIR --engine E --rung R --freeze-seed F \
-                  --out FILE [--jobs 4] [--only D:S,..]"
+                  cannae-replay leaders|genealogy --records DIR --engine E --rung R \
+                  --freeze-seed F --out FILE [--jobs 4] [--only D:S,..]"
             .to_string()),
     };
     if let Err(e) = done {
@@ -906,6 +1284,38 @@ mod tests {
         assert_eq!(scorer_stop(7800, &[None, None]), 156_000);
         // A break too late for the whole window ends at the scenario's end.
         assert_eq!(scorer_stop(1000, &[Some(5_000), None]), 20_000);
+    }
+
+    #[test]
+    fn the_first_tenth_with_ties() {
+        // Two turn at tick 5, front rank first by man number; the tenth's one place is shared.
+        let t = [(5, 0, 0.0), (5, 70, 1.0), (9, 3, 0.5)];
+        assert_eq!(first_k_depth(&t, 1), (0.0, 0.5, 1));
+        assert_eq!(first_k_depth(&t, 2), (1.0, 1.0, 2));
+        assert_eq!(first_k_depth(&t, 5), (1.5, 1.5, 3));
+        assert_eq!(first_k_depth(&[], 3), (0.0, 0.0, 0));
+        // Three at one tick for two places: each holds two thirds of a place.
+        let t = [(1, 0, 0.0), (1, 1, 0.0), (1, 2, 0.9)];
+        let (scorer, shared, n) = first_k_depth(&t, 2);
+        assert_eq!((scorer, n), (0.0, 2));
+        assert!((shared - 0.6).abs() < 1e-12);
+    }
+
+    #[test]
+    fn how_a_man_turned() {
+        assert_eq!(
+            turn_kind(Posture::Back, Some(Back::Knocked)),
+            "after_knock_back"
+        );
+        assert_eq!(
+            turn_kind(Posture::Back, Some(Back::Fear)),
+            "after_fear_back"
+        );
+        assert_eq!(
+            turn_kind(Posture::Steady, Some(Back::Knocked)),
+            "from_place"
+        );
+        assert_eq!(turn_kind(Posture::Forward, None), "from_place");
     }
 
     #[test]
