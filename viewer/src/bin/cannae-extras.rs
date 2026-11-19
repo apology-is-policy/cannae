@@ -4,12 +4,15 @@
 //!     cannae-extras rungs --records DIR [--freeze-seed F] [--seeds 10]
 //!     cannae-extras two --first DIR --records DIR [--freeze-seed F] [--seeds 10] [--equal-only]
 //!     cannae-extras topup --records DIR [--freeze-seed F] [--seeds 10]
+//!     cannae-extras sets --records DIR [--freeze-seed F] [--seeds 10]
 //!
 //! - `fails`: for each cell, on `base`, the failing sets by the part of the band that failed,
 //!   each pooled value beside its band, the stragglers and the tempo.
 //! - `rungs`: for each engine, one rung's memory statistic against another's, set by set.
 //! - `two`: the field engine's first batch beside the new one, pair by pair.
 //! - `topup`: one figure, the machine time the relief's top-up would take over the eight cells.
+//! - `sets`: the scorer's verdicts on `base`, one comma-separated line for each set of each
+//!   cell, for the analysis after Slice 0 (docs/slice0/analysis/).
 //!
 //! It reads records and runs nothing. It prints outcomes of scored runs, so it is run after
 //! the scoring. There are two exceptions, both run before it. `two --equal-only` prints how
@@ -1321,6 +1324,41 @@ fn topup(a: &Asked) -> Result<(), String> {
     Ok(())
 }
 
+/// The scorer's own verdicts, set by set: 1 a pass, 0 a fail, empty where it could not score
+/// the pattern. Pattern 6 is by its band alone, as the scorer has it on `base`.
+fn sets(a: &Asked) -> Result<(), String> {
+    let b = bands()?;
+    println!("engine,rung,set,p1,p2,p3,p4,p5,p6,p7,p8,passed,roman_broke");
+    for engine in ENGINES {
+        let engine_name = match engine {
+            Engine::Pairwise => "pairwise",
+            Engine::Field => "field",
+        };
+        for rung in 0..4u8 {
+            let rep = scorer(a, Cell { engine, rung }, &b)?;
+            for s in &rep.sets {
+                let v: Vec<&str> = s
+                    .verdicts
+                    .iter()
+                    .map(|v| match v {
+                        Some(true) => "1",
+                        Some(false) => "0",
+                        None => "",
+                    })
+                    .collect();
+                println!(
+                    "{engine_name},{rung},{},{},{},{}",
+                    s.draw,
+                    v.join(","),
+                    s.passed,
+                    s.roman_broke
+                );
+            }
+        }
+    }
+    Ok(())
+}
+
 fn main() {
     let mut args = std::env::args().skip(1);
     let command = args.next().unwrap_or_default();
@@ -1329,8 +1367,9 @@ fn main() {
         "rungs" => rungs(&a),
         "two" => two(&a),
         "topup" => topup(&a),
+        "sets" => sets(&a),
         _ => Err(
-            "usage: cannae-extras fails|rungs|two|topup --records DIR [--first DIR] \
+            "usage: cannae-extras fails|rungs|two|topup|sets --records DIR [--first DIR] \
              [--freeze-seed F] [--seeds 10] [--equal-only]"
                 .to_string(),
         ),

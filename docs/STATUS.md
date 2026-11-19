@@ -5,7 +5,7 @@ has run and is scored: **every cell fails the pre-registered test, on both engin
 report is drafted in full and design review 2 has reported; the newest blocks are under
 "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-19, 21:10 UTC.
+**Last updated:** 2026-11-19, 21:21 UTC.
 
 ## Current arc: Slice 0 analysis -- why the line breaks (approved 2026-11-19)
 
@@ -18,7 +18,7 @@ to find what breaks the line. It ends with a diagnosis and a proposed status tab
 
 | Chunk | Content | Commit |
 |---|---|---|
-| A1 | Counts from the batch's records: who lost, by cell; losses before the break; the spread of break times within a set; the runs where a line held, and what they pass; a rank screening of the 101 drawn lines against the time to break | |
+| A1 | Counts from the batch's records: who lost, by cell; losses before the break; the spread of break times within a set; the runs where a line held, and what they pass; a rank screening of the 101 drawn lines against the time to break | landed 2026-11-19 ([slice0/analysis/](slice0/analysis/README.md)) |
 | A2 | Mend the replay tool: why its battle drifted from the scorer's in 59 runs, and the relief it missed in a run's last second | |
 | A3 | The genealogy of the collapses, from replays with the event log's causes: what put the first men of each collapse into giving ground and what tipped them; pattern 3 with ties shared, and the stragglers' depth | |
 | A4 | The diagnosis, and a proposed status table for `docs/vision/` (failed as built, untested, withdrawn on speed), for Michal | |
@@ -857,6 +857,23 @@ verbatim, with its disposition table).
 **Since then (2026-11-19, 21:10 UTC): Slice 0 is at its end, and Michal approved the next
 arc: analysis first** (above, "Current arc"). The second speed reading still waits for a quiet
 Mac; it does not block the arc.
+
+**Since then (2026-11-19, 21:21 UTC): A1 has landed: counts from the records**
+([slice0/analysis/](slice0/analysis/README.md), exploratory). On `base`, in every cell:
+
+- **The Romans' line breaks first in 88 to 92 % of runs.**
+- **The loser has lost a median of one man when it breaks,** and none in 37 to 41 % of runs.
+  The fright spreads through a line nobody has hurt.
+- **About half the spread of break times is between seeds of one set.**
+- **Lines that held five minutes show pulses, but still break from the front** and take
+  their losses before the break. Pattern 3 passes in none of the 58 sets that held in five
+  seeds or more.
+- **The rank screening finds the same few lines on both engines and at every rung:** how far
+  apart the frames halt (the strongest), a man's support from those beside him, the alarm of
+  an enemy stepping at him, and the bout's rate and harm. No memory line moves the time to
+  break.
+
+A2, the replay tool, is next.
 
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
