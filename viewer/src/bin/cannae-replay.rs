@@ -4,9 +4,9 @@
 //!
 //!   cannae-replay drill --engine field|pairwise [--fight]
 //!   cannae-replay reliefs --records DIR --engine E --rung R --freeze-seed F --out FILE
-//!                         [--max 100] [--jobs 4]
+//!                         [--max 100] [--jobs 4] [--only D:S,..]
 //!   cannae-replay leaders --records DIR --engine E --rung R --freeze-seed F --out FILE
-//!                         [--jobs 4]
+//!                         [--jobs 4] [--only D:S,..]
 //!
 //! `drill` runs the relief alone, as the relief's own test does (`cannae-score`,
 //! `tests/relief.rs`): the relief patch with its reliefs allowed from half a minute, men whom
@@ -42,7 +42,13 @@
 //! A run is counted only if it is the battle of its record: the scorer's own run of that set
 //! and seed gives the record again, all but the wall time, and the battle stepped here has
 //! the same events. Both commands print the number of runs and of those not counted, and no
-//! outcome.
+//! outcome. `--only` keeps, of the runs a command would choose, those of the sets and seeds
+//! named: for checking a few runs, not for a count.
+//!
+//! The battle is stepped to the tick at which the scorer's run stopped ([`stop_tick`]).
+//! Until 2026-11-19 it was stepped to the record's `sim_s`, which holds that tick in whole
+//! seconds, rounded down: up to 19 ticks went unstepped, and a run with an event in them was
+//! not counted (59 of the report's runs), or missed a relief ordered there (8).
 //!
 //! They are for after the scoring. They ask for the records because they replay only a run
 //! that has one.
@@ -51,7 +57,7 @@ use cannae_core::schedule::BASE_TICK;
 use cannae_core::view::Order;
 use cannae_core::{BodyId, Event, EventKind, ManId, Posture, Role};
 use cannae_harness::Scenario;
-use cannae_harness::metrics::fortune;
+use cannae_harness::metrics::{fortune, scoring_end};
 use cannae_man::{Spread, Troop};
 use cannae_score::draw::{Cell, Drawn, drawn, nominal};
 use cannae_score::report::{RELIEF_EVERY, ROMANS};
@@ -393,11 +399,34 @@ struct Asked {
     out: String,
     max: usize,
     jobs: usize,
+    /// Sets and seeds to keep; empty keeps every run chosen.
+    only: Vec<(u32, u64)>,
+}
+
+impl Asked {
+    fn keeps(&self, r: &Record) -> bool {
+        self.only.is_empty() || self.only.contains(&(r.draw, r.seed))
+    }
+}
+
+/// `D:S,D:S,..` as sets and seeds.
+fn runs_named(v: &str) -> Result<Vec<(u32, u64)>, String> {
+    v.split(',')
+        .map(|ds| {
+            let (d, s) = ds
+                .split_once(':')
+                .ok_or(format!("--only: {ds:?} is not D:S"))?;
+            Ok((
+                d.parse().map_err(|e| format!("--only {ds:?}: {e}"))?,
+                s.parse().map_err(|e| format!("--only {ds:?}: {e}"))?,
+            ))
+        })
+        .collect()
 }
 
 fn asked(mut args: impl Iterator<Item = String>) -> Result<Asked, String> {
     let (mut dir, mut engine, mut rung, mut freeze, mut out) = (None, None, None, None, None);
-    let (mut max, mut jobs) = (100usize, 4usize);
+    let (mut max, mut jobs, mut only) = (100usize, 4usize, Vec::new());
     while let Some(a) = args.next() {
         let mut value = || args.next().ok_or_else(|| format!("{a} needs a value"));
         match a.as_str() {
@@ -408,6 +437,7 @@ fn asked(mut args: impl Iterator<Item = String>) -> Result<Asked, String> {
             "--out" => out = Some(value()?),
             "--max" => max = value()?.parse().map_err(|e| format!("--max: {e}"))?,
             "--jobs" => jobs = value()?.parse().map_err(|e| format!("--jobs: {e}"))?,
+            "--only" => only = runs_named(&value()?)?,
             other => return Err(format!("unknown argument {other:?}")),
         }
     }
@@ -426,6 +456,7 @@ fn asked(mut args: impl Iterator<Item = String>) -> Result<Asked, String> {
         out,
         max,
         jobs,
+        only,
     })
 }
 
@@ -473,6 +504,29 @@ fn again(
         return Err("the scorer's run does not give the record again".to_string());
     }
     Ok((d, run, events))
+}
+
+/// The tick after the last one the scorer's run stepped: 900 s after the first sample at which
+/// a side was broken, or the scenario's end, as the scorer's own loop finds it
+/// (`cannae_score::run_logged`, `scoring_end`). The summary's `side_break` holds the tick of
+/// that first sample for each side.
+fn scorer_stop(duration_s: u32, side_break: &[Option<u32>; 2]) -> u32 {
+    scoring_end(
+        side_break.iter().flatten().min().copied(),
+        duration_s * 1000 / BASE_TICK.0,
+    )
+}
+
+/// [`scorer_stop`] for a record, checked against the whole seconds the record keeps.
+fn stop_tick(s: &Scenario, run: &Run, r: &Record) -> Result<u32, String> {
+    let stop = scorer_stop(s.duration_s, &r.summary.side_break);
+    if stop * BASE_TICK.0 / 1000 != run.sim_s {
+        return Err(format!(
+            "the scorer stopped at {} s, not at tick {stop}",
+            run.sim_s
+        ));
+    }
+    Ok(stop)
 }
 
 /// The same battle, to be stepped here.
@@ -565,7 +619,7 @@ fn relief_lines(
     let (mut b, _) = stepped(s, "relief", a, &d, r.seed)?;
     let of = b.live.bodies().body.clone();
     let mut drills = vec![Drill::default(); pairs.len()];
-    let end = run.sim_s * 1000 / BASE_TICK.0;
+    let end = stop_tick(s, &run, r)?;
     while b.live.tick() < end {
         let man_step = b.live.step();
         for (k, &(tired, fresh)) in pairs.iter().enumerate() {
@@ -669,7 +723,8 @@ fn reliefs(args: impl Iterator<Item = String>) -> Result<(), String> {
         .filter(|r| r.relieved_s.iter().any(Option::is_some))
         .collect();
     let backed = records(&a, "backed")?;
-    let chosen = to_replay(&relieved, a.max);
+    let mut chosen = to_replay(&relieved, a.max);
+    chosen.retain(|r| a.keeps(r));
     let s = scenario("relief", &scenario_text("relief")?)?;
     let pairs = pairs(&s)?;
     over(&a, "relieved runs", relieved.len(), &chosen, |r| {
@@ -683,7 +738,7 @@ fn leader_lines(s: &Scenario, a: &Asked, r: &Record) -> Result<Vec<String>, Stri
     let (d, run, events) = again(s, "base", a, r)?;
     let (mut b, infos) = stepped(s, "base", a, &d, r.seed)?;
     let of = b.live.bodies().body.clone();
-    let end = run.sim_s * 1000 / BASE_TICK.0;
+    let end = stop_tick(s, &run, r)?;
     let breaks = &r.summary.body_break;
     let mut led_down = vec![false; s.bodies.len()];
     let mut seen = 0;
@@ -759,7 +814,7 @@ fn leaders(args: impl Iterator<Item = String>) -> Result<(), String> {
     let base = records(&a, "base")?;
     let chosen: Vec<&Record> = base
         .iter()
-        .filter(|r| r.draw < 200 && r.draw % 10 == 0)
+        .filter(|r| r.draw < 200 && r.draw % 10 == 0 && a.keeps(r))
         .collect();
     let s = scenario("base", &scenario_text("base")?)?;
     over(&a, "runs of base", base.len(), &chosen, |r| {
@@ -775,9 +830,9 @@ fn main() {
         Some("leaders") => leaders(args),
         _ => Err("usage: cannae-replay drill --engine E [--fight]\n       \
                   cannae-replay reliefs --records DIR --engine E --rung R --freeze-seed F \
-                  --out FILE [--max 100] [--jobs 4]\n       \
+                  --out FILE [--max 100] [--jobs 4] [--only D:S,..]\n       \
                   cannae-replay leaders --records DIR --engine E --rung R --freeze-seed F \
-                  --out FILE [--jobs 4]"
+                  --out FILE [--jobs 4] [--only D:S,..]"
             .to_string()),
     };
     if let Err(e) = done {
@@ -837,5 +892,26 @@ mod tests {
         // A run that reaches the count is still replayed whole, both its reliefs.
         assert_eq!(sets(to_replay(&all, 1)), [(0, 1), (1, 1)]);
         assert_eq!(sets(to_replay(&all, 100)).len(), 6);
+    }
+
+    #[test]
+    fn the_scorers_stop() {
+        // Set 72, seed 6, of `relief`: the warband broke at tick 6015, so the scorer stepped
+        // to tick 24016, and both reliefs were ordered after tick 24000. The record keeps
+        // 1,200 s, which as ticks would have stopped the replay at 24000.
+        assert_eq!(scorer_stop(7800, &[None, Some(6015)]), 24_016);
+        assert_eq!(24_016 * BASE_TICK.0 / 1000, 1200);
+        // The first side to break sets it; with no break it is the scenario's end.
+        assert_eq!(scorer_stop(7800, &[Some(350), Some(300)]), 18_301);
+        assert_eq!(scorer_stop(7800, &[None, None]), 156_000);
+        // A break too late for the whole window ends at the scenario's end.
+        assert_eq!(scorer_stop(1000, &[Some(5_000), None]), 20_000);
+    }
+
+    #[test]
+    fn runs_by_set_and_seed() {
+        assert_eq!(runs_named("72:6,0:10"), Ok(vec![(72, 6), (0, 10)]));
+        assert!(runs_named("72").is_err());
+        assert!(runs_named("72:x").is_err());
     }
 }
