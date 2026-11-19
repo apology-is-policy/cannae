@@ -4,7 +4,7 @@
 scored: **every cell fails the pre-registered test, on both engines and at every rung.** The
 report is being written; the newest blocks are under "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-19, 14:56 UTC.
+**Last updated:** 2026-11-19, 20:39 UTC.
 
 ## Current arc: Slice 0 -- the experiment (approved 2026-11-10)
 
@@ -816,6 +816,11 @@ in: the passages on both engines, what Slice 0 does not answer, and what comes a
 eleven are in [slice0/report/](slice0/report/). Varro has not read them yet; I have asked him
 whether he wants to take the field engine's parts.
 
+**Since then (2026-11-19, 20:39 UTC): Michal held rung 4 and asked for design review 2
+now.** The review is a read-only Fable reviewer on the vision, this page and the report. Its
+report will be saved verbatim in [reviews/](reviews/) with a disposition table, for Michal to
+decide on. Rung 4, a second round or a revision of the vision waits for it.
+
 **What the report owes is listed:** [slice0/report-outline.md](slice0/report-outline.md), a
 draft with no result in it, written before the new batch has made a record. It collects
 everything the pre-registration, its addenda and this page promised the report would give.
@@ -1097,6 +1102,11 @@ work do not wait on it.
 - Which three to five battles to seal. Needed before Slice 2 ([07](vision/07-validation.md) §5).
 
 **Michal's answers so far:**
+
+- **Rung 4 and design review 2 (2026-11-19):** rung 4 is held, not built yet, although its
+  condition (rungs 0 to 3 all fail) is met: design review 2 runs first, on the results, and
+  then Michal decides whether rung 4, a second round or a revision of the vision is the next
+  arc. The review runs now.
 
 - **The relief's top-up (2026-11-19):** yes, on the one figure agreed for it: about 4 hours
   of the Pi's time over the eight cells.
