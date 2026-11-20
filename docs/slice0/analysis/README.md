@@ -8,8 +8,8 @@ advice to analyse what exists before anything is built.
 | Chunk | Output | State |
 |---|---|---|
 | A1. Counts from the records | [a1-counts.md](a1-counts.md), with the scorer's verdicts set by set in [sets.csv](sets.csv) | done, 2026-11-19 |
-| A2. Mend the replay tool | the fault and the mend: [STATUS](../../STATUS.md); the report's replays run again | mended; replays running |
-| A3. The genealogy of the collapses, from replays | `cannae-replay genealogy`, counted by `tools/a3-genealogy.py` | queued |
+| A2. Mend the replay tool | the fault and the mend: [report section 5](../report/05-relief.md#the-fifteen-runs-the-first-replays-left-out); the report's replays run again and recounted | done, 2026-11-20 |
+| A3. The genealogy of the collapses, from replays | `cannae-replay genealogy`, counted by `tools/a3-genealogy.py` | running on the Pi |
 | A4. The diagnosis, and a proposed status table for `docs/vision/` | | |
 
 ## A1: what the records say

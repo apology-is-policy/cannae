@@ -178,7 +178,8 @@
 {"draw":40,"seed":4,"body":1,"side":0,"group":"file","fall_s":20.25,"break_after_s":177.25,"in_flight":0.0000,"succeed_after_s":8.95}
 {"draw":40,"seed":5,"body":1,"side":0,"group":"file","fall_s":204.50,"break_after_s":19.75,"in_flight":0.2278,"succeed_after_s":8.95}
 {"draw":40,"seed":5,"body":1,"side":0,"group":"file","fall_s":214.00,"break_after_s":10.25,"in_flight":0.2692,"succeed_after_s":8.95}
-{"draw":40,"seed":6,"not_counted":"the battle stepped here is not the scorer's"}
+{"draw":40,"seed":6,"body":0,"side":0,"group":"file","fall_s":33.75,"break_after_s":null,"in_flight":0.0000,"succeed_after_s":8.95}
+{"draw":40,"seed":6,"body":2,"side":1,"group":"file","fall_s":84.25,"break_after_s":86.75,"in_flight":0.0000,"succeed_after_s":null}
 {"draw":40,"seed":7,"body":1,"side":0,"group":"file","fall_s":128.50,"break_after_s":304.50,"in_flight":0.0000,"succeed_after_s":8.95}
 {"draw":40,"seed":7,"body":2,"side":1,"group":"file","fall_s":153.25,"break_after_s":null,"in_flight":0.0000,"succeed_after_s":null}
 {"draw":40,"seed":7,"body":1,"side":0,"group":"file","fall_s":189.00,"break_after_s":244.00,"in_flight":0.1026,"succeed_after_s":8.95}
@@ -213,14 +214,12 @@
 {"draw":50,"seed":10,"body":1,"side":0,"group":"file","fall_s":32.00,"break_after_s":10.00,"in_flight":0.2658,"succeed_after_s":8.90}
 {"draw":50,"seed":10,"body":1,"side":0,"group":"file","fall_s":36.25,"break_after_s":5.75,"in_flight":0.2564,"succeed_after_s":8.90}
 {"draw":60,"seed":2,"body":2,"side":1,"group":"file","fall_s":73.75,"break_after_s":22.00,"in_flight":0.0000,"succeed_after_s":null}
-{"draw":60,"seed":3,"not_counted":"the battle stepped here is not the scorer's"}
 {"draw":60,"seed":4,"body":1,"side":0,"group":"file","fall_s":20.25,"break_after_s":112.00,"in_flight":0.0000,"succeed_after_s":3.80}
 {"draw":60,"seed":4,"body":1,"side":0,"group":"file","fall_s":92.00,"break_after_s":40.25,"in_flight":0.0000,"succeed_after_s":3.80}
 {"draw":60,"seed":4,"body":1,"side":0,"group":"file","fall_s":105.75,"break_after_s":26.50,"in_flight":0.0000,"succeed_after_s":3.80}
 {"draw":60,"seed":4,"body":2,"side":1,"group":"file","fall_s":112.25,"break_after_s":null,"in_flight":0.0064,"succeed_after_s":null}
 {"draw":60,"seed":7,"body":2,"side":1,"group":"file","fall_s":65.25,"break_after_s":null,"in_flight":0.0000,"succeed_after_s":null}
 {"draw":60,"seed":7,"body":1,"side":0,"group":"file","fall_s":155.50,"break_after_s":205.75,"in_flight":0.2152,"succeed_after_s":3.80}
-{"draw":60,"seed":10,"not_counted":"the battle stepped here is not the scorer's"}
 {"draw":70,"seed":1,"body":0,"side":0,"group":"leader","fall_s":11.25,"break_after_s":32.50,"in_flight":0.0000,"succeed_after_s":4.95}
 {"draw":70,"seed":1,"body":0,"side":0,"group":"file","fall_s":24.00,"break_after_s":19.75,"in_flight":0.0000,"succeed_after_s":4.95}
 {"draw":70,"seed":1,"body":0,"side":0,"group":"file","fall_s":27.00,"break_after_s":16.75,"in_flight":0.0000,"succeed_after_s":4.95}
@@ -282,7 +281,6 @@
 {"draw":90,"seed":6,"body":0,"side":0,"group":"file","fall_s":23.25,"break_after_s":13.50,"in_flight":0.0000,"succeed_after_s":14.25}
 {"draw":90,"seed":6,"body":0,"side":0,"group":"file","fall_s":33.75,"break_after_s":3.00,"in_flight":0.0000,"succeed_after_s":14.25}
 {"draw":90,"seed":6,"body":2,"side":1,"group":"file","fall_s":36.25,"break_after_s":null,"in_flight":0.0000,"succeed_after_s":null}
-{"draw":90,"seed":8,"not_counted":"the battle stepped here is not the scorer's"}
 {"draw":90,"seed":10,"body":1,"side":0,"group":"file","fall_s":36.25,"break_after_s":42.75,"in_flight":0.2750,"succeed_after_s":14.25}
 {"draw":100,"seed":1,"body":0,"side":0,"group":"leader","fall_s":11.25,"break_after_s":926.50,"in_flight":0.0000,"succeed_after_s":11.15}
 {"draw":100,"seed":1,"body":0,"side":0,"group":"file","fall_s":27.00,"break_after_s":910.75,"in_flight":0.0000,"succeed_after_s":11.15}
@@ -484,7 +482,10 @@
 {"draw":150,"seed":9,"body":1,"side":0,"group":"file","fall_s":1150.25,"break_after_s":null,"in_flight":0.0132,"succeed_after_s":15.00}
 {"draw":150,"seed":9,"body":1,"side":0,"group":"file","fall_s":1963.00,"break_after_s":null,"in_flight":0.0133,"succeed_after_s":15.00}
 {"draw":150,"seed":9,"body":1,"side":0,"group":"file","fall_s":3128.25,"break_after_s":null,"in_flight":0.0141,"succeed_after_s":15.00}
-{"draw":150,"seed":10,"not_counted":"the battle stepped here is not the scorer's"}
+{"draw":150,"seed":10,"body":1,"side":0,"group":"file","fall_s":36.25,"break_after_s":75.75,"in_flight":0.0000,"succeed_after_s":15.00}
+{"draw":150,"seed":10,"body":2,"side":1,"group":"file","fall_s":51.25,"break_after_s":null,"in_flight":0.0000,"succeed_after_s":null}
+{"draw":150,"seed":10,"body":1,"side":0,"group":"file","fall_s":64.00,"break_after_s":48.00,"in_flight":0.0000,"succeed_after_s":15.00}
+{"draw":150,"seed":10,"body":0,"side":0,"group":"leader","fall_s":81.25,"break_after_s":14.00,"in_flight":0.0000,"succeed_after_s":15.00}
 {"draw":160,"seed":3,"body":2,"side":1,"group":"file","fall_s":33.00,"break_after_s":null,"in_flight":0.0000,"succeed_after_s":null}
 {"draw":160,"seed":4,"body":1,"side":0,"group":"file","fall_s":16.00,"break_after_s":26.50,"in_flight":0.0000,"succeed_after_s":2.20}
 {"draw":160,"seed":4,"body":1,"side":0,"group":"file","fall_s":20.25,"break_after_s":22.25,"in_flight":0.0000,"succeed_after_s":2.20}
@@ -504,7 +505,6 @@
 {"draw":170,"seed":9,"body":0,"side":0,"group":"file","fall_s":12.25,"break_after_s":1.00,"in_flight":0.2152,"succeed_after_s":8.00}
 {"draw":180,"seed":4,"body":2,"side":1,"group":"file","fall_s":491.25,"break_after_s":null,"in_flight":0.0000,"succeed_after_s":null}
 {"draw":180,"seed":6,"body":0,"side":0,"group":"file","fall_s":33.75,"break_after_s":21.75,"in_flight":0.0000,"succeed_after_s":6.45}
-{"draw":180,"seed":7,"not_counted":"the battle stepped here is not the scorer's"}
 {"draw":190,"seed":1,"body":1,"side":0,"group":"file","fall_s":8.50,"break_after_s":25.75,"in_flight":0.0000,"succeed_after_s":3.65}
 {"draw":190,"seed":1,"body":0,"side":0,"group":"leader","fall_s":11.25,"break_after_s":24.25,"in_flight":0.0000,"succeed_after_s":3.65}
 {"draw":190,"seed":1,"body":2,"side":1,"group":"file","fall_s":11.50,"break_after_s":null,"in_flight":0.0000,"succeed_after_s":null}
@@ -516,7 +516,14 @@
 {"draw":190,"seed":1,"body":0,"side":0,"group":"file","fall_s":27.00,"break_after_s":8.50,"in_flight":0.0533,"succeed_after_s":3.65}
 {"draw":190,"seed":1,"body":1,"side":0,"group":"file","fall_s":29.75,"break_after_s":4.50,"in_flight":0.0000,"succeed_after_s":3.65}
 {"draw":190,"seed":1,"body":0,"side":0,"group":"file","fall_s":33.00,"break_after_s":2.50,"in_flight":0.0694,"succeed_after_s":3.65}
-{"draw":190,"seed":2,"not_counted":"the battle stepped here is not the scorer's"}
+{"draw":190,"seed":2,"body":0,"side":0,"group":"file","fall_s":7.75,"break_after_s":28.50,"in_flight":0.0000,"succeed_after_s":3.65}
+{"draw":190,"seed":2,"body":1,"side":0,"group":"file","fall_s":13.75,"break_after_s":25.75,"in_flight":0.0000,"succeed_after_s":3.65}
+{"draw":190,"seed":2,"body":0,"side":0,"group":"leader","fall_s":14.00,"break_after_s":22.25,"in_flight":0.0000,"succeed_after_s":3.65}
+{"draw":190,"seed":2,"body":1,"side":0,"group":"file","fall_s":18.50,"break_after_s":21.00,"in_flight":0.0000,"succeed_after_s":3.65}
+{"draw":190,"seed":2,"body":1,"side":0,"group":"file","fall_s":19.75,"break_after_s":19.75,"in_flight":0.0000,"succeed_after_s":3.65}
+{"draw":190,"seed":2,"body":1,"side":0,"group":"file","fall_s":23.75,"break_after_s":15.75,"in_flight":0.0130,"succeed_after_s":3.65}
+{"draw":190,"seed":2,"body":2,"side":1,"group":"file","fall_s":29.75,"break_after_s":null,"in_flight":0.0000,"succeed_after_s":null}
+{"draw":190,"seed":2,"body":1,"side":0,"group":"file","fall_s":36.75,"break_after_s":2.75,"in_flight":0.0563,"succeed_after_s":3.65}
 {"draw":190,"seed":3,"body":1,"side":0,"group":"file","fall_s":4.50,"break_after_s":18.75,"in_flight":0.0000,"succeed_after_s":3.65}
 {"draw":190,"seed":3,"body":1,"side":0,"group":"file","fall_s":12.50,"break_after_s":10.75,"in_flight":0.0000,"succeed_after_s":3.65}
 {"draw":190,"seed":3,"body":0,"side":0,"group":"leader","fall_s":16.00,"break_after_s":5.25,"in_flight":0.0000,"succeed_after_s":3.65}
@@ -554,7 +561,13 @@
 {"draw":190,"seed":8,"body":0,"side":0,"group":"leader","fall_s":14.50,"break_after_s":4.50,"in_flight":0.0000,"succeed_after_s":3.65}
 {"draw":190,"seed":8,"body":1,"side":0,"group":"file","fall_s":23.75,"break_after_s":6.75,"in_flight":0.3684,"succeed_after_s":3.65}
 {"draw":190,"seed":8,"body":1,"side":0,"group":"file","fall_s":26.25,"break_after_s":4.25,"in_flight":0.3733,"succeed_after_s":3.65}
-{"draw":190,"seed":9,"not_counted":"the battle stepped here is not the scorer's"}
+{"draw":190,"seed":9,"body":0,"side":0,"group":"file","fall_s":12.25,"break_after_s":14.00,"in_flight":0.0000,"succeed_after_s":3.65}
+{"draw":190,"seed":9,"body":1,"side":0,"group":"file","fall_s":12.75,"break_after_s":17.25,"in_flight":0.0000,"succeed_after_s":3.65}
+{"draw":190,"seed":9,"body":1,"side":0,"group":"file","fall_s":15.50,"break_after_s":14.50,"in_flight":0.0000,"succeed_after_s":3.65}
+{"draw":190,"seed":9,"body":1,"side":0,"group":"file","fall_s":16.50,"break_after_s":13.50,"in_flight":0.0000,"succeed_after_s":3.65}
+{"draw":190,"seed":9,"body":0,"side":0,"group":"file","fall_s":17.00,"break_after_s":9.25,"in_flight":0.0000,"succeed_after_s":3.65}
+{"draw":190,"seed":9,"body":0,"side":0,"group":"file","fall_s":17.25,"break_after_s":9.00,"in_flight":0.0000,"succeed_after_s":3.65}
+{"draw":190,"seed":9,"body":0,"side":0,"group":"file","fall_s":18.25,"break_after_s":8.00,"in_flight":0.0000,"succeed_after_s":3.65}
 {"draw":190,"seed":10,"body":1,"side":0,"group":"file","fall_s":12.75,"break_after_s":26.50,"in_flight":0.0000,"succeed_after_s":3.65}
 {"draw":190,"seed":10,"body":1,"side":0,"group":"file","fall_s":13.50,"break_after_s":25.75,"in_flight":0.0000,"succeed_after_s":3.65}
 {"draw":190,"seed":10,"body":1,"side":0,"group":"file","fall_s":14.00,"break_after_s":25.25,"in_flight":0.0000,"succeed_after_s":3.65}

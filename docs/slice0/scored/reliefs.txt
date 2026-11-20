@@ -1,153 +1,153 @@
-reliefs-field-r0.jsonl: 136 lines read, 3 runs not counted, 0 lines that cannot be read, 0 of another kind
-  the first 50 sets: 38 reliefs seen, in 20 runs
-    the fresh century had the front after the order: median 18.75 s, longest 73.00 s (35 of 38 reliefs)
-    the tired century halted after that: median 18.75 s, longest 73.00 s (35 of 38 reliefs)
-    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (35 of 38 reliefs)
-    men out of their places at the halt, of those in them at the order: median 0.00, most 0.00 (35 of 38 reliefs)
-    pressed and jammed 0, pressed and not jammed 2, jammed and not pressed 0, neither 36
-    unfinished: a century broke before the halt in 0, the run ended in 3
+reliefs-field-r0.jsonl: 142 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
+  the first 50 sets: 42 reliefs seen, in 22 runs
+    the fresh century had the front after the order: median 18.75 s, longest 73.00 s (37 of 42 reliefs)
+    the tired century halted after that: median 18.75 s, longest 73.00 s (37 of 42 reliefs)
+    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (37 of 42 reliefs)
+    men out of their places at the halt, of those in them at the order: median 0.00, most 0.00 (37 of 42 reliefs)
+    pressed and jammed 0, pressed and not jammed 2, jammed and not pressed 0, neither 40
+    unfinished: a century broke before the halt in 0, the run ended in 5
     the runs beside their backed twins (better, worse, the same; no twin on disk):
       with a jammed relief: 0, 0, 0; 0
       with a pressed relief and none jammed: 1, 1, 0; 0
-      the rest: 6, 4, 8; 0
-  the top-up: 98 reliefs seen, in 50 runs
-    the fresh century had the front after the order: median 18.75 s, longest 1194.75 s (94 of 98 reliefs)
-    the tired century halted after that: median 18.75 s, longest 122.00 s (92 of 98 reliefs)
-    nine in ten were back in their places after the halt: median 0.05 s, longest 400.80 s (92 of 98 reliefs)
-    men out of their places at the halt, of those in them at the order: median 0.00, most 107.00 (92 of 98 reliefs)
-    pressed and jammed 2, pressed and not jammed 11, jammed and not pressed 0, neither 85
+      the rest: 7, 4, 9; 0
+  the top-up: 100 reliefs seen, in 51 runs
+    the fresh century had the front after the order: median 18.75 s, longest 1194.75 s (96 of 100 reliefs)
+    the tired century halted after that: median 18.75 s, longest 122.00 s (94 of 100 reliefs)
+    nine in ten were back in their places after the halt: median 0.05 s, longest 400.80 s (94 of 100 reliefs)
+    men out of their places at the halt, of those in them at the order: median 0.00, most 107.00 (94 of 100 reliefs)
+    pressed and jammed 2, pressed and not jammed 11, jammed and not pressed 0, neither 87
     unfinished: a century broke before the halt in 1, the run ended in 5
     the runs beside their backed twins (better, worse, the same; no twin on disk):
       with a jammed relief: 1, 1, 0; 0
       with a pressed relief and none jammed: 3, 3, 1; 0
-      the rest: 8, 16, 17; 0
-reliefs-field-r1.jsonl: 128 lines read, 3 runs not counted, 0 lines that cannot be read, 0 of another kind
-  the first 50 sets: 28 reliefs seen, in 15 runs
-    the fresh century had the front after the order: median 18.75 s, longest 174.00 s (25 of 28 reliefs)
-    the tired century halted after that: median 18.75 s, longest 174.00 s (25 of 28 reliefs)
-    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (25 of 28 reliefs)
-    men out of their places at the halt, of those in them at the order: median 0.00, most 2.00 (25 of 28 reliefs)
-    pressed and jammed 0, pressed and not jammed 2, jammed and not pressed 0, neither 26
-    unfinished: a century broke before the halt in 0, the run ended in 3
+      the rest: 9, 16, 17; 0
+reliefs-field-r1.jsonl: 133 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
+  the first 50 sets: 32 reliefs seen, in 17 runs
+    the fresh century had the front after the order: median 18.75 s, longest 174.00 s (27 of 32 reliefs)
+    the tired century halted after that: median 18.75 s, longest 174.00 s (27 of 32 reliefs)
+    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (27 of 32 reliefs)
+    men out of their places at the halt, of those in them at the order: median 0.00, most 2.00 (27 of 32 reliefs)
+    pressed and jammed 0, pressed and not jammed 2, jammed and not pressed 0, neither 30
+    unfinished: a century broke before the halt in 0, the run ended in 5
     the runs beside their backed twins (better, worse, the same; no twin on disk):
       with a jammed relief: 0, 0, 0; 0
       with a pressed relief and none jammed: 1, 1, 0; 0
-      the rest: 1, 3, 9; 0
-  the top-up: 100 reliefs seen, in 51 runs
-    the fresh century had the front after the order: median 18.75 s, longest 886.50 s (97 of 100 reliefs)
-    the tired century halted after that: median 18.75 s, longest 122.00 s (92 of 100 reliefs)
-    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (92 of 100 reliefs)
-    men out of their places at the halt, of those in them at the order: median 0.00, most 1.00 (92 of 100 reliefs)
-    pressed and jammed 1, pressed and not jammed 5, jammed and not pressed 0, neither 94
+      the rest: 1, 4, 10; 0
+  the top-up: 101 reliefs seen, in 52 runs
+    the fresh century had the front after the order: median 18.75 s, longest 886.50 s (98 of 101 reliefs)
+    the tired century halted after that: median 18.75 s, longest 122.00 s (93 of 101 reliefs)
+    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (93 of 101 reliefs)
+    men out of their places at the halt, of those in them at the order: median 0.00, most 1.00 (93 of 101 reliefs)
+    pressed and jammed 1, pressed and not jammed 6, jammed and not pressed 0, neither 94
     unfinished: a century broke before the halt in 1, the run ended in 7
     the runs beside their backed twins (better, worse, the same; no twin on disk):
       with a jammed relief: 0, 1, 0; 0
-      with a pressed relief and none jammed: 0, 3, 1; 0
+      with a pressed relief and none jammed: 0, 3, 2; 0
       the rest: 12, 16, 18; 0
-reliefs-field-r2.jsonl: 87 lines read, 3 runs not counted, 0 lines that cannot be read, 0 of another kind
-  the first 50 sets: 20 reliefs seen, in 11 runs
-    the fresh century had the front after the order: median 18.75 s, longest 73.00 s (17 of 20 reliefs)
-    the tired century halted after that: median 18.75 s, longest 73.00 s (17 of 20 reliefs)
-    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (17 of 20 reliefs)
-    men out of their places at the halt, of those in them at the order: median 0.00, most 0.00 (17 of 20 reliefs)
-    pressed and jammed 0, pressed and not jammed 0, jammed and not pressed 0, neither 20
-    unfinished: a century broke before the halt in 0, the run ended in 3
+reliefs-field-r2.jsonl: 93 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
+  the first 50 sets: 24 reliefs seen, in 13 runs
+    the fresh century had the front after the order: median 18.75 s, longest 73.00 s (19 of 24 reliefs)
+    the tired century halted after that: median 18.75 s, longest 73.00 s (19 of 24 reliefs)
+    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (19 of 24 reliefs)
+    men out of their places at the halt, of those in them at the order: median 0.00, most 0.00 (19 of 24 reliefs)
+    pressed and jammed 0, pressed and not jammed 0, jammed and not pressed 0, neither 24
+    unfinished: a century broke before the halt in 0, the run ended in 5
     the runs beside their backed twins (better, worse, the same; no twin on disk):
       with a jammed relief: 0, 0, 0; 0
       with a pressed relief and none jammed: 0, 0, 0; 0
-      the rest: 2, 4, 5; 0
-  the top-up: 67 reliefs seen, in 34 runs
-    the fresh century had the front after the order: median 18.75 s, longest 322.25 s (67 of 67 reliefs)
-    the tired century halted after that: median 18.75 s, longest 322.25 s (65 of 67 reliefs)
-    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (65 of 67 reliefs)
-    men out of their places at the halt, of those in them at the order: median 0.00, most 8.00 (65 of 67 reliefs)
-    pressed and jammed 0, pressed and not jammed 2, jammed and not pressed 0, neither 65
+      the rest: 2, 5, 6; 0
+  the top-up: 69 reliefs seen, in 35 runs
+    the fresh century had the front after the order: median 18.75 s, longest 322.25 s (69 of 69 reliefs)
+    the tired century halted after that: median 18.75 s, longest 322.25 s (67 of 69 reliefs)
+    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (67 of 69 reliefs)
+    men out of their places at the halt, of those in them at the order: median 0.00, most 8.00 (67 of 69 reliefs)
+    pressed and jammed 0, pressed and not jammed 2, jammed and not pressed 0, neither 67
     unfinished: a century broke before the halt in 0, the run ended in 2
     the runs beside their backed twins (better, worse, the same; no twin on disk):
       with a jammed relief: 0, 0, 0; 0
       with a pressed relief and none jammed: 1, 0, 0; 0
-      the rest: 11, 14, 8; 0
-reliefs-field-r3.jsonl: 120 lines read, 2 runs not counted, 0 lines that cannot be read, 0 of another kind
-  the first 50 sets: 21 reliefs seen, in 12 runs
-    the fresh century had the front after the order: median 18.75 s, longest 25.00 s (18 of 21 reliefs)
-    the tired century halted after that: median 18.75 s, longest 25.00 s (18 of 21 reliefs)
-    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (18 of 21 reliefs)
-    men out of their places at the halt, of those in them at the order: median 0.00, most 0.00 (18 of 21 reliefs)
-    pressed and jammed 0, pressed and not jammed 0, jammed and not pressed 0, neither 21
-    unfinished: a century broke before the halt in 0, the run ended in 3
+      the rest: 12, 14, 8; 0
+reliefs-field-r3.jsonl: 123 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
+  the first 50 sets: 23 reliefs seen, in 13 runs
+    the fresh century had the front after the order: median 18.75 s, longest 25.00 s (18 of 23 reliefs)
+    the tired century halted after that: median 18.75 s, longest 25.00 s (18 of 23 reliefs)
+    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (18 of 23 reliefs)
+    men out of their places at the halt, of those in them at the order: median 0.00, most 0.00 (18 of 23 reliefs)
+    pressed and jammed 0, pressed and not jammed 0, jammed and not pressed 0, neither 23
+    unfinished: a century broke before the halt in 0, the run ended in 5
     the runs beside their backed twins (better, worse, the same; no twin on disk):
       with a jammed relief: 0, 0, 0; 0
       with a pressed relief and none jammed: 0, 0, 0; 0
-      the rest: 2, 3, 7; 0
-  the top-up: 99 reliefs seen, in 50 runs
-    the fresh century had the front after the order: median 18.75 s, longest 341.00 s (99 of 99 reliefs)
-    the tired century halted after that: median 18.75 s, longest 18.75 s (98 of 99 reliefs)
-    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (98 of 99 reliefs)
-    men out of their places at the halt, of those in them at the order: median 0.00, most 2.00 (98 of 99 reliefs)
-    pressed and jammed 0, pressed and not jammed 8, jammed and not pressed 0, neither 91
+      the rest: 2, 3, 8; 0
+  the top-up: 100 reliefs seen, in 51 runs
+    the fresh century had the front after the order: median 18.75 s, longest 341.00 s (100 of 100 reliefs)
+    the tired century halted after that: median 18.75 s, longest 18.75 s (99 of 100 reliefs)
+    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (99 of 100 reliefs)
+    men out of their places at the halt, of those in them at the order: median 0.00, most 2.00 (99 of 100 reliefs)
+    pressed and jammed 0, pressed and not jammed 8, jammed and not pressed 0, neither 92
     unfinished: a century broke before the halt in 0, the run ended in 1
     the runs beside their backed twins (better, worse, the same; no twin on disk):
       with a jammed relief: 0, 0, 0; 0
       with a pressed relief and none jammed: 3, 1, 2; 0
-      the rest: 12, 17, 15; 0
-reliefs-pairwise-r0.jsonl: 43 lines read, 1 runs not counted, 0 lines that cannot be read, 0 of another kind
-  the first 50 sets: 9 reliefs seen, in 5 runs
-    the fresh century had the front after the order: median 18.75 s, longest 77.50 s (6 of 9 reliefs)
-    the tired century halted after that: median 18.75 s, longest 29.25 s (6 of 9 reliefs)
-    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (6 of 9 reliefs)
-    men out of their places at the halt, of those in them at the order: median 0.00, most 27.00 (6 of 9 reliefs)
-    pressed and jammed 1, pressed and not jammed 0, jammed and not pressed 0, neither 8
-    unfinished: a century broke before the halt in 0, the run ended in 3
-    the runs beside their backed twins (better, worse, the same; no twin on disk):
-      with a jammed relief: 1, 0, 0; 0
-      with a pressed relief and none jammed: 0, 0, 0; 0
-      the rest: 0, 2, 2; 0
-  the top-up: 34 reliefs seen, in 17 runs
-    the fresh century had the front after the order: median 18.75 s, longest 18.75 s (34 of 34 reliefs)
-    the tired century halted after that: median 18.75 s, longest 18.75 s (34 of 34 reliefs)
-    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (34 of 34 reliefs)
-    men out of their places at the halt, of those in them at the order: median 0.00, most 0.00 (34 of 34 reliefs)
-    pressed and jammed 0, pressed and not jammed 2, jammed and not pressed 0, neither 32
-    unfinished: a century broke before the halt in 0, the run ended in 0
-    the runs beside their backed twins (better, worse, the same; no twin on disk):
-      with a jammed relief: 0, 0, 0; 0
-      with a pressed relief and none jammed: 0, 1, 0; 0
-      the rest: 8, 6, 2; 0
-reliefs-pairwise-r1.jsonl: 43 lines read, 1 runs not counted, 0 lines that cannot be read, 0 of another kind
-  the first 50 sets: 9 reliefs seen, in 5 runs
-    the fresh century had the front after the order: median 18.75 s, longest 77.50 s (6 of 9 reliefs)
-    the tired century halted after that: median 18.75 s, longest 29.25 s (6 of 9 reliefs)
-    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (6 of 9 reliefs)
-    men out of their places at the halt, of those in them at the order: median 0.00, most 27.00 (6 of 9 reliefs)
-    pressed and jammed 1, pressed and not jammed 0, jammed and not pressed 0, neither 8
-    unfinished: a century broke before the halt in 0, the run ended in 3
-    the runs beside their backed twins (better, worse, the same; no twin on disk):
-      with a jammed relief: 1, 0, 0; 0
-      with a pressed relief and none jammed: 0, 0, 0; 0
-      the rest: 0, 1, 3; 0
-  the top-up: 34 reliefs seen, in 17 runs
-    the fresh century had the front after the order: median 18.75 s, longest 18.75 s (34 of 34 reliefs)
-    the tired century halted after that: median 18.75 s, longest 18.75 s (34 of 34 reliefs)
-    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (34 of 34 reliefs)
-    men out of their places at the halt, of those in them at the order: median 0.00, most 0.00 (34 of 34 reliefs)
-    pressed and jammed 0, pressed and not jammed 2, jammed and not pressed 0, neither 32
-    unfinished: a century broke before the halt in 0, the run ended in 0
-    the runs beside their backed twins (better, worse, the same; no twin on disk):
-      with a jammed relief: 0, 0, 0; 0
-      with a pressed relief and none jammed: 0, 1, 0; 0
-      the rest: 8, 6, 2; 0
-reliefs-pairwise-r2.jsonl: 33 lines read, 1 runs not counted, 0 lines that cannot be read, 0 of another kind
+      the rest: 12, 17, 16; 0
+reliefs-pairwise-r0.jsonl: 45 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
   the first 50 sets: 11 reliefs seen, in 6 runs
-    the fresh century had the front after the order: median 18.75 s, longest 137.25 s (8 of 11 reliefs)
-    the tired century halted after that: median 18.75 s, longest 89.75 s (8 of 11 reliefs)
-    nine in ten were back in their places after the halt: median 0.05 s, longest 1.05 s (8 of 11 reliefs)
-    men out of their places at the halt, of those in them at the order: median 0.00, most 32.00 (8 of 11 reliefs)
-    pressed and jammed 0, pressed and not jammed 1, jammed and not pressed 0, neither 10
-    unfinished: a century broke before the halt in 0, the run ended in 3
+    the fresh century had the front after the order: median 18.75 s, longest 77.50 s (6 of 11 reliefs)
+    the tired century halted after that: median 18.75 s, longest 29.25 s (6 of 11 reliefs)
+    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (6 of 11 reliefs)
+    men out of their places at the halt, of those in them at the order: median 0.00, most 27.00 (6 of 11 reliefs)
+    pressed and jammed 1, pressed and not jammed 0, jammed and not pressed 0, neither 10
+    unfinished: a century broke before the halt in 0, the run ended in 5
+    the runs beside their backed twins (better, worse, the same; no twin on disk):
+      with a jammed relief: 1, 0, 0; 0
+      with a pressed relief and none jammed: 0, 0, 0; 0
+      the rest: 0, 2, 3; 0
+  the top-up: 34 reliefs seen, in 17 runs
+    the fresh century had the front after the order: median 18.75 s, longest 18.75 s (34 of 34 reliefs)
+    the tired century halted after that: median 18.75 s, longest 18.75 s (34 of 34 reliefs)
+    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (34 of 34 reliefs)
+    men out of their places at the halt, of those in them at the order: median 0.00, most 0.00 (34 of 34 reliefs)
+    pressed and jammed 0, pressed and not jammed 2, jammed and not pressed 0, neither 32
+    unfinished: a century broke before the halt in 0, the run ended in 0
+    the runs beside their backed twins (better, worse, the same; no twin on disk):
+      with a jammed relief: 0, 0, 0; 0
+      with a pressed relief and none jammed: 0, 1, 0; 0
+      the rest: 8, 6, 2; 0
+reliefs-pairwise-r1.jsonl: 45 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
+  the first 50 sets: 11 reliefs seen, in 6 runs
+    the fresh century had the front after the order: median 18.75 s, longest 77.50 s (6 of 11 reliefs)
+    the tired century halted after that: median 18.75 s, longest 29.25 s (6 of 11 reliefs)
+    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (6 of 11 reliefs)
+    men out of their places at the halt, of those in them at the order: median 0.00, most 27.00 (6 of 11 reliefs)
+    pressed and jammed 1, pressed and not jammed 0, jammed and not pressed 0, neither 10
+    unfinished: a century broke before the halt in 0, the run ended in 5
+    the runs beside their backed twins (better, worse, the same; no twin on disk):
+      with a jammed relief: 1, 0, 0; 0
+      with a pressed relief and none jammed: 0, 0, 0; 0
+      the rest: 0, 1, 4; 0
+  the top-up: 34 reliefs seen, in 17 runs
+    the fresh century had the front after the order: median 18.75 s, longest 18.75 s (34 of 34 reliefs)
+    the tired century halted after that: median 18.75 s, longest 18.75 s (34 of 34 reliefs)
+    nine in ten were back in their places after the halt: median 0.05 s, longest 0.05 s (34 of 34 reliefs)
+    men out of their places at the halt, of those in them at the order: median 0.00, most 0.00 (34 of 34 reliefs)
+    pressed and jammed 0, pressed and not jammed 2, jammed and not pressed 0, neither 32
+    unfinished: a century broke before the halt in 0, the run ended in 0
+    the runs beside their backed twins (better, worse, the same; no twin on disk):
+      with a jammed relief: 0, 0, 0; 0
+      with a pressed relief and none jammed: 0, 1, 0; 0
+      the rest: 8, 6, 2; 0
+reliefs-pairwise-r2.jsonl: 35 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
+  the first 50 sets: 13 reliefs seen, in 7 runs
+    the fresh century had the front after the order: median 18.75 s, longest 137.25 s (8 of 13 reliefs)
+    the tired century halted after that: median 18.75 s, longest 89.75 s (8 of 13 reliefs)
+    nine in ten were back in their places after the halt: median 0.05 s, longest 1.05 s (8 of 13 reliefs)
+    men out of their places at the halt, of those in them at the order: median 0.00, most 32.00 (8 of 13 reliefs)
+    pressed and jammed 0, pressed and not jammed 1, jammed and not pressed 0, neither 12
+    unfinished: a century broke before the halt in 0, the run ended in 5
     the runs beside their backed twins (better, worse, the same; no twin on disk):
       with a jammed relief: 0, 0, 0; 0
       with a pressed relief and none jammed: 1, 0, 0; 0
-      the rest: 1, 1, 3; 0
+      the rest: 1, 1, 4; 0
   the top-up: 22 reliefs seen, in 11 runs
     the fresh century had the front after the order: median 18.75 s, longest 18.75 s (22 of 22 reliefs)
     the tired century halted after that: median 18.75 s, longest 18.75 s (22 of 22 reliefs)
@@ -159,18 +159,18 @@ reliefs-pairwise-r2.jsonl: 33 lines read, 1 runs not counted, 0 lines that canno
       with a jammed relief: 0, 0, 0; 0
       with a pressed relief and none jammed: 1, 0, 0; 0
       the rest: 4, 4, 2; 0
-reliefs-pairwise-r3.jsonl: 39 lines read, 1 runs not counted, 0 lines that cannot be read, 0 of another kind
-  the first 50 sets: 11 reliefs seen, in 6 runs
-    the fresh century had the front after the order: median 18.75 s, longest 25.50 s (8 of 11 reliefs)
-    the tired century halted after that: median 18.75 s, longest 25.50 s (8 of 11 reliefs)
-    nine in ten were back in their places after the halt: median 0.05 s, longest 1.05 s (8 of 11 reliefs)
-    men out of their places at the halt, of those in them at the order: median 0.00, most 8.00 (8 of 11 reliefs)
-    pressed and jammed 0, pressed and not jammed 0, jammed and not pressed 0, neither 11
-    unfinished: a century broke before the halt in 0, the run ended in 3
+reliefs-pairwise-r3.jsonl: 41 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
+  the first 50 sets: 13 reliefs seen, in 7 runs
+    the fresh century had the front after the order: median 18.75 s, longest 25.50 s (8 of 13 reliefs)
+    the tired century halted after that: median 18.75 s, longest 25.50 s (8 of 13 reliefs)
+    nine in ten were back in their places after the halt: median 0.05 s, longest 1.05 s (8 of 13 reliefs)
+    men out of their places at the halt, of those in them at the order: median 0.00, most 8.00 (8 of 13 reliefs)
+    pressed and jammed 0, pressed and not jammed 0, jammed and not pressed 0, neither 13
+    unfinished: a century broke before the halt in 0, the run ended in 5
     the runs beside their backed twins (better, worse, the same; no twin on disk):
       with a jammed relief: 0, 0, 0; 0
       with a pressed relief and none jammed: 0, 0, 0; 0
-      the rest: 0, 1, 5; 0
+      the rest: 0, 1, 6; 0
   the top-up: 28 reliefs seen, in 14 runs
     the fresh century had the front after the order: median 18.75 s, longest 18.75 s (28 of 28 reliefs)
     the tired century halted after that: median 18.75 s, longest 18.75 s (28 of 28 reliefs)

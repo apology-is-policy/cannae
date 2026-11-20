@@ -5,7 +5,8 @@
 [STATUS](../../STATUS.md), [leaders.txt](../scored/leaders.txt) and
 [open-flank.txt](../scored/open-flank.txt). One thing more was found while this report was
 being written, after the scoring; it comes first, and the text says how it was counted.
-Nothing here is corrected, and nothing is scored again.
+Nothing here is corrected, and nothing is scored again. **Corrected on 2026-11-20:** the
+leaders' count is the recount with the replay tool mended, every run counted (below).
 
 ## Found after the scoring: in `flank`, the band starts the clock
 
@@ -125,9 +126,11 @@ the drawn sets do this. Both counts were defined before any record of the new ba
 **The sample:** `base`, sets 0, 10, .. 190, all ten seeds, in every cell, replayed with the
 event log. A leader's fall is the first time the leader of a front body goes down before his
 body broke; a file leader's fall, for comparison, is every fall of a man who is a file leader
-at that tick. 52 of the 1,600 replayed runs were not counted, all because the battle the
-replay tool stepped had other events than the scorer's (8, 8, 6 and 4 on the field's rungs 0
-to 3; 7, 7, 6 and 6 on the pairwise).
+at that tick. All 1,600 replayed runs count. The first replays had left out 52 (8, 8, 6 and 4
+on the field's rungs 0 to 3; 7, 7, 6 and 6 on the pairwise), because the replay tool stopped
+up to 19 ticks before the scorer did (section 5, "The fifteen runs the first replays left
+out"). Run again on 2026-11-20 with the tool mended, the 52 count, and every line of the other
+runs came out byte for byte the same.
 
 For the Roman bodies: how many falls were followed by the body's break within 5 s, within
 30 s, and before a successor could have the place by the set's own delay (2 to 15 s, drawn for
@@ -135,14 +138,14 @@ each set):
 
 | Engine | Rung | Leaders' falls | Broke within 5 s | Within 30 s | Before a successor | File leaders' falls | Broke within 5 s | Within 30 s | Before a successor |
 |---|---|---|---|---|---|---|---|---|---|
-| Field | 0 | 40 | 15 (38 %) | 24 (60 %) | 11 (28 %) | 373 | 55 (15 %) | 186 (50 %) | 59 (16 %) |
-| Field | 1 | 40 | 16 (40 %) | 26 (65 %) | 13 (32 %) | 363 | 56 (15 %) | 190 (52 %) | 59 (16 %) |
-| Field | 2 | 35 | 24 (69 %) | 29 (83 %) | 21 (60 %) | 250 | 69 (28 %) | 190 (76 %) | 72 (29 %) |
-| Field | 3 | 38 | 16 (42 %) | 25 (66 %) | 13 (34 %) | 335 | 64 (19 %) | 199 (59 %) | 69 (21 %) |
-| Pairwise | 0 | 33 | 15 (45 %) | 24 (73 %) | 14 (42 %) | 422 | 206 (49 %) | 335 (79 %) | 193 (46 %) |
-| Pairwise | 1 | 33 | 15 (45 %) | 24 (73 %) | 14 (42 %) | 423 | 207 (49 %) | 337 (80 %) | 195 (46 %) |
-| Pairwise | 2 | 28 | 20 (71 %) | 25 (89 %) | 18 (64 %) | 329 | 205 (62 %) | 301 (91 %) | 193 (59 %) |
-| Pairwise | 3 | 30 | 13 (43 %) | 24 (80 %) | 12 (40 %) | 403 | 193 (48 %) | 329 (82 %) | 184 (46 %) |
+| Field | 0 | 42 | 15 (36 %) | 26 (62 %) | 12 (29 %) | 389 | 56 (14 %) | 199 (51 %) | 60 (15 %) |
+| Field | 1 | 42 | 17 (40 %) | 27 (64 %) | 13 (31 %) | 378 | 56 (15 %) | 199 (53 %) | 59 (16 %) |
+| Field | 2 | 36 | 25 (69 %) | 30 (83 %) | 22 (61 %) | 262 | 71 (27 %) | 198 (76 %) | 73 (28 %) |
+| Field | 3 | 39 | 17 (44 %) | 26 (67 %) | 13 (33 %) | 347 | 64 (18 %) | 207 (60 %) | 69 (20 %) |
+| Pairwise | 0 | 34 | 16 (47 %) | 25 (74 %) | 15 (44 %) | 426 | 209 (49 %) | 338 (79 %) | 196 (46 %) |
+| Pairwise | 1 | 34 | 16 (47 %) | 25 (74 %) | 15 (44 %) | 427 | 210 (49 %) | 340 (80 %) | 198 (46 %) |
+| Pairwise | 2 | 28 | 20 (71 %) | 25 (89 %) | 18 (64 %) | 336 | 211 (63 %) | 308 (92 %) | 199 (59 %) |
+| Pairwise | 3 | 32 | 15 (47 %) | 26 (81 %) | 14 (44 %) | 405 | 195 (48 %) | 331 (82 %) | 186 (46 %) |
 
 **The body was in a like state at both kinds of fall:** the median share of its standing men
 in flight was 0.00 at a leader's fall in every cell, and 0.00 (field) or 0.01 (pairwise) at a
@@ -157,10 +160,10 @@ within 5 s much more often than a file leader's, with the body in a like state, 
 what Michal saw):
 
 - **On the field engine it does.** A century broke within 5 s of its centurion's fall more
-  than twice as often as after a file leader's, in every rung: in 38 to 69 % of the
-  centurions' falls, by rung, against 15 to 28 %.
+  than twice as often as after a file leader's, in every rung: in 36 to 69 % of the
+  centurions' falls, by rung, against 14 to 27 %.
 - **On the pairwise engine the count does not single out the centurion.** A body broke within
-  5 s of nearly half of all its file leaders' falls too (48 to 62 %), against 43 to 71 % of
+  5 s of nearly half of all its file leaders' falls too (48 to 63 %), against 47 to 71 % of
   its centurions'. With a formed fight of about 19 s (section 1), many falls come near the
   break, whoever falls.
 - **What it does not say** (Varro): the count pools twenty sets, and the fear a fallen leader

@@ -1,7 +1,8 @@
 # Slice 0: the report (draft)
 
 **Drafted in full, section by section, from [the outline](../report-outline.md), and
-corrected after [design review 2](../../reviews/2026-11-19-fable-5.2-slice0-review.md);**
+corrected after [design review 2](../../reviews/2026-11-19-fable-5.2-slice0-review.md),
+and on 2026-11-20 with the replays recounted (sections 5, 6, 7 and 11);**
 Varro has not yet read it. Every count comes from the outputs in [../scored/](../scored/), made by the
 commands the outline fixed before the batch ended. Nothing is computed in the text that a
 tool did not print, with one exception that section 6 names: the flank clock, counted from

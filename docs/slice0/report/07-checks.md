@@ -67,8 +67,9 @@ nothing in the batch.
 - **The audit:** in all 64 audit lines (eight cells, eight variants), the stopped and the whole
   summaries of the audited runs are equal, 100 of 100 in each (section 3).
 - **The replays** count a run only if the scorer's own run of its set and seed gives the
-  record back. It did in every one; 67 replays were not counted for faults of the replay
-  tool, and sections 5 and 6 list them.
+  record back. It did in every one. The first replays left out 67 for a fault of the replay
+  tool, which stopped early; mended after the report and run again on 2026-11-20, every
+  replay counts (sections 5 and 6).
 
 ## The QC pass
 

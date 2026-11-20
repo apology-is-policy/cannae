@@ -6,7 +6,10 @@
 [replays/](../scored/replays/) and the last lines of each engine in
 [rungs.txt](../scored/rungs.txt). What is shown, and how it is read, was fixed in
 [the outline](../report-outline.md) ("5. The relief") before any record of `relief` was read.
-The relief is reported for each cell and never scored for a set.
+The relief is reported for each cell and never scored for a set. **Corrected on 2026-11-20:**
+the replays were run again with the replay tool mended, every run now counts, and the
+tables of replayed reliefs are the recount (see "The fifteen runs the first replays left
+out", below).
 
 ## The drill hardly came
 
@@ -120,7 +123,7 @@ half a second of a free walk over the same ground, and no man is pushed out of h
 For each cell, the relieved runs of `relief` were replayed, lowest set first and then lowest
 seed, until 100 reliefs were seen or the runs were used up; then the top-up's, apart, up to
 100 reliefs of their own. A replay changes no record. It counts only if its battle is the
-record's own; fifteen were not counted, and they are listed below.
+record's own. All of them count; the first replays had left out fifteen (below).
 
 **The times are the drill's own.** In every cell, in both parts, the median relief put the
 fresh century in front 18.75 s after the order and halted the tired one 18.75 s after that,
@@ -129,25 +132,25 @@ The median number of men out of their places at the halt is 0. The longest:
 
 | Engine | Rung | Part | Reliefs seen (runs) | Halted | Front taken, longest | Halted after that, longest | Nine in ten back, longest | Out of place at the halt, most |
 |---|---|---|---|---|---|---|---|---|
-| Field | 0 | first 50 sets | 38 (20) | 35 | 73.00 s | 73.00 s | 0.05 s | 0 |
-| Field | 0 | top-up | 98 (50) | 92 | 1,194.75 s | 122.00 s | 400.80 s | 107 |
-| Field | 1 | first 50 sets | 28 (15) | 25 | 174.00 s | 174.00 s | 0.05 s | 2 |
-| Field | 1 | top-up | 100 (51) | 92 | 886.50 s | 122.00 s | 0.05 s | 1 |
-| Field | 2 | first 50 sets | 20 (11) | 17 | 73.00 s | 73.00 s | 0.05 s | 0 |
-| Field | 2 | top-up | 67 (34) | 65 | 322.25 s | 322.25 s | 0.05 s | 8 |
-| Field | 3 | first 50 sets | 21 (12) | 18 | 25.00 s | 25.00 s | 0.05 s | 0 |
-| Field | 3 | top-up | 99 (50) | 98 | 341.00 s | 18.75 s | 0.05 s | 2 |
-| Pairwise | 0 | first 50 sets | 9 (5) | 6 | 77.50 s | 29.25 s | 0.05 s | 27 |
+| Field | 0 | first 50 sets | 42 (22) | 37 | 73.00 s | 73.00 s | 0.05 s | 0 |
+| Field | 0 | top-up | 100 (51) | 94 | 1,194.75 s | 122.00 s | 400.80 s | 107 |
+| Field | 1 | first 50 sets | 32 (17) | 27 | 174.00 s | 174.00 s | 0.05 s | 2 |
+| Field | 1 | top-up | 101 (52) | 93 | 886.50 s | 122.00 s | 0.05 s | 1 |
+| Field | 2 | first 50 sets | 24 (13) | 19 | 73.00 s | 73.00 s | 0.05 s | 0 |
+| Field | 2 | top-up | 69 (35) | 67 | 322.25 s | 322.25 s | 0.05 s | 8 |
+| Field | 3 | first 50 sets | 23 (13) | 18 | 25.00 s | 25.00 s | 0.05 s | 0 |
+| Field | 3 | top-up | 100 (51) | 99 | 341.00 s | 18.75 s | 0.05 s | 2 |
+| Pairwise | 0 | first 50 sets | 11 (6) | 6 | 77.50 s | 29.25 s | 0.05 s | 27 |
 | Pairwise | 0 | top-up | 34 (17) | 34 | 18.75 s | 18.75 s | 0.05 s | 0 |
-| Pairwise | 1 | first 50 sets | 9 (5) | 6 | 77.50 s | 29.25 s | 0.05 s | 27 |
+| Pairwise | 1 | first 50 sets | 11 (6) | 6 | 77.50 s | 29.25 s | 0.05 s | 27 |
 | Pairwise | 1 | top-up | 34 (17) | 34 | 18.75 s | 18.75 s | 0.05 s | 0 |
-| Pairwise | 2 | first 50 sets | 11 (6) | 8 | 137.25 s | 89.75 s | 1.05 s | 32 |
+| Pairwise | 2 | first 50 sets | 13 (7) | 8 | 137.25 s | 89.75 s | 1.05 s | 32 |
 | Pairwise | 2 | top-up | 22 (11) | 22 | 18.75 s | 18.75 s | 0.05 s | 0 |
-| Pairwise | 3 | first 50 sets | 11 (6) | 8 | 25.50 s | 25.50 s | 1.05 s | 8 |
+| Pairwise | 3 | first 50 sets | 13 (7) | 8 | 25.50 s | 25.50 s | 1.05 s | 8 |
 | Pairwise | 3 | top-up | 28 (14) | 28 | 18.75 s | 18.75 s | 0.05 s | 0 |
 
-- **Every relieved run of the first 50 sets was replayed,** but for those not counted: no
-  cell came near 100 reliefs there. The field's top-up at rungs 0, 1 and 3 stopped at about
+- **Every relieved run of the first 50 sets was replayed:** no cell came near 100 reliefs
+  there. The field's top-up at rungs 0, 1 and 3 stopped at about
   100 reliefs, before its relieved runs were used up.
 - **The reliefs that did not halt were unfinished:** the run ended before the tired century
   halted, or a century broke first.
@@ -159,26 +162,26 @@ century; **unfinished**, by reason.
 
 | Engine | Rung | Part | Pressed and jammed | Pressed, not jammed | Jammed, not pressed | Neither | Unfinished: a century broke, the run ended |
 |---|---|---|---|---|---|---|---|
-| Field | 0 | first 50 sets | 0 | 2 | 0 | 36 | 0, 3 |
-| Field | 0 | top-up | 2 | 11 | 0 | 85 | 1, 5 |
-| Field | 1 | first 50 sets | 0 | 2 | 0 | 26 | 0, 3 |
-| Field | 1 | top-up | 1 | 5 | 0 | 94 | 1, 7 |
-| Field | 2 | first 50 sets | 0 | 0 | 0 | 20 | 0, 3 |
-| Field | 2 | top-up | 0 | 2 | 0 | 65 | 0, 2 |
-| Field | 3 | first 50 sets | 0 | 0 | 0 | 21 | 0, 3 |
-| Field | 3 | top-up | 0 | 8 | 0 | 91 | 0, 1 |
-| Pairwise | 0 | first 50 sets | 1 | 0 | 0 | 8 | 0, 3 |
+| Field | 0 | first 50 sets | 0 | 2 | 0 | 40 | 0, 5 |
+| Field | 0 | top-up | 2 | 11 | 0 | 87 | 1, 5 |
+| Field | 1 | first 50 sets | 0 | 2 | 0 | 30 | 0, 5 |
+| Field | 1 | top-up | 1 | 6 | 0 | 94 | 1, 7 |
+| Field | 2 | first 50 sets | 0 | 0 | 0 | 24 | 0, 5 |
+| Field | 2 | top-up | 0 | 2 | 0 | 67 | 0, 2 |
+| Field | 3 | first 50 sets | 0 | 0 | 0 | 23 | 0, 5 |
+| Field | 3 | top-up | 0 | 8 | 0 | 92 | 0, 1 |
+| Pairwise | 0 | first 50 sets | 1 | 0 | 0 | 10 | 0, 5 |
 | Pairwise | 0 | top-up | 0 | 2 | 0 | 32 | 0, 0 |
-| Pairwise | 1 | first 50 sets | 1 | 0 | 0 | 8 | 0, 3 |
+| Pairwise | 1 | first 50 sets | 1 | 0 | 0 | 10 | 0, 5 |
 | Pairwise | 1 | top-up | 0 | 2 | 0 | 32 | 0, 0 |
-| Pairwise | 2 | first 50 sets | 0 | 1 | 0 | 10 | 0, 3 |
+| Pairwise | 2 | first 50 sets | 0 | 1 | 0 | 12 | 0, 5 |
 | Pairwise | 2 | top-up | 0 | 2 | 0 | 20 | 0, 0 |
-| Pairwise | 3 | first 50 sets | 0 | 0 | 0 | 11 | 0, 3 |
+| Pairwise | 3 | first 50 sets | 0 | 0 | 0 | 13 | 0, 5 |
 | Pairwise | 3 | top-up | 0 | 2 | 0 | 26 | 0, 0 |
 
-**The three unfinished reliefs of the first 50 sets are the same in every cell:** sets 16
-and 56, seed 6, ordered at 1,200 s, and the run ended before the halt. Read from those
-runs' records, not by a tool fixed beforehand: in both, on both engines, the warband broke
+**The five unfinished reliefs of the first 50 sets are the same in every cell:** sets 16, 56
+and 72, seed 6, all ordered at 1,200 s, and the run ended before the halt. Read from those
+runs' records, not by a tool fixed beforehand: in all three, on both engines, the warband broke
 just after five minutes, so the run's window closed at about twenty minutes, the first moment
 the script allows a relief. The Roman line had won, stood in a lull, and was relieved as the
 run ended.
@@ -190,28 +193,28 @@ lacked its twin on disk.
 
 | Engine | Rung | Part | With a jammed relief | With a pressed relief, none jammed | The rest |
 |---|---|---|---|---|---|
-| Field | 0 | first 50 sets | 0, 0, 0 | 1, 1, 0 | 6, 4, 8 |
-| Field | 0 | top-up | 1, 1, 0 | 3, 3, 1 | 8, 16, 17 |
-| Field | 1 | first 50 sets | 0, 0, 0 | 1, 1, 0 | 1, 3, 9 |
-| Field | 1 | top-up | 0, 1, 0 | 0, 3, 1 | 12, 16, 18 |
-| Field | 2 | first 50 sets | 0, 0, 0 | 0, 0, 0 | 2, 4, 5 |
-| Field | 2 | top-up | 0, 0, 0 | 1, 0, 0 | 11, 14, 8 |
-| Field | 3 | first 50 sets | 0, 0, 0 | 0, 0, 0 | 2, 3, 7 |
-| Field | 3 | top-up | 0, 0, 0 | 3, 1, 2 | 12, 17, 15 |
-| Pairwise | 0 | first 50 sets | 1, 0, 0 | 0, 0, 0 | 0, 2, 2 |
+| Field | 0 | first 50 sets | 0, 0, 0 | 1, 1, 0 | 7, 4, 9 |
+| Field | 0 | top-up | 1, 1, 0 | 3, 3, 1 | 9, 16, 17 |
+| Field | 1 | first 50 sets | 0, 0, 0 | 1, 1, 0 | 1, 4, 10 |
+| Field | 1 | top-up | 0, 1, 0 | 0, 3, 2 | 12, 16, 18 |
+| Field | 2 | first 50 sets | 0, 0, 0 | 0, 0, 0 | 2, 5, 6 |
+| Field | 2 | top-up | 0, 0, 0 | 1, 0, 0 | 12, 14, 8 |
+| Field | 3 | first 50 sets | 0, 0, 0 | 0, 0, 0 | 2, 3, 8 |
+| Field | 3 | top-up | 0, 0, 0 | 3, 1, 2 | 12, 17, 16 |
+| Pairwise | 0 | first 50 sets | 1, 0, 0 | 0, 0, 0 | 0, 2, 3 |
 | Pairwise | 0 | top-up | 0, 0, 0 | 0, 1, 0 | 8, 6, 2 |
-| Pairwise | 1 | first 50 sets | 1, 0, 0 | 0, 0, 0 | 0, 1, 3 |
+| Pairwise | 1 | first 50 sets | 1, 0, 0 | 0, 0, 0 | 0, 1, 4 |
 | Pairwise | 1 | top-up | 0, 0, 0 | 0, 1, 0 | 8, 6, 2 |
-| Pairwise | 2 | first 50 sets | 0, 0, 0 | 1, 0, 0 | 1, 1, 3 |
+| Pairwise | 2 | first 50 sets | 0, 0, 0 | 1, 0, 0 | 1, 1, 4 |
 | Pairwise | 2 | top-up | 0, 0, 0 | 1, 0, 0 | 4, 4, 2 |
-| Pairwise | 3 | first 50 sets | 0, 0, 0 | 0, 0, 0 | 0, 1, 5 |
+| Pairwise | 3 | first 50 sets | 0, 0, 0 | 0, 0, 0 | 0, 1, 6 |
 | Pairwise | 3 | top-up | 0, 0, 0 | 1, 0, 0 | 8, 4, 1 |
 
 ### How it reads, by the rules fixed beforehand
 
 - **The jammed count is how often the fault could act.** On the pairwise engine, where the
   discs pass men too freely, one relief was jammed at rung 0 and one at rung 1, both in the
-  first 50 sets (1 of 9 reliefs seen there), and none at rungs 2 and 3 or in any top-up. Each
+  first 50 sets (1 of 11 reliefs seen there), and none at rungs 2 and 3 or in any top-up. Each
   of the two runs fared better than its twin. On the field engine, two reliefs were jammed in
   the top-up at rung 0 and one at rung 1, and none elsewhere.
 - **No relief was jammed without an enemy in it.** Every jammed relief was also pressed, and
@@ -227,34 +230,24 @@ was not built, so that battle cannot be run. These counts give how often the fau
 not what it did. And nothing is read from the difference between the engines, which differ in
 everything else too.
 
-## The fifteen replays not counted
+## The fifteen runs the first replays left out
 
-| Engine | Rung | Set, seed | Part | Why |
-|---|---|---|---|---|
-| Field | 0 | 8, 5 | first 50 sets | the battle stepped by the replay is not the scorer's |
-| Field | 0 | 72, 6 | first 50 sets | the record has both reliefs ordered at 1,200 s; the replay saw none |
-| Field | 0 | 2, 6 | top-up | the battle stepped by the replay is not the scorer's |
-| Field | 1 | 8, 5 | first 50 sets | the battle stepped by the replay is not the scorer's |
-| Field | 1 | 72, 6 | first 50 sets | the record has both reliefs ordered at 1,200 s; the replay saw none |
-| Field | 1 | 93, 5 | top-up | the battle stepped by the replay is not the scorer's |
-| Field | 2 | 8, 5 | first 50 sets | the battle stepped by the replay is not the scorer's |
-| Field | 2 | 72, 6 | first 50 sets | the record has both reliefs ordered at 1,200 s; the replay saw none |
-| Field | 2 | 150, 3 | top-up | the battle stepped by the replay is not the scorer's |
-| Field | 3 | 72, 6 | first 50 sets | the record has both reliefs ordered at 1,200 s; the replay saw none |
-| Field | 3 | 17, 7 | top-up | the battle stepped by the replay is not the scorer's |
-| Pairwise | 0 | 72, 6 | first 50 sets | the record has both reliefs ordered at 1,200 s; the replay saw none |
-| Pairwise | 1 | 72, 6 | first 50 sets | the record has both reliefs ordered at 1,200 s; the replay saw none |
-| Pairwise | 2 | 72, 6 | first 50 sets | the record has both reliefs ordered at 1,200 s; the replay saw none |
-| Pairwise | 3 | 72, 6 | first 50 sets | the record has both reliefs ordered at 1,200 s; the replay saw none |
+**The first replays, on 2026-11-19, left out fifteen relieved runs:** set 72, seed 6, in all
+eight cells, and seven of the field engine's (sets and seeds 8, 5 at rungs 0 to 2; 2, 6;
+93, 5; 150, 3; 17, 7 in the top-up). The records were sound: in every one the scorer's own
+run gave the record back.
 
-- **Set 72, seed 6, is one run in all eight cells,** of the same kind as sets 16 and 56
-  above: its record ends at 1,200 s, and both reliefs were ordered in that last second. The
-  replay saw no relief.
-- **The other seven are the field engine's:** the battle the replay tool stepped had other
-  events than the scorer's.
-- **The records are sound.** In every one of the fifteen, the scorer's own run of that set
-  and seed gave the record back, all but the wall time; the replay tool checks that first.
-  The fault is in the replay tool, and it is on the list for later (section 11).
+**The fault was in the replay tool, which stopped early.** The record keeps the scorer's last
+tick in whole seconds, rounded down, and the tool stepped each battle only that far: up to
+19 ticks short. Where an event fell in those ticks, the battle did not compare equal and the
+run was not counted. In set 72, seed 6, both reliefs were ordered in them: the warband broke
+at tick 6,015, the scorer ran to tick 24,016, and the replay stopped at 24,000.
+
+**The tool was mended in the analysis after the report** (b8ae6af, [STATUS](../../STATUS.md)),
+and every replay was run again on 2026-11-20. Every run counts. Every line of the runs the
+first replays had counted came out byte for byte the same, so the recount adds the fifteen
+and changes nothing else. Set 72, seed 6, is of the same kind as sets 16 and 56: both
+reliefs were ordered at 1,200 s, in the run's last second, and the run ended before the halt.
 
 ## What it means
 

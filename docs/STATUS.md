@@ -5,7 +5,7 @@ has run and is scored: **every cell fails the pre-registered test, on both engin
 report is drafted in full and design review 2 has reported; the newest blocks are under
 "Since then" below.
 **Working mode:** guided (see [CLAUDE.md](../CLAUDE.md)).
-**Last updated:** 2026-11-19, 21:38 UTC.
+**Last updated:** 2026-11-20, 02:34 UTC.
 
 ## Current arc: Slice 0 analysis -- why the line breaks (approved 2026-11-19)
 
@@ -19,8 +19,8 @@ to find what breaks the line. It ends with a diagnosis and a proposed status tab
 | Chunk | Content | Commit |
 |---|---|---|
 | A1 | Counts from the batch's records: who lost, by cell; losses before the break; the spread of break times within a set; the runs where a line held, and what they pass; a rank screening of the 101 drawn lines against the time to break | landed 2026-11-19 ([slice0/analysis/](slice0/analysis/README.md)) |
-| A2 | Mend the replay tool: why its battle drifted from the scorer's in 59 runs, and the relief it missed in a run's last second | mended b8ae6af; the replays run again on the Pi |
-| A3 | The genealogy of the collapses, from replays with the event log's causes: what put the first men of each collapse into giving ground and what tipped them; pattern 3 with ties shared, and the stragglers' depth | tools d33bb9d; queued on the Pi after A2 |
+| A2 | Mend the replay tool: why its battle drifted from the scorer's in 59 runs, and the relief it missed in a run's last second | landed: mended b8ae6af; the replays run again, all counted, and the report recounted (this block's commit) |
+| A3 | The genealogy of the collapses, from replays with the event log's causes: what put the first men of each collapse into giving ground and what tipped them; pattern 3 with ties shared, and the stragglers' depth | tools d33bb9d; running on the Pi since 02:20 UTC on 20 Nov |
 | A4 | The diagnosis, and a proposed status table for `docs/vision/` (failed as built, untested, withdrawn on speed), for Michal | |
 
 ## Slice 0 -- the experiment (approved 2026-11-10; at its end 2026-11-19)
@@ -874,6 +874,19 @@ Mac; it does not block the arc.
   break.
 
 A2, the replay tool, is next.
+
+**Since then (2026-11-20, 02:34 UTC): A2 has landed.** The report's replays ran again on the
+Pi with the mended tool (21:27 to 02:19 UTC): **every run counts,** where the first replays
+had left out 67. Every line of the runs the first replays counted came out byte for byte the
+same, so the recount only adds the 67. Sections 5, 6, 7 and 11 of the report are corrected
+to it. No reading changes:
+
+- the relief's tables gain the fifteen runs;
+- the leaders' count moves by a run or two a cell: a century still broke within 5 s of its
+  centurion's fall more than twice as often as after a file leader's on the field engine (36
+  to 69 % against 14 to 27 %), and not on the pairwise engine.
+
+**A3's genealogy is running on the Pi** since 02:20 UTC.
 
 **Since then (2026-11-19, 21:38 UTC): the replay tool's fault is found and mended (A2,
 b8ae6af).** It never drifted: it stopped early. The record keeps the scorer's stopping tick in

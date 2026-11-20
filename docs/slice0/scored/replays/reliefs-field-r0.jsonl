@@ -1,4 +1,5 @@
-{"draw":8,"seed":5,"not_counted":"the battle stepped here is not the scorer's"}
+{"draw":8,"seed":5,"relief":0,"ordered_s":1200.00,"placed_at_order":[79,80],"up_after_s":18.75,"halted_after_s":18.75,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"better"}
+{"draw":8,"seed":5,"relief":1,"ordered_s":1200.00,"placed_at_order":[79,80],"up_after_s":18.75,"halted_after_s":18.75,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"better"}
 {"draw":16,"seed":6,"relief":0,"ordered_s":1200.00,"placed_at_order":[80,80],"up_after_s":null,"halted_after_s":null,"astray_at_halt":null,"back_after_s":null,"pressed":false,"jammed":false,"unfinished":"ended","twin":"same"}
 {"draw":16,"seed":6,"relief":1,"ordered_s":1200.00,"placed_at_order":[80,80],"up_after_s":null,"halted_after_s":null,"astray_at_halt":null,"back_after_s":null,"pressed":false,"jammed":false,"unfinished":"ended","twin":"same"}
 {"draw":36,"seed":1,"relief":0,"ordered_s":1272.75,"placed_at_order":[78,80],"up_after_s":17.25,"halted_after_s":17.25,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"better"}
@@ -10,7 +11,8 @@
 {"draw":56,"seed":6,"relief":1,"ordered_s":1200.00,"placed_at_order":[78,80],"up_after_s":null,"halted_after_s":null,"astray_at_halt":null,"back_after_s":null,"pressed":false,"jammed":false,"unfinished":"ended","twin":"same"}
 {"draw":72,"seed":4,"relief":0,"ordered_s":1200.00,"placed_at_order":[80,80],"up_after_s":18.75,"halted_after_s":18.75,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"same"}
 {"draw":72,"seed":4,"relief":1,"ordered_s":1200.00,"placed_at_order":[80,80],"up_after_s":18.75,"halted_after_s":18.75,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"same"}
-{"draw":72,"seed":6,"not_counted":"the reliefs were ordered at [None, None] here and at [Some(1200), Some(1200)] in the record"}
+{"draw":72,"seed":6,"relief":0,"ordered_s":1200.00,"placed_at_order":[80,80],"up_after_s":null,"halted_after_s":null,"astray_at_halt":null,"back_after_s":null,"pressed":false,"jammed":false,"unfinished":"ended","twin":"same"}
+{"draw":72,"seed":6,"relief":1,"ordered_s":1200.00,"placed_at_order":[80,80],"up_after_s":null,"halted_after_s":null,"astray_at_halt":null,"back_after_s":null,"pressed":false,"jammed":false,"unfinished":"ended","twin":"same"}
 {"draw":92,"seed":4,"relief":0,"ordered_s":1200.00,"placed_at_order":[78,80],"up_after_s":73.00,"halted_after_s":73.00,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"same"}
 {"draw":92,"seed":4,"relief":1,"ordered_s":1200.00,"placed_at_order":[79,80],"up_after_s":18.75,"halted_after_s":18.75,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"same"}
 {"draw":100,"seed":6,"relief":0,"ordered_s":1222.50,"placed_at_order":[77,80],"up_after_s":13.75,"halted_after_s":13.75,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"better"}
@@ -42,7 +44,8 @@
 {"draw":2,"seed":2,"relief":1,"ordered_s":1200.00,"placed_at_order":[67,80],"up_after_s":18.00,"halted_after_s":18.00,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"same"}
 {"draw":2,"seed":4,"relief":0,"ordered_s":1200.00,"placed_at_order":[80,80],"up_after_s":18.75,"halted_after_s":18.75,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"better"}
 {"draw":2,"seed":4,"relief":1,"ordered_s":1200.00,"placed_at_order":[80,80],"up_after_s":18.75,"halted_after_s":18.75,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"better"}
-{"draw":2,"seed":6,"not_counted":"the battle stepped here is not the scorer's"}
+{"draw":2,"seed":6,"relief":0,"ordered_s":1200.00,"placed_at_order":[80,80],"up_after_s":18.75,"halted_after_s":18.75,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"better"}
+{"draw":2,"seed":6,"relief":1,"ordered_s":1200.00,"placed_at_order":[80,80],"up_after_s":18.75,"halted_after_s":18.75,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"better"}
 {"draw":3,"seed":2,"relief":0,"ordered_s":1200.00,"placed_at_order":[74,80],"up_after_s":17.00,"halted_after_s":17.00,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"same"}
 {"draw":3,"seed":2,"relief":1,"ordered_s":1200.00,"placed_at_order":[72,80],"up_after_s":18.75,"halted_after_s":18.75,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"same"}
 {"draw":3,"seed":3,"relief":0,"ordered_s":1209.75,"placed_at_order":[78,80],"up_after_s":18.75,"halted_after_s":18.75,"astray_at_halt":0,"back_after_s":0.05,"pressed":false,"jammed":false,"unfinished":null,"twin":"worse"}

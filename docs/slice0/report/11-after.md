@@ -25,7 +25,9 @@
 
 ## Faults to mend that change no result
 
-- **The replay tool's stepping:** in 59 replays its battle drifted from the scorer's, and in 8
+- **The replay tool's stepping:** in 59 replays its battle differed from the scorer's, and in 8
   it missed a relief ordered in a run's last second (sections 5 and 6). The records are sound:
-  the scorer's own run gives each one back. Why the tool's battle drifts is not yet known.
+  the scorer's own run gives each one back. **Mended on 2026-11-20** (b8ae6af): the tool
+  stopped up to 19 ticks early, because the record keeps the scorer's last tick in whole
+  seconds. Run again, every replay counts, and sections 5 and 6 give the recount.
 - **The flank band's marking,** if `flank` is run again (section 6).

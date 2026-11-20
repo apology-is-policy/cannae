@@ -1,120 +1,120 @@
-leaders-field-r0.jsonl: 557 lines read, 8 runs not counted, 0 lines that cannot be read, 0 of another kind
-  Romans, leaders: 40 falls in bodies not yet broken
-    the body broke within 5 s after 15 of 40 (38 %), within 30 s after 24 of 40 (60 %), later after 11 (median 91.25 s), never after 5
+leaders-field-r0.jsonl: 578 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
+  Romans, leaders: 42 falls in bodies not yet broken
+    the body broke within 5 s after 15 of 42 (36 %), within 30 s after 26 of 42 (62 %), later after 11 (median 91.25 s), never after 5
     the share of the body's standing men in flight at the fall: median 0.00
-    the body broke before a successor could have the place, by the set's own delay: 11 of 40 (28 %)
-  Romans, file leaders: 373 falls in bodies not yet broken
-    the body broke within 5 s after 55 of 373 (15 %), within 30 s after 186 of 373 (50 %), later after 117 (median 127.75 s), never after 70
+    the body broke before a successor could have the place, by the set's own delay: 12 of 42 (29 %)
+  Romans, file leaders: 389 falls in bodies not yet broken
+    the body broke within 5 s after 56 of 389 (14 %), within 30 s after 199 of 389 (51 %), later after 119 (median 124.75 s), never after 71
     the share of the body's standing men in flight at the fall: median 0.00
-    the body broke before a successor could have the place, by the set's own delay: 59 of 373 (16 %)
+    the body broke before a successor could have the place, by the set's own delay: 60 of 389 (15 %)
   warband, leaders: 9 falls in bodies not yet broken
     the body broke within 5 s after 0 of 9 (0 %), within 30 s after 4 of 9 (44 %), later after 2 (median 131.62 s), never after 3
     the share of the body's standing men in flight at the fall: median 0.00
-  warband, file leaders: 135 falls in bodies not yet broken
-    the body broke within 5 s after 0 of 135 (0 %), within 30 s after 8 of 135 (6 %), later after 27 (median 129.50 s), never after 100
+  warband, file leaders: 138 falls in bodies not yet broken
+    the body broke within 5 s after 0 of 138 (0 %), within 30 s after 8 of 138 (6 %), later after 28 (median 108.12 s), never after 102
     the share of the body's standing men in flight at the fall: median 0.00
-leaders-field-r1.jsonl: 540 lines read, 8 runs not counted, 0 lines that cannot be read, 0 of another kind
-  Romans, leaders: 40 falls in bodies not yet broken
-    the body broke within 5 s after 16 of 40 (40 %), within 30 s after 26 of 40 (65 %), later after 9 (median 91.25 s), never after 5
+leaders-field-r1.jsonl: 562 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
+  Romans, leaders: 42 falls in bodies not yet broken
+    the body broke within 5 s after 17 of 42 (40 %), within 30 s after 27 of 42 (64 %), later after 10 (median 123.75 s), never after 5
     the share of the body's standing men in flight at the fall: median 0.00
-    the body broke before a successor could have the place, by the set's own delay: 13 of 40 (32 %)
-  Romans, file leaders: 363 falls in bodies not yet broken
-    the body broke within 5 s after 56 of 363 (15 %), within 30 s after 190 of 363 (52 %), later after 110 (median 107.50 s), never after 63
+    the body broke before a successor could have the place, by the set's own delay: 13 of 42 (31 %)
+  Romans, file leaders: 378 falls in bodies not yet broken
+    the body broke within 5 s after 56 of 378 (15 %), within 30 s after 199 of 378 (53 %), later after 113 (median 107.00 s), never after 66
     the share of the body's standing men in flight at the fall: median 0.00
-    the body broke before a successor could have the place, by the set's own delay: 59 of 363 (16 %)
+    the body broke before a successor could have the place, by the set's own delay: 59 of 378 (16 %)
   warband, leaders: 10 falls in bodies not yet broken
     the body broke within 5 s after 0 of 10 (0 %), within 30 s after 4 of 10 (40 %), later after 2 (median 131.62 s), never after 4
     the share of the body's standing men in flight at the fall: median 0.00
-  warband, file leaders: 127 falls in bodies not yet broken
-    the body broke within 5 s after 0 of 127 (0 %), within 30 s after 7 of 127 (6 %), later after 23 (median 52.50 s), never after 97
+  warband, file leaders: 132 falls in bodies not yet broken
+    the body broke within 5 s after 0 of 132 (0 %), within 30 s after 7 of 132 (5 %), later after 23 (median 52.50 s), never after 102
     the share of the body's standing men in flight at the fall: median 0.00
-leaders-field-r2.jsonl: 392 lines read, 6 runs not counted, 0 lines that cannot be read, 0 of another kind
-  Romans, leaders: 35 falls in bodies not yet broken
-    the body broke within 5 s after 24 of 35 (69 %), within 30 s after 29 of 35 (83 %), later after 6 (median 36.75 s), never after 0
+leaders-field-r2.jsonl: 406 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
+  Romans, leaders: 36 falls in bodies not yet broken
+    the body broke within 5 s after 25 of 36 (69 %), within 30 s after 30 of 36 (83 %), later after 6 (median 36.75 s), never after 0
     the share of the body's standing men in flight at the fall: median 0.00
-    the body broke before a successor could have the place, by the set's own delay: 21 of 35 (60 %)
-  Romans, file leaders: 250 falls in bodies not yet broken
-    the body broke within 5 s after 69 of 250 (28 %), within 30 s after 190 of 250 (76 %), later after 53 (median 91.25 s), never after 7
+    the body broke before a successor could have the place, by the set's own delay: 22 of 36 (61 %)
+  Romans, file leaders: 262 falls in bodies not yet broken
+    the body broke within 5 s after 71 of 262 (27 %), within 30 s after 198 of 262 (76 %), later after 57 (median 101.00 s), never after 7
     the share of the body's standing men in flight at the fall: median 0.00
-    the body broke before a successor could have the place, by the set's own delay: 72 of 250 (29 %)
+    the body broke before a successor could have the place, by the set's own delay: 73 of 262 (28 %)
   warband, leaders: 8 falls in bodies not yet broken
     the body broke within 5 s after 4 of 8 (50 %), within 30 s after 7 of 8 (88 %), later after 0 (median none), never after 1
     the share of the body's standing men in flight at the fall: median 0.00
-  warband, file leaders: 99 falls in bodies not yet broken
-    the body broke within 5 s after 4 of 99 (4 %), within 30 s after 9 of 99 (9 %), later after 35 (median 58.00 s), never after 55
+  warband, file leaders: 100 falls in bodies not yet broken
+    the body broke within 5 s after 4 of 100 (4 %), within 30 s after 9 of 100 (9 %), later after 35 (median 58.00 s), never after 56
     the share of the body's standing men in flight at the fall: median 0.00
-leaders-field-r3.jsonl: 506 lines read, 4 runs not counted, 0 lines that cannot be read, 0 of another kind
-  Romans, leaders: 38 falls in bodies not yet broken
-    the body broke within 5 s after 16 of 38 (42 %), within 30 s after 25 of 38 (66 %), later after 11 (median 91.00 s), never after 2
+leaders-field-r3.jsonl: 521 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
+  Romans, leaders: 39 falls in bodies not yet broken
+    the body broke within 5 s after 17 of 39 (44 %), within 30 s after 26 of 39 (67 %), later after 11 (median 91.00 s), never after 2
     the share of the body's standing men in flight at the fall: median 0.00
-    the body broke before a successor could have the place, by the set's own delay: 13 of 38 (34 %)
-  Romans, file leaders: 335 falls in bodies not yet broken
-    the body broke within 5 s after 64 of 335 (19 %), within 30 s after 199 of 335 (59 %), later after 97 (median 106.50 s), never after 39
+    the body broke before a successor could have the place, by the set's own delay: 13 of 39 (33 %)
+  Romans, file leaders: 347 falls in bodies not yet broken
+    the body broke within 5 s after 64 of 347 (18 %), within 30 s after 207 of 347 (60 %), later after 100 (median 102.38 s), never after 40
     the share of the body's standing men in flight at the fall: median 0.00
-    the body broke before a successor could have the place, by the set's own delay: 69 of 335 (21 %)
+    the body broke before a successor could have the place, by the set's own delay: 69 of 347 (20 %)
   warband, leaders: 11 falls in bodies not yet broken
     the body broke within 5 s after 0 of 11 (0 %), within 30 s after 4 of 11 (36 %), later after 3 (median 194.75 s), never after 4
     the share of the body's standing men in flight at the fall: median 0.00
-  warband, file leaders: 122 falls in bodies not yet broken
-    the body broke within 5 s after 1 of 122 (1 %), within 30 s after 11 of 122 (9 %), later after 35 (median 147.75 s), never after 76
+  warband, file leaders: 124 falls in bodies not yet broken
+    the body broke within 5 s after 1 of 124 (1 %), within 30 s after 11 of 124 (9 %), later after 35 (median 147.75 s), never after 78
     the share of the body's standing men in flight at the fall: median 0.00
-leaders-pairwise-r0.jsonl: 549 lines read, 7 runs not counted, 0 lines that cannot be read, 0 of another kind
-  Romans, leaders: 33 falls in bodies not yet broken
-    the body broke within 5 s after 15 of 33 (45 %), within 30 s after 24 of 33 (73 %), later after 8 (median 48.50 s), never after 1
+leaders-pairwise-r0.jsonl: 558 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
+  Romans, leaders: 34 falls in bodies not yet broken
+    the body broke within 5 s after 16 of 34 (47 %), within 30 s after 25 of 34 (74 %), later after 8 (median 48.50 s), never after 1
     the share of the body's standing men in flight at the fall: median 0.00
-    the body broke before a successor could have the place, by the set's own delay: 14 of 33 (42 %)
-  Romans, file leaders: 422 falls in bodies not yet broken
-    the body broke within 5 s after 206 of 422 (49 %), within 30 s after 335 of 422 (79 %), later after 66 (median 52.50 s), never after 21
+    the body broke before a successor could have the place, by the set's own delay: 15 of 34 (44 %)
+  Romans, file leaders: 426 falls in bodies not yet broken
+    the body broke within 5 s after 209 of 426 (49 %), within 30 s after 338 of 426 (79 %), later after 67 (median 52.75 s), never after 21
     the share of the body's standing men in flight at the fall: median 0.01
-    the body broke before a successor could have the place, by the set's own delay: 193 of 422 (46 %)
+    the body broke before a successor could have the place, by the set's own delay: 196 of 426 (46 %)
   warband, leaders: 4 falls in bodies not yet broken
     the body broke within 5 s after 0 of 4 (0 %), within 30 s after 3 of 4 (75 %), later after 1 (median 225.00 s), never after 0
     the share of the body's standing men in flight at the fall: median 0.00
-  warband, file leaders: 90 falls in bodies not yet broken
-    the body broke within 5 s after 0 of 90 (0 %), within 30 s after 20 of 90 (22 %), later after 8 (median 48.00 s), never after 62
+  warband, file leaders: 94 falls in bodies not yet broken
+    the body broke within 5 s after 0 of 94 (0 %), within 30 s after 20 of 94 (21 %), later after 8 (median 48.00 s), never after 66
     the share of the body's standing men in flight at the fall: median 0.00
-leaders-pairwise-r1.jsonl: 550 lines read, 7 runs not counted, 0 lines that cannot be read, 0 of another kind
-  Romans, leaders: 33 falls in bodies not yet broken
-    the body broke within 5 s after 15 of 33 (45 %), within 30 s after 24 of 33 (73 %), later after 8 (median 48.50 s), never after 1
+leaders-pairwise-r1.jsonl: 559 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
+  Romans, leaders: 34 falls in bodies not yet broken
+    the body broke within 5 s after 16 of 34 (47 %), within 30 s after 25 of 34 (74 %), later after 8 (median 48.50 s), never after 1
     the share of the body's standing men in flight at the fall: median 0.00
-    the body broke before a successor could have the place, by the set's own delay: 14 of 33 (42 %)
-  Romans, file leaders: 423 falls in bodies not yet broken
-    the body broke within 5 s after 207 of 423 (49 %), within 30 s after 337 of 423 (80 %), later after 68 (median 52.50 s), never after 18
+    the body broke before a successor could have the place, by the set's own delay: 15 of 34 (44 %)
+  Romans, file leaders: 427 falls in bodies not yet broken
+    the body broke within 5 s after 210 of 427 (49 %), within 30 s after 340 of 427 (80 %), later after 69 (median 52.75 s), never after 18
     the share of the body's standing men in flight at the fall: median 0.01
-    the body broke before a successor could have the place, by the set's own delay: 195 of 423 (46 %)
+    the body broke before a successor could have the place, by the set's own delay: 198 of 427 (46 %)
   warband, leaders: 3 falls in bodies not yet broken
     the body broke within 5 s after 0 of 3 (0 %), within 30 s after 2 of 3 (67 %), later after 1 (median 225.00 s), never after 0
     the share of the body's standing men in flight at the fall: median 0.00
-  warband, file leaders: 91 falls in bodies not yet broken
-    the body broke within 5 s after 0 of 91 (0 %), within 30 s after 12 of 91 (13 %), later after 5 (median 45.00 s), never after 74
+  warband, file leaders: 95 falls in bodies not yet broken
+    the body broke within 5 s after 0 of 95 (0 %), within 30 s after 12 of 95 (13 %), later after 5 (median 45.00 s), never after 78
     the share of the body's standing men in flight at the fall: median 0.00
-leaders-pairwise-r2.jsonl: 439 lines read, 6 runs not counted, 0 lines that cannot be read, 0 of another kind
+leaders-pairwise-r2.jsonl: 447 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
   Romans, leaders: 28 falls in bodies not yet broken
     the body broke within 5 s after 20 of 28 (71 %), within 30 s after 25 of 28 (89 %), later after 3 (median 53.25 s), never after 0
     the share of the body's standing men in flight at the fall: median 0.00
     the body broke before a successor could have the place, by the set's own delay: 18 of 28 (64 %)
-  Romans, file leaders: 329 falls in bodies not yet broken
-    the body broke within 5 s after 205 of 329 (62 %), within 30 s after 301 of 329 (91 %), later after 20 (median 49.88 s), never after 8
+  Romans, file leaders: 336 falls in bodies not yet broken
+    the body broke within 5 s after 211 of 336 (63 %), within 30 s after 308 of 336 (92 %), later after 20 (median 49.88 s), never after 8
     the share of the body's standing men in flight at the fall: median 0.01
-    the body broke before a successor could have the place, by the set's own delay: 193 of 329 (59 %)
+    the body broke before a successor could have the place, by the set's own delay: 199 of 336 (59 %)
   warband, leaders: 4 falls in bodies not yet broken
     the body broke within 5 s after 2 of 4 (50 %), within 30 s after 4 of 4 (100 %), later after 0 (median none), never after 0
     the share of the body's standing men in flight at the fall: median 0.00
-  warband, file leaders: 78 falls in bodies not yet broken
-    the body broke within 5 s after 5 of 78 (6 %), within 30 s after 20 of 78 (26 %), later after 19 (median 64.75 s), never after 39
+  warband, file leaders: 79 falls in bodies not yet broken
+    the body broke within 5 s after 5 of 79 (6 %), within 30 s after 20 of 79 (25 %), later after 19 (median 64.75 s), never after 40
     the share of the body's standing men in flight at the fall: median 0.00
-leaders-pairwise-r3.jsonl: 522 lines read, 6 runs not counted, 0 lines that cannot be read, 0 of another kind
-  Romans, leaders: 30 falls in bodies not yet broken
-    the body broke within 5 s after 13 of 30 (43 %), within 30 s after 24 of 30 (80 %), later after 6 (median 67.50 s), never after 0
+leaders-pairwise-r3.jsonl: 527 lines read, 0 runs not counted, 0 lines that cannot be read, 0 of another kind
+  Romans, leaders: 32 falls in bodies not yet broken
+    the body broke within 5 s after 15 of 32 (47 %), within 30 s after 26 of 32 (81 %), later after 6 (median 67.50 s), never after 0
     the share of the body's standing men in flight at the fall: median 0.00
-    the body broke before a successor could have the place, by the set's own delay: 12 of 30 (40 %)
-  Romans, file leaders: 403 falls in bodies not yet broken
-    the body broke within 5 s after 193 of 403 (48 %), within 30 s after 329 of 403 (82 %), later after 48 (median 50.62 s), never after 26
+    the body broke before a successor could have the place, by the set's own delay: 14 of 32 (44 %)
+  Romans, file leaders: 405 falls in bodies not yet broken
+    the body broke within 5 s after 195 of 405 (48 %), within 30 s after 331 of 405 (82 %), later after 48 (median 50.62 s), never after 26
     the share of the body's standing men in flight at the fall: median 0.01
-    the body broke before a successor could have the place, by the set's own delay: 184 of 403 (46 %)
+    the body broke before a successor could have the place, by the set's own delay: 186 of 405 (46 %)
   warband, leaders: 4 falls in bodies not yet broken
     the body broke within 5 s after 0 of 4 (0 %), within 30 s after 3 of 4 (75 %), later after 1 (median 225.00 s), never after 0
     the share of the body's standing men in flight at the fall: median 0.00
-  warband, file leaders: 85 falls in bodies not yet broken
-    the body broke within 5 s after 1 of 85 (1 %), within 30 s after 17 of 85 (20 %), later after 31 (median 58.00 s), never after 37
+  warband, file leaders: 86 falls in bodies not yet broken
+    the body broke within 5 s after 1 of 86 (1 %), within 30 s after 17 of 86 (20 %), later after 31 (median 58.00 s), never after 38
     the share of the body's standing men in flight at the fall: median 0.00
